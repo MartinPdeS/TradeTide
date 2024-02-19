@@ -31,13 +31,13 @@ ax = metadata.plot.scatter(
     color='C0'
 )
 
-metadata.plot.scatter(
-    ax=ax,
-    x='date',
-    y='positions',
-    label='positions',
-    color='C1'
-)
+# metadata.plot.scatter(
+#     ax=ax,
+#     x='date',
+#     y='positions',
+#     label='positions',
+#     color='C1'
+# )
 
 
 metadata['stop loss triggered'] = metadata['stop loss triggered'].astype(float)
@@ -47,7 +47,9 @@ metadata.plot.scatter(
     x='date',
     y='stop loss triggered',
     label='stop-loss triger',
-    color='red'
+    color='red',
+    marker='x',
+
 )
 
 
@@ -58,18 +60,21 @@ metadata.plot.scatter(
     x='date',
     y='take profit triggered',
     label='take profit triger',
-    color='green'
+    color='green',
+    marker='^',
 )
-
-
-
 
 ax_right = ax.twinx()
 
 ax.set_yticks([])
 ax_right.set_yticks([])
 
-# ax = metadata.plot(x='date', y=['entry price'], color='black', ax=ax_right)
+portfolio.plot(
+    x='date',
+    y='holdings',
+    color='black',
+    ax=ax_right
+)
 
 plt.show()
 

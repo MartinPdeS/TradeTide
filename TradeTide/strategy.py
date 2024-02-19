@@ -1,4 +1,3 @@
-from TradeTide.tools import get_crossings
 import matplotlib.pyplot as plt
 import pandas
 import numpy
@@ -29,8 +28,8 @@ class Strategy():
 
     def back_test(
             self,
-            stop_loss: float = 0.001,  # 0.1% loss
-            take_profit: float = 0.001,  # 0.1% profit
+            stop_loss: float = 0.01,  # 1% loss
+            take_profit: float = 0.01,  # 1% profit
             buy_unit: float = 1_000,
             initial_capital: float = 100_000,
             return_extra_data: bool = False) -> pandas.DataFrame:
@@ -48,7 +47,7 @@ class Strategy():
         data['stop loss price'] = data['entry price'] * (1 - stop_loss)
         data['take profit price'] = data['entry price'] * (1 + take_profit)
 
-        # Determin edays where the stop-loss or take-profit is triggered
+        # Determine days where the stop-loss or take-profit is triggered
         # Stop-loss trigger: where the low is below the stop-loss price
         # Take-profit trigger: where the high is above the take-profit price
         data['stop loss triggered'] = data['low'] < data['stop loss price']
@@ -75,6 +74,8 @@ class Strategy():
 
         portfolio['date'] = data['date']
 
+        self.data = data
+
         if return_extra_data:
             return portfolio, data
 
@@ -90,7 +91,7 @@ class Strategy():
 
         ax = dataframe.plot(x='date', y=metric_list)
 
-        sub = dataframe.loc[dataframe['buy signal'] == True]
+        # sub = dataframe.loc[dataframe['buy signal'] == True]
 
         sub.plot.scatter(
             ax=ax,

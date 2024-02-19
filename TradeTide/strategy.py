@@ -1,7 +1,7 @@
 from TradeTide.tools import get_crossings
 import matplotlib.pyplot as plt
-import numpy
 import pandas
+import numpy
 from dataclasses import dataclass
 
 
@@ -19,10 +19,6 @@ class Strategy():
 
         self.metric_1.add_to_dataframe(self.dataframe, self.column)
 
-        self.dataframe['buy signal'] = get_crossings(self.metric_0, self.metric_1)
-
-        self.dataframe['sell signal'] = get_crossings(self.metric_1, self.metric_0)
-
     @property
     def values_0(self):
         return self.dataframe[self.metric_0.__repr__()]
@@ -31,24 +27,56 @@ class Strategy():
     def values_1(self):
         return self.dataframe[self.metric_1.__repr__()]
 
-    def test(self) -> pandas.DataFrame:
-        initial_capital: float = 100_000
+    def back_test(
+            self,
+            stop_loss: float = 0.001,  # 0.1% loss
+            take_profit: float = 0.001,  # 0.1% profit
+            buy_unit: float = 1_000,
+            initial_capital: float = 100_000,
+            return_extra_data: bool = False) -> pandas.DataFrame:
 
-        close_value = self.dataframe['close']
+        data = self.dataframe.copy()
+        data['signal'] = numpy.where(self.metric_0.values > self.metric_1.values, 1, 0)
 
-        positions = pandas.DataFrame(index=self.dataframe.index).fillna(0.0)
+        # Calculate the price at which each position is taken
+        data['entry price'] = data['close'].where(data['signal'].diff() == 1.0)
 
-        positions['forex'] = 1_000 * self.dataframe['buy signal']
+        # Forward fill the entry prices for the holding period of each position
+        data['entry price'] = data['entry price'].ffill()
 
-        portfolio = positions.multiply(close_value, axis=0)
+        # Calculate stop-loss and take-projet prices based on the entry prices
+        data['stop loss price'] = data['entry price'] * (1 - stop_loss)
+        data['take profit price'] = data['entry price'] * (1 + take_profit)
 
-        portfolio['cash'] = initial_capital - (positions['forex'].diff() * close_value).cumsum()
+        # Determin edays where the stop-loss or take-profit is triggered
+        # Stop-loss trigger: where the low is below the stop-loss price
+        # Take-profit trigger: where the high is above the take-profit price
+        data['stop loss triggered'] = data['low'] < data['stop loss price']
+        data['take profit triggered'] = data['high'] > data['take profit price']
 
-        portfolio['total'] = portfolio['cash'] + positions.multiply(close_value, axis=0).sum(axis=1)
+        # If either stop-loss or take-profit is triggered, the position should be closed
+        data['close position'] = data['stop loss triggered'] | data['take profit triggered']
 
-        portfolio['revenue'] = portfolio['total'].pct_change()
+        # Reset the signal on the days where the position is closed due to stop-loss or take-profit
+        data['signal'] = numpy.where(data['close position'], 0, data['signal'])
 
-        portfolio['date'] = self.dataframe['date']
+        # Recalculate the positions after considering stop-loss take-profit
+        data['positions'] = data['signal'].diff()
+
+        portfolio = pandas.DataFrame(index=data.index)
+
+        portfolio['holdings'] = data['positions'].cumsum() * data['close'] * buy_unit
+
+        portfolio['cash'] = initial_capital - (data['positions'] * data['close'] * buy_unit).cumsum()
+
+        portfolio['total'] = portfolio['cash'] + portfolio['holdings']
+
+        portfolio['returns'] = portfolio['total'].pct_change()
+
+        portfolio['date'] = data['date']
+
+        if return_extra_data:
+            return portfolio, data
 
         return portfolio
 

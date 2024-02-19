@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class RollingAverage():
+class SimpleMovingAverage():
     window: int
     min_periods: int
 
@@ -12,7 +12,7 @@ class RollingAverage():
         self.values = dataframe[column].rolling(
             window=self.window,
             min_periods=self.min_periods
-        ).mean()
+        ).mean(engine='numba')
 
         return self.values
 
@@ -26,6 +26,6 @@ class RollingAverage():
         return self.values.plot(*args, **kwargs)
 
     def __repr__(self) -> str:
-        return f"RA:: window[{self.window}]"
+        return f"SMA:: window[{self.window}]"
 
 # -

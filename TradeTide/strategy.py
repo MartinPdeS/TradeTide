@@ -1,18 +1,23 @@
 from TradeTide.tools import get_crossings
 import matplotlib.pyplot as plt
 import numpy
+import pandas
+from dataclasses import dataclass
 
 
+@dataclass
 class Strategy():
-    def __init__(self, dataframe, metric_0, metric_1, column: str):
-        self.dataframe = dataframe
-        self.column = column
-        self.metric_0 = metric_0
-        self.metric_1 = metric_1
+    dataframe: pandas.DataFrame
+    metric_0: object
+    metric_1: object
+    column: str
+    high_boundary: float = 1
+    low_boundary: float = 1
 
-        self.metric_0.add_to_dataframe(dataframe, column)
+    def __post_init__(self):
+        self.metric_0.add_to_dataframe(self.dataframe, self.column)
 
-        self.metric_1.add_to_dataframe(dataframe, column)
+        self.metric_1.add_to_dataframe(self.dataframe, self.column)
 
         self.dataframe['buy signal'] = get_crossings(self.metric_0, self.metric_1)
 
@@ -26,7 +31,28 @@ class Strategy():
     def values_1(self):
         return self.dataframe[self.metric_1.__repr__()]
 
-    def plot(self):
+    def test(self) -> pandas.DataFrame:
+        initial_capital: float = 100_000
+
+        close_value = self.dataframe['close']
+
+        positions = pandas.DataFrame(index=self.dataframe.index).fillna(0.0)
+
+        positions['forex'] = 1_000 * self.dataframe['buy signal']
+
+        portfolio = positions.multiply(close_value, axis=0)
+
+        portfolio['cash'] = initial_capital - (positions['forex'].diff() * close_value).cumsum()
+
+        portfolio['total'] = portfolio['cash'] + positions.multiply(close_value, axis=0).sum(axis=1)
+
+        portfolio['revenue'] = portfolio['total'].pct_change()
+
+        portfolio['date'] = self.dataframe['date']
+
+        return portfolio
+
+    def plot(self) -> None:
         metric_list = [
             self.metric_0.__repr__(),
             self.metric_1.__repr__()
@@ -44,7 +70,8 @@ class Strategy():
             y=self.metric_0.__repr__(),
             color='green',
             s=40,
-            zorder=-1
+            zorder=-1,
+            label='buy signal'
         )
 
         sub = dataframe.loc[dataframe['sell signal'] == True]
@@ -55,7 +82,8 @@ class Strategy():
             y=self.metric_0.__repr__(),
             color='red',
             s=40,
-            zorder=-1
+            zorder=-1,
+            label='sell signal'
         )
 
         plt.show()

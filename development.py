@@ -1,11 +1,12 @@
 from TradeTide.tools import get_dataframe
 from TradeTide.metrics import RollingAverage
 from TradeTide.strategy import Strategy
+import matplotlib.pyplot as plt
 
 
 dataframe = get_dataframe('eur', 'usd', year=2019)
 
-sub_frame = dataframe[:800].copy()
+sub_frame = dataframe[:305000].copy()
 
 strategy = Strategy(
     dataframe=sub_frame,
@@ -14,9 +15,8 @@ strategy = Strategy(
     column='high'
 )
 
+portfolio = strategy.test()
 
-# a = sub_frame[sub_frame['buy signal'] == True]
+portfolio.plot(x='date', y='total')
+plt.show()
 
-# print(a)
-
-strategy.plot()

@@ -1,23 +1,41 @@
 from TradeTide.tools import get_dataframe
-from TradeTide.metrics import SimpleMovingAverage
-from TradeTide.strategy import Strategy
+from TradeTide.backtester import BackTester
 import matplotlib.pyplot as plt
+from TradeTide.strategy import MovingAverageCrossing, RelativeStrengthIndex
+
 
 dataframe = get_dataframe('eur', 'usd', year=2020)
 
+sub_frame = dataframe[:130_000].copy()
 
-sub_frame = dataframe[:3_000].copy()
+# strategy = MovingAverageCrossing(
+#     long_window=150,
+#     short_window=30,
+#     min_period=10
+# )
 
-strategy = Strategy(
-    dataframe=sub_frame,
-    metric_0=SimpleMovingAverage(200, 8),
-    metric_1=SimpleMovingAverage(50, 8),
-    column='high'
+# strategy.generate_signal(sub_frame)
+
+
+strategy = RelativeStrengthIndex(
+    period=100,
+    oversold_threshold=30,
+    overbought_threshold=70
 )
 
-portfolio, metadata = strategy.back_test(
-    stop_loss=0.001,
-    take_profit=0.001,
+strategy.generate_signal(sub_frame)
+
+# strategy.plot()
+
+
+backtester = BackTester(
+    dataframe=sub_frame,
+    signal=strategy.signal,
+)
+
+portfolio, metadata = backtester.back_test(
+    stop_loss=0.01,
+    take_profit=0.01,
     initial_capital=100_000,
     buy_unit=1_000,
     return_extra_data=True
@@ -69,12 +87,17 @@ ax_right = ax.twinx()
 ax.set_yticks([])
 ax_right.set_yticks([])
 
+
 portfolio.plot(
     x='date',
     y='holdings',
     color='black',
     ax=ax_right
 )
+
+ax.legend(loc=2)
+ax_right.legend(loc=1)
+
 
 plt.show()
 

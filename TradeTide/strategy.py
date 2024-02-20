@@ -1,120 +1,154 @@
-import matplotlib.pyplot as plt
 import pandas
 import numpy
-from dataclasses import dataclass
+from abc import ABC, abstractmethod
+import matplotlib.pyplot as plt
 
 
-@dataclass
-class Strategy():
-    dataframe: pandas.DataFrame
-    metric_0: object
-    metric_1: object
-    column: str
-    high_boundary: float = 1
-    low_boundary: float = 1
+class Strategy(ABC):
 
-    def __post_init__(self):
-        self.metric_0.add_to_dataframe(self.dataframe, self.column)
+    def __init__(self):
+        pass
 
-        self.metric_1.add_to_dataframe(self.dataframe, self.column)
+    @abstractmethod
+    def generate_signal(self) -> pandas.DataFrame:
+        pass
 
-    @property
-    def values_0(self):
-        return self.dataframe[self.metric_0.__repr__()]
-
-    @property
-    def values_1(self):
-        return self.dataframe[self.metric_1.__repr__()]
-
-    def back_test(
-            self,
-            stop_loss: float = 0.01,  # 1% loss
-            take_profit: float = 0.01,  # 1% profit
-            buy_unit: float = 1_000,
-            initial_capital: float = 100_000,
-            return_extra_data: bool = False) -> pandas.DataFrame:
-
-        data = self.dataframe.copy()
-        data['signal'] = numpy.where(self.metric_0.values > self.metric_1.values, 1, 0)
-
-        # Calculate the price at which each position is taken
-        data['entry price'] = data['close'].where(data['signal'].diff() == 1.0)
-
-        # Forward fill the entry prices for the holding period of each position
-        data['entry price'] = data['entry price'].ffill()
-
-        # Calculate stop-loss and take-projet prices based on the entry prices
-        data['stop loss price'] = data['entry price'] * (1 - stop_loss)
-        data['take profit price'] = data['entry price'] * (1 + take_profit)
-
-        # Determine days where the stop-loss or take-profit is triggered
-        # Stop-loss trigger: where the low is below the stop-loss price
-        # Take-profit trigger: where the high is above the take-profit price
-        data['stop loss triggered'] = data['low'] < data['stop loss price']
-        data['take profit triggered'] = data['high'] > data['take profit price']
-
-        # If either stop-loss or take-profit is triggered, the position should be closed
-        data['close position'] = data['stop loss triggered'] | data['take profit triggered']
-
-        # Reset the signal on the days where the position is closed due to stop-loss or take-profit
-        data['signal'] = numpy.where(data['close position'], 0, data['signal'])
-
-        # Recalculate the positions after considering stop-loss take-profit
-        data['positions'] = data['signal'].diff()
-
-        portfolio = pandas.DataFrame(index=data.index)
-
-        portfolio['holdings'] = data['positions'].cumsum() * data['close'] * buy_unit
-
-        portfolio['cash'] = initial_capital - (data['positions'] * data['close'] * buy_unit).cumsum()
-
-        portfolio['total'] = portfolio['cash'] + portfolio['holdings']
-
-        portfolio['returns'] = portfolio['total'].pct_change()
-
-        portfolio['date'] = data['date']
-
-        self.data = data
-
-        if return_extra_data:
-            return portfolio, data
-
-        return portfolio
-
-    def plot(self) -> None:
-        metric_list = [
-            self.metric_0.__repr__(),
-            self.metric_1.__repr__()
-        ]
-
-        dataframe = self.dataframe
-
-        ax = dataframe.plot(x='date', y=metric_list)
-
-        # sub = dataframe.loc[dataframe['buy signal'] == True]
-
-        sub.plot.scatter(
-            ax=ax,
-            x='date',
-            y=self.metric_0.__repr__(),
-            color='green',
-            s=40,
-            zorder=-1,
-            label='buy signal'
-        )
-
-        sub = dataframe.loc[dataframe['sell signal'] == True]
-
-        sub.plot.scatter(
-            ax=ax,
-            x='date',
-            y=self.metric_0.__repr__(),
-            color='red',
-            s=40,
-            zorder=-1,
-            label='sell signal'
-        )
+    def plot(self):
+        self.signal.plot.scatter(x='date', y='value')
 
         plt.show()
+
+
+class MovingAverageCrossing(Strategy):
+
+    def __init__(
+            self,
+            short_window: int = 30,
+            long_window: int = 150,
+            min_period: int = 10,
+            value_type: str = 'close'):
+        """
+        Constructs a new instance.
+
+        :param      short_window:  The short window for the SMA
+        :type       short_window:  int
+        :param      long_window:   The long window for the SMA
+        :type       long_window:   int
+        :param      min_period:    The minimum period
+        :type       min_period:    int
+        :param      value_type:    The value type ['high', 'low', 'open', 'close']
+        :type       value_type:    str
+        """
+        self.short_window = short_window
+        self.long_window = long_window
+        self.min_period = min_period
+        self.value_type = value_type
+
+    def generate_signal(self, dataframe: pandas.DataFrame) -> pandas.DataFrame:
+        self.signal = pandas.DataFrame(index=dataframe.index)
+
+        long_window_array = dataframe[self.value_type].rolling(
+            window=self.long_window,
+            min_periods=self.min_period
+        ).mean(engine='numba')
+
+        short_window_array = dataframe[self.value_type].rolling(
+            window=self.short_window,
+            min_periods=self.min_period
+        ).mean(engine='numba')
+
+        self.signal['value'] = numpy.where(short_window_array > long_window_array, 1, 0)
+
+        self.signal['date'] = dataframe['date']
+
+        return self.signal
+
+
+class RelativeStrengthIndex(Strategy):
+    def __init__(
+            self,
+            period: int = 14,
+            overbought_threshold: int = 70,
+            oversold_threshold: int = 30,
+            value_type: str = 'close'):
+        """
+        Constructs a new instance.
+
+        :param      period:                The number of period used to compute the RSI
+        :type       period:                int
+        :param      overbought_threshold:  The RSI threshold above which the market is considered overbought, and a sell signal may be generated
+        :type       overbought_threshold:  int
+        :param      oversold_threshold:    The RSI threshold below which the market is considered oversold, and a buy signal may be generated.
+        :type       oversold_threshold:    int
+        :param      value_type:            The value type
+        :type       value_type:            str
+        """
+        self.period = period
+        self.overbought_threshold = overbought_threshold
+        self.oversold_threshold = oversold_threshold
+        self.value_type = value_type
+
+    def generate_signal(self, dataframe: pandas.DataFrame) -> pandas.DataFrame:
+        self.signal = pandas.DataFrame(index=dataframe.index)
+
+        delta = dataframe[self.value_type].diff()
+
+        gain = (delta.where(delta > 0, 0)).rolling(window=self.period).mean()
+
+        loss = (-delta.where(delta < 0, 0)).rolling(window=self.period).mean()
+
+        rs = gain / loss
+
+        rsi = 100 - (100 / (1 + rs))
+
+        self.signal['value'] = 0
+
+        self.signal.loc[rsi < self.oversold_threshold, 'value'] = 1
+        self.signal.loc[rsi > self.overbought_threshold, 'value'] = -1
+
+        self.signal['date'] = dataframe['date']
+
+        return self.signal
+
+
+class BollingerBands(Strategy):
+    def __init__(
+            self,
+            periods: int = 20,
+            deviation: float = 2,
+            value_type: str = 'close'):
+        """
+        Constructs a new instance.
+
+        :param      periods:     The number of period for the moving average
+        :type       periods:     int
+        :param      deviation:   The number of standard deviation for the upper and lower bands
+        :type       deviation:   float
+        :param      value_type:  The value type
+        :type       value_type:  str
+        """
+        self.periods = periods
+        self.deviation = deviation
+        self.value_type = value_type
+
+    def generate_signal(self, dataframe: pandas.DataFrame) -> pandas.DataFrame:
+        self.signal = pandas.DataFrame(index=dataframe.index)
+
+        self.signal['date'] = dataframe['date']
+
+        self.signal['NA'] = dataframe[self.value_type].rolling(window=self.periods).mean()
+
+        self.signal['STD'] = dataframe[self.value_type].rolling(window=self.periods).std()
+
+        self.signal['upper_band'] = self.signal['NA'] + (self.signal['STD'] * self.deviation)
+
+        self.signal['lower_band'] = self.signal['NA'] - (self.signal['STD'] * self.deviation)
+
+        # Generate buy signal when the close price crosses below the lower band
+        self.signal['value'] = numpy.where(dataframe['close'] < self.data['lower_band'], 1, 0)
+
+        # Generate sell signal when the close price corsses above the upper band
+        self.signal['value'] = numpy.where(dataframe['close'] > self.data['lower_band'], -1, self.signal['value'])
+
 
 # -

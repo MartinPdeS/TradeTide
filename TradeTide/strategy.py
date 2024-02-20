@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 
 
 class Strategy(ABC):
-
     def __init__(self):
         pass
 
@@ -47,6 +46,8 @@ class MovingAverageCrossing(Strategy):
     def generate_signal(self, dataframe: pandas.DataFrame) -> pandas.DataFrame:
         self.signal = pandas.DataFrame(index=dataframe.index)
 
+        self.signal['date'] = dataframe['date']
+
         long_window_array = dataframe[self.value_type].rolling(
             window=self.long_window,
             min_periods=self.min_period
@@ -58,8 +59,6 @@ class MovingAverageCrossing(Strategy):
         ).mean(engine='numba')
 
         self.signal['value'] = numpy.where(short_window_array > long_window_array, 1, 0)
-
-        self.signal['date'] = dataframe['date']
 
         return self.signal
 
@@ -91,6 +90,8 @@ class RelativeStrengthIndex(Strategy):
     def generate_signal(self, dataframe: pandas.DataFrame) -> pandas.DataFrame:
         self.signal = pandas.DataFrame(index=dataframe.index)
 
+        self.signal['date'] = dataframe['date']
+
         delta = dataframe[self.value_type].diff()
 
         gain = (delta.where(delta > 0, 0)).rolling(window=self.period).mean()
@@ -105,8 +106,6 @@ class RelativeStrengthIndex(Strategy):
 
         self.signal.loc[rsi < self.oversold_threshold, 'value'] = 1
         self.signal.loc[rsi > self.overbought_threshold, 'value'] = -1
-
-        self.signal['date'] = dataframe['date']
 
         return self.signal
 

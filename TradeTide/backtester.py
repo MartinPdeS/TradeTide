@@ -22,11 +22,28 @@ class BackTester():
 
     def back_test(
             self,
-            stop_loss: float = 0.01,  # 1% loss
-            take_profit: float = 0.01,  # 1% profit
+            stop_loss: float = 0.01,
+            take_profit: float = 0.01,
             buy_unit: float = 1_000,
             initial_capital: float = 100_000,
             return_extra_data: bool = False) -> pandas.DataFrame:
+        """
+        Run the back tests on the data
+
+        :param      stop_loss:          The stop loss threshold [default is 1%]
+        :type       stop_loss:          float
+        :param      take_profit:        The take profit threshold [default is 1%]
+        :type       take_profit:        float
+        :param      buy_unit:           The buy unit
+        :type       buy_unit:           float
+        :param      initial_capital:    The initial capital
+        :type       initial_capital:    float
+        :param      return_extra_data:  If true returns some extra data on the computation as a dataframe
+        :type       return_extra_data:  bool
+
+        :returns:   The computed portfolio
+        :rtype:     pandas.DataFrame
+        """
 
         data = self.dataframe.copy()
         data['signal'] = self.signal['value']
@@ -69,45 +86,84 @@ class BackTester():
         portfolio['date'] = data['date']
 
         self.data = data
+        self.portfolio = portfolio
 
         if return_extra_data:
             return portfolio, data
 
         return portfolio
 
-    def plot(self) -> None:
-        metric_list = [
-            self.metric_0.__repr__(),
-            self.metric_1.__repr__()
-        ]
+    def plot(
+            self,
+            show_stop_loss: bool = False,
+            show_take_win: bool = False,
+            show_holdings: bool = False,
+            show_totals: bool = False,
+            show_cash: bool = False) -> None:
 
-        dataframe = self.dataframe
+        meta_data = self.data.copy()
 
-        ax = dataframe.plot(x='date', y=metric_list)
-
-        # sub = dataframe.loc[dataframe['buy signal'] == True]
-
-        sub.plot.scatter(
-            ax=ax,
+        ax = meta_data.plot.scatter(
             x='date',
-            y=self.metric_0.__repr__(),
-            color='green',
-            s=40,
-            zorder=-1,
-            label='buy signal'
+            y='signal',
+            figsize=(12, 4),
+            label='signal',
+            color='C0'
         )
 
-        sub = dataframe.loc[dataframe['sell signal'] == True]
+        ax_right = ax.twinx()
 
-        sub.plot.scatter(
-            ax=ax,
-            x='date',
-            y=self.metric_0.__repr__(),
-            color='red',
-            s=40,
-            zorder=-1,
-            label='sell signal'
-        )
+        if show_stop_loss:
+            meta_data['stop loss triggered'] = meta_data['stop loss triggered'].astype(float)
+
+            meta_data.plot.scatter(
+                ax=ax,
+                x='date',
+                y='stop loss triggered',
+                label='stop-loss triger',
+                color='red',
+                marker=7,
+
+            )
+
+        if show_take_win:
+            meta_data['take profit triggered'] = meta_data['take profit triggered'].astype(float)
+
+            meta_data.plot.scatter(
+                ax=ax,
+                x='date',
+                y='take profit triggered',
+                label='take profit triger',
+                color='green',
+                marker=6,
+            )
+
+        if show_holdings:
+            self.portfolio.plot(
+                x='date',
+                y='holdings',
+                linewidth=2,
+                ax=ax_right
+            )
+
+        if show_totals:
+            self.portfolio.plot(
+                x='date',
+                y='total',
+                linewidth=2,
+                ax=ax_right
+            )
+
+        if show_cash:
+            self.portfolio.plot(
+                x='date',
+                y='cash',
+                linewidth=2,
+                ax=ax_right
+            )
+
+        ax.legend(loc=2)
+        ax_right.legend(loc=1)
 
         plt.show()
 

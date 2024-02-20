@@ -13,20 +13,64 @@ class BackTester():
     allowing for the evaluation of the strategy's effectiveness.
     """
 
-    def __init__(self, dataframe: pandas.DataFrame, strategy: Strategy):
+    def __init__(self, market: pandas.DataFrame, strategy: Strategy):
         """
         Initializes the ForexBacktester with a trading strategy and backtesting parameters.
         """
-        self.dataframe = dataframe
+        self.market_dataframe = market
         self.strategy = strategy
 
     @property
     def values_0(self):
-        return self.dataframe[self.metric_0.__repr__()]
+        return self.market_dataframe[self.metric_0.__repr__()]
 
     @property
     def values_1(self):
-        return self.dataframe[self.metric_1.__repr__()]
+        return self.market_dataframe[self.metric_1.__repr__()]
+
+    def manage_positions(self, market: pandas.DataFrame, spread: float, stop_loss: float, take_profit: float) -> None:
+        """
+        Manages open positions based on stop-loss, take-profit, and spread.
+
+        :param      spread:  The spread
+        :type       spread:  float
+
+        :returns:   { description_of_the_return_value }
+        :rtype:     None
+        """
+        portfolio = self.portfolio
+        # Adjust for spread at entry
+        portfolio['opened_positions'] = portfolio['positions']
+        portfolio['entry_price'] = market['close'].where(portfolio['positions'] == 1) + spread  # maybe + spread
+
+        # Forward fill entry prices for the holding period
+        portfolio['entry_price'] = portfolio['entry_price'].ffill()
+
+        # Calculate stop-loss and take-profit prices
+        portfolio['stop_loss_price'] = portfolio['entry_price'] * (1 - stop_loss)
+        portfolio['take_profit_price'] = portfolio['entry_price'] * (1 + take_profit)
+
+        # Check if stop-loss or take-profit were triggered
+        portfolio['stop_loss_triggered'] = market['low'] < portfolio['stop_loss_price']
+        portfolio['take_profit_triggered'] = market['high'] > portfolio['take_profit_price']
+
+        # Close positions where stop-loss or take-profit conditions are met
+        portfolio['close_positions'] = portfolio['stop_loss_triggered'] | portfolio['take_profit_triggered']
+        portfolio.loc[portfolio['close_positions'], 'positions'] = 0
+
+    def calculate_units_and_portfolio(self, initial_capital: float, spread: float, max_cap_per_trade: float, market: pandas.DataFrame):
+        """
+        Calculates the number of units for each trade and updates the portfolio.
+        """
+        portfolio = self.portfolio
+
+        # Calculate the number of units that can be bought with the max capital per trade
+        portfolio['units'] = numpy.floor((max_cap_per_trade - spread) / portfolio['entry_price'])
+
+        portfolio['holdings'] = (portfolio['units'] * market['close']).cumsum()
+        portfolio['cash'] = initial_capital - (portfolio['units'] * portfolio['entry_price']).cumsum()
+        portfolio['total'] = portfolio['cash'] + portfolio['holdings']
+        portfolio['returns'] = portfolio['total'].pct_change()
 
     def back_test(
             self,
@@ -34,7 +78,9 @@ class BackTester():
             take_profit: float = 0.01,
             buy_unit: float = 1_000,
             initial_capital: float = 100_000,
-            return_extra_data: bool = False) -> pandas.DataFrame:
+            spread: float = 0.01,
+            return_extra_data: bool = False,
+            max_cap_per_trade: float = 1_000) -> pandas.DataFrame:
         """
         Run the back tests on the data
 
@@ -52,54 +98,36 @@ class BackTester():
         :returns:   The computed portfolio
         :rtype:     pandas.DataFrame
         """
+        market = self.market_dataframe.copy()
 
-        data = self.dataframe.copy()
-        data['signal'] = self.strategy.signal
+        # Initialize the portfolio DataFrame
+        portfolio = self.portfolio = pandas.DataFrame(index=market.index)
+        portfolio['date'] = market['date']
 
-        # Calculate the price at which each position is taken
-        data['entry price'] = data['close'].where(data['signal'].diff() == 1.0)
+        portfolio['signal'] = self.strategy.signal
 
-        # Forward fill the entry prices for the holding period of each position
-        data['entry price'] = data['entry price'].ffill()
+        portfolio['positions'] = portfolio['signal'].diff()
 
-        # Calculate stop-loss and take-projet prices based on the entry prices
-        data['stop loss price'] = data['entry price'] * (1 - stop_loss)
-        data['take profit price'] = data['entry price'] * (1 + take_profit)
+        self.manage_positions(
+            market=market,
+            spread=spread,
+            stop_loss=stop_loss,
+            take_profit=take_profit
+        )
 
-        # Determine days where the stop-loss or take-profit is triggered
-        # Stop-loss trigger: where the low is below the stop-loss price
-        # Take-profit trigger: where the high is above the take-profit price
-        data['stop loss triggered'] = data['low'] < data['stop loss price']
-        data['take profit triggered'] = data['high'] > data['take profit price']
+        self.calculate_units_and_portfolio(
+            market=market,
+            initial_capital=initial_capital,
+            spread=spread,
+            max_cap_per_trade=max_cap_per_trade
+        )
 
-        # If either stop-loss or take-profit is triggered, the position should be closed
-        data['close position'] = data['stop loss triggered'] | data['take profit triggered']
-
-        # Reset the signal on the days where the position is closed due to stop-loss or take-profit
-        data['signal'] = numpy.where(data['close position'], 0, data['signal'])
-
-        # Recalculate the positions after considering stop-loss take-profit
-        data['positions'] = data['signal'].diff()
-
-        portfolio = pandas.DataFrame(index=data.index)
-
-        portfolio['holdings'] = data['positions'].cumsum() * data['close'] * buy_unit
-
-        portfolio['cash'] = initial_capital - (data['positions'] * data['close'] * buy_unit).cumsum()
-
-        portfolio['total'] = portfolio['cash'] + portfolio['holdings']
-
-        portfolio['returns'] = portfolio['total'].pct_change()
-
-        portfolio['date'] = data['date']
-
-        self.data = data
-        self.portfolio = portfolio
+        self.data = market
 
         if return_extra_data:
-            return portfolio, data
+            return self.portfolio, market
 
-        return portfolio
+        return self.portfolio
 
     def plot(
             self,
@@ -109,9 +137,10 @@ class BackTester():
             show_totals: bool = False,
             show_cash: bool = False) -> None:
 
-        meta_data = self.data.copy()
+        market = self.data.copy()
+        portfolio = self.portfolio
 
-        ax = meta_data.plot.scatter(
+        ax = portfolio.plot.scatter(
             x='date',
             y='signal',
             figsize=(12, 4),
@@ -122,12 +151,12 @@ class BackTester():
         ax_right = ax.twinx()
 
         if show_stop_loss:
-            meta_data['stop loss triggered'] = meta_data['stop loss triggered'].astype(float)
+            portfolio['stop_loss_triggered'] = portfolio['stop_loss_triggered'].astype(float)
 
-            meta_data.plot.scatter(
+            portfolio.plot.scatter(
                 ax=ax,
                 x='date',
-                y='stop loss triggered',
+                y='stop_loss_triggered',
                 label='stop-loss triger',
                 color='red',
                 marker=7,
@@ -135,12 +164,12 @@ class BackTester():
             )
 
         if show_take_win:
-            meta_data['take profit triggered'] = meta_data['take profit triggered'].astype(float)
+            portfolio['take_profit_triggered'] = portfolio['take_profit_triggered'].astype(float)
 
-            meta_data.plot.scatter(
+            portfolio.plot.scatter(
                 ax=ax,
                 x='date',
-                y='take profit triggered',
+                y='take_profit_triggered',
                 label='take profit triger',
                 color='green',
                 marker=6,

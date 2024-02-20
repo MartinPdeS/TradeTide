@@ -5,6 +5,8 @@ import pathlib
 from MPSPlots.render2D import SceneList
 import matplotlib.pyplot as plt
 
+# data taken from https://forexsb.com/historical-forex-data
+
 
 def get_data_path(currency_0: str, currency_1: str, year: int) -> pathlib.Path:
     data_folder = directories.data

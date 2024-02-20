@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas
 import numpy
+from TradeTide.strategy import Strategy
 
 
 class BackTester():
@@ -12,12 +13,12 @@ class BackTester():
     allowing for the evaluation of the strategy's effectiveness.
     """
 
-    def __init__(self, dataframe: pandas.DataFrame, signal: pandas.DataFrame):
+    def __init__(self, dataframe: pandas.DataFrame, strategy: Strategy):
         """
         Initializes the ForexBacktester with a trading strategy and backtesting parameters.
         """
         self.dataframe = dataframe
-        self.signal = signal
+        self.strategy = strategy
 
     @property
     def values_0(self):
@@ -53,7 +54,7 @@ class BackTester():
         """
 
         data = self.dataframe.copy()
-        data['signal'] = self.signal['value']
+        data['signal'] = self.strategy.signal
 
         # Calculate the price at which each position is taken
         data['entry price'] = data['close'].where(data['signal'].diff() == 1.0)

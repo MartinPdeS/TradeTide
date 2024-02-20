@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 import matplotlib.pyplot as plt
 
 __all__ = [
-    'CustomStrategy',
+    'Custom',
     'Random',
     'MovingAverageCrossing',
     'RelativeStrengthIndex',
@@ -42,7 +42,7 @@ class Strategy(ABC):
         return wrapper
 
 
-class CustomStrategy(Strategy):
+class Custom(Strategy):
     def __init__(self, custom_signal: numpy.ndarray):
         self.custom_signal = custom_signal
 
@@ -69,7 +69,7 @@ class Random(Strategy):
 
     @Strategy.post_generate_signal
     def generate_signal(self, dataframe: pandas.DataFrame) -> pandas.DataFrame:
-        signal = numpy.zeros(len(dataframe))
+        random_signal = numpy.zeros(len(dataframe))
 
         random_index = numpy.random.choice(
             len(dataframe),
@@ -78,11 +78,11 @@ class Random(Strategy):
             p=None
         )
 
-        signal[random_index] = 1
+        random_signal[random_index] = 1
 
         self.data = pandas.DataFrame(index=dataframe.index)
 
-        self.data['signal'] = self.custom_signal
+        self.data['signal'] = random_signal
 
 
 class MovingAverageCrossing(Strategy):

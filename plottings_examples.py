@@ -1,11 +1,11 @@
 from TradeTide.tools import get_dataframe
 from TradeTide.backtester import BackTester
-from TradeTide.strategy import MovingAverageCrossing, RelativeStrengthIndex
+from TradeTide.strategy import MovingAverageCrossing, RelativeStrengthIndex, Random
 
 
 dataframe = get_dataframe('eur', 'usd', year=2020)
 
-sub_frame = dataframe[:130_000].copy()
+sub_frame = dataframe[:30_000].copy()
 
 
 strategy = RelativeStrengthIndex(
@@ -14,12 +14,14 @@ strategy = RelativeStrengthIndex(
     overbought_threshold=60
 )
 
+strategy = Random()
+
 strategy.generate_signal(sub_frame)
 
 
 backtester = BackTester(
     dataframe=sub_frame,
-    signal=strategy.signal,
+    strategy=strategy,
 )
 
 portfolio, metadata = backtester.back_test(

@@ -1,6 +1,5 @@
 from TradeTide.tools import get_dataframe
 from TradeTide.backtester import BackTester
-import matplotlib.pyplot as plt
 from TradeTide.strategy import MovingAverageCrossing, RelativeStrengthIndex
 
 

@@ -3,6 +3,14 @@ import numpy
 from abc import ABC, abstractmethod
 import matplotlib.pyplot as plt
 
+__all__ = [
+    'CustomStrategy',
+    'Random',
+    'MovingAverageCrossing',
+    'RelativeStrengthIndex',
+    'BollingerBands'
+]
+
 
 class Strategy(ABC):
     def __init__(self):
@@ -13,9 +21,68 @@ class Strategy(ABC):
         pass
 
     def plot(self):
-        self.signal.plot.scatter(x='date', y='value')
+        self.data.plot.scatter(x='date', y='signal')
 
         plt.show()
+
+    @property
+    def signal(self) -> pandas.Series:
+        return self.data['signal']
+
+    def post_generate_signal(function):
+        def wrapper(self, dataframe):
+            self.data = pandas.DataFrame(index=dataframe.index)
+
+            function(self, dataframe=dataframe)
+
+            self.data['date'] = dataframe['date']
+
+            return self.data['signal']
+
+        return wrapper
+
+
+class CustomStrategy(Strategy):
+    def __init__(self, custom_signal: numpy.ndarray):
+        self.custom_signal = custom_signal
+
+    @Strategy.post_generate_signal
+    def generate_signal(self, dataframe: pandas.DataFrame) -> pandas.DataFrame:
+        assert len(dataframe) == len(self.custom_signal), 'Mismatch between the custom signal and dataframe'
+
+        self.data['signal'] = self.custom_signal
+
+
+class Random(Strategy):
+    """
+    Random strategy with a given number of occurence
+    """
+
+    def __init__(self, number_of_occurence: int = 1):
+        """
+        Constructs a new instance.
+
+        :param      number_of_occurence:  The number of occurence for a positive signal
+        :type       number_of_occurence:  int
+        """
+        self.number_of_occurence = number_of_occurence
+
+    @Strategy.post_generate_signal
+    def generate_signal(self, dataframe: pandas.DataFrame) -> pandas.DataFrame:
+        signal = numpy.zeros(len(dataframe))
+
+        random_index = numpy.random.choice(
+            len(dataframe),
+            size=self.number_of_occurence,
+            replace=True,
+            p=None
+        )
+
+        signal[random_index] = 1
+
+        self.data = pandas.DataFrame(index=dataframe.index)
+
+        self.data['signal'] = self.custom_signal
 
 
 class MovingAverageCrossing(Strategy):
@@ -43,11 +110,8 @@ class MovingAverageCrossing(Strategy):
         self.min_period = min_period
         self.value_type = value_type
 
+    @Strategy.post_generate_signal
     def generate_signal(self, dataframe: pandas.DataFrame) -> pandas.DataFrame:
-        self.signal = pandas.DataFrame(index=dataframe.index)
-
-        self.signal['date'] = dataframe['date']
-
         long_window_array = dataframe[self.value_type].rolling(
             window=self.long_window,
             min_periods=self.min_period
@@ -58,9 +122,7 @@ class MovingAverageCrossing(Strategy):
             min_periods=self.min_period
         ).mean(engine='numba')
 
-        self.signal['value'] = numpy.where(short_window_array > long_window_array, 1, 0)
-
-        return self.signal
+        self.data['signal'] = numpy.where(short_window_array > long_window_array, 1, 0)
 
 
 class RelativeStrengthIndex(Strategy):
@@ -87,11 +149,8 @@ class RelativeStrengthIndex(Strategy):
         self.oversold_threshold = oversold_threshold
         self.value_type = value_type
 
+    @Strategy.post_generate_signal
     def generate_signal(self, dataframe: pandas.DataFrame) -> pandas.DataFrame:
-        self.signal = pandas.DataFrame(index=dataframe.index)
-
-        self.signal['date'] = dataframe['date']
-
         delta = dataframe[self.value_type].diff()
 
         gain = (delta.where(delta > 0, 0)).rolling(window=self.period).mean()
@@ -102,12 +161,10 @@ class RelativeStrengthIndex(Strategy):
 
         rsi = 100 - (100 / (1 + rs))
 
-        self.signal['value'] = 0
+        self.data['signal'] = 0
 
-        self.signal.loc[rsi < self.oversold_threshold, 'value'] = 1
-        self.signal.loc[rsi > self.overbought_threshold, 'value'] = -1
-
-        return self.signal
+        self.data.loc[rsi < self.oversold_threshold, 'signal'] = 1
+        self.data.loc[rsi > self.overbought_threshold, 'signal'] = -1
 
 
 class BollingerBands(Strategy):
@@ -130,24 +187,19 @@ class BollingerBands(Strategy):
         self.deviation = deviation
         self.value_type = value_type
 
+    @Strategy.post_generate_signal
     def generate_signal(self, dataframe: pandas.DataFrame) -> pandas.DataFrame:
-        self.signal = pandas.DataFrame(index=dataframe.index)
+        self.data['NA'] = dataframe[self.value_type].rolling(window=self.periods).mean()
 
-        self.signal['date'] = dataframe['date']
+        self.data['STD'] = dataframe[self.value_type].rolling(window=self.periods).std()
 
-        self.signal['NA'] = dataframe[self.value_type].rolling(window=self.periods).mean()
+        self.data['upper_band'] = self.data['NA'] + (self.data['STD'] * self.deviation)
 
-        self.signal['STD'] = dataframe[self.value_type].rolling(window=self.periods).std()
-
-        self.signal['upper_band'] = self.signal['NA'] + (self.signal['STD'] * self.deviation)
-
-        self.signal['lower_band'] = self.signal['NA'] - (self.signal['STD'] * self.deviation)
+        self.data['lower_band'] = self.data['NA'] - (self.data['STD'] * self.deviation)
 
         # Generate buy signal when the close price crosses below the lower band
-        self.signal['value'] = numpy.where(dataframe['close'] < self.data['lower_band'], 1, 0)
+        self.data['signal'] = numpy.where(dataframe['close'] < self.data['lower_band'], 1, 0)
 
         # Generate sell signal when the close price corsses above the upper band
-        self.signal['value'] = numpy.where(dataframe['close'] > self.data['lower_band'], -1, self.signal['value'])
-
-
+        self.data['signal'] = numpy.where(dataframe['close'] > self.data['lower_band'], -1, self.data['signal'])
 # -

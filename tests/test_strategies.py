@@ -2,13 +2,14 @@
 # -*- coding: utf-8 -*-
 
 import pytest
-from TradeTide.strategy import MovingAverageCrossing, RelativeStrengthIndex, BollingerBands
+from TradeTide.strategy import MovingAverageCrossing, RelativeStrengthIndex, BollingerBands, Random
 from TradeTide.tools import get_dataframe
 
 strategy_list = [
     MovingAverageCrossing,
     RelativeStrengthIndex,
-    BollingerBands
+    BollingerBands,
+    Random
 ]
 
 

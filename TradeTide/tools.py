@@ -28,6 +28,8 @@ def get_dataframe(currency_0: str, currency_1: str, year: int) -> pandas.DataFra
 
     dataframe['date'] = pandas.to_datetime(dataframe['date'])
 
+    assert dataframe['date'].is_monotonic_increasing, 'Time stamp is not monotonic increasing'
+
     dataframe['date'] = dataframe['date'].dt.tz_localize('UTC')
 
     dataframe['time_stamp'] = pandas.to_timedelta(dataframe['date'].diff())

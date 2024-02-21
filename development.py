@@ -1,75 +1,33 @@
 from TradeTide.tools import get_dataframe
-from TradeTide.metrics import SimpleMovingAverage
-from TradeTide.strategy import Strategy
-import matplotlib.pyplot as plt
+from TradeTide.backtester import BackTester
+from TradeTide.strategy import RelativeStrengthIndex
+from TradeTide.plottings import plot_trading_strategy
 
 dataframe = get_dataframe('eur', 'usd', year=2020)
 
+market = dataframe[:100_000]
 
-sub_frame = dataframe[:3_000].copy()
 
-strategy = Strategy(
-    dataframe=sub_frame,
-    metric_0=SimpleMovingAverage(200, 8),
-    metric_1=SimpleMovingAverage(50, 8),
-    column='high'
+strategy = RelativeStrengthIndex(
+    period=100,
+    oversold_threshold=30,
+    overbought_threshold=70
 )
 
-portfolio, metadata = strategy.back_test(
-    stop_loss=0.001,
-    take_profit=0.001,
+strategy.generate_signal(market)
+
+
+backtester = BackTester(
+    market=market,
+    strategy=strategy,
+)
+
+portfolio = backtester.back_test(
+    stop_loss=0.01,
+    take_profit=0.01,
     initial_capital=100_000,
     buy_unit=1_000,
-    return_extra_data=True
 )
 
-ax = metadata.plot.scatter(
-    x='date',
-    y='signal',
-    figsize=(12, 4),
-    label='signal',
-    color='C0'
-)
-
-metadata.plot.scatter(
-    ax=ax,
-    x='date',
-    y='positions',
-    label='positions',
-    color='C1'
-)
-
-
-metadata['stop loss triggered'] = metadata['stop loss triggered'].astype(float)
-
-metadata.plot.scatter(
-    ax=ax,
-    x='date',
-    y='stop loss triggered',
-    label='stop-loss triger',
-    color='red'
-)
-
-
-metadata['take profit triggered'] = metadata['take profit triggered'].astype(float)
-
-metadata.plot.scatter(
-    ax=ax,
-    x='date',
-    y='take profit triggered',
-    label='take profit triger',
-    color='green'
-)
-
-
-
-
-ax_right = ax.twinx()
-
-ax.set_yticks([])
-ax_right.set_yticks([])
-
-# ax = metadata.plot(x='date', y=['entry price'], color='black', ax=ax_right)
-
-plt.show()
+backtester.calculate_performance_metrics()
 

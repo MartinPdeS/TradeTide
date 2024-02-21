@@ -19,6 +19,7 @@ class BackTester():
         """
         self.market_dataframe = market
         self.strategy = strategy
+        self.portfolio = None
 
     @property
     def values_0(self):
@@ -98,6 +99,7 @@ class BackTester():
         :returns:   The computed portfolio
         :rtype:     pandas.DataFrame
         """
+        self.initial_capital = initial_capital
         market = self.market_dataframe.copy()
 
         # Initialize the portfolio DataFrame
@@ -137,7 +139,6 @@ class BackTester():
             show_totals: bool = False,
             show_cash: bool = False) -> None:
 
-        market = self.data.copy()
         portfolio = self.portfolio
 
         ax = portfolio.plot.scatter(
@@ -203,5 +204,50 @@ class BackTester():
         ax_right.legend(loc=1)
 
         plt.show()
+
+    def get_final_portfolio_value(self) -> float:
+        """
+        Calculates and prints the final value of the portfolio.
+        """
+        final_portfolio_value = self.portfolio['total'].iloc[-1]
+        print(f"Final Portfolio Value: ${final_portfolio_value:.2f}")
+
+        return final_portfolio_value
+
+    def calculate_performance_metrics(self):
+        """
+        Calculates and prints key performance metrics of the trading strategy based on the backtest results.
+        """
+        if self.portfolio is None:
+            print("Backtest the strategy first before calculating performance metrics.")
+            return
+
+        # Total Return
+        total_return = (self.portfolio['total'].iloc[-1] / self.initial_capital) - 1
+
+        # Annualized Return
+        trading_days = len(self.portfolio)
+        annualized_return = ((1 + total_return) ** (365.0 / trading_days)) - 1
+
+        # Maximum Drawdown
+        rolling_max = self.portfolio['total'].cummax()
+        drawdown = self.portfolio['total'] / rolling_max - 1.0
+        max_drawdown = drawdown.min()
+
+        # Sharpe Ratio (Assuming risk-free rate is 0 for simplicity)
+        daily_returns = self.portfolio['returns']
+        sharpe_ratio = daily_returns.mean() / daily_returns.std() * numpy.sqrt(252)
+
+        # Win-Loss Ratio
+        wins = len(self.portfolio[self.portfolio['returns'] > 0])
+        losses = len(self.portfolio[self.portfolio['returns'] < 0])
+        win_loss_ratio = wins / losses if losses != 0 else numpy.inf
+
+        # Print the metrics
+        print(f"Total Return: {total_return * 100:.2f}%")
+        print(f"Annualized Return: {annualized_return * 100:.2f}%")
+        print(f"Maximum Drawdown: {max_drawdown * 100:.2f}%")
+        print(f"Sharpe Ratio: {sharpe_ratio:.2f}")
+        print(f"Win-Loss Ratio: {win_loss_ratio:.2f}")
 
 # -

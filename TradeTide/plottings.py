@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import pandas
 
 
 def plot_metrics_on_ax(ax, market, portfolio, strategy):
@@ -10,6 +11,12 @@ def plot_metrics_on_ax(ax, market, portfolio, strategy):
     ax.grid(True)
 
 
+def legend_without_duplicate_labels(ax):
+    handles, labels = ax.get_legend_handles_labels()
+    unique = [(h, l) for i, (h, l) in enumerate(zip(handles, labels)) if l not in labels[:i]]
+    ax.legend(*zip(*unique))
+
+
 def plot_price_and_signal(ax, market, portfolio, strategy):
     ax.grid(False)
 
@@ -18,12 +25,13 @@ def plot_price_and_signal(ax, market, portfolio, strategy):
         market.date,
         market['close'],
         label='Close Price',
-        color='skyblue'
+        color='C0',
+        linewidth=2
     )
 
     ax.scatter(
-        portfolio.date[portfolio['opened_positions'] == 1],
-        market['close'][portfolio['opened_positions'] == 1],
+        x=portfolio.date[portfolio['opened_positions'] == 1],
+        y=market['close'][portfolio['opened_positions'] == 1],
         label='Buy Signal',
         marker='^',
         s=50,
@@ -33,8 +41,8 @@ def plot_price_and_signal(ax, market, portfolio, strategy):
     )
 
     ax.scatter(
-        portfolio.date[portfolio['opened_positions'] == -1],
-        market['close'][portfolio['opened_positions'] == -1],
+        x=portfolio.date[portfolio['opened_positions'] == -1],
+        y=market['close'][portfolio['opened_positions'] == -1],
         label='Sell Signal',
         marker='v',
         color='red',
@@ -48,12 +56,31 @@ def plot_price_and_signal(ax, market, portfolio, strategy):
 
     # Shading holding periods
     holding = False
-    for i in range(1, len(portfolio)):
-        if portfolio['positions'].iloc[i] == 1:  # Buy signal
-            start_date = portfolio.date[i]
+
+    for i, row in portfolio.iterrows():
+        if row.positions == 1:  # Buy signal
+            start_date = row.date
             holding = True
-        elif portfolio['positions'].iloc[i] == -1 and holding:  # Sell signal
-            end_date = portfolio.date[i]
+
+        elif row.positions == -1 and holding:
+            end_date = row.date
+            holding = False
+
+            ax.plot(
+                [start_date, end_date],
+                [row['stop_loss_price'], row['stop_loss_price']],
+                color='red',
+                label='stop-loss',
+                linewidth=2
+            )
+
+            ax.plot(
+                [start_date, end_date],
+                [row['take_profit_price'], row['take_profit_price']],
+                color='green',
+                label='take-profit',
+                linewidth=2
+            )
 
             ax.fill_betweenx(
                 y=[min_y, max_y],
@@ -62,7 +89,6 @@ def plot_price_and_signal(ax, market, portfolio, strategy):
                 color='gray',
                 alpha=0.3,
             )
-            holding = False
 
     # Customize the main plot
     ax.set_ylabel('Price')
@@ -80,28 +106,35 @@ def plot_assets(ax, market, portfolio, strategy):
         zorder=-1
     )
 
-    # ax.plot(
-    #     portfolio.date,
-    #     portfolio.holdings,
-    #     label='holdings',
-    #     alpha=1,
-    #     linewidth=2,
-    #     zorder=-1
-    # )
-
     ax.legend()
 
 
-def plot_trading_strategy(market, portfolio, strategy, title='Trading Strategy Overview'):
+def plot_trading_strategy(
+        market: pandas.DataFrame,
+        portfolio: pandas.DataFrame,
+        strategy: object,
+        title: str = 'Trading Strategy Overview'):
     """
     Plots the trading strategy performance including price, buy/sell signals,
     and other relevant indicators like moving averages or RSI.
 
-    Parameters:
-    - data: DataFrame containing the historical data and trading indicators/signals.
-    - title: str, optional. The title of the plot.
+    :param      market:     DataFrame containing the historical market data.
+    :type       market:     pandas.DataFrame
+    :param      portfolio:  DataFrame containing the portofolio values.
+    :type       portfolio:  pandas.DataFrame
+    :param      strategy:   The strategy adopted containing the technical indicators.
+    :type       strategy:   object
+    :param      title:      The title of the plot.
+    :type       title:      str
     """
-    fig, axs = plt.subplots(3, 1, figsize=(7, 7), gridspec_kw={'height_ratios': [3, 1, 2]}, sharex=True)
+    fig, axs = plt.subplots(
+        nrows=3,
+        ncols=1,
+        figsize=(10, 7),
+        gridspec_kw={'height_ratios': [3, 1, 2]},
+        sharex=True
+    )
+
     fig.suptitle(title)
 
     plot_price_and_signal(
@@ -130,5 +163,6 @@ def plot_trading_strategy(market, portfolio, strategy, title='Trading Strategy O
         ax.xaxis.set_major_locator(mdates.MonthLocator())
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
 
+    legend_without_duplicate_labels(axs[0])
     plt.xticks(rotation=45)
     plt.show()

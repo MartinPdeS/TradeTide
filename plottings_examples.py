@@ -1,11 +1,10 @@
 from TradeTide.tools import get_dataframe
 from TradeTide.backtester import BackTester
 from TradeTide.strategy import RelativeStrengthIndex
-from TradeTide.plottings import plot_trading_strategy
 
 dataframe = get_dataframe('eur', 'usd', year=2020)
 
-market = dataframe[:100_000]
+market = dataframe[20_000:40_000]
 
 
 strategy = RelativeStrengthIndex(
@@ -23,15 +22,16 @@ backtester = BackTester(
 )
 
 portfolio, metadata = backtester.back_test(
-    stop_loss=0.01,
-    take_profit=0.01,
+    stop_loss='.1%',
+    take_profit='.1%',
     initial_capital=100_000,
     buy_unit=1_000,
-    return_extra_data=True
+    return_extra_data=True,
+    spread=0
 )
 
-plot_trading_strategy(
-    market=market,
-    portfolio=portfolio,
-    strategy=strategy,
-)
+# print(portfolio['positions'])
+
+backtester.plot()
+
+# -

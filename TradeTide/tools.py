@@ -4,8 +4,17 @@ import numpy
 import pathlib
 from MPSPlots.render2D import SceneList
 import matplotlib.pyplot as plt
+import numbers
 
 # data taken from https://forexsb.com/historical-forex-data
+
+
+def percent_to_float(string_value):
+    if isinstance(string_value, numbers.Number):
+        return string_value
+
+    else:
+        return float(string_value.replace(',', '.')[:-1]) / 100
 
 
 def get_data_path(currency_0: str, currency_1: str, year: int) -> pathlib.Path:

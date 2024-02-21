@@ -1,7 +1,8 @@
-import matplotlib.pyplot as plt
 import pandas
 import numpy
 from TradeTide.strategy import Strategy
+from TradeTide.plottings import plot_trading_strategy
+from TradeTide.tools import percent_to_float
 
 
 class BackTester():
@@ -21,27 +22,23 @@ class BackTester():
         self.strategy = strategy
         self.portfolio = None
 
-    @property
-    def values_0(self):
-        return self.market_dataframe[self.metric_0.__repr__()]
-
-    @property
-    def values_1(self):
-        return self.market_dataframe[self.metric_1.__repr__()]
-
     def manage_positions(self, market: pandas.DataFrame, spread: float, stop_loss: float, take_profit: float) -> None:
         """
-        Manages open positions based on stop-loss, take-profit, and spread.
+        Manages open positions based on specified spread, stop loss, and take profit parameters.
 
         :param      spread:  The spread
         :type       spread:  float
 
-        :returns:   { description_of_the_return_value }
+        :returns:   No return
         :rtype:     None
         """
+        # Aliasing portfolio
         portfolio = self.portfolio
-        # Adjust for spread at entry
+
+        # Initialize 'opened_positions' to track the status of new trades
         portfolio['opened_positions'] = portfolio['positions']
+
+        # Entry price includes the spread for buy positions
         portfolio['entry_price'] = market['close'].where(portfolio['positions'] == 1) + spread  # maybe + spread
 
         # Forward fill entry prices for the holding period
@@ -59,19 +56,37 @@ class BackTester():
         portfolio['close_positions'] = portfolio['stop_loss_triggered'] | portfolio['take_profit_triggered']
         portfolio.loc[portfolio['close_positions'], 'positions'] = 0
 
-    def calculate_units_and_portfolio(self, initial_capital: float, spread: float, max_cap_per_trade: float, market: pandas.DataFrame):
+    def calculate_units_and_portfolio(
+            self,
+            market: pandas.DataFrame,
+            initial_capital: float,
+            spread: float,
+            max_cap_per_trade: float):
         """
         Calculates the number of units for each trade and updates the portfolio.
+
+        :param      market:             DataFrame containing the historical market data.
+        :type       market:             pandas.DataFrame
+        :param      initial_capital:    The initial capital
+        :type       initial_capital:    float
+        :param      spread:             The spread value from the broker
+        :type       spread:             float
+        :param      max_cap_per_trade:  The maximum capability per trade
+        :type       max_cap_per_trade:  float
         """
+        # Aliasing portfolio
         portfolio = self.portfolio
 
-        # Calculate the number of units that can be bought with the max capital per trade
+        # Determine the number of units that can be bought with the available capital per trade
         portfolio['units'] = numpy.floor((max_cap_per_trade - spread) / portfolio['entry_price'])
 
+        # Calculate cumulative holdings and cash, considering the units bought and the entry price
         portfolio['holdings'] = (portfolio['units'] * market['close']).cumsum()
         portfolio['cash'] = initial_capital - (portfolio['units'] * portfolio['entry_price']).cumsum()
+
+        # Total portfolio value and percentage returns
         portfolio['total'] = portfolio['cash'] + portfolio['holdings']
-        portfolio['returns'] = portfolio['total'].pct_change()
+        portfolio['returns'] = portfolio['total'].ffill().pct_change()
 
     def back_test(
             self,
@@ -99,6 +114,9 @@ class BackTester():
         :returns:   The computed portfolio
         :rtype:     pandas.DataFrame
         """
+        stop_loss = percent_to_float(stop_loss)
+        take_profit = percent_to_float(take_profit)
+
         self.initial_capital = initial_capital
         market = self.market_dataframe.copy()
 
@@ -109,6 +127,8 @@ class BackTester():
         portfolio['signal'] = self.strategy.signal
 
         portfolio['positions'] = portfolio['signal'].diff()
+
+        portfolio.at[portfolio.index[0], 'positions'] = 0
 
         self.manage_positions(
             market=market,
@@ -131,79 +151,12 @@ class BackTester():
 
         return self.portfolio
 
-    def plot(
-            self,
-            show_stop_loss: bool = False,
-            show_take_win: bool = False,
-            show_holdings: bool = False,
-            show_totals: bool = False,
-            show_cash: bool = False) -> None:
-
-        portfolio = self.portfolio
-
-        ax = portfolio.plot.scatter(
-            x='date',
-            y='signal',
-            figsize=(12, 4),
-            label='signal',
-            color='C0'
+    def plot(self) -> None:
+        return plot_trading_strategy(
+            market=self.market_dataframe,
+            portfolio=self.portfolio,
+            strategy=self.strategy,
         )
-
-        ax_right = ax.twinx()
-
-        if show_stop_loss:
-            portfolio['stop_loss_triggered'] = portfolio['stop_loss_triggered'].astype(float)
-
-            portfolio.plot.scatter(
-                ax=ax,
-                x='date',
-                y='stop_loss_triggered',
-                label='stop-loss triger',
-                color='red',
-                marker=7,
-
-            )
-
-        if show_take_win:
-            portfolio['take_profit_triggered'] = portfolio['take_profit_triggered'].astype(float)
-
-            portfolio.plot.scatter(
-                ax=ax,
-                x='date',
-                y='take_profit_triggered',
-                label='take profit triger',
-                color='green',
-                marker=6,
-            )
-
-        if show_holdings:
-            self.portfolio.plot(
-                x='date',
-                y='holdings',
-                linewidth=2,
-                ax=ax_right
-            )
-
-        if show_totals:
-            self.portfolio.plot(
-                x='date',
-                y='total',
-                linewidth=2,
-                ax=ax_right
-            )
-
-        if show_cash:
-            self.portfolio.plot(
-                x='date',
-                y='cash',
-                linewidth=2,
-                ax=ax_right
-            )
-
-        ax.legend(loc=2)
-        ax_right.legend(loc=1)
-
-        plt.show()
 
     def get_final_portfolio_value(self) -> float:
         """

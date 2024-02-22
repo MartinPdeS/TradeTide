@@ -23,7 +23,8 @@ class BaseStrategy(ABC):
         pass
 
     def plot(self):
-        self.data.plot.scatter(x='date', y='signal')
+        figure, ax = plt.subplots(1, 1, figsize=(12, 4))
+        self.add_to_ax(ax)
 
         plt.show()
 
@@ -37,10 +38,9 @@ class BaseStrategy(ABC):
     def post_generate_signal(function):
         def wrapper(self, dataframe):
             self.data = pandas.DataFrame(index=dataframe.index)
+            self.data[self.value_type] = dataframe[self.value_type]
 
             function(self, dataframe=dataframe)
-
-            self.data['date'] = dataframe['date']
 
             return self.data['signal']
 
@@ -175,14 +175,12 @@ class MovingAverageCrossing(BaseStrategy):
             ax (matplotlib.axes.Axes): The Matplotlib axis object where the moving averages will be plotted.
         """
         ax.plot(
-            self.data.date,
             self.data['short_window_array'],
             linewidth=2,
             label='long window'
         )
 
         ax.plot(
-            self.data.date,
             self.data['long_window_array'],
             label='short window',
             linewidth=2,
@@ -211,12 +209,12 @@ class MovingAverageCrossing(BaseStrategy):
                               'long_window_array', 'short_window_array', and 'signal'. The 'signal' column contains
                               the generated trading signals based on the moving average crossover strategy.
         """
-        self.data['long_window_array'] = dataframe[self.value_type].rolling(
+        self.data['long_window_array'] = self.data[self.value_type].rolling(
             window=self.long_window,
             min_periods=self.min_period
         ).mean(engine='numba')
 
-        self.data['short_window_array'] = dataframe[self.value_type].rolling(
+        self.data['short_window_array'] = self.data[self.value_type].rolling(
             window=self.short_window,
             min_periods=self.min_period
         ).mean(engine='numba')
@@ -271,15 +269,30 @@ class RelativeStrengthIndex(BaseStrategy):
             ax (matplotlib.axes.Axes): The Matplotlib axis object where the RSI plot will be added.
         """
         ax.plot(
-            self.data.date,
             self.data['rsi'],
             label='RSI',
             linewidth=2,
             color='grey'
         )
 
-        ax.axhline(self.overbought_threshold, linestyle='--', color='red', alpha=0.5, linewidth=2)
-        ax.axhline(self.oversold_threshold, linestyle='--', color='green', alpha=0.5, linewidth=2)
+        ax.axhline(
+            self.overbought_threshold,
+            linestyle='--',
+            color='red',
+            alpha=0.5,
+            linewidth=2,
+            label='overbought'
+        )
+
+        ax.axhline(
+            self.oversold_threshold,
+            linestyle='--',
+            color='green',
+            alpha=0.5,
+            linewidth=2,
+            label='oversold'
+        )
+
         ax.set_ylabel('RSI')
 
     @BaseStrategy.post_generate_signal
@@ -297,7 +310,7 @@ class RelativeStrengthIndex(BaseStrategy):
             pandas.DataFrame: The input DataFrame with an added 'rsi' column containing the RSI values and a 'signal' column
                               containing the buy/sell signals.
         """
-        delta = dataframe[self.value_type].diff()
+        delta = self.data[self.value_type].diff()
 
         gain = (delta.where(delta > 0, 0)).rolling(window=self.period).mean()
 
@@ -389,17 +402,17 @@ class BollingerBands(BaseStrategy):
             pandas.DataFrame: The input DataFrame with added columns for the moving average ('NA'), standard deviation ('STD'),
                               upper band ('upper_band'), lower band ('lower_band'), and buy/sell signals ('signal').
         """
-        self.data['NA'] = dataframe[self.value_type].rolling(window=self.periods).mean()
+        self.data['NA'] = self.data[self.value_type].rolling(window=self.periods).mean()
 
-        self.data['STD'] = dataframe[self.value_type].rolling(window=self.periods).std()
+        self.data['STD'] = self.data[self.value_type].rolling(window=self.periods).std()
 
         self.data['upper_band'] = self.data['NA'] + (self.data['STD'] * self.deviation)
 
         self.data['lower_band'] = self.data['NA'] - (self.data['STD'] * self.deviation)
 
         # Generate buy signal when the close price crosses below the lower band
-        self.data['signal'] = numpy.where(dataframe['close'] < self.data['lower_band'], 1, 0)
+        self.data['signal'] = numpy.where(self.data['close'] < self.data['lower_band'], 1, 0)
 
         # Generate sell signal when the close price corsses above the upper band
-        self.data['signal'] = numpy.where(dataframe['close'] > self.data['lower_band'], -1, self.data['signal'])
+        self.data['signal'] = numpy.where(self.data['close'] > self.data['lower_band'], -1, self.data['signal'])
 # -

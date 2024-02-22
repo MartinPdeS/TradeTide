@@ -96,7 +96,6 @@ class PlotTrade():
             ax (matplotlib.axes.Axes): The matplotlib axis object to which the asset total plot will be added.
         """
         ax.plot(
-            self.portfolio.date,
             self.portfolio.total,
             label='Total',
             alpha=1,
@@ -134,13 +133,13 @@ class PlotTrade():
         # Shading holding periods
         holding = False
 
-        for i, row in self.portfolio.iterrows():
+        for date, row in self.portfolio.iterrows():
             if row.opened_positions == 1:  # Buy signal
-                start_date = row.date
+                start_date = date
                 holding = True
 
             elif row.opened_positions == -1 and holding:
-                end_date = row.date
+                end_date = date
                 holding = False
 
                 ax.plot(
@@ -179,7 +178,6 @@ class PlotTrade():
 
         # Price and signals plot
         ax.plot(
-            self.market.date,
             self.market['close'],
             label='Close Price',
             color='C0',
@@ -190,7 +188,7 @@ class PlotTrade():
         index_close_position = self.portfolio['opened_positions'] == -1
 
         ax.scatter(
-            x=self.portfolio.date[index_open_position],
+            x=self.portfolio.index[index_open_position],
             y=self.market['close'][index_open_position],
             label='Buy Signal',
             marker='^',
@@ -201,7 +199,7 @@ class PlotTrade():
         )
 
         ax.scatter(
-            x=self.portfolio.date[index_close_position],
+            x=self.portfolio.index[index_close_position],
             y=self.market['close'][index_close_position],
             label='Sell Signal',
             marker='v',

@@ -64,6 +64,8 @@ def get_market_data(currency_0: str, currency_1: str, year: int) -> pandas.DataF
 
     dataframe['time_delta'] = dataframe['date'].diff()
 
+    dataframe = dataframe.set_index('date')
+
     return dataframe
 
 

@@ -188,7 +188,6 @@ class BackTester():
 
         # Initialize the portfolio DataFrame
         portfolio = self.portfolio = pandas.DataFrame(index=market.index)
-        portfolio['date'] = market['date']
 
         portfolio['signal'] = self.strategy.signal
 

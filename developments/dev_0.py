@@ -1,23 +1,21 @@
 from TradeTide.loader import get_market_data
 from TradeTide.backtester import BackTester
-from TradeTide.strategy import RelativeStrengthIndex
+from TradeTide.strategy import MovingAverageCrossing
 
-dataframe = get_market_data('jpy', 'usd', year=2023)
+market_data = get_market_data('jpy', 'usd', year=2023)
 
-market = dataframe[100:40000]
+market_data = market_data[100:40000]
 
 
-strategy = RelativeStrengthIndex(
-    period=100,
-    oversold_threshold=30,
-    overbought_threshold=70
-)
+strategy = MovingAverageCrossing(short_window='20min', long_window='150min')
 
-strategy.generate_signal(market)
+strategy.generate_signal(market_data)
+
+strategy.plot()
 
 
 backtester = BackTester(
-    market=market,
+    market=market_data,
     strategy=strategy,
 )
 

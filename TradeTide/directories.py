@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8; py-indent-offset:4 -*-
 
+from pathlib import Path
 import os
 import git
 
 cwd = os.getcwd()
-
-from pathlib import Path
 
 repository = git.Repo('.', search_parent_directories=True)
 

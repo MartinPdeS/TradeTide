@@ -1,4 +1,4 @@
-from TradeTide import BackTester, RelativeStrengthIndex, get_market_data
+from TradeTide import BackTester, BollingerBands, get_market_data
 
 # Load historical market data
 market_data = get_market_data('eur', 'usd', year=2023)
@@ -6,7 +6,7 @@ market_data = get_market_data('eur', 'usd', year=2023)
 market_data = market_data[:40_000]
 
 # Initialize the trading strategy
-strategy = RelativeStrengthIndex(period='30min', overbought_threshold=70, oversold_threshold=30)
+strategy = BollingerBands()
 
 strategy.generate_signal(market_data)
 
@@ -14,7 +14,7 @@ strategy.generate_signal(market_data)
 backtester = BackTester(market=market_data, strategy=strategy)
 
 # Run the backtest with the specified parameters
-backtester.back_test(stop_loss='.1%', take_profit='.1%', spread=0)
+backtester.back_test(stop_loss='.001', take_profit='.1%', spread=0)
 
 # Access the resulting portfolio DataFrame
 portfolio = backtester.portfolio

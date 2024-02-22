@@ -1,6 +1,9 @@
+#!/usr/bin/env python
+# -*- coding: utf-8; py-indent-offset:4 -*-
+
 import matplotlib.pyplot as plt
 import pandas
-from TradeTide.strategy import BaseStrategy
+from TradeTide.strategy.base_strategy import BaseStrategy
 import matplotlib
 from typing import NoReturn
 import MPSPlots.render2D

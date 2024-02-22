@@ -1,7 +1,10 @@
+#!/usr/bin/env python
+# -*- coding: utf-8; py-indent-offset:4 -*-
+
 from typing import NoReturn
 import pandas
 import numpy
-from TradeTide.strategy import BaseStrategy
+from TradeTide.strategy.base_strategy import BaseStrategy
 from TradeTide.plottings import PlotTrade
 from TradeTide.tools import percent_to_float
 

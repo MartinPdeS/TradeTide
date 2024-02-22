@@ -1,7 +1,10 @@
+#!/usr/bin/env python
+# -*- coding: utf-8; py-indent-offset:4 -*-
+
 import numbers
 
 
-def percent_to_float(string_value):
+def percent_to_float(string_value: str | float) -> float:
     """
     Converts a percentage string to a float.
 

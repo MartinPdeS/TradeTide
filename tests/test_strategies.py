@@ -1,24 +1,19 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8; py-indent-offset:4 -*-
 
 import pytest
-from TradeTide.strategy import MovingAverageCrossing, RelativeStrengthIndex, BollingerBands, Random
-from TradeTide.tools import get_dataframe
+import TradeTide.strategy
+from TradeTide.loader import get_market_data
 
-strategy_list = [
-    MovingAverageCrossing,
-    RelativeStrengthIndex,
-    BollingerBands,
-    Random
-]
+strategy_list = TradeTide.strategy.__all__
 
 
 @pytest.mark.parametrize("strategy", strategy_list, ids=strategy_list)
 def test_strategy(strategy):
-    dataframe = get_dataframe('eur', 'usd', year=2020)
+    market_data = get_market_data('eur', 'usd', year=2023)
 
-    sub_frame = dataframe[:10_000].copy()
+    market_data = market_data[:10_000].copy()
 
-    strat = RelativeStrengthIndex()
+    strat = getattr(TradeTide.strategy, strategy)()
 
-    strat.generate_signal(sub_frame)
+    strat.generate_signal(market_data)

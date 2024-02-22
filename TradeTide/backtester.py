@@ -154,7 +154,6 @@ class BackTester():
             self,
             stop_loss: float | str = '0.1%',
             take_profit: float | str = '0.1%',
-            buy_unit: float = 1_000,
             initial_capital: float = 100_000,
             spread: float = 0.01,
             return_extra_data: bool = False,
@@ -169,7 +168,6 @@ class BackTester():
         Parameters:
             stop_loss (float | str, optional): The stop loss threshold, specified as a percentage (e.g., '1%') or a float. Default is '0.1%'.
             take_profit (float | str, optional): The take profit threshold, specified as a percentage (e.g., '1%') or a float. Default is '0.1%'.
-            buy_unit (float, optional): The number of units to buy per trade. Default is 1,000.
             initial_capital (float, optional): The initial capital available for trading. Default is 100,000.
             spread (float, optional): The spread between buy and sell prices as a percentage of the price. Default is 0.01 (1%).
             return_extra_data (bool, optional): If True, the method returns additional data related to the backtest. Default is False.
@@ -233,7 +231,6 @@ class BackTester():
             The method assumes that the backtest has been run and the `portfolio` attribute of the BackTester class
             has been populated with trading data and results.
         """
-
         plot = PlotTrade(
             market=self.market_dataframe,
             portfolio=self.portfolio,

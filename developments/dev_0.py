@@ -1,35 +1,21 @@
-from TradeTide.loader import get_market_data
-from TradeTide.backtester import BackTester
-from TradeTide.strategy import MovingAverageCrossing
+from TradeTide import BackTester, RelativeStrengthIndex, get_market_data
 
-market_data = get_market_data('jpy', 'usd', year=2023)
+market_data = get_market_data('eur', 'usd', year=2023)
 
-market_data = market_data[100:40000]
-
-
-strategy = MovingAverageCrossing(short_window='20min', long_window='150min')
+strategy = RelativeStrengthIndex(period='30min', overbought_threshold=90, oversold_threshold=10)
 
 strategy.generate_signal(market_data)
 
-strategy.plot()
+backtester = BackTester(market=market_data, strategy=strategy)
 
+backtester.back_test(stop_loss='.1%', take_profit='.1%', spread=0)
 
-backtester = BackTester(
-    market=market_data,
-    strategy=strategy,
-)
-
-portfolio, metadata = backtester.back_test(
-    stop_loss='.1%',
-    take_profit='.1%',
-    initial_capital=100_000,
-    buy_unit=1_000,
-    return_extra_data=True,
-    spread=0
-)
-
-print(portfolio['positions'])
+portfolio = backtester.portfolio
 
 backtester.plot()
 
-# -
+backtester.calculate_performance_metrics()
+
+final_portfolio_value = backtester.get_final_portfolio_value()
+
+print(f"Final Portfolio Value: {final_portfolio_value}")

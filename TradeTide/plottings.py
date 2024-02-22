@@ -3,6 +3,7 @@ import pandas
 from TradeTide.strategy import BaseStrategy
 import matplotlib
 from typing import NoReturn
+import MPSPlots.render2D
 
 
 class PlotTrade():
@@ -53,7 +54,7 @@ class PlotTrade():
             nrows=3,
             ncols=1,
             figsize=(10, 7),
-            gridspec_kw={'height_ratios': [3, 1, 2]},
+            gridspec_kw={'height_ratios': [3, 2, 2]},
             sharex=True
         )
 
@@ -68,6 +69,8 @@ class PlotTrade():
         self.add_metric_to_ax(ax=self.axis[1])
 
         self.add_asset_to_ax(ax=self.axis[2])
+
+        plt.subplots_adjust(wspace=0, hspace=0)
 
         plt.xticks(rotation=45)
         plt.show()
@@ -132,11 +135,11 @@ class PlotTrade():
         holding = False
 
         for i, row in self.portfolio.iterrows():
-            if row.positions == 1:  # Buy signal
+            if row.opened_positions == 1:  # Buy signal
                 start_date = row.date
                 holding = True
 
-            elif row.positions == -1 and holding:
+            elif row.opened_positions == -1 and holding:
                 end_date = row.date
                 holding = False
 

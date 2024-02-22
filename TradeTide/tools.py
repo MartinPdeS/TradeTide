@@ -17,5 +17,8 @@ def percent_to_float(string_value):
     if isinstance(string_value, numbers.Number):
         return string_value
 
+    if '%' not in string_value:
+        return float(string_value)
+
     else:
         return float(string_value.replace(',', '.')[:-1]) / 100

@@ -142,6 +142,7 @@ class MovingAverageCrossing(BaseStrategy):
     Methods:
         add_to_ax: Plots the short and long moving averages on a given Matplotlib axis.
     """
+
     def __init__(
             self,
             short_window: int = 30,

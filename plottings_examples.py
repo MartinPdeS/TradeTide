@@ -1,4 +1,4 @@
-from TradeTide.tools import get_dataframe
+from TradeTide.loader import get_dataframe
 from TradeTide.backtester import BackTester
 from TradeTide.strategy import RelativeStrengthIndex
 

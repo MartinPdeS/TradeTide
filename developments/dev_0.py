@@ -2,7 +2,7 @@ from TradeTide.loader import get_market_data
 from TradeTide.backtester import BackTester
 from TradeTide.strategy import RelativeStrengthIndex
 
-dataframe = get_market_data('eur', 'usd', year=2020)
+dataframe = get_market_data('jpy', 'usd', year=2023)
 
 market = dataframe[100:40000]
 

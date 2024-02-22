@@ -25,7 +25,7 @@ def get_data_path(currency_0: str, currency_1: str, year: int) -> pathlib.Path:
     return data_file
 
 
-def get_dataframe(currency_0: str, currency_1: str, year: int) -> pandas.DataFrame:
+def get_dataframe(currency_0: str='eur', currency_1: str='usd', year: int=2020) -> pandas.DataFrame:
     data_file = get_data_path(
         currency_0=currency_0,
         currency_1=currency_1,

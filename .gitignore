@@ -5,6 +5,7 @@
 *.a
 *.pdf
 *.pickle
+.venv
 
 
 .tox

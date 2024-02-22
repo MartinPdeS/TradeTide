@@ -1,33 +1,12 @@
-from TradeTide.tools import get_dataframe
-from TradeTide.backtester import BackTester
-from TradeTide.strategy import RelativeStrengthIndex
-from TradeTide.plottings import plot_trading_strategy
+import pandas as pd
 
-dataframe = get_dataframe('eur', 'usd', year=2020)
+# create a DataFrame with datetime data
+df = pd.DataFrame({'date': ['2022-06-01 12:00:00', '2022-06-02 13:00:00', '2022-06-03 14:00:00']})
 
-market = dataframe[:100_000]
+# convert the date column to datetime format
+df['date'] = pd.to_datetime(df['date'])
 
+# change the datetime format
+df['date_formatted'] = df['date'].dt.strftime('%H:%M:%S')
 
-strategy = RelativeStrengthIndex(
-    period=100,
-    oversold_threshold=30,
-    overbought_threshold=70
-)
-
-strategy.generate_signal(market)
-
-
-backtester = BackTester(
-    market=market,
-    strategy=strategy,
-)
-
-portfolio = backtester.back_test(
-    stop_loss=0.01,
-    take_profit=0.01,
-    initial_capital=100_000,
-    buy_unit=1_000,
-)
-
-backtester.calculate_performance_metrics()
-
+print(df)

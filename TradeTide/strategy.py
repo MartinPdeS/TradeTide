@@ -12,7 +12,7 @@ __all__ = [
 ]
 
 
-class Strategy(ABC):
+class BaseStrategy(ABC):
     def __init__(self):
         pass
 
@@ -45,18 +45,18 @@ class Strategy(ABC):
         return wrapper
 
 
-class Custom(Strategy):
+class Custom(BaseStrategy):
     def __init__(self, custom_signal: numpy.ndarray):
         self.custom_signal = custom_signal
 
-    @Strategy.post_generate_signal
+    @BaseStrategy.post_generate_signal
     def generate_signal(self, dataframe: pandas.DataFrame) -> pandas.DataFrame:
         assert len(dataframe) == len(self.custom_signal), 'Mismatch between the custom signal and dataframe'
 
         self.data['signal'] = self.custom_signal
 
 
-class Random(Strategy):
+class Random(BaseStrategy):
     """
     Random strategy with a given number of occurence
     """
@@ -73,7 +73,7 @@ class Random(Strategy):
     def add_to_ax(self, ax) -> None:
         ax.set_ylabel('Random signal: no metric')
 
-    @Strategy.post_generate_signal
+    @BaseStrategy.post_generate_signal
     def generate_signal(self, dataframe: pandas.DataFrame) -> pandas.DataFrame:
         random_signal = numpy.zeros(len(dataframe))
 
@@ -91,7 +91,7 @@ class Random(Strategy):
         self.data['signal'] = random_signal
 
 
-class MovingAverageCrossing(Strategy):
+class MovingAverageCrossing(BaseStrategy):
 
     def __init__(
             self,
@@ -130,7 +130,7 @@ class MovingAverageCrossing(Strategy):
         )
         ax.set_ylabel('SMA crossing')
 
-    @Strategy.post_generate_signal
+    @BaseStrategy.post_generate_signal
     def generate_signal(self, dataframe: pandas.DataFrame) -> pandas.DataFrame:
 
         self.data['long_window_array'] = dataframe[self.value_type].rolling(
@@ -146,7 +146,7 @@ class MovingAverageCrossing(Strategy):
         self.data['signal'] = numpy.where(self.data['short_window_array'] > self.data['long_window_array'], 1, 0)
 
 
-class RelativeStrengthIndex(Strategy):
+class RelativeStrengthIndex(BaseStrategy):
     def __init__(
             self,
             period: int = 14,
@@ -182,7 +182,7 @@ class RelativeStrengthIndex(Strategy):
         ax.axhline(self.oversold_threshold, linestyle='--', color='green', alpha=0.5)
         ax.set_ylabel('RSI')
 
-    @Strategy.post_generate_signal
+    @BaseStrategy.post_generate_signal
     def generate_signal(self, dataframe: pandas.DataFrame) -> pandas.DataFrame:
         delta = dataframe[self.value_type].diff()
 
@@ -200,7 +200,7 @@ class RelativeStrengthIndex(Strategy):
         self.data.loc[self.data['rsi'] > self.overbought_threshold, 'signal'] = -1
 
 
-class BollingerBands(Strategy):
+class BollingerBands(BaseStrategy):
     def __init__(
             self,
             periods: int = 20,
@@ -234,7 +234,7 @@ class BollingerBands(Strategy):
         )
         ax.set_ylabel('Bolliner Bands strategy')
 
-    @Strategy.post_generate_signal
+    @BaseStrategy.post_generate_signal
     def generate_signal(self, dataframe: pandas.DataFrame) -> pandas.DataFrame:
         self.data['NA'] = dataframe[self.value_type].rolling(window=self.periods).mean()
 

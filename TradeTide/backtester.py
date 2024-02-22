@@ -1,7 +1,7 @@
 import pandas
 import numpy
-from TradeTide.strategy import Strategy
-from TradeTide.plottings import plot_trading_strategy
+from TradeTide.strategy import BaseStrategy
+from TradeTide.plottings import PlotTrade
 from TradeTide.tools import percent_to_float
 
 
@@ -14,7 +14,7 @@ class BackTester():
     allowing for the evaluation of the strategy's effectiveness.
     """
 
-    def __init__(self, market: pandas.DataFrame, strategy: Strategy):
+    def __init__(self, market: pandas.DataFrame, strategy: BaseStrategy):
         """
         Initializes the ForexBacktester with a trading strategy and backtesting parameters.
         """
@@ -152,11 +152,17 @@ class BackTester():
         return self.portfolio
 
     def plot(self) -> None:
-        return plot_trading_strategy(
+        plot = PlotTrade(
             market=self.market_dataframe,
             portfolio=self.portfolio,
             strategy=self.strategy,
         )
+        plot.construct_figure()
+        # return plot_trading_strategy(
+        #     market=self.market_dataframe,
+        #     portfolio=self.portfolio,
+        #     strategy=self.strategy,
+        # )
 
     def get_final_portfolio_value(self) -> float:
         """

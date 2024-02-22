@@ -1,168 +1,218 @@
 import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
 import pandas
+from TradeTide.strategy import BaseStrategy
+import matplotlib
+from typing import NoReturn
 
 
-def plot_metrics_on_ax(ax, market, portfolio, strategy):
-    strategy.add_to_ax(ax)
-
-    # Customize the indicators plot
-    ax.legend()
-    ax.grid(True)
-
-
-def legend_without_duplicate_labels(ax):
-    handles, labels = ax.get_legend_handles_labels()
-    unique = [(h, l) for i, (h, l) in enumerate(zip(handles, labels)) if l not in labels[:i]]
-    ax.legend(*zip(*unique))
-
-
-def plot_price_and_signal(ax, market, portfolio, strategy):
-    ax.grid(False)
-
-    # Price and signals plot
-    ax.plot(
-        market.date,
-        market['close'],
-        label='Close Price',
-        color='C0',
-        linewidth=2
-    )
-
-    ax.scatter(
-        x=portfolio.date[portfolio['opened_positions'] == 1],
-        y=market['close'][portfolio['opened_positions'] == 1],
-        label='Buy Signal',
-        marker='^',
-        s=50,
-        color='green',
-        alpha=1,
-        zorder=-1
-    )
-
-    ax.scatter(
-        x=portfolio.date[portfolio['opened_positions'] == -1],
-        y=market['close'][portfolio['opened_positions'] == -1],
-        label='Sell Signal',
-        marker='v',
-        color='red',
-        s=50,
-        alpha=1,
-        zorder=-1
-    )
-
-    min_y = market['close'].min()
-    max_y = market['close'].max()
-
-    # Shading holding periods
-    holding = False
-
-    for i, row in portfolio.iterrows():
-        if row.positions == 1:  # Buy signal
-            start_date = row.date
-            holding = True
-
-        elif row.positions == -1 and holding:
-            end_date = row.date
-            holding = False
-
-            ax.plot(
-                [start_date, end_date],
-                [row['stop_loss_price'], row['stop_loss_price']],
-                color='red',
-                label='stop-loss',
-                linewidth=2
-            )
-
-            ax.plot(
-                [start_date, end_date],
-                [row['take_profit_price'], row['take_profit_price']],
-                color='green',
-                label='take-profit',
-                linewidth=2
-            )
-
-            ax.fill_betweenx(
-                y=[min_y, max_y],
-                x1=start_date,
-                x2=end_date,
-                color='gray',
-                alpha=0.3,
-            )
-
-    # Customize the main plot
-    ax.set_ylabel('Price')
-    ax.legend()
-    ax.grid(False)
-
-
-def plot_assets(ax, market, portfolio, strategy):
-    ax.plot(
-        portfolio.date,
-        portfolio.total,
-        label='Total',
-        alpha=1,
-        linewidth=2,
-        zorder=-1
-    )
-
-    ax.legend()
-
-
-def plot_trading_strategy(
-        market: pandas.DataFrame,
-        portfolio: pandas.DataFrame,
-        strategy: object,
-        title: str = 'Trading Strategy Overview'):
+class PlotTrade():
     """
-    Plots the trading strategy performance including price, buy/sell signals,
-    and other relevant indicators like moving averages or RSI.
+    This class is designed to visualize trading strategies by plotting the market data,
+    portfolio metrics, and trading signals based on a specified trading strategy. It integrates
+    market price data, portfolio performance, and strategy indicators into a coherent set of
+    matplotlib plots to provide a comprehensive overview of trading activity and strategy effectiveness.
 
-    :param      market:     DataFrame containing the historical market data.
-    :type       market:     pandas.DataFrame
-    :param      portfolio:  DataFrame containing the portofolio values.
-    :type       portfolio:  pandas.DataFrame
-    :param      strategy:   The strategy adopted containing the technical indicators.
-    :type       strategy:   object
-    :param      title:      The title of the plot.
-    :type       title:      str
+    Attributes:
+        market (pandas.DataFrame): DataFrame containing market data with at least 'date' and 'close' columns.
+        portfolio (pandas.DataFrame): DataFrame containing portfolio metrics and trading signals,
+                                      must include 'date', 'total', 'positions', 'opened_positions',
+                                      'stop_loss_price', and 'take_profit_price' columns.
+        strategy (BaseStrategy): An instance of a strategy class that implements an `add_to_ax` method,
+                                 which adds strategy-specific metrics or indicators to a matplotlib axis.
     """
-    fig, axs = plt.subplots(
-        nrows=3,
-        ncols=1,
-        figsize=(10, 7),
-        gridspec_kw={'height_ratios': [3, 1, 2]},
-        sharex=True
-    )
 
-    fig.suptitle(title)
+    def __init__(
+            self,
+            market: pandas.DataFrame,
+            portfolio: pandas.DataFrame,
+            strategy: BaseStrategy):
+        """
+        Initializes the PlotTrade object with market data, portfolio information, and a trading strategy.
 
-    plot_price_and_signal(
-        ax=axs[0],
-        market=market,
-        portfolio=portfolio,
-        strategy=strategy
-    )
+        Parameters:
+            market (pandas.DataFrame): The market data to be plotted, including dates and prices.
+            portfolio (pandas.DataFrame): The portfolio data including dates, asset totals, and trading positions.
+            strategy (BaseStrategy): The trading strategy object which contains logic to add strategy-specific
+                                     indicators to the plot.
+        """
+        self.market = market
+        self.portfolio = portfolio
+        self.strategy = strategy
 
-    plot_assets(
-        ax=axs[2],
-        market=market,
-        portfolio=portfolio,
-        strategy=strategy
-    )
+    def construct_figure(self) -> NoReturn:
+        """
+        Constructs and displays the trading strategy overview figure. This method organizes subplots into a
+        single figure, representing market prices, trading signals, portfolio metrics, and strategy-specific
+        indicators. It creates an interactive visualization to analyze the trading strategy's performance over time.
 
-    plot_metrics_on_ax(
-        ax=axs[1],
-        market=market,
-        portfolio=portfolio,
-        strategy=strategy
-    )
+        This method does not return anything but shows the constructed matplotlib figure.
+        """
+        title: str = 'Trading Strategy Overview'
 
-    # Format the x-axis
-    for ax in axs:
-        ax.xaxis.set_major_locator(mdates.MonthLocator())
-        ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+        self.figure, self.axis = plt.subplots(
+            nrows=3,
+            ncols=1,
+            figsize=(10, 7),
+            gridspec_kw={'height_ratios': [3, 1, 2]},
+            sharex=True
+        )
 
-    legend_without_duplicate_labels(axs[0])
-    plt.xticks(rotation=45)
-    plt.show()
+        self.figure.suptitle(title)
+
+        self.add_price_and_signal_to_ax(ax=self.axis[0])
+
+        self.add_position_holding_to_ax(ax=self.axis[0])
+
+        self.remove_duplicate_legend_from_ax(self.axis[0])
+
+        self.add_metric_to_ax(ax=self.axis[1])
+
+        self.add_asset_to_ax(ax=self.axis[2])
+
+        plt.xticks(rotation=45)
+        plt.show()
+
+    def remove_duplicate_legend_from_ax(self, ax: matplotlib.axes.Axes) -> NoReturn:
+        """
+        Removes duplicate entries from the legend of a given matplotlib axis. This method ensures that each
+        legend entry is unique, improving the clarity of the plot.
+
+        Parameters:
+            ax (matplotlib.axes.Axes): The matplotlib axis object from which to remove duplicate legend entries.
+        """
+        handles, labels = ax.get_legend_handles_labels()
+        unique = [(h, l) for i, (h, l) in enumerate(zip(handles, labels)) if l not in labels[:i]]
+        ax.legend(*zip(*unique))
+
+    def add_asset_to_ax(self, ax: matplotlib.axes.Axes):
+        """
+        Adds asset total over time to a specified matplotlib axis. This plot represents the total value of the
+        trading portfolio over the duration of the trading data.
+
+        Parameters:
+            ax (matplotlib.axes.Axes): The matplotlib axis object to which the asset total plot will be added.
+        """
+        ax.plot(
+            self.portfolio.date,
+            self.portfolio.total,
+            label='Total',
+            alpha=1,
+            linewidth=2,
+            zorder=-1
+        )
+
+        ax.legend()
+
+    def add_metric_to_ax(self, ax: matplotlib.axes.Axes) -> NoReturn:
+        """
+        Adds strategy-specific metrics or indicators to a specified matplotlib axis. This method utilizes the
+        `add_to_ax` method of the strategy object, allowing for flexible integration of various strategy indicators.
+
+        Parameters:
+            ax (matplotlib.axes.Axes): The matplotlib axis object to which the strategy metrics will be added.
+        """
+        self.strategy.add_to_ax(ax)
+
+        # Customize the indicators plot
+        ax.legend()
+        ax.grid(True)
+
+    def add_position_holding_to_ax(self, ax: matplotlib.axes.Axes) -> NoReturn:
+        """
+        Visualizes trading positions as shaded regions on the price plot, indicating periods where trades are
+        held. It also plots stop-loss and take-profit levels, providing a clear view of trade management strategies.
+
+        Parameters:
+            ax (matplotlib.axes.Axes): The matplotlib axis object to which the position holding information will be added.
+        """
+        min_y = self.market['close'].min()
+        max_y = self.market['close'].max()
+
+        # Shading holding periods
+        holding = False
+
+        for i, row in self.portfolio.iterrows():
+            if row.positions == 1:  # Buy signal
+                start_date = row.date
+                holding = True
+
+            elif row.positions == -1 and holding:
+                end_date = row.date
+                holding = False
+
+                ax.plot(
+                    [start_date, end_date],
+                    [row['stop_loss_price'], row['stop_loss_price']],
+                    color='red',
+                    label='stop-loss',
+                    linewidth=2
+                )
+
+                ax.plot(
+                    [start_date, end_date],
+                    [row['take_profit_price'], row['take_profit_price']],
+                    color='green',
+                    label='take-profit',
+                    linewidth=2
+                )
+
+                ax.fill_betweenx(
+                    y=[min_y, max_y],
+                    x1=start_date,
+                    x2=end_date,
+                    color='gray',
+                    alpha=0.3,
+                )
+
+    def add_price_and_signal_to_ax(self, ax: matplotlib.axes.Axes) -> NoReturn:
+        """
+        Plots the market closing prices and trading signals (buy/sell) on a specified matplotlib axis. This method
+        provides a visual representation of when trades were opened or closed in relation to the market price movements.
+
+        Parameters:
+            ax (matplotlib.axes.Axes): The matplotlib axis object to which the price and signal information will be added.
+        """
+        ax.grid(False)
+
+        # Price and signals plot
+        ax.plot(
+            self.market.date,
+            self.market['close'],
+            label='Close Price',
+            color='C0',
+            linewidth=2
+        )
+
+        index_open_position = self.portfolio['opened_positions'] == 1
+        index_close_position = self.portfolio['opened_positions'] == -1
+
+        ax.scatter(
+            x=self.portfolio.date[index_open_position],
+            y=self.market['close'][index_open_position],
+            label='Buy Signal',
+            marker='^',
+            s=50,
+            color='green',
+            alpha=1,
+            zorder=-1
+        )
+
+        ax.scatter(
+            x=self.portfolio.date[index_close_position],
+            y=self.market['close'][index_close_position],
+            label='Sell Signal',
+            marker='v',
+            color='red',
+            s=50,
+            alpha=1,
+            zorder=-1
+        )
+
+        # Customize the main plot
+        ax.set_ylabel('Price')
+        ax.legend()
+        ax.grid(False)
+
+
+
+

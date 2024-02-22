@@ -4,7 +4,7 @@ from TradeTide.strategy import RelativeStrengthIndex
 
 dataframe = get_dataframe('eur', 'usd', year=2020)
 
-market = dataframe[20_000:40_000]
+market = dataframe[100:40000]
 
 
 strategy = RelativeStrengthIndex(

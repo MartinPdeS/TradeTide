@@ -1,4 +1,4 @@
-from TradeTide import BackTester, MovingAverageCrossing, get_market_data
+from TradeTide import BackTester, BollingerBands, get_market_data
 
 # Load historical market data
 market_data = get_market_data('eur', 'usd', year=2023)
@@ -6,7 +6,7 @@ market_data = get_market_data('eur', 'usd', year=2023)
 market_data = market_data[:4000]
 
 # Initialize the trading strategy
-strategy = MovingAverageCrossing(short_window='30min', long_window='90min')
+strategy = BollingerBands()
 
 strategy.generate_signal(market_data)
 

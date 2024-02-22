@@ -28,7 +28,7 @@ class BollingerBands(BaseStrategy):
 
     def __init__(
             self,
-            periods: int = 20,
+            periods: int = '20min',
             deviation: float = 2,
             value_type: str = 'close'):
         """
@@ -53,19 +53,23 @@ class BollingerBands(BaseStrategy):
         Parameters:
             ax (matplotlib.axes.Axes): The Matplotlib axis object where the Bollinger Bands plot will be added.
         """
-        ax.plot(
-            self.data.date,
-            self.data['upper_band'],
+        ax.fill_between(
+            x=self.data.index,
+            y1=self.data['lower_band'],
+            y2=self.data['upper_band'],
             label='upper band',
-            linewidth=2,
+            linewidth=1,
+            color='black',
+            alpha=0.2
         )
 
         ax.plot(
-            self.data.date,
-            self.data['lower_band'],
-            label='lower band',
-            linewidth=2,
+            self.data.close,
+            label='close value',
+            linewidth=1,
+            color='C0'
         )
+
         ax.set_ylabel('Bolliner Bands strategy')
 
     @BaseStrategy.post_generate_signal

@@ -7,6 +7,7 @@ from TradeTide.strategy.base_strategy import BaseStrategy
 import matplotlib
 from typing import NoReturn
 import MPSPlots.render2D
+# plt.style.use('ggplot')
 
 
 class PlotTrade():
@@ -58,7 +59,7 @@ class PlotTrade():
             ncols=1,
             figsize=(10, 7),
             gridspec_kw={'height_ratios': [3, 2, 2]},
-            sharex=True
+            sharex=True,
         )
 
         self.figure.suptitle(title)
@@ -73,7 +74,7 @@ class PlotTrade():
 
         self.add_asset_to_ax(ax=self.axis[2])
 
-        plt.subplots_adjust(wspace=0, hspace=0)
+        plt.subplots_adjust(wspace=0, hspace=0.15)
 
         plt.xticks(rotation=45)
         plt.show()
@@ -88,7 +89,7 @@ class PlotTrade():
         """
         handles, labels = ax.get_legend_handles_labels()
         unique = [(h, l) for i, (h, l) in enumerate(zip(handles, labels)) if l not in labels[:i]]
-        ax.legend(*zip(*unique))
+        ax.legend(*zip(*unique), facecolor='white', framealpha=1)
 
     def add_asset_to_ax(self, ax: matplotlib.axes.Axes):
         """
@@ -98,15 +99,45 @@ class PlotTrade():
         Parameters:
             ax (matplotlib.axes.Axes): The matplotlib axis object to which the asset total plot will be added.
         """
-        ax.plot(
+
+        line_0 = ax.plot(
             self.portfolio.total,
             label='Total',
-            alpha=1,
             linewidth=2,
-            zorder=-1
+            color='C0'
         )
 
-        ax.legend()
+        line_1 = ax.plot(
+            self.portfolio.cash,
+            label='Cash',
+            linewidth=2,
+            color='C1'
+        )
+
+        line_2 = ax.plot(
+            self.portfolio.holdings,
+            label='Holdings',
+            linewidth=2,
+            color='C2'
+        )
+        ax_twin = ax.twinx()
+
+        line_3 = ax_twin.plot(
+            self.portfolio.units,
+            label='units',
+            linewidth=2,
+            color='C3'
+        )
+
+        lines = line_0 + line_1 + line_2 + line_3
+        labels = [
+            line.get_label() for line in lines
+        ]
+
+        ax_twin.legend(lines, labels, loc='upper left', facecolor='white', framealpha=1).set_zorder(100)
+        ax_twin.set_axisbelow(True)
+        ax.set_ylabel('Assets')
+        ax_twin.set_ylabel('Units')
 
     def add_metric_to_ax(self, ax: matplotlib.axes.Axes) -> NoReturn:
         """
@@ -119,7 +150,7 @@ class PlotTrade():
         self.strategy.add_to_ax(ax)
 
         # Customize the indicators plot
-        ax.legend()
+        ax.legend(loc='upper right', facecolor='white', framealpha=1)
         ax.grid(True)
 
     def add_position_holding_to_ax(self, ax: matplotlib.axes.Axes) -> NoReturn:
@@ -130,6 +161,7 @@ class PlotTrade():
         Parameters:
             ax (matplotlib.axes.Axes): The matplotlib axis object to which the position holding information will be added.
         """
+        ax.set_axisbelow(True)
         min_y = self.market['close'].min()
         max_y = self.market['close'].max()
 
@@ -177,7 +209,8 @@ class PlotTrade():
         Parameters:
             ax (matplotlib.axes.Axes): The matplotlib axis object to which the price and signal information will be added.
         """
-        ax.grid(False)
+        ax.set_axisbelow(True)
+        ax.grid(True)
 
         # Price and signals plot
         ax.plot(
@@ -197,8 +230,6 @@ class PlotTrade():
             marker='^',
             s=50,
             color='green',
-            alpha=1,
-            zorder=-1
         )
 
         ax.scatter(
@@ -208,14 +239,12 @@ class PlotTrade():
             marker='v',
             color='red',
             s=50,
-            alpha=1,
-            zorder=-1
         )
 
         # Customize the main plot
         ax.set_ylabel('Price')
-        ax.legend()
-        ax.grid(False)
+        ax.legend(loc='upper right', facecolor='white', framealpha=1)
+        ax.grid(True)
 
 
 

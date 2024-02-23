@@ -1,12 +1,23 @@
-import pandas as pd
+from TradeTide import BackTester, indicators, get_market_data
 
-# create a DataFrame with datetime data
-df = pd.DataFrame({'date': ['2022-06-01 12:00:00', '2022-06-02 13:00:00', '2022-06-03 14:00:00']})
+market_data = get_market_data('eur', 'usd', year=2023)
 
-# convert the date column to datetime format
-df['date'] = pd.to_datetime(df['date'])
+market_data = market_data[:800]
 
-# change the datetime format
-df['date_formatted'] = df['date'].dt.strftime('%H:%M:%S')
+strategy = indicators.RelativeStrengthIndex(period='30min', overbought_threshold=90, oversold_threshold=10)
 
-print(df)
+strategy.generate_signal(market_data)
+
+backtester = BackTester(market=market_data, strategy=strategy)
+
+backtester.back_test(stop_loss='.1%', take_profit='.1%', spread=0)
+
+portfolio = backtester.portfolio
+
+backtester.plot()
+
+# backtester.calculate_performance_metrics()
+
+# final_portfolio_value = backtester.get_final_portfolio_value()
+
+# print(f"Final Portfolio Value: {final_portfolio_value}")

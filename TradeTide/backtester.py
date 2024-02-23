@@ -4,7 +4,7 @@
 from typing import NoReturn
 import pandas
 import numpy
-from TradeTide.strategy.base_strategy import BaseStrategy
+from TradeTide.strategy import Strategy
 from TradeTide.plottings import PlotTrade
 from TradeTide.tools import percent_to_float
 
@@ -18,7 +18,7 @@ class BackTester():
     allowing for the evaluation of the strategy's effectiveness.
     """
 
-    def __init__(self, market: pandas.DataFrame, strategy: BaseStrategy):
+    def __init__(self, market: pandas.DataFrame, strategy: Strategy) -> NoReturn:
         """
         Initializes a new instance of the BackTester class with specified market data and trading strategy.
 
@@ -30,12 +30,12 @@ class BackTester():
             market (pandas.DataFrame): The historical market data to be used for backtesting. This DataFrame should include
                                        columns relevant to the trading strategy, such as 'date', 'open', 'high', 'low', 'close',
                                        and optionally 'volume', among others.
-            strategy (BaseStrategy): An instance of a trading strategy derived from the BaseStrategy class. This strategy should
+            strategy (Strategy): An instance of a trading strategy derived from the Strategy class. This strategy should
                                      implement methods for generating trading signals based on the provided market data.
 
         Attributes:
             market_dataframe (pandas.DataFrame): Stores the provided market data for use in backtesting.
-            strategy (BaseStrategy): The trading strategy to be backtested.
+            strategy (Strategy): The trading strategy to be backtested.
             portfolio (pandas.DataFrame or None): Initialized as None, this attribute is intended to store the results of the
                                                    backtest, including the performance of the trading strategy over time. It will
                                                    be populated and updated during the backtesting process.
@@ -49,7 +49,12 @@ class BackTester():
         self.strategy = strategy
         self.portfolio = None
 
-    def manage_positions(self, market: pandas.DataFrame, spread: float, stop_loss: float, take_profit: float) -> NoReturn:
+    def manage_positions(
+            self,
+            market: pandas.DataFrame,
+            spread: float,
+            stop_loss: float,
+            take_profit: float) -> NoReturn:
         """
         Manages the opening and closing of trading positions based on stop loss and take profit thresholds, adjusted for spread.
 
@@ -141,6 +146,7 @@ class BackTester():
 
         # Determine the number of units that can be bought with the available capital per trade
         portfolio['units'] = numpy.floor((max_cap_per_trade - spread) / portfolio['entry_price'])
+        print(portfolio.units)
 
         # Calculate cumulative holdings and cash, considering the units bought and the entry price
         portfolio['holdings'] = (portfolio['units'] * market['close']).cumsum()
@@ -155,7 +161,7 @@ class BackTester():
             stop_loss: float | str = '0.1%',
             take_profit: float | str = '0.1%',
             initial_capital: float = 100_000,
-            spread: float = 0.01,
+            spread: float = 0.1,
             return_extra_data: bool = False,
             max_cap_per_trade: float = 1_000) -> pandas.DataFrame:
         """
@@ -252,8 +258,8 @@ class BackTester():
         Note:
             This method should be called after completing the backtest to ensure the portfolio contains the final trading results.
         """
-
         final_portfolio_value = self.portfolio['total'].iloc[-1]
+
         print(f"Final Portfolio Value: ${final_portfolio_value:.2f}")
 
         return final_portfolio_value
@@ -276,7 +282,6 @@ class BackTester():
             If the portfolio is not yet populated (i.e., the backtest has not been run), the method will print a message
             indicating that the backtest should be executed first.
         """
-
         if self.portfolio is None:
             print("Backtest the strategy first before calculating performance metrics.")
             return

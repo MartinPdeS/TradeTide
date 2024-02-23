@@ -72,3 +72,5 @@ Email:`martin.poinsinet-de-sivry@polymtl.ca <mailto:martin.poinsinet-de-sivry@po
 .. |Logo| image:: https://github.com/MartinPdeS/TradeTide/raw/master/docs/images/logo.png
 
 .. |example_image| image:: https://github.com/MartinPdeS/TradeTide/raw/master/docs/images/image_example.png
+
+

@@ -3,7 +3,6 @@
 
 import sys
 from sphinx_gallery.sorting import FileNameSortKey
-from sphinx_gallery.sorting import ExplicitOrder
 from packaging.version import parse
 from MPSPlots.styles import use_mpsplots_style
 

@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8; py-indent-offset:4 -*-
 
+from typing import NoReturn
+
 from TradeTide import directories
 import pandas
 import pathlib
@@ -72,7 +74,7 @@ def get_market_data(currency_0: str, currency_1: str, year: int) -> pandas.DataF
     return dataframe
 
 
-def convert_xlsx_to_csv(currency_0: str, currency_1: str, year: int) -> None:
+def convert_xlsx_to_csv(currency_0: str, currency_1: str, year: int) -> NoReturn:
     """
     Converts an Excel file containing currency data to a CSV format.
 
@@ -103,4 +105,4 @@ def convert_xlsx_to_csv(currency_0: str, currency_1: str, year: int) -> None:
 
     dataframe.to_csv(data_file.with_suffix('.csv'), index=False)
 
-
+# -

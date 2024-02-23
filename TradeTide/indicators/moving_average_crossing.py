@@ -5,16 +5,16 @@ import pandas
 import numpy
 from typing import NoReturn
 import matplotlib
-from TradeTide.strategy.base_strategy import BaseStrategy
+from TradeTide.indicators.base_indicator import BaseIndicator
 
 
-class MovingAverageCrossing(BaseStrategy):
+class MovingAverageCrossing(BaseIndicator):
     """
-    Implements a Moving Average Crossing strategy as an extension of the BaseStrategy class.
+    Implements a Moving Average Crossing indicator as an extension of the BaseIndicator class.
 
-    This strategy involves two moving averages of a series: a "short" and a "long" moving average. A typical trading signal
+    This indicator involves two moving averages of a series: a "short" and a "long" moving average. A typical trading signal
     is generated when the short moving average crosses above (bullish signal) or below (bearish signal) the long moving average.
-    The strategy is commonly used to identify the momentum and direction of a trend.
+    The indicator is commonly used to identify the momentum and direction of a trend.
 
     Attributes:
         short_window (int): The window size of the short moving average.
@@ -33,7 +33,7 @@ class MovingAverageCrossing(BaseStrategy):
             min_period: int = 10,
             value_type: str = 'close'):
         """
-        Initializes a new instance of the MovingAverageCrossing strategy with specified parameters.
+        Initializes a new instance of the MovingAverageCrossing indicator with specified parameters.
 
         Parameters:
             short_window (int): Number of periods to use for the short moving average. Default is 30.
@@ -47,6 +47,7 @@ class MovingAverageCrossing(BaseStrategy):
         self.min_period = min_period
         self.value_type = value_type
 
+    @BaseIndicator.shade_signal
     def add_to_ax(self, ax: matplotlib.axes.Axes) -> NoReturn:
         """
         Adds the short and long moving average plots to the specified Matplotlib axis.
@@ -70,8 +71,8 @@ class MovingAverageCrossing(BaseStrategy):
         )
         ax.set_ylabel('SMA crossing')
 
-    @BaseStrategy.post_generate_signal
-    def generate_signal(self, dataframe: pandas.DataFrame) -> pandas.DataFrame:
+    @BaseIndicator.post_generate_signal
+    def generate_signal(self, market_data: pandas.DataFrame) -> pandas.DataFrame:
         """
         Generates trading signals based on the crossover of short-term and long-term moving averages.
 
@@ -80,17 +81,17 @@ class MovingAverageCrossing(BaseStrategy):
         moving averages, respectively. A trading signal is generated when the short-term moving average crosses above the
         long-term moving average, indicated by a value of 1 in the 'signal' column; otherwise, the 'signal' value is set to 0.
 
-        The method is decorated with `@BaseStrategy.post_generate_signal`, suggesting it may perform additional operations
-        or checks defined in the `BaseStrategy` class after the signal generation.
+        The method is decorated with `@BaseIndicator.post_generate_signal`, suggesting it may perform additional operations
+        or checks defined in the `BaseIndicator` class after the signal generation.
 
         Parameters:
-            dataframe (pandas.DataFrame): The input DataFrame containing market data. It must include a column named
+            market_data (pandas.DataFrame): The input DataFrame containing market data. It must include a column named
                                           as specified by `self.value_type`, which is used for calculating moving averages.
 
         Returns:
             pandas.DataFrame: The original DataFrame is modified in-place to include three new columns:
                               'long_window_array', 'short_window_array', and 'signal'. The 'signal' column contains
-                              the generated trading signals based on the moving average crossover strategy.
+                              the generated trading signals based on the moving average crossover indicator.
         """
         self.data['long_window_array'] = self.data[self.value_type].rolling(
             window=self.long_window,

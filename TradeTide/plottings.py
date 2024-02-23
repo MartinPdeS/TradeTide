@@ -3,7 +3,7 @@
 
 import matplotlib.pyplot as plt
 import pandas
-from TradeTide.strategy.base_strategy import BaseStrategy
+from TradeTide.strategy import Strategy
 import matplotlib
 from typing import NoReturn
 import MPSPlots.render2D
@@ -22,7 +22,7 @@ class PlotTrade():
         portfolio (pandas.DataFrame): DataFrame containing portfolio metrics and trading signals,
                                       must include 'date', 'total', 'positions', 'opened_positions',
                                       'stop_loss_price', and 'take_profit_price' columns.
-        strategy (BaseStrategy): An instance of a strategy class that implements an `add_to_ax` method,
+        strategy (Strategy): An instance of a strategy class that implements an `add_to_ax` method,
                                  which adds strategy-specific metrics or indicators to a matplotlib axis.
     """
 
@@ -30,14 +30,14 @@ class PlotTrade():
             self,
             market: pandas.DataFrame,
             portfolio: pandas.DataFrame,
-            strategy: BaseStrategy):
+            strategy: Strategy):
         """
         Initializes the PlotTrade object with market data, portfolio information, and a trading strategy.
 
         Parameters:
             market (pandas.DataFrame): The market data to be plotted, including dates and prices.
             portfolio (pandas.DataFrame): The portfolio data including dates, asset totals, and trading positions.
-            strategy (BaseStrategy): The trading strategy object which contains logic to add strategy-specific
+            strategy (Strategy): The trading strategy object which contains logic to add strategy-specific
                                      indicators to the plot.
         """
         self.market = market

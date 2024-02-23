@@ -5,12 +5,12 @@ import pandas
 import numpy
 from typing import NoReturn
 import matplotlib
-from TradeTide.strategy.base_strategy import BaseStrategy
+from TradeTide.indicators.base_indicator import BaseIndicator
 
 
-class BollingerBands(BaseStrategy):
+class BollingerBands(BaseIndicator):
     """
-    Implements the Bollinger Bands trading strategy as an extension of the BaseStrategy class.
+    Implements the Bollinger Bands trading indicator as an extension of the BaseIndicator class.
 
     Bollinger Bands consist of a middle band being an N-period simple moving average (SMA), an upper band at K times an N-period
     standard deviation above the middle band, and a lower band at K times an N-period standard deviation below the middle band.
@@ -28,11 +28,11 @@ class BollingerBands(BaseStrategy):
 
     def __init__(
             self,
-            periods: int = '20min',
+            periods: int = 20,
             deviation: float = 2,
             value_type: str = 'close'):
         """
-        Initializes a new instance of the BollingerBands strategy with specified parameters.
+        Initializes a new instance of the BollingerBands indicator with specified parameters.
 
         Parameters:
             periods (int): The lookback period for calculating the moving average and standard deviation. Default is 20.
@@ -41,13 +41,14 @@ class BollingerBands(BaseStrategy):
         """
         self.periods = periods
         self.deviation = deviation
-        self.value_type = value_type
+        self.value_type = 'close'
 
+    @BaseIndicator.shade_signal
     def add_to_ax(self, ax: matplotlib.axes.Axes) -> NoReturn:
         """
         Adds the Bollinger Bands plot to the specified Matplotlib axis.
 
-        This method plots the upper and lower bands of the Bollinger Bands strategy, providing a visual representation
+        This method plots the upper and lower bands of the Bollinger Bands indicator, providing a visual representation
         of the market's overbought and oversold conditions.
 
         Parameters:
@@ -55,8 +56,8 @@ class BollingerBands(BaseStrategy):
         """
         ax.fill_between(
             x=self.data.index,
-            y1=self.data['lower_band'],
-            y2=self.data['upper_band'],
+            y1=self.data.lower_band,
+            y2=self.data.upper_band,
             label='upper band',
             linewidth=1,
             color='black',
@@ -70,10 +71,10 @@ class BollingerBands(BaseStrategy):
             color='C0'
         )
 
-        ax.set_ylabel('Bolliner Bands strategy')
+        ax.set_ylabel('Bolliner Bands indicator')
 
-    @BaseStrategy.post_generate_signal
-    def generate_signal(self, dataframe: pandas.DataFrame) -> pandas.DataFrame:
+    @BaseIndicator.post_generate_signal
+    def generate_signal(self, market_data: pandas.DataFrame) -> pandas.DataFrame:
         """
         Calculates the Bollinger Bands based on the provided DataFrame and generates buy or sell signals.
 
@@ -82,23 +83,23 @@ class BollingerBands(BaseStrategy):
         These signals are added to a 'signal' column in the DataFrame.
 
         Parameters:
-            dataframe (pandas.DataFrame): The input DataFrame containing price data and a column specified by `value_type`.
+            market_data (pandas.DataFrame): The input DataFrame containing price data and a column specified by `value_type`.
 
         Returns:
-            pandas.DataFrame: The input DataFrame with added columns for the moving average ('NA'), standard deviation ('STD'),
+            pandas.DataFrame: The input DataFrame with added columns for the moving average ('MA'), standard deviation ('STD'),
                               upper band ('upper_band'), lower band ('lower_band'), and buy/sell signals ('signal').
         """
-        self.data['NA'] = self.data[self.value_type].rolling(window=self.periods).mean()
+        self.data['MA'] = self.data['close'].rolling(window=self.periods).mean()
 
-        self.data['STD'] = self.data[self.value_type].rolling(window=self.periods).std()
+        self.data['STD'] = self.data['close'].rolling(window=self.periods).std()
 
-        self.data['upper_band'] = self.data['NA'] + (self.data['STD'] * self.deviation)
+        self.data['upper_band'] = self.data['MA'] + (self.data['STD'] * self.deviation)
 
-        self.data['lower_band'] = self.data['NA'] - (self.data['STD'] * self.deviation)
+        self.data['lower_band'] = self.data['MA'] - (self.data['STD'] * self.deviation)
 
         # Generate buy signal when the close price crosses below the lower band
         self.data['signal'] = numpy.where(self.data['close'] < self.data['lower_band'], 1, 0)
 
-        # Generate sell signal when the close price corsses above the upper band
-        self.data['signal'] = numpy.where(self.data['close'] > self.data['lower_band'], -1, self.data['signal'])
+        # Generate sell signal when the close price crosses above the upper band
+        self.data['signal'] = numpy.where(self.data['close'] > self.data['upper_band'], -1, self.data['signal'])
 # -

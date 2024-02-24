@@ -59,7 +59,7 @@ def get_market_data(currency_0: str, currency_1: str, year: int) -> pandas.DataF
         names=['date', 'open', 'high', 'low', 'close', 'volume', 'spread']
     )
 
-    dataframe['date'] = pandas.to_datetime(dataframe['date'])
+    dataframe['date'] = pandas.to_datetime(dataframe['date'], infer_datetime_format=True)
 
     assert dataframe['date'].is_monotonic_increasing, 'Time stamp is not monotonic increasing'
 

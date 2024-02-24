@@ -18,7 +18,7 @@ class BackTester():
     allowing for the evaluation of the strategy's effectiveness.
     """
 
-    def __init__(self, market: pandas.DataFrame, strategy: Strategy) -> NoReturn:
+    def __init__(self, market: pandas.DataFrame, strategy: Strategy):
         """
         Initializes a new instance of the BackTester class with specified market data and trading strategy.
 
@@ -85,14 +85,43 @@ class BackTester():
             1 indicates a new buy position. The method modifies the portfolio DataFrame in-place and does not return a value.
         """
 
-        # Aliasing portfolio
+
+        # # Initialize 'position' column with 0 indicating no open positions initially
+        # self.portfolio['positions'] = 0
+
+        # # Open positions based on signals: 1 for buy signals, -1 for sell signals
+        # # Positions are only opened if there's no existing open position (hence the multiplication with (positions == 0))
+        # self.portfolio['positions'] = self.strategy.data['signal'] * (self.portfolio['positions'].shift(1).fillna(0) == 0)
+
+        # # Placeholder for stop-loss and take-profit logic
+        # # You'll need to define how stop_loss_triggered and take_profit_triggered are calculated
+        # # For example, they could be boolean Series indicating where these conditions are met
+        # stop_loss_triggered = pandas.Series([False] * len(self.portfolio), index=self.portfolio.index)  # Replace with actual logic
+        # take_profit_triggered = pandas.Series([False] * len(self.portfolio), index=self.portfolio.index)  # Replace with actual logic
+
+        # # Close positions if stop-loss or take-profit conditions are met
+        # # This sets the 'position' to 0 where either condition is True
+        # self.portfolio.loc[stop_loss_triggered | take_profit_triggered, 'positions'] = 0
+
+        # # Forward fill positions to maintain open positions until they are closed or a new position is opened
+        # self.portfolio['positions'].ffill(inplace=True)
+
+        # # Ensure the first position is set correctly (if the strategy starts with an open position)
+        # self.portfolio['positions'].iloc[0] = self.strategy.data['signal'].iloc[0]
+
+        # # Aliasing portfolio
         portfolio = self.portfolio
 
+        portfolio['positions'] = self.strategy.data['signal'].diff()
+        portfolio['positions'][0] = 0.0
+        print(self.strategy.data['signal'])
+        print(portfolio['positions'])
+        dsa
         # Initialize 'opened_positions' to track the status of new trades
         portfolio['opened_positions'] = portfolio['positions']
 
         # Entry price includes the spread for buy positions
-        portfolio['entry_price'] = market['close'].where(portfolio['positions'] == 1) + spread  # maybe + spread
+        portfolio['entry_price'] = market['close'].where(portfolio['positions'].isin([-1, 1])) + spread  # maybe + spread
 
         # Forward fill entry prices for the holding period
         portfolio['entry_price'] = portfolio['entry_price'].ffill()
@@ -146,7 +175,6 @@ class BackTester():
 
         # Determine the number of units that can be bought with the available capital per trade
         portfolio['units'] = numpy.floor((max_cap_per_trade - spread) / portfolio['entry_price'])
-        print(portfolio.units)
 
         # Calculate cumulative holdings and cash, considering the units bought and the entry price
         portfolio['holdings'] = (portfolio['units'] * market['close']).cumsum()
@@ -155,6 +183,86 @@ class BackTester():
         # Total portfolio value and percentage returns
         portfolio['total'] = portfolio['cash'] + portfolio['holdings']
         portfolio['returns'] = portfolio['total'].ffill().pct_change()
+
+    def signals_to_positions(self) -> NoReturn:
+        """
+        Transforms trading signals into positions by interpreting changes in the signals.
+
+        This method updates positions based on the following rules:
+        - A positive change in the signal (e.g., from 0 to 1) indicates entering a long position.
+        - A negative change in the signal (e.g., from 1 to 0 or 1 to -1) indicates exiting a long position or entering a short position.
+        - Continuous signals (no change) imply holding the current position.
+        - Direct reversals (e.g., from -1 to 1) are allowed and indicate switching positions.
+
+        The 'positions' column in the portfolio DataFrame is updated to reflect the current trading position.
+        """
+        # Copy signals from the strategy to the portfolio DataFrame
+        self.portfolio['signal'] = self.strategy.signal
+
+        # Calculate the difference to detect changes in the signal
+        signal_changes = self.portfolio['signal'].diff()
+
+        # Determine positions: 1 for long, -1 for short, 0 for no position
+        self.portfolio['positions'] = numpy.select(
+            [
+                signal_changes > 0,  # Condition for entering a long position
+                signal_changes < 0,  # Condition for entering a short position or exiting
+            ],
+            [
+                1,  # Value for entering a long position
+                numpy.where(self.portfolio['signal'] == -1, -1, 0)  # Enter short position if signal is -1, else exit
+            ],
+            default=self.portfolio['signal']  # Default to the current signal, allowing for direct reversals and continuous holding
+        )
+
+        # Forward fill to maintain positions until the next change
+        self.portfolio['positions'].ffill(inplace=True)
+
+        # Fill initial NaN values with 0 (no position at start)
+        self.portfolio['positions'].fillna(0, inplace=True)
+        print(self.portfolio.signal.head(10))
+        print(self.portfolio.positions.head(10))
+
+    def _signals_to_positions(self):
+        """
+        Transforms trading signals into positions by interpreting changes in the signals.
+
+        This method updates positions based on the following rules:
+        - A positive change in the signal (e.g., from 0 to 1) indicates entering a long position.
+        - A negative change in the signal (e.g., from 1 to 0 or 1 to -1) indicates exiting a long position or entering a short position.
+        - Continuous signals (no change) imply holding the current position.
+        - Direct reversals (e.g., from -1 to 1) are allowed and indicate switching positions.
+
+        The 'positions' column in the portfolio DataFrame is updated to reflect the current trading position.
+        """
+        # Copy signals from the strategy to the portfolio DataFrame
+        self.portfolio['signal'] = self.strategy.signal
+
+        # Calculate the difference to detect changes in the signal
+        signal_changes = self.portfolio['signal'].diff()
+
+        # Initialize positions based on signal changes
+        self.portfolio['positions'] = 0  # Default to no position
+
+        # Interpret signal changes to determine positions
+        for i in range(1, len(signal_changes)):
+            if signal_changes.iloc[i] > 0:
+                self.portfolio['positions'].iloc[i] = 1  # Enter long position
+            elif signal_changes.iloc[i] < 0:
+                if self.portfolio['signal'].iloc[i] == -1:
+                    self.portfolio['positions'].iloc[i] = -1  # Enter short position
+                else:
+                    self.portfolio['positions'].iloc[i] = 0  # Exit position
+            else:
+                # Carry forward the position from the previous period
+                self.portfolio['positions'].iloc[i] = self.portfolio['positions'].iloc[i - 1]
+
+        # Handle the initial position based on the initial signal
+        self.portfolio.at[self.portfolio.index[0], 'positions'] = self.portfolio['signal'].iloc[0]
+        # print(self.portfolio.signal.head(10))
+        # print(signal_changes.head(10))
+        # print(self.portfolio.positions.head(10))
+        # dsa
 
     def back_test(
             self,
@@ -191,39 +299,32 @@ class BackTester():
         take_profit = percent_to_float(take_profit)
 
         self.initial_capital = initial_capital
-        market = self.market_dataframe.copy()
+        market_data = self.market_dataframe.copy()
 
         # Initialize the portfolio DataFrame
-        portfolio = self.portfolio = pandas.DataFrame(index=market.index)
+        self.portfolio = pandas.DataFrame(index=market_data.index)
 
-        portfolio['signal'] = self.strategy.signal
-
-        portfolio['positions'] = portfolio['signal'].diff()
-
-        portfolio.at[portfolio.index[0], 'positions'] = 0
+        # self.signals_to_positions()
 
         self.manage_positions(
-            market=market,
+            market=market_data,
             spread=spread,
             stop_loss=stop_loss,
             take_profit=take_profit
         )
 
         self.calculate_units_and_portfolio(
-            market=market,
+            market=market_data,
             initial_capital=initial_capital,
             spread=spread,
             max_cap_per_trade=max_cap_per_trade
         )
 
-        self.data = market
-
-        if return_extra_data:
-            return self.portfolio, market
+        self.market_data = market_data
 
         return self.portfolio
 
-    def plot(self) -> NoReturn:
+    def plot(self, **kwargs) -> NoReturn:
         """
         Generates a visual representation of the backtest results using the PlotTrade class.
 
@@ -243,7 +344,7 @@ class BackTester():
             strategy=self.strategy,
         )
 
-        plot.construct_figure()
+        plot.construct_figure(**kwargs)
 
     def get_final_portfolio_value(self) -> float:
         """

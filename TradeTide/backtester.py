@@ -7,6 +7,7 @@ import numpy
 from TradeTide.strategy import Strategy
 from TradeTide.plottings import PlotTrade
 from TradeTide.tools import percent_to_float
+from TradeTide.position import Position
 
 
 class BackTester():
@@ -54,7 +55,8 @@ class BackTester():
             market: pandas.DataFrame,
             spread: float,
             stop_loss: float,
-            take_profit: float) -> NoReturn:
+            take_profit: float,
+            max_cap_per_trade: float) -> NoReturn:
         """
         Manages the opening and closing of trading positions based on stop loss and take profit thresholds, adjusted for spread.
 
@@ -84,59 +86,25 @@ class BackTester():
             This method assumes the 'positions' column in the portfolio DataFrame tracks the current open positions, where a value of
             1 indicates a new buy position. The method modifies the portfolio DataFrame in-place and does not return a value.
         """
+        # Extract signals and identify where new positions should be opened
+        signals = self.strategy.data['signal']
+        new_positions = signals.diff().fillna(0) != 0
 
+        # Initialize or clear the list to store Position objects
+        self.position_list = []
 
-        # # Initialize 'position' column with 0 indicating no open positions initially
-        # self.portfolio['positions'] = 0
-
-        # # Open positions based on signals: 1 for buy signals, -1 for sell signals
-        # # Positions are only opened if there's no existing open position (hence the multiplication with (positions == 0))
-        # self.portfolio['positions'] = self.strategy.data['signal'] * (self.portfolio['positions'].shift(1).fillna(0) == 0)
-
-        # # Placeholder for stop-loss and take-profit logic
-        # # You'll need to define how stop_loss_triggered and take_profit_triggered are calculated
-        # # For example, they could be boolean Series indicating where these conditions are met
-        # stop_loss_triggered = pandas.Series([False] * len(self.portfolio), index=self.portfolio.index)  # Replace with actual logic
-        # take_profit_triggered = pandas.Series([False] * len(self.portfolio), index=self.portfolio.index)  # Replace with actual logic
-
-        # # Close positions if stop-loss or take-profit conditions are met
-        # # This sets the 'position' to 0 where either condition is True
-        # self.portfolio.loc[stop_loss_triggered | take_profit_triggered, 'positions'] = 0
-
-        # # Forward fill positions to maintain open positions until they are closed or a new position is opened
-        # self.portfolio['positions'].ffill(inplace=True)
-
-        # # Ensure the first position is set correctly (if the strategy starts with an open position)
-        # self.portfolio['positions'].iloc[0] = self.strategy.data['signal'].iloc[0]
-
-        # # Aliasing portfolio
-        portfolio = self.portfolio
-
-        portfolio['positions'] = self.strategy.data['signal'].diff()
-        portfolio['positions'][0] = 0.0
-        print(self.strategy.data['signal'])
-        print(portfolio['positions'])
-        dsa
-        # Initialize 'opened_positions' to track the status of new trades
-        portfolio['opened_positions'] = portfolio['positions']
-
-        # Entry price includes the spread for buy positions
-        portfolio['entry_price'] = market['close'].where(portfolio['positions'].isin([-1, 1])) + spread  # maybe + spread
-
-        # Forward fill entry prices for the holding period
-        portfolio['entry_price'] = portfolio['entry_price'].ffill()
-
-        # Calculate stop-loss and take-profit prices
-        portfolio['stop_loss_price'] = portfolio['entry_price'] * (1 - stop_loss)
-        portfolio['take_profit_price'] = portfolio['entry_price'] * (1 + take_profit)
-
-        # Check if stop-loss or take-profit were triggered
-        portfolio['stop_loss_triggered'] = market['low'] < portfolio['stop_loss_price']
-        portfolio['take_profit_triggered'] = market['high'] > portfolio['take_profit_price']
-
-        # Close positions where stop-loss or take-profit conditions are met
-        portfolio['close_positions'] = portfolio['stop_loss_triggered'] | portfolio['take_profit_triggered']
-        portfolio.loc[portfolio['close_positions'], 'positions'] = 0
+        # Iterate over signals and open new positions where indicated
+        for date, signal in signals[new_positions].items():
+            if signal != 0:  # Check if the signal indicates a new position (non-zero)
+                position = Position(
+                    start_date=date,
+                    stop_loss=stop_loss,
+                    take_profit=take_profit,
+                    market=market,
+                    spread=spread,
+                    max_cap_per_trade=max_cap_per_trade
+                )
+                self.position_list.append(position)
 
     def calculate_units_and_portfolio(
             self,
@@ -172,9 +140,6 @@ class BackTester():
         """
         # Aliasing portfolio
         portfolio = self.portfolio
-
-        # Determine the number of units that can be bought with the available capital per trade
-        portfolio['units'] = numpy.floor((max_cap_per_trade - spread) / portfolio['entry_price'])
 
         # Calculate cumulative holdings and cash, considering the units bought and the entry price
         portfolio['holdings'] = (portfolio['units'] * market['close']).cumsum()
@@ -220,8 +185,6 @@ class BackTester():
 
         # Fill initial NaN values with 0 (no position at start)
         self.portfolio['positions'].fillna(0, inplace=True)
-        print(self.portfolio.signal.head(10))
-        print(self.portfolio.positions.head(10))
 
     def _signals_to_positions(self):
         """
@@ -259,10 +222,6 @@ class BackTester():
 
         # Handle the initial position based on the initial signal
         self.portfolio.at[self.portfolio.index[0], 'positions'] = self.portfolio['signal'].iloc[0]
-        # print(self.portfolio.signal.head(10))
-        # print(signal_changes.head(10))
-        # print(self.portfolio.positions.head(10))
-        # dsa
 
     def back_test(
             self,
@@ -304,21 +263,20 @@ class BackTester():
         # Initialize the portfolio DataFrame
         self.portfolio = pandas.DataFrame(index=market_data.index)
 
-        # self.signals_to_positions()
-
         self.manage_positions(
             market=market_data,
             spread=spread,
             stop_loss=stop_loss,
-            take_profit=take_profit
-        )
-
-        self.calculate_units_and_portfolio(
-            market=market_data,
-            initial_capital=initial_capital,
-            spread=spread,
+            take_profit=take_profit,
             max_cap_per_trade=max_cap_per_trade
         )
+
+        # self.calculate_units_and_portfolio(
+        #     market=market_data,
+        #     initial_capital=initial_capital,
+        #     spread=spread,
+        #     max_cap_per_trade=max_cap_per_trade
+        # )
 
         self.market_data = market_data
 
@@ -339,6 +297,7 @@ class BackTester():
             has been populated with trading data and results.
         """
         plot = PlotTrade(
+            back_tester=self,
             market=self.market_dataframe,
             portfolio=self.portfolio,
             strategy=self.strategy,

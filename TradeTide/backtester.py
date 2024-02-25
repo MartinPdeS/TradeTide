@@ -243,7 +243,8 @@ class BackTester():
                     take_profit=take_profit,
                     market=market,
                     units=units,
-                    entry_price=entry_price
+                    entry_price=entry_price,
+                    type='long' if signal == +1 else 'short'
                 )
                 self.position_list.append(position)
 

@@ -12,23 +12,24 @@ from dataclasses import dataclass
 @dataclass
 class Position:
     """
-    A class to represent and manage a trading position, including its entry, risk management parameters, and visualization of its lifecycle.
+    Manages a trading position with entry, risk management, and visualization.
 
     Attributes:
-        start_date (pd.Timestamp): The date when the position is initiated.
-        stop_loss (float): The stop-loss threshold, defined as a percentage below the entry price, used to limit potential losses.
-        take_profit (float): The take-profit threshold, defined as a percentage above the entry price, used to secure profits.
-        market (pd.DataFrame): The market data, which must include a 'close' column that represents the closing prices of the asset.
-        units (float): The number of units the position is holding.
-        entry_price (float): The price of entry for one unit.
+        start_date (pd.Timestamp): Date when the position is opened.
+        stop_loss (float): Percentage below the entry price for the stop-loss level.
+        take_profit (float): Percentage above the entry price for the take-profit level.
+        market (pd.DataFrame): Market data with at least 'close' prices.
+        units (float): Number of units involved in the position.
+        entry_price (float): Price at which the position is entered.
+        type (str): Type of position, either short or long
 
     Methods:
-        compute_triggers: Calculates the price levels for stop-loss and take-profit triggers.
-        generate_holding_time: Marks the holding period of the position in the market data.
-        add_stop_loss_to_ax: Adds stop-loss and take-profit lines to a matplotlib axis.
-        add_triggers: Plots the points where stop-loss or take-profit conditions were triggered.
-        add_to_ax: Adds the holding period and trigger points to a matplotlib axis for visualization.
-        plot: Creates a plot visualizing the position's lifecycle against market data.
+        compute_exit_price: Determines the exit price based on the trigger events.
+        update_cash: Updates the cash balance based on position entry and exit.
+        add_units_to_dataframe: Adds the position's units to a DataFrame during the holding period.
+        compute_triggers: Identifies the trigger levels and dates for stop-loss and take-profit.
+        generate_holding_time: Marks the holding period within the market data timeframe.
+        plot: Visualizes the position lifecycle against the market data.
     """
     start_date: pandas.Timestamp
     stop_loss: float
@@ -36,16 +37,21 @@ class Position:
     market: pandas.DataFrame
     units: float
     entry_price: float
+    type: str
 
     def __post_init__(self):
         self.start_date = pandas.to_datetime(self.start_date)
-        if 'close' not in self.market.columns:
-            raise ValueError("Market DataFrame must contain a 'close' column.")
 
+        self.validate_market_data()
         self.compute_triggers()
         self.compute_exit_price()
         self.entry_value = self.entry_price * self.units
         self.generate_holding_time()
+
+    def validate_market_data(self):
+        """Ensures the market data contains the required 'close' column."""
+        if 'close' not in self.market.columns:
+            raise ValueError("The market DataFrame must contain a 'close' column.")
 
     def compute_exit_price(self):
         """Determines the exit price of the position based on the actual trigger event."""

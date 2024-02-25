@@ -17,5 +17,5 @@ __all__ = [
     'RelativeMomentumIndex',
     'BollingerBands',
     'MovingAverageConvergenceDivergence',
-    'CombinedSignalStrategy'
+    'StochRSIIndicator'
 ]

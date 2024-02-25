@@ -19,4 +19,6 @@ def test_load_dataframe(currency_pair: tuple) -> None:
 
     print(data_frame.columns)
 
+    data_frame = get_market_data('usd', 'eur', year=2023)
+
 # -

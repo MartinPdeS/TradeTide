@@ -50,7 +50,6 @@ class RelativeMomentumIndex(BaseIndicator):
         self.oversold_threshold = oversold_threshold
         self.value_type = value_type
 
-    @BaseIndicator.shade_signal
     def add_to_ax(self, ax: plt.Axes) -> NoReturn:
         """
         Adds the RMI plot to the specified Matplotlib axis, including the overbought and oversold threshold lines.

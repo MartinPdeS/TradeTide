@@ -101,7 +101,6 @@ class PlotTrade():
             if show:
                 ax = axis[axis_number, 0]
                 method(ax=ax)
-                # self.add_position_holding_to_ax(ax=self.axis[0])
                 ax.set_axisbelow(True)
                 self.add_buy_sell_signal_to_ax(ax=ax)
                 self._format_legend(ax=ax)
@@ -132,20 +131,10 @@ class PlotTrade():
         """
         ax.set_ylabel('Positions')
 
-        # Initialize a DataFrame to track total holdings over time
-        total_holdings = pandas.DataFrame(index=self.market.index)
-        total_holdings['value'] = 0
-
-        # Aggregate holdings from all positions in the portfolio
-        for position in self.backtester.position_list:
-            # Ensure 'holding' is aligned with the market index
-            aligned_holding = position.holding.reindex(self.market.index, fill_value=0)
-            total_holdings['value'] += aligned_holding
-
         # Plot the cumulative positions over time
         ax.plot(
-            total_holdings.index,
-            total_holdings['value'],
+            self.portfolio.index,
+            self.portfolio.positions,
             linewidth=2,
             color='C0',
             label='Cumulative Positions'
@@ -167,20 +156,10 @@ class PlotTrade():
         """
         ax.set_ylabel('Units')
 
-        # Initialize a DataFrame to track total units over time
-        total_units = pandas.DataFrame(index=self.market.index)
-        total_units['units'] = 0
-
-        # Aggregate units from all positions in the portfolio
-        for position in self.backtester.position_list:
-            # Ensure 'holding' is aligned with the market index
-            aligned_holding = position.holding.reindex(self.market.index, fill_value=0)
-            total_units['units'] += aligned_holding * position.units
-
         # Plot the total units over time
         ax.plot(
-            total_units.index,
-            total_units['units'],
+            self.portfolio.index,
+            self.portfolio.units,
             linewidth=2,
             color='C0',
             label='Total Units'
@@ -201,31 +180,28 @@ class PlotTrade():
         """
         ax.set_ylabel('Portfolio Value')
 
-        # Plot the total portfolio value over time
-        ax.plot(
-            self.portfolio.index,
-            self.portfolio['total'],
-            label='Total Value',
-            linewidth=2,
-            color='C0'
-        )
+        # ax.plot(
+        #     self.portfolio.index,
+        #     self.portfolio.holdings_value,
+        #     label='Holdings Value',
+        #     linewidth=2,
+        #     color='C0'
+        # )
 
-        # Plot the cash component of the portfolio over time
         ax.plot(
             self.portfolio.index,
-            self.portfolio['cash'],
+            self.portfolio.cash,
             label='Cash',
             linewidth=2,
             color='C1'
         )
 
-        # Plot the holdings value of the portfolio over time
         ax.plot(
             self.portfolio.index,
-            self.portfolio['holdings'],
-            label='Holdings',
+            self.portfolio.total,
+            label='Total',
             linewidth=2,
-            color='C2'
+            color='black'
         )
 
     def add_strategy_to_ax(self, ax: plt.Axes) -> NoReturn:
@@ -259,54 +235,28 @@ class PlotTrade():
         # Aggregate units from all positions in the portfolio
         for position in self.backtester.position_list:
             position.add_stop_loss_to_ax(ax=ax)
-            # Ensure 'holding' is aligned with the market index
-            # aligned_holding = position.holding.reindex(self.market.index, fill_value=0)
-            # total_units['units'] += aligned_holding * position.units
-
-        # index_open_position = self.portfolio['positions'] == 1
-        # index_close_position = self.portfolio['positions'] == -1
-
-        # ax.scatter(
-        #     x=self.portfolio.index[index_open_position],
-        #     y=self.market['close'][index_open_position],
-        #     label='Long position',
-        #     marker='^',
-        #     s=50,
-        #     color='green',
-        # )
-
-        # ax.scatter(
-        #     x=self.portfolio.index[index_close_position],
-        #     y=self.market['close'][index_close_position],
-        #     label='Short position',
-        #     marker='v',
-        #     color='red',
-        #     s=50,
-        # )
-
-        # self.add_stop_loss_take_profit_to_ax(ax=ax)
 
     def add_buy_sell_signal_to_ax(self, ax: plt.Axes) -> NoReturn:
-        min_y, max_y = ax.get_ylim()
-
         ax.fill_between(
-            x=self.portfolio.index,
-            y1=max_y,
-            y2=min_y,
+            x=self.market.index,
+            y1=0,
+            y2=1,
             where=self.strategy.data['signal'] == -1,
             color='red',
             label='Sell signal',
             alpha=0.2,
+            transform=ax.get_xaxis_transform(),
         )
 
         ax.fill_between(
-            x=self.portfolio.index,
-            y1=max_y,
-            y2=min_y,
+            x=self.market.index,
+            y1=0,
+            y2=1,
             where=self.strategy.data['signal'] == +1,
             color='green',
             label='Buy signal',
             alpha=0.2,
+            transform=ax.get_xaxis_transform(),
         )
 
     def add_stop_loss_take_profit_to_ax(self, ax: plt.Axes) -> NoReturn:
@@ -340,9 +290,6 @@ class PlotTrade():
         Parameters:
             ax (plt.Axes): The matplotlib axis object to which the position holding information will be added.
         """
-        min_y = self.market['close'].min()
-        max_y = self.market['close'].max()
-
         # Shading holding periods
         holding = False
 
@@ -372,11 +319,12 @@ class PlotTrade():
                 )
 
                 ax.fill_betweenx(
-                    y=[min_y, max_y],
+                    y=[0, 1],
                     x1=start_date,
                     x2=end_date,
                     color='gray',
                     alpha=0.3,
+                    transform=ax.get_xaxis_transform(),
                 )
 
     def _format_legend(self, ax: plt.Axes) -> NoReturn:

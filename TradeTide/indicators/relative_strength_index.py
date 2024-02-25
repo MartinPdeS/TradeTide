@@ -46,7 +46,6 @@ class RelativeStrengthIndex(BaseIndicator):
         self.oversold_threshold = oversold_threshold
         self.value_type = value_type
 
-    @BaseIndicator.shade_signal
     def add_to_ax(self, ax: matplotlib.axes.Axes) -> NoReturn:
         """
         Adds the RSI plot to the specified Matplotlib axis, including the overbought and oversold threshold lines.

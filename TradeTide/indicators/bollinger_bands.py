@@ -43,7 +43,6 @@ class BollingerBands(BaseIndicator):
         self.deviation = deviation
         self.value_type = 'close'
 
-    @BaseIndicator.shade_signal
     def add_to_ax(self, ax: matplotlib.axes.Axes) -> NoReturn:
         """
         Adds the Bollinger Bands plot to the specified Matplotlib axis.

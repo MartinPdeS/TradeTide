@@ -47,7 +47,6 @@ class MovingAverageConvergenceDivergence(BaseIndicator):
         self.signal_period = signal_period
         self.value_type = value_type
 
-    @BaseIndicator.shade_signal
     def add_to_ax(self, ax: plt.Axes) -> NoReturn:
         """
         Adds the MACD line, signal line, and histogram to the specified Matplotlib axis.

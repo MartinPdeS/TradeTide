@@ -35,7 +35,7 @@ class Random(BaseIndicator):
         """
         self.number_of_occurence = number_of_occurence
 
-    @BaseIndicator.shade_signal
+    @BaseIndicator.decorator_shade_signal
     def add_to_ax(self, ax: matplotlib.axes.Axes) -> NoReturn:
         """
         Updates the y-axis label of the given Matplotlib axis to indicate that a random signal indicator is being used.

@@ -46,108 +46,9 @@ class BackTester():
             with the 'strategy'. The 'strategy' instance must be properly configured with any required parameters prior to
             initialization of the BackTester.
         """
-        self.market_dataframe = market
+        self.market = market
         self.strategy = strategy
         self.portfolio = None
-
-    def manage_positions(
-            self,
-            market: pandas.DataFrame,
-            spread: float,
-            stop_loss: float,
-            take_profit: float,
-            max_cap_per_trade: float) -> NoReturn:
-        """
-        Manages the opening and closing of trading positions based on stop loss and take profit thresholds, adjusted for spread.
-
-        This method updates the portfolio DataFrame to include entry prices for new positions (adjusted for spread), and calculates
-        stop loss and take profit price levels for each open position. It then checks market data to determine if these levels are
-        breached, indicating whether a position should be closed due to stop loss or take profit conditions being met.
-
-        Parameters:
-            market (pandas.DataFrame): The DataFrame containing historical market data with 'close', 'low', and 'high' price columns.
-            spread (float): The spread applied to the entry price of a new position, representing the transaction cost.
-            stop_loss (float): The stop loss threshold, expressed as a decimal (e.g., 0.1 for 10%). Positions are closed if the market
-                               price drops below this threshold relative to the entry price.
-            take_profit (float): The take profit threshold, expressed as a decimal (e.g., 0.1 for 10%). Positions are closed if the market
-                                 price rises above this threshold relative to the entry price.
-
-        Updates:
-            The portfolio DataFrame is updated in-place to include the following columns:
-            - 'opened_positions': Tracks newly opened positions.
-            - 'entry_price': The entry price for each position, adjusted for the spread.
-            - 'stop_loss_price': The price level at which a stop loss would be triggered.
-            - 'take_profit_price': The price level at which a take profit would be triggered.
-            - 'stop_loss_triggered': A boolean flag indicating if the stop loss condition has been met.
-            - 'take_profit_triggered': A boolean flag indicating if the take profit condition has been met.
-            - 'close_positions': A boolean flag indicating if a position should be closed due to stop loss or take profit conditions.
-
-        Note:
-            This method assumes the 'positions' column in the portfolio DataFrame tracks the current open positions, where a value of
-            1 indicates a new buy position. The method modifies the portfolio DataFrame in-place and does not return a value.
-        """
-        # Extract signals and identify where new positions should be opened
-        signals = self.strategy.data['signal']
-        new_positions = signals.diff().fillna(0) != 0
-
-        # Initialize or clear the list to store Position objects
-        self.position_list = []
-
-        # Iterate over signals and open new positions where indicated
-        for date, signal in signals[new_positions].items():
-            if signal != 0:  # Check if the signal indicates a new position (non-zero)
-                position = Position(
-                    start_date=date,
-                    stop_loss=stop_loss,
-                    take_profit=take_profit,
-                    market=market,
-                    spread=spread,
-                    max_cap_per_trade=max_cap_per_trade
-                )
-                self.position_list.append(position)
-
-    def calculate_units_and_portfolio(
-            self,
-            market: pandas.DataFrame,
-            initial_capital: float,
-            spread: float,
-            max_cap_per_trade: float):
-        """
-        Calculates the number of units to buy for each trade based on available capital, spread, and market conditions,
-        and updates the portfolio DataFrame with these calculations.
-
-        This method computes the feasible number of units for each trade while adhering to the constraints of initial capital,
-        maximum capital allocation per trade, and the transaction spread. It updates the portfolio with details of holdings,
-        cash balance, total value, and returns over time.
-
-        Parameters:
-            market (pandas.DataFrame): The DataFrame containing historical market data, including at least 'close' prices and dates.
-            initial_capital (float): The initial capital available for trading.
-            spread (float): The transaction spread, representing the cost of trading, deducted from the capital allocated per trade.
-            max_cap_per_trade (float): The maximum amount of capital allocated for each trade.
-
-        The method updates the portfolio DataFrame in-place, adding columns for:
-            - 'units': The number of units bought in each trade.
-            - 'holdings': The cumulative value of the holdings over time.
-            - 'cash': The cash balance after each trade, considering the cost of purchased units and the spread.
-            - 'total': The total value of the portfolio (cash + holdings) over time.
-            - 'returns': The percentage return of the portfolio, calculated from the total value.
-
-        Note:
-            - The method assumes that 'entry_price' is a column in the portfolio DataFrame, representing the price at which each trade is entered.
-            - The 'market' DataFrame must include a 'close' column, which represents the closing price of the asset.
-            - The method modifies the portfolio DataFrame in-place; it does not return a new DataFrame.
-        """
-        # Aliasing portfolio
-        portfolio = self.portfolio
-
-        # Calculate cumulative holdings and cash, considering the units bought and the entry price
-        portfolio['holdings'] = (portfolio['units'] * market['close']).cumsum()
-        portfolio['cash'] = initial_capital - (portfolio['units'] * portfolio['entry_price']).cumsum()
-
-        # Total portfolio value and percentage returns
-        portfolio['total'] = portfolio['cash'] + portfolio['holdings']
-        portfolio['returns'] = portfolio['total'].ffill().pct_change()
 
     def signals_to_positions(self) -> NoReturn:
         """
@@ -258,29 +159,93 @@ class BackTester():
         take_profit = percent_to_float(take_profit)
 
         self.initial_capital = initial_capital
-        market_data = self.market_dataframe.copy()
-
-        # Initialize the portfolio DataFrame
-        self.portfolio = pandas.DataFrame(index=market_data.index)
 
         self.manage_positions(
-            market=market_data,
+            market=self.market,
             spread=spread,
             stop_loss=stop_loss,
             take_profit=take_profit,
             max_cap_per_trade=max_cap_per_trade
         )
 
-        # self.calculate_units_and_portfolio(
-        #     market=market_data,
-        #     initial_capital=initial_capital,
-        #     spread=spread,
-        #     max_cap_per_trade=max_cap_per_trade
-        # )
+        self.portfolio = pandas.DataFrame(index=self.market.index)
+        self.portfolio['units'] = 0.
+        self.portfolio['holdings_value'] = 0.
+        self.portfolio['holding'] = 0.
+        self.portfolio['cash'] = float(initial_capital)
+        self.portfolio['positions'] = 0.
 
-        self.market_data = market_data
+        # Calculate cumulative holdings and cash, considering the units bought and the entry price
+        for position in self.position_list:
+            position.add_units_to_dataframe(self.portfolio)
+            position.add_holding_value_to_dataframe(self.portfolio)
+            position.add_holding_to_dataframe(self.portfolio)
+            position.update_cash(self.portfolio)
+
+        # # Total portfolio value and percentage returns
+        self.portfolio['total'] = self.portfolio['cash'] + self.portfolio['holdings_value']
+        self.portfolio['returns'] = self.portfolio['total'].ffill().pct_change()
 
         return self.portfolio
+
+    def manage_positions(
+            self,
+            market: pandas.DataFrame,
+            spread: float,
+            stop_loss: float,
+            take_profit: float,
+            max_cap_per_trade: float) -> NoReturn:
+        """
+        Manages the opening and closing of trading positions based on stop loss and take profit thresholds, adjusted for spread.
+
+        This method updates the portfolio DataFrame to include entry prices for new positions (adjusted for spread), and calculates
+        stop loss and take profit price levels for each open position. It then checks market data to determine if these levels are
+        breached, indicating whether a position should be closed due to stop loss or take profit conditions being met.
+
+        Parameters:
+            market (pandas.DataFrame): The DataFrame containing historical market data with 'close', 'low', and 'high' price columns.
+            spread (float): The spread applied to the entry price of a new position, representing the transaction cost.
+            stop_loss (float): The stop loss threshold, expressed as a decimal (e.g., 0.1 for 10%). Positions are closed if the market
+                               price drops below this threshold relative to the entry price.
+            take_profit (float): The take profit threshold, expressed as a decimal (e.g., 0.1 for 10%). Positions are closed if the market
+                                 price rises above this threshold relative to the entry price.
+
+        Updates:
+            The portfolio DataFrame is updated in-place to include the following columns:
+            - 'opened_positions': Tracks newly opened positions.
+            - 'entry_price': The entry price for each position, adjusted for the spread.
+            - 'stop_loss_price': The price level at which a stop loss would be triggered.
+            - 'take_profit_price': The price level at which a take profit would be triggered.
+            - 'stop_loss_triggered': A boolean flag indicating if the stop loss condition has been met.
+            - 'take_profit_triggered': A boolean flag indicating if the take profit condition has been met.
+            - 'close_positions': A boolean flag indicating if a position should be closed due to stop loss or take profit conditions.
+
+        Note:
+            This method assumes the 'positions' column in the portfolio DataFrame tracks the current open positions, where a value of
+            1 indicates a new buy position. The method modifies the portfolio DataFrame in-place and does not return a value.
+        """
+        # Extract signals and identify where new positions should be opened
+        signals = self.strategy.data['signal']
+        new_positions = signals.diff().fillna(0) != 0
+
+        # Initialize or clear the list to store Position objects
+        self.position_list = []
+
+        # Iterate over signals and open new positions where indicated
+        for date, signal in signals[new_positions].items():
+            if signal != 0:  # Check if the signal indicates a new position (non-zero)
+                entry_price = self.market.loc[date, 'close'] + spread
+                units = numpy.floor((max_cap_per_trade - spread) / entry_price)
+
+                position = Position(
+                    start_date=date,
+                    stop_loss=stop_loss,
+                    take_profit=take_profit,
+                    market=market,
+                    units=units,
+                    entry_price=entry_price
+                )
+                self.position_list.append(position)
 
     def plot(self, **kwargs) -> NoReturn:
         """
@@ -298,7 +263,7 @@ class BackTester():
         """
         plot = PlotTrade(
             back_tester=self,
-            market=self.market_dataframe,
+            market=self.market,
             portfolio=self.portfolio,
             strategy=self.strategy,
         )

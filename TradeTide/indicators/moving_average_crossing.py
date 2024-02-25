@@ -47,7 +47,6 @@ class MovingAverageCrossing(BaseIndicator):
         self.min_period = min_period
         self.value_type = value_type
 
-    @BaseIndicator.shade_signal
     def add_to_ax(self, ax: matplotlib.axes.Axes) -> NoReturn:
         """
         Adds the short and long moving average plots to the specified Matplotlib axis.

@@ -29,6 +29,9 @@ def get_data_path(currency_0: str, currency_1: str, year: int) -> pathlib.Path:
 
     data_file = data_folder / f"{currency_0}_{currency_1}" / str(year) / "data"
 
+    if not data_file.with_suffix('.csv').exists():
+        data_file = data_folder / f"{currency_1}_{currency_0}" / str(year) / "data"
+
     return data_file
 
 

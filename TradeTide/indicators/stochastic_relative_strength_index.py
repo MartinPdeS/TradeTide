@@ -37,7 +37,6 @@ class StochRSIIndicator(BaseIndicator):
         self.rsi_periods = rsi_periods
         self.value_type = value_type
 
-    @BaseIndicator.shade_signal
     def add_to_ax(self, ax: matplotlib.axes.Axes) -> NoReturn:
         """
         Adds the StochRSI plot to the specified Matplotlib axis.

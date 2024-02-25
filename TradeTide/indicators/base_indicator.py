@@ -43,6 +43,8 @@ class BaseIndicator(ABC):
         figure, ax = plt.subplots(1, 1, figsize=(12, 4))
         self.add_to_ax(ax)
 
+        self.shade_signal_area(ax=ax)
+
         plt.show()
 
     @property
@@ -90,7 +92,30 @@ class BaseIndicator(ABC):
 
         return df
 
-    def shade_signal(function):
+    def shade_signal_area(self, ax: plt.Axes) -> NoReturn:
+        ax.fill_between(
+            x=self.data.index,
+            y1=0,
+            y2=1,
+            where=self.data['signal'] == -1,
+            color='red',
+            label='Sell signal',
+            alpha=0.2,
+            transform=ax.get_xaxis_transform(),
+        )
+
+        ax.fill_between(
+            x=self.data.index,
+            y1=0,
+            y2=1,
+            where=self.data['signal'] == +1,
+            color='green',
+            label='Buy signal',
+            alpha=0.2,
+            transform=ax.get_xaxis_transform(),
+        )
+
+    def decorator_shade_signal(function):
         """
         A decorator to add shaded areas to the plot for buy and sell signals.
 
@@ -104,31 +129,11 @@ class BaseIndicator(ABC):
         def wrapper(self, ax: matplotlib.axes.Axes):
             function(self, ax)
 
-            min_y, max_y = ax.get_ylim()
-
-            ax.fill_between(
-                x=self.data.index,
-                y1=max_y,
-                y2=min_y,
-                where=self.data['signal'] == -1,
-                color='red',
-                label='Sell signal',
-                alpha=0.2,
-            )
-
-            ax.fill_between(
-                x=self.data.index,
-                y1=max_y,
-                y2=min_y,
-                where=self.data['signal'] == +1,
-                color='green',
-                label='Buy signal',
-                alpha=0.2,
-            )
+            self.shade_signal_area(ax=ax)
 
         return wrapper
 
-    @shade_signal
+    @decorator_shade_signal
     def add_to_ax(self, ax: matplotlib.axes.Axes) -> NoReturn:
         """
         Adds the indicator's data to the provided Axes object. This method is intended to be overridden by subclasses

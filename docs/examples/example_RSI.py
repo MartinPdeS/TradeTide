@@ -1,21 +1,20 @@
-from TradeTide import BackTester, RelativeStrengthIndex, get_market_data
+from TradeTide import BackTester, indicators, get_market_data
 
 # Load historical market data
 market_data = get_market_data('eur', 'usd', year=2023)
 
-market_data = market_data[:40_000]
+market_data = market_data[:4_000]
 
 # Initialize the trading strategy
-strategy = RelativeStrengthIndex(
+strategy = indicators.RelativeStrengthIndex(
     period='30min',
-    overbought_threshold=90,
-    oversold_threshold=10
+    overbought_threshold=70,
+    oversold_threshold=30
 )
 
 strategy.generate_signal(market_data)
 
 strategy.plot()
-dsa
 
 # Create the BackTester instance with market data and strategy
 backtester = BackTester(market=market_data, strategy=strategy)

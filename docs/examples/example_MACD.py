@@ -1,4 +1,4 @@
-from TradeTide import BackTester, MovingAverageConvergenceDivergence, get_market_data
+from TradeTide import BackTester, indicators, get_market_data
 
 # Load historical market data
 market_data = get_market_data('eur', 'usd', year=2023)
@@ -6,10 +6,10 @@ market_data = get_market_data('eur', 'usd', year=2023)
 market_data = market_data[:4_000]
 
 # Initialize the trading strategy
-strategy = MovingAverageConvergenceDivergence(
+strategy = indicators.MovingAverageConvergenceDivergence(
     short_period=12,
     long_period=26,
-    signal_period='9min'
+    signal_period=9
 )
 
 strategy.generate_signal(market_data)

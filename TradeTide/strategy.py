@@ -21,7 +21,7 @@ class Strategy:
 
     value_type: str = 'close'
 
-    def __init__(self, *strategies: BaseIndicator, weights: list = None) -> numpy:
+    def __init__(self, *indicators: BaseIndicator, weights: list = None) -> numpy:
         """
         Initializes the CombinedSignalStrategy with market data, strategy instances, and optional weights.
 
@@ -29,17 +29,17 @@ class Strategy:
             strategies (list): List of strategy instances, each adhering to the StrategyInterface.
             weights (list, optional): List of weights corresponding to each strategy. If None, weights are initialized randomly.
         """
-        self.strategies = strategies
-        self.weights = weights if weights is not None else numpy.random.rand(len(strategies))
+        self.indicators = indicators
+        self.weights = weights if weights is not None else numpy.random.rand(len(indicators))
         self.weights /= numpy.sqrt(numpy.square(self.weights).sum())
 
-        if len(strategies) != len(self.weights):
-            raise ValueError("The number of strategies must be equal to the number of weights.")
+        if len(indicators) != len(self.weights):
+            raise ValueError("The number of indicators must be equal to the number of weights.")
 
     @BaseIndicator.post_generate_signal
     def generate_signal(self, market_data: pandas.DataFrame) -> pandas.DataFrame:
         """
-        Aggregates signals from individual strategies based on assigned weights to generate final combined signals.
+        Aggregates signals from individual indicators based on assigned weights to generate final combined signals.
 
         Returns:
             pd.Series: Final combined signals where 1 represents a 'buy' signal, -1 represents a 'sell' signal,
@@ -48,7 +48,7 @@ class Strategy:
         signals_df = pandas.DataFrame(index=market_data.index)
 
         # Collect signals from each strategy
-        for i, strategy in enumerate(self.strategies):
+        for i, strategy in enumerate(self.indicators):
             signals_df[f'signal_{i}'] = strategy.generate_signal(market_data)
 
         # Apply weights to the signals
@@ -63,7 +63,7 @@ class Strategy:
     def plot(self) -> NoReturn:
         n_strategy = len(self.strategies)
 
-        title: str = 'Trading Strategies Overview'
+        title: str = 'Trading Indicators Overview'
 
         self.figure, self.axis = plt.subplots(
             nrows=(n_strategy + 1),
@@ -104,8 +104,8 @@ class Strategy:
         self.axis[0].set_ylabel('Close value')
         self.axis[-1].set_xlabel('Date')
 
-        for strategy, ax in zip(self.strategies, self.axis[1:]):
-            strategy.add_to_ax(ax)
+        for indicator, ax in zip(self.indicators, self.axis[1:]):
+            indicator.add_to_ax(ax)
 
         plt.subplots_adjust(wspace=0, hspace=0.1)
         plt.legend()

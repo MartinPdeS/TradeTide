@@ -1,4 +1,4 @@
-from TradeTide import BackTester, MovingAverageCrossing, get_market_data
+from TradeTide import BackTester, indicators, get_market_data
 
 # Load historical market data
 market_data = get_market_data('eur', 'usd', year=2023)
@@ -6,13 +6,15 @@ market_data = get_market_data('eur', 'usd', year=2023)
 market_data = market_data[:4000]
 
 # Initialize the trading strategy
-strategy = MovingAverageCrossing(
+strategy = indicators.MovingAverageCrossing(
     long_window='150min',
     short_window='30min',
     min_period=10
 )
 
 strategy.generate_signal(market_data)
+
+strategy.plot()
 
 # Create the BackTester instance with market data and strategy
 backtester = BackTester(market=market_data, strategy=strategy)

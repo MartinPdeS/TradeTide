@@ -1,12 +1,11 @@
-from TradeTide import BackTester, RelativeMomentumIndex, get_market_data
+from TradeTide import BackTester, indicators, get_market_data
 
 # Load historical market data
 market_data = get_market_data('eur', 'usd', year=2023)
-
-market_data = market_data[:40_000]
+market_data = market_data[:10_000]
 
 # Initialize the trading strategy
-strategy = RelativeMomentumIndex(
+strategy = indicators.RelativeMomentumIndex(
     period='30min',
     momentum=5,
     overbought_threshold=70,

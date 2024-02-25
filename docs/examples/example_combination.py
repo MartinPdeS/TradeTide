@@ -1,4 +1,4 @@
-from TradeTide import BackTester, RelativeMomentumIndex, BollingerBands, get_market_data, CombinedSignalStrategy
+from TradeTide import BackTester, indicators, get_market_data, Strategy
 
 # Load historical market data
 market_data = get_market_data('eur', 'usd', year=2023)
@@ -6,18 +6,14 @@ market_data = get_market_data('eur', 'usd', year=2023)
 market_data = market_data[:40_000]
 
 # Initialize the trading strategy
-strategy_0 = BollingerBands()
-strategy_1 = RelativeMomentumIndex()
+strategy_0 = indicators.BollingerBands()
+strategy_1 = indicators.RelativeMomentumIndex()
 
-strategy = CombinedSignalStrategy(
-    strategies=[strategy_0, strategy_1]
+strategy = Strategy(
+    strategy_0, strategy_1
 )
 
 strategy.generate_signal(market_data)
-
-strategy.plot()
-
-dsa
 
 # Create the BackTester instance with market data and strategy
 backtester = BackTester(market=market_data, strategy=strategy)

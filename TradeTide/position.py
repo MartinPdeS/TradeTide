@@ -64,14 +64,23 @@ class Position:
         dataframe.loc[self.start_date:self.stop_date, 'cash'] -= entry_spend
         dataframe.loc[self.stop_date:, 'cash'] += exit_get
 
+    def update_portfolio_dataframe(self, dataframe: pandas.DataFrame) -> NoReturn:
+        self.add_units_to_dataframe(dataframe=dataframe)
+        self.add_holding_value_to_dataframe(dataframe=dataframe)
+        self.add_position_to_dataframe(dataframe=dataframe)
+        self.update_cash(dataframe=dataframe)
+
     def add_units_to_dataframe(self, dataframe: pandas.DataFrame) -> NoReturn:
         dataframe.loc[self.start_date:self.stop_date, 'units'] += self.units
 
-    def add_holding_to_dataframe(self, dataframe: pandas.DataFrame) -> NoReturn:
-        dataframe.loc[self.start_date:self.stop_date, 'positions'] += 1
+    def add_position_to_dataframe(self, dataframe: pandas.DataFrame) -> NoReturn:
+        if self.type == 'short':
+            dataframe.loc[self.start_date:self.stop_date, 'short_positions'] += 1
+        else:
+            dataframe.loc[self.start_date:self.stop_date, 'long_positions'] += 1
 
     def add_holding_value_to_dataframe(self, dataframe: pandas.DataFrame) -> NoReturn:
-        dataframe.loc[self.start_date:self.stop_date, 'holdings_value'] += self.units * self.market.close
+        dataframe.loc[self.start_date:self.stop_date, 'holdings'] += self.units * self.market.close
 
     def compute_triggers(self) -> NoReturn:
         """Computes and sets the trigger levels and dates for stop-loss and take-profit conditions."""
@@ -117,6 +126,7 @@ class Position:
                 x=self.take_profit_trigger,
                 y=self.market.at[self.take_profit_trigger, 'close'],
                 color='green',
+                s=10,
                 label='Take-profit Triggered',
                 zorder=5
             )
@@ -126,6 +136,7 @@ class Position:
                 x=self.stop_loss_trigger,
                 y=self.market.at[self.stop_loss_trigger, 'close'],
                 color='red',
+                s=10,
                 label='Stop-loss Triggered',
                 zorder=5
             )

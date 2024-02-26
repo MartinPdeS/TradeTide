@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import pandas
 import numpy
 from TradeTide.strategy import Strategy
-import matplotlib
 from typing import NoReturn
 import MPSPlots.render2D
 # plt.style.use('ggplot')
@@ -29,7 +28,7 @@ class PlotTrade():
 
     def __init__(
             self,
-            back_tester: object,
+            backtester: object,
             market: pandas.DataFrame,
             portfolio: pandas.DataFrame,
             strategy: Strategy):
@@ -42,12 +41,12 @@ class PlotTrade():
             strategy (Strategy): The trading strategy object which contains logic to add strategy-specific
                                      indicators to the plot.
         """
-        self.backtester = back_tester
+        self.backtester = backtester
         self.market = market
         self.portfolio = portfolio
         self.strategy = strategy
 
-    def construct_figure(
+    def plot_trading_strategy(
             self,
             show_price: bool = True,
             show_metric: bool = False,
@@ -74,14 +73,14 @@ class PlotTrade():
             - The subplots share the x-axis, which typically represents time, to facilitate comparative analysis across different aspects of the trading strategy.
             - Additional customization options for each subplot, such as legends, axes labels, and plot styles, can be specified within the respective plotting methods called within this method.
         """
-        n_axis = numpy.sum([show_price, show_metric, show_assets, show_positions, show_units])
+        plots_count = sum([show_price, show_metric, show_assets, show_positions, show_units])
 
         title: str = 'Trading Strategy Overview'
 
         figure, axis = plt.subplots(
-            nrows=n_axis,
+            nrows=plots_count,
             ncols=1,
-            figsize=(12, 2 * n_axis),
+            figsize=(12, 2 * plots_count),
             sharex=True,
             squeeze=False
         )
@@ -89,11 +88,11 @@ class PlotTrade():
         figure.suptitle(title)
 
         plot_methods = [
-            (show_price, self.add_price_and_signal_to_ax),
-            (show_metric, self.add_strategy_to_ax),
-            (show_positions, self.add_position_to_ax),
-            (show_assets, self.add_asset_to_ax),
-            (show_units, self.add_units_to_ax)
+            (show_price, self._add_price_and_signal_to_ax),
+            (show_metric, self._add_strategy_to_ax),
+            (show_positions, self._add_position_to_ax),
+            (show_assets, self._add_asset_to_ax),
+            (show_units, self._add_units_to_ax)
         ]
 
         axis_number = 0
@@ -113,7 +112,7 @@ class PlotTrade():
 
         return figure
 
-    def add_position_to_ax(self, ax: plt.Axes) -> None:
+    def _add_position_to_ax(self, ax: plt.Axes) -> None:
         """
         Visualizes the cumulative positions held over time on a specified Matplotlib axis. This visualization
         helps in understanding how the trading strategy's positions change throughout the trading period.
@@ -134,13 +133,21 @@ class PlotTrade():
         # Plot the cumulative positions over time
         ax.plot(
             self.portfolio.index,
-            self.portfolio.positions,
+            self.portfolio.long_positions,
             linewidth=2,
             color='C0',
-            label='Cumulative Positions'
+            label='Long positions'
         )
 
-    def add_units_to_ax(self, ax: plt.Axes) -> None:
+        ax.plot(
+            self.portfolio.index,
+            self.portfolio.short_positions,
+            linewidth=2,
+            color='C1',
+            label='Short positions'
+        )
+
+    def _add_units_to_ax(self, ax: plt.Axes) -> None:
         """
         Visualizes the total units held in the trading portfolio over time on a specified Matplotlib axis. This plot
         aggregates the units from all positions in the portfolio, providing insight into the portfolio's exposure in
@@ -165,7 +172,7 @@ class PlotTrade():
             label='Total Units'
         )
 
-    def add_asset_to_ax(self, ax: plt.Axes) -> None:
+    def _add_asset_to_ax(self, ax: plt.Axes) -> None:
         """
         Visualizes the composition of the trading portfolio over time on a specified Matplotlib axis. This includes
         plots for the total portfolio value, cash component, and holdings value, providing a comprehensive view of
@@ -179,14 +186,6 @@ class PlotTrade():
             representing the total portfolio value, cash amount, and value of holdings over time, respectively.
         """
         ax.set_ylabel('Portfolio Value')
-
-        # ax.plot(
-        #     self.portfolio.index,
-        #     self.portfolio.holdings_value,
-        #     label='Holdings Value',
-        #     linewidth=2,
-        #     color='C0'
-        # )
 
         ax.plot(
             self.portfolio.index,
@@ -204,7 +203,7 @@ class PlotTrade():
             color='black'
         )
 
-    def add_strategy_to_ax(self, ax: plt.Axes) -> NoReturn:
+    def _add_strategy_to_ax(self, ax: plt.Axes) -> NoReturn:
         """
         Adds strategy-specific metrics or indicators to a specified matplotlib axis. This method utilizes the
         `add_to_ax` method of the strategy object, allowing for flexible integration of various strategy indicators.
@@ -214,7 +213,7 @@ class PlotTrade():
         """
         self.strategy.add_to_ax(ax)
 
-    def add_price_and_signal_to_ax(self, ax: plt.Axes) -> NoReturn:
+    def _add_price_and_signal_to_ax(self, ax: plt.Axes) -> NoReturn:
         """
         Plots the market closing prices and trading signals (buy/sell) on a specified matplotlib axis. This method
         provides a visual representation of when trades were opened or closed in relation to the market price movements.
@@ -235,6 +234,7 @@ class PlotTrade():
         # Aggregate units from all positions in the portfolio
         for position in self.backtester.position_list:
             position.add_stop_loss_to_ax(ax=ax)
+            position.add_triggers(ax=ax)
 
     def add_buy_sell_signal_to_ax(self, ax: plt.Axes) -> NoReturn:
         ax.fill_between(
@@ -258,74 +258,6 @@ class PlotTrade():
             alpha=0.2,
             transform=ax.get_xaxis_transform(),
         )
-
-    def add_stop_loss_take_profit_to_ax(self, ax: plt.Axes) -> NoReturn:
-        discontinuity = self.portfolio.stop_loss_price.diff() != 0
-
-        stop_loss = self.portfolio.stop_loss_price.copy()
-        take_profit = self.portfolio.take_profit_price.copy()
-
-        stop_loss[discontinuity] = numpy.nan
-        take_profit[discontinuity] = numpy.nan
-
-        ax.plot(
-            stop_loss,
-            color='red',
-            label='stop-loss',
-            linewidth=2
-        )
-
-        ax.plot(
-            take_profit,
-            color='green',
-            label='take-profit',
-            linewidth=2
-        )
-
-    def add_position_holding_to_ax(self, ax: plt.Axes) -> NoReturn:
-        """
-        Visualizes trading positions as shaded regions on the price plot, indicating periods where trades are
-        held. It also plots stop-loss and take-profit levels, providing a clear view of trade management strategies.
-
-        Parameters:
-            ax (plt.Axes): The matplotlib axis object to which the position holding information will be added.
-        """
-        # Shading holding periods
-        holding = False
-
-        for date, row in self.portfolio.iterrows():
-            if row.opened_positions == 1:  # Buy signal
-                start_date = date
-                holding = True
-
-            elif row.opened_positions == -1 and holding:
-                end_date = date
-                holding = False
-
-                ax.plot(
-                    [start_date, end_date],
-                    [row['stop_loss_price'], row['stop_loss_price']],
-                    color='red',
-                    label='stop-loss',
-                    linewidth=2
-                )
-
-                ax.plot(
-                    [start_date, end_date],
-                    [row['take_profit_price'], row['take_profit_price']],
-                    color='green',
-                    label='take-profit',
-                    linewidth=2
-                )
-
-                ax.fill_betweenx(
-                    y=[0, 1],
-                    x1=start_date,
-                    x2=end_date,
-                    color='gray',
-                    alpha=0.3,
-                    transform=ax.get_xaxis_transform(),
-                )
 
     def _format_legend(self, ax: plt.Axes) -> NoReturn:
         """

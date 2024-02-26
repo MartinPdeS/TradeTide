@@ -62,11 +62,8 @@ class BackTester():
 
         The 'positions' column in the portfolio DataFrame is updated to reflect the current trading position.
         """
-        # Copy signals from the strategy to the portfolio DataFrame
-        self.portfolio['signal'] = self.strategy.signal
-
         # Calculate the difference to detect changes in the signal
-        signal_changes = self.portfolio['signal'].diff()
+        signal_changes = self.strategy.signal.diff()
 
         # Determine positions: 1 for long, -1 for short, 0 for no position
         self.portfolio['positions'] = numpy.select(
@@ -76,9 +73,9 @@ class BackTester():
             ],
             [
                 1,  # Value for entering a long position
-                numpy.where(self.portfolio['signal'] == -1, -1, 0)  # Enter short position if signal is -1, else exit
+                numpy.where(self.strategy.signal == -1, -1, 0)  # Enter short position if signal is -1, else exit
             ],
-            default=self.portfolio['signal']  # Default to the current signal, allowing for direct reversals and continuous holding
+            default=self.strategy.signal  # Default to the current signal, allowing for direct reversals and continuous holding
         )
 
         # Forward fill to maintain positions until the next change
@@ -99,11 +96,8 @@ class BackTester():
 
         The 'positions' column in the portfolio DataFrame is updated to reflect the current trading position.
         """
-        # Copy signals from the strategy to the portfolio DataFrame
-        self.portfolio['signal'] = self.strategy.signal
-
         # Calculate the difference to detect changes in the signal
-        signal_changes = self.portfolio['signal'].diff()
+        signal_changes = self.self.strategy.signal.diff()
 
         # Initialize positions based on signal changes
         self.portfolio['positions'] = 0  # Default to no position
@@ -113,7 +107,7 @@ class BackTester():
             if signal_changes.iloc[i] > 0:
                 self.portfolio['positions'].iloc[i] = 1  # Enter long position
             elif signal_changes.iloc[i] < 0:
-                if self.portfolio['signal'].iloc[i] == -1:
+                if self.strategy.signal.iloc[i] == -1:
                     self.portfolio['positions'].iloc[i] = -1  # Enter short position
                 else:
                     self.portfolio['positions'].iloc[i] = 0  # Exit position
@@ -122,7 +116,7 @@ class BackTester():
                 self.portfolio['positions'].iloc[i] = self.portfolio['positions'].iloc[i - 1]
 
         # Handle the initial position based on the initial signal
-        self.portfolio.at[self.portfolio.index[0], 'positions'] = self.portfolio['signal'].iloc[0]
+        self.portfolio.at[self.portfolio.index[0], 'positions'] = self.strategy.signal.iloc[0]
 
     def back_test(
             self,
@@ -168,25 +162,25 @@ class BackTester():
             max_cap_per_trade=max_cap_per_trade
         )
 
-        self.portfolio = pandas.DataFrame(index=self.market.index)
-        self.portfolio['units'] = 0.
-        self.portfolio['holdings_value'] = 0.
-        self.portfolio['holding'] = 0.
-        self.portfolio['cash'] = float(initial_capital)
-        self.portfolio['positions'] = 0.
+        self.generate_portfolio()
+
+        return self.portfolio
+
+    def generate_portfolio(self) -> NoReturn:
+        self.portfolio = pandas.DataFrame(
+            0,
+            index=self.market.index,
+            columns=['units', 'holdings', 'short_positions', 'long_positions', 'cash'])
+
+        self.portfolio['cash'] = float(self.initial_capital)
 
         # Calculate cumulative holdings and cash, considering the units bought and the entry price
         for position in self.position_list:
-            position.add_units_to_dataframe(self.portfolio)
-            position.add_holding_value_to_dataframe(self.portfolio)
-            position.add_holding_to_dataframe(self.portfolio)
-            position.update_cash(self.portfolio)
+            position.update_portfolio_dataframe(dataframe=self.portfolio)
 
         # # Total portfolio value and percentage returns
-        self.portfolio['total'] = self.portfolio['cash'] + self.portfolio['holdings_value']
+        self.portfolio['total'] = self.portfolio['cash'] + self.portfolio['holdings']
         self.portfolio['returns'] = self.portfolio['total'].ffill().pct_change()
-
-        return self.portfolio
 
     def manage_positions(
             self,
@@ -225,7 +219,7 @@ class BackTester():
             1 indicates a new buy position. The method modifies the portfolio DataFrame in-place and does not return a value.
         """
         # Extract signals and identify where new positions should be opened
-        signals = self.strategy.data['signal']
+        signals = self.strategy.signal
         new_positions = signals.diff().fillna(0) != 0
 
         # Initialize or clear the list to store Position objects
@@ -263,13 +257,13 @@ class BackTester():
             has been populated with trading data and results.
         """
         plot = PlotTrade(
-            back_tester=self,
+            backtester=self,
             market=self.market,
             portfolio=self.portfolio,
             strategy=self.strategy,
         )
 
-        plot.construct_figure(**kwargs)
+        plot.plot_trading_strategy(**kwargs)
 
     def get_final_portfolio_value(self) -> float:
         """

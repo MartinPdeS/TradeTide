@@ -47,7 +47,8 @@ class PlotTrade():
 
     def plot_trading_strategy(
             self,
-            show_price: bool = True,
+            show_price: bool = False,
+            show_total: bool = True,
             show_metric: bool = False,
             show_assets: bool = False,
             show_units: bool = False,
@@ -72,14 +73,14 @@ class PlotTrade():
             - The subplots share the x-axis, which typically represents time, to facilitate comparative analysis across different aspects of the trading strategy.
             - Additional customization options for each subplot, such as legends, axes labels, and plot styles, can be specified within the respective plotting methods called within this method.
         """
-        plots_count = sum([show_price, show_metric, show_assets, show_positions, show_units])
+        plots_count = sum([show_price, show_metric, show_assets, show_positions, show_units, show_total])
 
         title: str = 'Trading Strategy Overview'
 
         figure, axis = plt.subplots(
             nrows=plots_count,
             ncols=1,
-            figsize=(12, 2 * plots_count),
+            figsize=(12, 2.5 * plots_count),
             sharex=True,
             squeeze=False
         )
@@ -91,7 +92,8 @@ class PlotTrade():
             (show_metric, self._add_strategy_to_ax),
             (show_positions, self._add_position_to_ax),
             (show_assets, self._add_asset_to_ax),
-            (show_units, self._add_units_to_ax)
+            (show_units, self._add_units_to_ax),
+            (show_total, self._add_portfolio_value_to_ax)
         ]
 
         axis_number = 0
@@ -100,7 +102,6 @@ class PlotTrade():
                 ax = axis[axis_number, 0]
                 method(ax=ax)
                 ax.set_axisbelow(True)
-                self._add_buy_sell_signal_to_ax(ax=ax)
                 self._format_legend(ax=ax)
                 axis_number += 1
 
@@ -108,6 +109,7 @@ class PlotTrade():
 
         plt.xticks(rotation=45)
         plt.show()
+        plt.tight_layout()
 
         return figure
 
@@ -165,13 +167,13 @@ class PlotTrade():
         # Plot the total units over time
         ax.plot(
             self.portfolio.index,
-            self.portfolio.units,
+            self.portfolio.holdings,
             linewidth=2,
             color='C0',
             label='Total Units'
         )
 
-    def _add_asset_to_ax(self, ax: plt.Axes) -> None:
+    def _add_portfolio_value_to_ax(self, ax: plt.Axes) -> None:
         """
         Visualizes the composition of the trading portfolio over time on a specified Matplotlib axis. This includes
         plots for the total portfolio value, cash component, and holdings value, providing a comprehensive view of
@@ -188,11 +190,37 @@ class PlotTrade():
 
         ax.plot(
             self.portfolio.index,
-            self.portfolio.cash,
-            label='Cash',
+            self.portfolio.total,
+            label='Total',
             linewidth=2,
-            color='C1'
+            color='black'
         )
+
+        # for position in self.backtester.position_list:
+        #     ax.axvspan(
+        #         xmin=position.start_date,
+        #         xmax=position.stop_date,
+        #         alpha=0.2,
+        #         label='Open position',
+        #         color='black'
+        #     )
+
+        ax.get_yaxis().get_major_formatter().set_useOffset(True)
+
+    def _add_asset_to_ax(self, ax: plt.Axes) -> None:
+        """
+        Visualizes the composition of the trading portfolio over time on a specified Matplotlib axis. This includes
+        plots for the total portfolio value, cash component, and holdings value, providing a comprehensive view of
+        the portfolio's financial status throughout the trading period.
+
+        Parameters:
+            ax (plt.Axes): The Matplotlib Axes object where the portfolio components will be plotted.
+
+        Note:
+            This method assumes the portfolio DataFrame contains 'total', 'cash', and 'holdings' columns,
+            representing the total portfolio value, cash amount, and value of holdings over time, respectively.
+        """
+        ax.set_ylabel('Assets Value and Cash')
 
         ax.plot(
             self.portfolio.index,
@@ -200,6 +228,23 @@ class PlotTrade():
             label='Total',
             linewidth=2,
             color='black'
+        )
+
+        for position in self.backtester.position_list:
+            ax.axvspan(
+                xmin=position.start_date,
+                xmax=position.stop_date,
+                alpha=0.2,
+                label='Open position',
+                color='black'
+            )
+
+        ax.plot(
+            self.portfolio.index,
+            self.portfolio.holdings,
+            label='Holdings',
+            linewidth=2,
+            color='C0'
         )
 
     def _add_strategy_to_ax(self, ax: plt.Axes) -> NoReturn:
@@ -211,6 +256,8 @@ class PlotTrade():
             ax (plt.Axes): The matplotlib axis object to which the strategy metrics will be added.
         """
         self.strategy.add_to_ax(ax)
+
+        self._add_buy_sell_signal_to_ax(ax=ax)
 
     def _add_price_and_signal_to_ax(self, ax: plt.Axes) -> NoReturn:
         """

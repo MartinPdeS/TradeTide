@@ -84,41 +84,7 @@ class BackTester():
         # Fill initial NaN values with 0 (no position at start)
         self.portfolio['positions'].fillna(0, inplace=True)
 
-    def _signals_to_positions(self):
-        """
-        Transforms trading signals into positions by interpreting changes in the signals.
-
-        This method updates positions based on the following rules:
-        - A positive change in the signal (e.g., from 0 to 1) indicates entering a long position.
-        - A negative change in the signal (e.g., from 1 to 0 or 1 to -1) indicates exiting a long position or entering a short position.
-        - Continuous signals (no change) imply holding the current position.
-        - Direct reversals (e.g., from -1 to 1) are allowed and indicate switching positions.
-
-        The 'positions' column in the portfolio DataFrame is updated to reflect the current trading position.
-        """
-        # Calculate the difference to detect changes in the signal
-        signal_changes = self.self.strategy.signal.diff()
-
-        # Initialize positions based on signal changes
-        self.portfolio['positions'] = 0  # Default to no position
-
-        # Interpret signal changes to determine positions
-        for i in range(1, len(signal_changes)):
-            if signal_changes.iloc[i] > 0:
-                self.portfolio['positions'].iloc[i] = 1  # Enter long position
-            elif signal_changes.iloc[i] < 0:
-                if self.strategy.signal.iloc[i] == -1:
-                    self.portfolio['positions'].iloc[i] = -1  # Enter short position
-                else:
-                    self.portfolio['positions'].iloc[i] = 0  # Exit position
-            else:
-                # Carry forward the position from the previous period
-                self.portfolio['positions'].iloc[i] = self.portfolio['positions'].iloc[i - 1]
-
-        # Handle the initial position based on the initial signal
-        self.portfolio.at[self.portfolio.index[0], 'positions'] = self.strategy.signal.iloc[0]
-
-    def back_test(
+    def backtest(
             self,
             stop_loss: float | str = '0.1%',
             take_profit: float | str = '0.1%',
@@ -190,46 +156,53 @@ class BackTester():
             take_profit: float,
             max_cap_per_trade: float) -> NoReturn:
         """
-        Manages the opening and closing of trading positions based on stop loss and take profit thresholds, adjusted for spread.
+        Optimizes the management of trading positions, leveraging Pandas for pre-processing and NumPy for efficient storage.
+        This method identifies new trading signals, calculates entry prices and units, instantiates Position objects for each
+        trade, and stores these objects in a NumPy array.
 
-        This method updates the portfolio DataFrame to include entry prices for new positions (adjusted for spread), and calculates
-        stop loss and take profit price levels for each open position. It then checks market data to determine if these levels are
-        breached, indicating whether a position should be closed due to stop loss or take profit conditions being met.
+        The method enhances performance by minimizing loop iterations and utilizing vectorized operations for bulk data processing,
+        making it significantly faster for managing large datasets or frequent trading signals.
 
         Parameters:
-            market (pandas.DataFrame): The DataFrame containing historical market data with 'close', 'low', and 'high' price columns.
-            spread (float): The spread applied to the entry price of a new position, representing the transaction cost.
-            stop_loss (float): The stop loss threshold, expressed as a decimal (e.g., 0.1 for 10%). Positions are closed if the market
-                               price drops below this threshold relative to the entry price.
-            take_profit (float): The take profit threshold, expressed as a decimal (e.g., 0.1 for 10%). Positions are closed if the market
-                                 price rises above this threshold relative to the entry price.
+            market (pandas.DataFrame): The DataFrame containing historical market data. It must include a 'close' column
+                                       with the closing prices of the asset being traded.
+            spread (float): The transaction cost represented as a spread applied to the entry price of each new position.
+                            This cost is subtracted from the entry price for buys and added for sells.
+            stop_loss (float): The stop-loss threshold, expressed as a decimal. It represents the maximum loss a trader is
+                               willing to accept. A position is closed if the price falls below this threshold for long positions
+                               or rises above it for short positions.
+            take_profit (float): The take-profit threshold, also expressed as a decimal. It represents the price level at which
+                                 a position is closed to realize gains.
+            max_cap_per_trade (float): The maximum capital allocated for each trade. This value is used to calculate the number
+                                       of units to be traded based on the entry price and spread.
 
         Updates:
-            The portfolio DataFrame is updated in-place to include the following columns:
-            - 'opened_positions': Tracks newly opened positions.
-            - 'entry_price': The entry price for each position, adjusted for the spread.
-            - 'stop_loss_price': The price level at which a stop loss would be triggered.
-            - 'take_profit_price': The price level at which a take profit would be triggered.
-            - 'stop_loss_triggered': A boolean flag indicating if the stop loss condition has been met.
-            - 'take_profit_triggered': A boolean flag indicating if the take profit condition has been met.
-            - 'close_positions': A boolean flag indicating if a position should be closed due to stop loss or take profit conditions.
+            self.positions_array (np.array): A NumPy array that stores references to Position instances created for each new
+                                             trading signal identified. This array replaces the previous list-based storage
+                                             to enhance access performance and memory efficiency.
 
         Note:
-            This method assumes the 'positions' column in the portfolio DataFrame tracks the current open positions, where a value of
-            1 indicates a new buy position. The method modifies the portfolio DataFrame in-place and does not return a value.
+            This method assumes that there is an existing 'strategy' attribute in the calling object which provides trading signals
+            through a 'signal' DataFrame column. Signals are interpreted as follows: a positive value indicates a 'buy' signal,
+            a negative value indicates a 'sell' signal, and a zero value indicates no action.
+            The portfolio management, including the calculation of stop-loss and take-profit levels and the decision to open or close
+            positions, is based solely on these signals and the parameters provided to this method.
+
         """
-        # Extract signals and identify where new positions should be opened
+        # Detect new positions based on strategy signals
         signals = self.strategy.signal
-        new_positions = signals.diff().fillna(0) != 0
+        new_positions_idx = signals[signals.diff().fillna(0) != 0].index
 
         # Initialize or clear the list to store Position objects
         self.position_list = []
 
         # Iterate over signals and open new positions where indicated
-        for date, signal in signals[new_positions].items():
-            if signal != 0:  # Check if the signal indicates a new position (non-zero)
-                entry_price = self.market.loc[date, 'close'] + spread
-                units = numpy.floor((max_cap_per_trade - spread) / entry_price)
+        for date in new_positions_idx:
+            if self.strategy.signal.loc[date] != 0:  # Ensure there's an actionable signal
+
+                entry_price: float = self.market.loc[date, 'close'] + spread
+                units: int = numpy.floor((max_cap_per_trade - spread) / entry_price)
+                position_type: str = 'long' if self.strategy.signal.loc[date] > 0 else 'short'
 
                 position = Position(
                     start_date=date,
@@ -238,8 +211,9 @@ class BackTester():
                     market=market,
                     units=units,
                     entry_price=entry_price,
-                    position_type='long' if signal == +1 else 'short'
+                    position_type=position_type
                 )
+
                 self.position_list.append(position)
 
     def plot(self, **kwargs) -> NoReturn:

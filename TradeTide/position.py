@@ -57,7 +57,6 @@ class Position:
 
         self.validate_market_data()
         self.compute_triggers()
-        self.compute_exit_price()
         self.entry_value = self.entry_price * self.units
         self.generate_holding_time()
 
@@ -70,26 +69,6 @@ class Position:
         if 'close' not in self.market.columns:
             raise ValueError("The market DataFrame must contain a 'close' column.")
 
-    def compute_exit_price(self):
-        """
-        Calculates the exit price for the trading position based on the earliest trigger of stop-loss or take-profit.
-        Sets the exit price attribute based on the market close price at the stop date.
-        """
-        self.exit_price = self.market.loc[self.stop_date, 'close'] if self.stop_date else numpy.nan
-
-    def update_cash(self, dataframe: pandas.DataFrame) -> NoReturn:
-        """
-        Updates the cash balance within a portfolio DataFrame based on the entry and exit of the trading position.
-
-        Parameters:
-            dataframe (pandas.DataFrame): The portfolio DataFrame to be updated with cash balance changes.
-        """
-        entry_spend = self.entry_price * self.units
-        exit_get = self.exit_price * self.units
-
-        dataframe.loc[self.start_date:self.stop_date, 'cash'] -= entry_spend
-        dataframe.loc[self.stop_date:, 'cash'] += exit_get
-
     def update_portfolio_dataframe(self, dataframe: pandas.DataFrame) -> NoReturn:
         """
         Updates the given portfolio DataFrame with details about the trading position, including units held, holding value,
@@ -98,21 +77,11 @@ class Position:
         Parameters:
             dataframe (pandas.DataFrame): The portfolio DataFrame to be updated with the trading position's details.
         """
-        self.add_units_to_dataframe(dataframe=dataframe)
-        self.add_holding_value_to_dataframe(dataframe=dataframe)
-        self.add_position_to_dataframe(dataframe=dataframe)
+        self.add_holding_to_dataframe(dataframe=dataframe)
+        self.add_position_and_units_to_dataframe(dataframe=dataframe)
         self.update_cash(dataframe=dataframe)
 
-    def add_units_to_dataframe(self, dataframe: pandas.DataFrame) -> NoReturn:
-        """
-        Adds the units of the asset involved in the trading position to the specified portfolio DataFrame during the holding period.
-
-        Parameters:
-            dataframe (pandas.DataFrame): The portfolio DataFrame to be updated with units information.
-        """
-        dataframe.loc[self.start_date:self.stop_date, 'units'] += self.units
-
-    def add_position_to_dataframe(self, dataframe: pandas.DataFrame) -> NoReturn:
+    def add_position_and_units_to_dataframe(self, dataframe: pandas.DataFrame) -> NoReturn:
         """
         Marks the trading position as either long or short in the specified portfolio DataFrame during the holding period.
 
@@ -124,7 +93,9 @@ class Position:
         else:
             dataframe.loc[self.start_date:self.stop_date, 'long_positions'] += 1
 
-    def add_holding_value_to_dataframe(self, dataframe: pandas.DataFrame) -> NoReturn:
+        dataframe.loc[self.start_date:self.stop_date, 'units'] += self.units
+
+    def add_holding_to_dataframe(self, dataframe: pandas.DataFrame) -> NoReturn:
         """
         Adds the holding value of the trading position to the specified portfolio DataFrame during the holding period.
 
@@ -133,22 +104,42 @@ class Position:
         """
         dataframe.loc[self.start_date:self.stop_date, 'holdings'] += self.units * self.market.close
 
+    def update_cash(self, dataframe: pandas.DataFrame) -> NoReturn:
+        """
+        Updates the cash balance within a portfolio DataFrame based on the entry and exit of the trading position.
+
+        Parameters:
+            dataframe (pandas.DataFrame): The portfolio DataFrame to be updated with cash balance changes.
+        """
+        self.exit_price = self.market.shift().loc[self.stop_date, 'close'] if self.stop_date else numpy.nan
+
+        entry_spend = self.entry_price * self.units
+        exit_get = self.exit_price * self.units
+
+        dataframe.loc[self.start_date:, 'cash'] -= entry_spend
+
+        idx = dataframe.index.get_loc(self.stop_date) + 1
+
+        dataframe.iloc[idx:, dataframe.columns.get_loc('cash')] += exit_get
+
+        # dataframe.shift().loc[self.start_date:, 'cash'] += exit_get
+
     def compute_triggers(self) -> NoReturn:
         """
         Computes the trigger levels and dates for stop-loss and take-profit based on the market data and the position type.
         Sets the respective attributes for stop-loss and take-profit prices, as well as the earliest trigger date.
         """
-        market_after_start = self.market.loc[self.start_date:]
+        market_after_start = self.market.close.loc[self.start_date:]
         if self.position_type == 'short':
             self.stop_loss_price = self.entry_price * (1 + self.stop_loss)
             self.take_profit_price = self.entry_price * (1 - self.take_profit)
-            condition_for_stop = market_after_start['close'] >= self.stop_loss_price
-            condition_for_profit = market_after_start['close'] <= self.take_profit_price
+            condition_for_stop = market_after_start >= self.stop_loss_price
+            condition_for_profit = market_after_start <= self.take_profit_price
         else:  # long position
             self.stop_loss_price = self.entry_price * (1 - self.stop_loss)
             self.take_profit_price = self.entry_price * (1 + self.take_profit)
-            condition_for_stop = market_after_start['close'] <= self.stop_loss_price
-            condition_for_profit = market_after_start['close'] >= self.take_profit_price
+            condition_for_stop = market_after_start <= self.stop_loss_price
+            condition_for_profit = market_after_start >= self.take_profit_price
 
         self.stop_loss_trigger = market_after_start[condition_for_stop].first_valid_index()
         self.take_profit_trigger = market_after_start[condition_for_profit].first_valid_index()

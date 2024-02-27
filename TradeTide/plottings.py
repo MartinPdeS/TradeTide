@@ -3,7 +3,6 @@
 
 import matplotlib.pyplot as plt
 import pandas
-import numpy
 from TradeTide.strategy import Strategy
 from typing import NoReturn
 import MPSPlots.render2D
@@ -101,7 +100,7 @@ class PlotTrade():
                 ax = axis[axis_number, 0]
                 method(ax=ax)
                 ax.set_axisbelow(True)
-                self.add_buy_sell_signal_to_ax(ax=ax)
+                self._add_buy_sell_signal_to_ax(ax=ax)
                 self._format_legend(ax=ax)
                 axis_number += 1
 
@@ -233,10 +232,10 @@ class PlotTrade():
 
         # Aggregate units from all positions in the portfolio
         for position in self.backtester.position_list:
-            position.add_stop_loss_to_ax(ax=ax)
-            position.add_triggers(ax=ax)
+            position._add_stop_loss_to_ax(ax=ax)
+            position._add_triggers_to_ax(ax=ax)
 
-    def add_buy_sell_signal_to_ax(self, ax: plt.Axes) -> NoReturn:
+    def _add_buy_sell_signal_to_ax(self, ax: plt.Axes) -> NoReturn:
         ax.fill_between(
             x=self.market.index,
             y1=0,

@@ -168,7 +168,7 @@ class BackTester():
 
     def generate_portfolio(self) -> NoReturn:
         self.portfolio = pandas.DataFrame(
-            0,
+            0.0,
             index=self.market.index,
             columns=['units', 'holdings', 'short_positions', 'long_positions', 'cash'])
 
@@ -238,7 +238,7 @@ class BackTester():
                     market=market,
                     units=units,
                     entry_price=entry_price,
-                    type='long' if signal == +1 else 'short'
+                    position_type='long' if signal == +1 else 'short'
                 )
                 self.position_list.append(position)
 

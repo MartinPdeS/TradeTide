@@ -6,7 +6,9 @@ from typing import NoReturn
 from TradeTide import directories
 import pandas
 import pathlib
-
+from datetime import timedelta
+import datetime
+from TradeTide.tools import parse_time_string_to_delta
 # data taken from https://forexsb.com/historical-forex-data
 
 
@@ -35,7 +37,7 @@ def get_data_path(currency_0: str, currency_1: str, year: int) -> pathlib.Path:
     return data_file
 
 
-def get_market_data(currency_0: str, currency_1: str, year: int) -> pandas.DataFrame:
+def get_market_data(currency_0: str, currency_1: str, year: int, time_span: str = None) -> pandas.DataFrame:
     """
     Reads currency exchange data from a CSV file into a pandas DataFrame and processes it.
 
@@ -73,6 +75,22 @@ def get_market_data(currency_0: str, currency_1: str, year: int) -> pandas.DataF
     dataframe['time_delta'] = dataframe['date'].diff()
 
     dataframe = dataframe.set_index('date')
+
+    if time_span is not None:
+
+        time_span = parse_time_string_to_delta(time_span)
+
+        time_stop = dataframe.index[0] + time_span
+
+        if time_stop > dataframe.index[-1]:
+            total_span = dataframe.index[-1] - dataframe.index[0]
+            raise ValueError(f'Time span value is too large for the dataset, largest time span available is: {total_span.days}')
+
+        mask = dataframe.index < time_stop
+
+        dataframe = dataframe.loc[mask]
+
+    dataframe.time_span = dataframe.index[-1] - dataframe.index[0]
 
     return dataframe
 

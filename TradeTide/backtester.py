@@ -284,7 +284,7 @@ class BackTester():
         total_return = (self.portfolio['total'].iloc[-1] / self.initial_capital) - 1
 
         # Annualized Return
-        trading_days = len(self.portfolio)
+        trading_days = self.market.time_span.days
         annualized_return = ((1 + total_return) ** (365.0 / trading_days)) - 1
 
         # Maximum Drawdown

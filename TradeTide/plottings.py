@@ -64,6 +64,7 @@ class PlotTrade():
             show_assets (bool, optional): If True, includes a plot of assets over time, reflecting the portfolio's composition. Default is False.
             show_positions (bool, optional): If True, includes a plot of the trading positions over time, showing when and how the strategy enters or exits trades. Default is False.
             show_units (bool, optional): If True, includes a plot of the trading units over time, showing when and how the strategy enters or exits trades. Default is False.
+            show_positions (bool, optional): If True, includes a plot of the position over time.
 
         Returns:
             None: This method does not return a value. Instead, it displays the constructed matplotlib figure directly.
@@ -205,7 +206,10 @@ class PlotTrade():
         #         color='black'
         #     )
 
-        ax.get_yaxis().get_major_formatter().set_useOffset(True)
+        ax.get_yaxis().get_major_formatter().set_useOffset(False)
+        ax.get_yaxis().get_major_formatter().set_scientific(False)
+
+        ax.get_yaxis().get_major_formatter().offset = self.backtester.initial_capital
 
     def _add_asset_to_ax(self, ax: plt.Axes) -> None:
         """
@@ -281,6 +285,16 @@ class PlotTrade():
         for position in self.backtester.position_list:
             position._add_stop_loss_to_ax(ax=ax)
             position._add_triggers_to_ax(ax=ax)
+
+            ax.vlines(
+                x=position.start_date,
+                ymin=0,
+                ymax=1,
+                transform=ax.get_xaxis_transform(),
+                alpha=0.2,
+                label='Open position',
+                color='black'
+            )
 
     def _add_buy_sell_signal_to_ax(self, ax: plt.Axes) -> NoReturn:
         ax.fill_between(

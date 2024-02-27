@@ -122,8 +122,6 @@ class Position:
 
         dataframe.iloc[idx:, dataframe.columns.get_loc('cash')] += exit_get
 
-        # dataframe.shift().loc[self.start_date:, 'cash'] += exit_get
-
     def compute_triggers(self) -> NoReturn:
         """
         Computes the trigger levels and dates for stop-loss and take-profit based on the market data and the position type.

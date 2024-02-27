@@ -44,13 +44,13 @@ def test_signal_generation(backtester):
 
 
 def test_backtest_execution(backtester):
-    portfolio = backtester.back_test()
+    portfolio = backtester.backtest()
     assert isinstance(portfolio, pandas.DataFrame), "Backtest didn't return a DataFrame."
     assert not portfolio.empty, "Backtest returned an empty DataFrame."
 
 
 def test_performance_metrics(backtester):
-    backtester.back_test()
+    backtester.backtest()
     # Mock the performance calculation to simplify the test
     backtester.calculate_performance_metrics = lambda: {'Total Return': 0.1}
     performance_metrics = backtester.calculate_performance_metrics()

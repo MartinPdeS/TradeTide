@@ -245,10 +245,10 @@ class PlotTrade():
 
         ax.plot(
             self.portfolio.index,
-            self.portfolio.holdings,
-            label='Holdings',
+            self.portfolio.cash,
+            label='Cash',
             linewidth=2,
-            color='C0'
+            color='C1'
         )
 
     def _add_strategy_to_ax(self, ax: plt.Axes) -> NoReturn:
@@ -281,7 +281,7 @@ class PlotTrade():
             linewidth=2
         )
 
-        # Aggregate units from all positions in the portfolio
+        # # Aggregate units from all positions in the portfolio
         for position in self.backtester.position_list:
             position._add_stop_loss_to_ax(ax=ax)
             position._add_triggers_to_ax(ax=ax)

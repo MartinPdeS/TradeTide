@@ -5,6 +5,7 @@ import pytest
 import pandas
 from TradeTide.backtester import BackTester
 from TradeTide.loader import get_market_data
+from TradeTide.capital_managment import LimitedCapital
 
 
 class MockStrategy:
@@ -37,20 +38,35 @@ def backtester(mock_data: pandas.DataFrame) -> BackTester:
     return backtester
 
 
+@pytest.fixture
+def capital_managment():
+    capital_managment = LimitedCapital(
+        initial_capital=1_000,
+        spread=0,
+        stop_loss='.1%',
+        take_profit='.1%',
+        max_cap_per_trade=100,
+        limit_of_positions=3
+    )
+
+    return capital_managment
+
+
 def test_signal_generation(backtester):
     for date, row in backtester.strategy.data.iterrows():
         expected_signal = 1 if date.day == 1 else 0
         assert row['signal'] == expected_signal, "Signal generation failed."
 
 
-def test_backtest_execution(backtester):
-    portfolio = backtester.backtest()
+def test_backtest_execution(backtester, capital_managment):
+    portfolio = backtester.backtest(capital_managment=capital_managment)
     assert isinstance(portfolio, pandas.DataFrame), "Backtest didn't return a DataFrame."
     assert not portfolio.empty, "Backtest returned an empty DataFrame."
 
 
-def test_performance_metrics(backtester):
-    backtester.backtest()
+def test_performance_metrics(backtester, capital_managment):
+
+    backtester.backtest(capital_managment=capital_managment)
     # Mock the performance calculation to simplify the test
     backtester.calculate_performance_metrics = lambda: {'Total Return': 0.1}
     performance_metrics = backtester.calculate_performance_metrics()

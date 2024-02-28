@@ -78,10 +78,11 @@ class Position:
             dataframe (pandas.DataFrame): The portfolio DataFrame to be updated with the trading position's details.
         """
         self.add_holding_to_dataframe(dataframe=dataframe)
-        self.add_position_and_units_to_dataframe(dataframe=dataframe)
+        self.add_position_to_dataframe(dataframe=dataframe)
+        self.add_units_to_dataframe(dataframe=dataframe)
         self.update_cash(dataframe=dataframe)
 
-    def add_position_and_units_to_dataframe(self, dataframe: pandas.DataFrame) -> NoReturn:
+    def add_position_to_dataframe(self, dataframe: pandas.DataFrame) -> NoReturn:
         """
         Marks the trading position as either long or short in the specified portfolio DataFrame during the holding period.
 
@@ -93,6 +94,22 @@ class Position:
         else:
             dataframe.loc[self.start_date:self.stop_date, 'long_positions'] += 1
 
+    def add_total_position_to_dataframe(self, dataframe: pandas.DataFrame) -> NoReturn:
+        """
+        Marks the trading position as either long or short in the specified portfolio DataFrame during the holding period.
+
+        Parameters:
+            dataframe (pandas.DataFrame): The portfolio DataFrame to be updated with the position type information.
+        """
+        dataframe.loc[self.start_date:self.stop_date, 'open_positions'] += 1
+
+    def add_units_to_dataframe(self, dataframe: pandas.DataFrame) -> NoReturn:
+        """
+        Marks the trading position as either long or short in the specified portfolio DataFrame during the holding period.
+
+        Parameters:
+            dataframe (pandas.DataFrame): The portfolio DataFrame to be updated with the position type information.
+        """
         dataframe.loc[self.start_date:self.stop_date, 'units'] += self.units
 
     def add_holding_to_dataframe(self, dataframe: pandas.DataFrame) -> NoReturn:

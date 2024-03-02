@@ -48,6 +48,7 @@ class BackTester():
         """
         self.market = market
         self.strategy = strategy
+        self.strategy.generate_signal(self.market)
         self.portfolio = None
 
     def signals_to_positions(self) -> NoReturn:
@@ -116,6 +117,8 @@ class BackTester():
             - This method does not return additional data frames with extra backtest-related data. For detailed trade or
               market condition analysis, modifications to the method or strategy implementation may be required.
         """
+        self.capital_managment = capital_managment
+
         self.portfolio = pandas.DataFrame(
             0.0,
             index=self.market.index,
@@ -123,8 +126,6 @@ class BackTester():
         )
 
         self.portfolio['cash'] = float(capital_managment.initial_capital)
-
-        self.initial_capital = capital_managment.initial_capital
 
         capital_managment.manage(
             backtester=self,
@@ -209,14 +210,14 @@ class BackTester():
             return
 
         # Total Return
-        total_return = (self.portfolio['total'].iloc[-1] / self.initial_capital) - 1
+        total_return = (self.portfolio['total'].iloc[-1] / self.capital_managment.initial_capital) - 1
 
         # Annualized Return
         trading_days = self.market.time_span.total_seconds() / timedelta(days=1).total_seconds()
 
         annualized_return = ((1 + total_return) ** (365.0 / trading_days)) - 1
 
-        # Maximum Drawdown
+        # Maximum Drawdown.
         rolling_max = self.portfolio['total'].cummax()
         drawdown = self.portfolio['total'] / rolling_max - 1.0
         max_drawdown = drawdown.min()

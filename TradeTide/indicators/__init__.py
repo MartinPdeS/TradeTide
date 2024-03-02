@@ -4,6 +4,7 @@ from .moving_average_crossing import MovingAverageCrossing
 from .relative_momentum_index import RelativeMomentumIndex
 from .moving_average_convergence_divergence import MovingAverageConvergenceDivergence
 from .stochastic_relative_strength_index import StochRSIIndicator
+from .average_true_range import AverageTrueRange
 
 from .custom import Custom
 from .random import Random

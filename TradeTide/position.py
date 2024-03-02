@@ -45,29 +45,22 @@ class Position:
         >>> position.plot()
     """
     start_date: pandas.Timestamp
-    stop_loss: float
-    take_profit: float
+    stop_loss_price: float
+    take_profit_price: float
     market: pandas.DataFrame
     units: float
     entry_price: float
     position_type: str  # 'long' or 'short'
 
     def __post_init__(self):
-        self.start_date = pandas.to_datetime(self.start_date)
-
-        self.validate_market_data()
         self.compute_triggers()
         self.entry_value = self.entry_price * self.units
         self.generate_holding_time()
 
-    def validate_market_data(self) -> NoReturn:
-        """
-        Validates that the market data provided contains a 'close' column.
-        Raises:
-            ValueError: If the 'close' column is not present in the market DataFrame.
-        """
-        if 'close' not in self.market.columns:
-            raise ValueError("The market DataFrame must contain a 'close' column.")
+    @property
+    def profit_loss(self) -> float:
+        """ Retunrs the cash value that this position made over time """
+        return self.exit_get - self.entry_spend
 
     def update_portfolio_dataframe(self, dataframe: pandas.DataFrame) -> NoReturn:
         """
@@ -130,14 +123,14 @@ class Position:
         """
         self.exit_price = self.market.shift().loc[self.stop_date, 'close'] if self.stop_date else numpy.nan
 
-        entry_spend = self.entry_price * self.units
-        exit_get = self.exit_price * self.units
+        self.entry_spend = self.entry_price * self.units
+        self.exit_get = self.exit_price * self.units
 
-        dataframe.loc[self.start_date:, 'cash'] -= entry_spend
+        dataframe.loc[self.start_date:, 'cash'] -= self.entry_spend
 
         idx = dataframe.index.get_loc(self.stop_date) + 1
 
-        dataframe.iloc[idx:, dataframe.columns.get_loc('cash')] += exit_get
+        dataframe.iloc[idx:, dataframe.columns.get_loc('cash')] += self.exit_get
 
     def compute_triggers(self) -> NoReturn:
         """
@@ -146,13 +139,9 @@ class Position:
         """
         market_after_start = self.market.close.loc[self.start_date:]
         if self.position_type == 'short':
-            self.stop_loss_price = self.entry_price * (1 + self.stop_loss)
-            self.take_profit_price = self.entry_price * (1 - self.take_profit)
             condition_for_stop = market_after_start >= self.stop_loss_price
             condition_for_profit = market_after_start <= self.take_profit_price
         else:  # long position
-            self.stop_loss_price = self.entry_price * (1 - self.stop_loss)
-            self.take_profit_price = self.entry_price * (1 + self.take_profit)
             condition_for_stop = market_after_start <= self.stop_loss_price
             condition_for_profit = market_after_start >= self.take_profit_price
 

@@ -79,6 +79,14 @@ class MovingAverageConvergenceDivergence(BaseIndicator):
         ax.legend()
         ax.set_ylabel('MACD')
 
+    def get_features(self, drop_na: bool = True) -> pandas.DataFrame:
+        features = self.data[['macd', 'signal_line', 'histogram']].copy()
+
+        if drop_na:
+            features.dropna(inplace=True)
+
+        return features
+
     @BaseIndicator.post_generate_signal
     def generate_signal(self, market_data: pandas.DataFrame) -> pandas.DataFrame:
         """

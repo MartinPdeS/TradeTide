@@ -43,7 +43,8 @@ class BaseIndicator(ABC):
         figure, ax = plt.subplots(1, 1, figsize=(12, 4))
         self.add_to_ax(ax)
 
-        self.shade_signal_area(ax=ax)
+        if 'signal' in self.data.columns:
+            self.shade_signal_area(ax=ax)
 
         plt.show()
 
@@ -97,7 +98,7 @@ class BaseIndicator(ABC):
             x=self.data.index,
             y1=0,
             y2=1,
-            where=self.data['signal'] == -1,
+            where=self.data.signal == -1,
             color='red',
             label='Sell signal',
             alpha=0.2,

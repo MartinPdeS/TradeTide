@@ -6,6 +6,7 @@ import pandas
 from TradeTide.backtester import BackTester
 from TradeTide.loader import get_market_data
 from TradeTide.capital_managment import LimitedCapital
+from TradeTide.loss_profit_managment import DirectLossProfitManagement
 
 
 class MockStrategy:
@@ -40,13 +41,17 @@ def backtester(mock_data: pandas.DataFrame) -> BackTester:
 
 @pytest.fixture
 def capital_managment():
+    loss_profit_managment = DirectLossProfitManagement(
+        stop_loss='.1%',
+        take_profit='.1%',
+    )
+
     capital_managment = LimitedCapital(
         initial_capital=1_000,
         spread=0,
-        stop_loss='.1%',
-        take_profit='.1%',
         max_cap_per_trade=100,
-        limit_of_positions=3
+        limit_of_positions=3,
+        loss_profit_managment=loss_profit_managment
     )
 
     return capital_managment

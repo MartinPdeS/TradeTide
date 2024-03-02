@@ -43,6 +43,14 @@ class BollingerBands(BaseIndicator):
         self.deviation = deviation
         self.value_type = 'close'
 
+    def get_features(self, drop_na: bool = True) -> pandas.DataFrame:
+        features = self.data[['MA', 'STD', 'upper_band', 'lower_band']].copy()
+
+        if drop_na:
+            features.dropna(inplace=True)
+
+        return features
+
     def add_to_ax(self, ax: matplotlib.axes.Axes) -> NoReturn:
         """
         Adds the Bollinger Bands plot to the specified Matplotlib axis.

@@ -6,7 +6,10 @@ import pandas as pd
 import numpy as np
 from TradeTide.indicators.base_indicator import BaseIndicator
 
+from dataclasses import dataclass
 
+
+@dataclass(kw_only=True)
 class Custom(BaseIndicator):
     """
     A custom trading signal generator that integrates user-defined signals into market data.
@@ -32,6 +35,9 @@ class Custom(BaseIndicator):
                                         no action.
         """
         self.custom_signal = custom_signal
+
+    def __repr__(self) -> str:
+        return "Custom indicator"
 
     @BaseIndicator.post_generate_signal
     def generate_signal(self, market_data: pd.DataFrame) -> pd.DataFrame:

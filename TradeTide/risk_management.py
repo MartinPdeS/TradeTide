@@ -4,10 +4,10 @@
 
 import pandas
 from TradeTide.tools import percent_to_float
-from TradeTide.indicators import AverageTrueRange
+from TradeTide.indicators import ATR
 
 
-class LossProfitManagementBase:
+class RiskBase:
     """
     Base class for managing loss and profit calculations for trading strategies.
 
@@ -32,7 +32,7 @@ class LossProfitManagementBase:
         raise NotImplementedError("Subclass must implement this method.")
 
 
-class DirectLossProfitManagement(LossProfitManagementBase):
+class DirectLossProfit(RiskBase):
     """
     Manages loss and profit calculations using direct stop_loss and take_profit values.
 
@@ -69,7 +69,7 @@ class DirectLossProfitManagement(LossProfitManagementBase):
         return stop_loss_price, take_profit_price
 
 
-class ATRLossProfitManagement(LossProfitManagementBase):
+class ATRLossProfit(RiskBase):
     """
     Manages loss and profit calculations based on the Average True Range (ATR) indicator.
 
@@ -87,7 +87,7 @@ class ATRLossProfitManagement(LossProfitManagementBase):
             ATR_multiplier (float): The multiplier applied to the ATR value for stop loss/take profit calculations.
             periods (float | str): The number of periods used for the ATR calculation.
         """
-        self.ATR_indicator = AverageTrueRange(periods=periods)
+        self.ATR_indicator = ATR(periods=periods)
         self.ATR_value = self.ATR_indicator.generate_signal(market)['ATR']
         self.ATR_multiplier = ATR_multiplier
 
@@ -108,7 +108,7 @@ class ATRLossProfitManagement(LossProfitManagementBase):
         return stop_loss_price, take_profit_price
 
 
-class TrailingStopLossManagement(LossProfitManagementBase):
+class TrailingStopLoss(RiskBase):
     """
     Manages loss and profit calculations using dynamic trailing stop loss and take profit approaches for both long and short positions.
 

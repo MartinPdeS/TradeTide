@@ -7,17 +7,20 @@ from typing import NoReturn
 import matplotlib
 from TradeTide.indicators.base_indicator import BaseIndicator
 
+from dataclasses import dataclass, field
 
-class BollingerBands(BaseIndicator):
+
+@dataclass(kw_only=True)
+class BB(BaseIndicator):
     """
-    Implements the Bollinger Bands trading indicator as an extension of the BaseIndicator class.
+    Implements the Bollinger Bands (BB) trading indicator as an extension of the BaseIndicator class.
 
     Bollinger Bands consist of a middle band being an N-period simple moving average (SMA), an upper band at K times an N-period
     standard deviation above the middle band, and a lower band at K times an N-period standard deviation below the middle band.
     These bands are used to determine overbought and oversold conditions in a market.
 
     Attributes
-        periods (int): The number of periods used to calculate the SMA and standard deviation.
+        periods (int | str): The number of periods used to calculate the SMA and standard deviation.
         deviation (float): The number of standard deviations away from the SMA the upper and lower bands should be set.
         value_type (str): The column name from the input DataFrame on which the Bollinger Bands calculation is based, usually 'close'.
 
@@ -26,22 +29,9 @@ class BollingerBands(BaseIndicator):
         generate_signal: Calculates the Bollinger Bands based on price movements and generates buy/sell signals.
     """
 
-    def __init__(
-            self,
-            periods: int = 20,
-            deviation: float = 2,
-            value_type: str = 'close'):
-        """
-        Initializes a new instance of the BollingerBands indicator with specified parameters.
-
-        Parameters:
-            periods (int): The lookback period for calculating the moving average and standard deviation. Default is 20.
-            deviation (float): The number of standard deviations to set the upper and lower bands from the moving average. Default is 2.
-            value_type (str): The type of price to be used in Bollinger Bands calculation (e.g., 'close', 'open'). Default is 'close'.
-        """
-        self.periods = periods
-        self.deviation = deviation
-        self.value_type = 'close'
+    periods: int | str = 20
+    deviation: float = 2
+    value_type: str = field(default='close', repr=False)
 
     def get_features(self, drop_na: bool = True) -> pandas.DataFrame:
         features = self.data[['MA', 'STD', 'upper_band', 'lower_band']].copy()
@@ -77,8 +67,6 @@ class BollingerBands(BaseIndicator):
             linewidth=1,
             color='C0'
         )
-
-        ax.set_ylabel('Bolliner Bands indicator')
 
     @BaseIndicator.post_generate_signal
     def generate_signal(self, market_data: pandas.DataFrame) -> pandas.DataFrame:

@@ -207,8 +207,12 @@ class BackTester():
         Returns:
             float: The annualized return as a percentage.
         """
-        trading_seconds = (self.market.index[-1] - self.market.index[0]).seconds
-        return ((1 + total_return) ** (365.0 * 24 * 60 * 60 / trading_seconds)) - 1
+        trading_days = (self.market.index[-1] - self.market.index[0]).days
+
+        if trading_days == 0:
+            return numpy.nan
+
+        return ((1 + total_return) ** (365.0 / trading_days)) - 1
 
     def calculate_max_drawdown(self) -> float:
         """
@@ -310,18 +314,18 @@ class BackTester():
         volatility = self.calculate_volatility()
 
         self.performance_dict = {
-            "start_date": self.market.index[0],
-            "stop_date": self.market.index[-1],
-            "duration": f"{duration} days",
-            "total_return": f"{total_return * 100:.2f}%",
-            "annualized_return": f"{annualized_return * 100:.2f}%",
-            "max_drawdown": f"{max_drawdown * 100:.2f}%",
-            "sharpe_ratio": f"{sharpe_ratio:.2f}",
-            "sortino_ratio": f"{sortino_ratio:.2f}",
-            "total_positions": f"{len(self.position_list)}",
-            "win_loss_ratio": f"{win_loss_ratio:.2f}",
-            "equity": f"${equity:,.2f}",
-            "volatility": f"{volatility * 100:.2f}%"
+            "Start Date": self.market.index[0],
+            "Stop Date": self.market.index[-1],
+            "Duration": f"{duration} days",
+            "Returns": f"{total_return * 100:.2f}%",
+            "Returns [annualized]": f"{annualized_return * 100:.2f}%",
+            "Maximum drawdown": f"{max_drawdown * 100:.2f}%",
+            "Sharpe Ratio": f"{sharpe_ratio:.2f}",
+            "Sortino Ratio": f"{sortino_ratio:.2f}",
+            "Number of Trades": f"{len(self.position_list)}",
+            "Win-Loss Ratio": f"{win_loss_ratio:.2f}",
+            "Equity": f"${equity:,.2f}",
+            "Volatility": f"{volatility * 100:.2f}%"
         }
 
         return self.performance_dict

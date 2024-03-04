@@ -5,7 +5,7 @@ from typing import NoReturn
 import pandas
 import numpy
 from TradeTide.position import Position
-from TradeTide.risk_management import DirectLossProfitManagement, ATRLossProfitManagement
+from TradeTide.risk_management import DirectLossProfit, ATRLossProfit
 
 
 class CapitalManagement:
@@ -16,7 +16,7 @@ class CapitalManagement:
 
     def __init__(
             self,
-            risk_management: DirectLossProfitManagement | ATRLossProfitManagement,
+            risk_management: DirectLossProfit | ATRLossProfit,
             max_cap_per_trade: float,
             limit_of_positions: int = numpy.inf):
         """
@@ -51,7 +51,7 @@ class LimitedCapital(CapitalManagement):
 
     def __init__(
             self,
-            risk_management: DirectLossProfitManagement | ATRLossProfitManagement,
+            risk_management: DirectLossProfit | ATRLossProfit,
             initial_capital: float,
             max_cap_per_trade: float,
             limit_of_positions: int = numpy.inf):
@@ -127,7 +127,7 @@ class UnlimitedCapital(CapitalManagement):
 
     def __init__(
             self,
-            risk_management: DirectLossProfitManagement | ATRLossProfitManagement,
+            risk_management: DirectLossProfit | ATRLossProfit,
             max_cap_per_trade: float,
             limit_of_positions: int = numpy.inf):
         """

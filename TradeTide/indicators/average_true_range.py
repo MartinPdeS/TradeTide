@@ -7,8 +7,11 @@ import numpy
 import matplotlib.pyplot as plt
 from TradeTide.indicators.base_indicator import BaseIndicator
 
+from dataclasses import dataclass, field
 
-class AverageTrueRange(BaseIndicator):
+
+@dataclass(kw_only=True)
+class ATR(BaseIndicator):
     """
     Implements the Average True Range (ATR) trading indicator as an extension of the BaseIndicator class.
 
@@ -17,24 +20,15 @@ class AverageTrueRange(BaseIndicator):
     in the price of an asset over a certain period of time.
 
     Attributes:
-        periods (int): The number of periods over which the ATR is calculated, typically 14.
+        periods (int | str): The number of periods over which the ATR is calculated, typically 14.
         value_type (str): The column names from the input DataFrame on which the ATR calculation is based, usually 'high', 'low', and 'close'.
 
     Methods:
         add_to_ax: Plots the ATR on a given Matplotlib axis.
         generate_signal: Calculates the ATR based on price movements.
     """
-
-    def __init__(self, periods: int = 14, value_type: str = 'close'):
-        """
-        Initializes a new instance of the AverageTrueRange indicator with specified parameters.
-
-        Parameters:
-            periods (int): The lookback period for calculating the ATR. Default is 14.
-            value_type (str): The type of price to be used in ATR calculation. Default is 'close'.
-        """
-        self.periods = periods
-        self.value_type = value_type
+    periods: int | str = 14
+    value_type: str = field(default='close', repr=False)
 
     def add_to_ax(self, ax: plt.Axes) -> NoReturn:
         """

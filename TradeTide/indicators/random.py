@@ -35,6 +35,9 @@ class Random(BaseIndicator):
         """
         self.number_of_occurence = number_of_occurence
 
+    def __repr__(self) -> str:
+        return "Random indicator"
+
     @BaseIndicator.decorator_shade_signal
     def add_to_ax(self, ax: matplotlib.axes.Axes) -> NoReturn:
         """
@@ -45,7 +48,7 @@ class Random(BaseIndicator):
         Parameters:
             ax (matplotlib.axes.Axes): The Matplotlib axis object to update.
         """
-        ax.set_ylabel('Random signal: no metric')
+        pass
 
     @BaseIndicator.post_generate_signal
     def generate_signal(self, market_data: pandas.DataFrame) -> pandas.DataFrame:

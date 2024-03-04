@@ -41,10 +41,13 @@ class BaseIndicator(ABC):
         This method creates a plot with shaded areas indicating buy and sell signals.
         """
         figure, ax = plt.subplots(1, 1, figsize=(12, 4))
+        ax.set_ylabel(self.__repr__())
         self.add_to_ax(ax)
 
         if 'signal' in self.data.columns:
             self.shade_signal_area(ax=ax)
+
+        plt.legend()
 
         plt.show()
 

@@ -6,8 +6,11 @@ import pandas
 import matplotlib.pyplot as plt
 from TradeTide.indicators.base_indicator import BaseIndicator
 
+from dataclasses import dataclass, field
 
-class RelativeMomentumIndex(BaseIndicator):
+
+@dataclass(kw_only=True)
+class RMI(BaseIndicator):
     """
     Implements the Relative Momentum Index (RMI) trading indicator, an extension of the BaseIndicator class.
 
@@ -16,7 +19,7 @@ class RelativeMomentumIndex(BaseIndicator):
     where higher values typically indicate overbought conditions and lower values indicate oversold conditions.
 
     Attributes:
-        period (int): The number of periods used to calculate the RMI.
+        period (int | str): The number of periods used to calculate the RMI.
         momentum (int): The lag period to compare the current price against for momentum calculation.
         overbought_threshold (int): The RMI level above which the asset is considered overbought. Commonly set to 70.
         oversold_threshold (int): The RMI level below which the asset is considered oversold. Commonly set to 30.
@@ -27,28 +30,11 @@ class RelativeMomentumIndex(BaseIndicator):
         generate_signal: Calculates the RMI values based on price changes and generates buy/sell signals.
     """
 
-    def __init__(
-            self,
-            period: int = 14,
-            momentum: int = 5,
-            overbought_threshold: int = 70,
-            oversold_threshold: int = 30,
-            value_type: str = 'close'):
-        """
-        Initializes a new instance of the RelativeMomentumIndex indicator with specified parameters.
-
-        Parameters:
-            period (int): The lookback period for RMI calculation. Default is 14.
-            momentum (int): The lag period to compare the current price against for momentum calculation. Default is 5.
-            overbought_threshold (int): The RMI value above which the market is considered overbought. Default is 70.
-            oversold_threshold (int): The RMI value below which the market is considered oversold. Default is 30.
-            value_type (str): The type of price to be used in RMI calculation (e.g., 'close', 'open'). Default is 'close'.
-        """
-        self.period = period
-        self.momentum = momentum
-        self.overbought_threshold = overbought_threshold
-        self.oversold_threshold = oversold_threshold
-        self.value_type = value_type
+    period: int | str = 14
+    momentum: int = 5
+    overbought_threshold: int = field(default=70, repr=False)
+    oversold_threshold: int = field(default=30, repr=False)
+    value_type: str = field(default='close', repr=False)
 
     def add_to_ax(self, ax: plt.Axes) -> NoReturn:
         """
@@ -81,8 +67,6 @@ class RelativeMomentumIndex(BaseIndicator):
             linewidth=2,
             label='Oversold'
         )
-
-        ax.set_ylabel('RMI')
 
     @BaseIndicator.post_generate_signal
     def generate_signal(self, market_data: pandas.DataFrame) -> pandas.DataFrame:

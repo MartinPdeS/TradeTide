@@ -6,8 +6,11 @@ import pandas as pd
 import matplotlib
 from TradeTide.indicators.base_indicator import BaseIndicator
 
+from dataclasses import dataclass, field
 
-class StochRSIIndicator(BaseIndicator):
+
+@dataclass(kw_only=True)
+class SRSII(BaseIndicator):
     """
     Implements the Stochastic Relative Strength Index (StochRSI) trading indicator as an extension of the BaseIndicator class.
 
@@ -15,7 +18,7 @@ class StochRSIIndicator(BaseIndicator):
     overbought and oversold signals within a bound range (0-1 or 0-100).
 
     Attributes:
-        periods (int): The number of periods used to calculate the RSI and subsequently the StochRSI.
+        periods (int | str): The number of periods used to calculate the RSI and subsequently the StochRSI.
         rsi_periods (int): The number of periods used for calculating the underlying RSI.
         value_type (str): The column name from the input DataFrame on which the StochRSI calculation is based, usually 'close'.
 
@@ -24,18 +27,9 @@ class StochRSIIndicator(BaseIndicator):
         generate_signal: Calculates the StochRSI based on RSI movements and generates overbought/oversold signals.
     """
 
-    def __init__(self, periods: int = 14, rsi_periods: int = 14, value_type: str = 'close'):
-        """
-        Initializes a new instance of the StochRSIIndicator with specified parameters.
-
-        Parameters:
-            periods (int): The lookback period for calculating the StochRSI. Default is 14.
-            rsi_periods (int): The lookback period for calculating the underlying RSI. Default is 14.
-            value_type (str): The type of price to be used in StochRSI calculation (e.g., 'close', 'open'). Default is 'close'.
-        """
-        self.periods = periods
-        self.rsi_periods = rsi_periods
-        self.value_type = value_type
+    periods: int | str = 14
+    rsi_periods: int = 14
+    value_type: str = field(default='close', repr=False)
 
     def add_to_ax(self, ax: matplotlib.axes.Axes) -> NoReturn:
         """
@@ -55,7 +49,6 @@ class StochRSIIndicator(BaseIndicator):
         )
         ax.axhline(y=0.8, color='red', linestyle='--', label='Overbought')
         ax.axhline(y=0.2, color='green', linestyle='--', label='Oversold')
-        ax.set_ylabel('StochRSI')
         ax.legend()
 
     @BaseIndicator.post_generate_signal

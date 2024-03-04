@@ -7,7 +7,7 @@ import numpy
 import matplotlib.pyplot as plt
 
 from dataclasses import dataclass
-from TradeTide.risk_management import LossProfitManagementBase
+from TradeTide.risk_management import RiskBase
 
 
 @dataclass
@@ -21,7 +21,7 @@ class Position:
         start_date (pd.Timestamp): Date when the position is initiated.
         market (pd.DataFrame): DataFrame containing market data with at least 'close' and 'spread' prices.
         position_type (str): Type of the position ('long' or 'short').
-        risk_management (LossProfitManagementBase): An instance of a risk management strategy defining stop loss and take profit levels.
+        risk_management (RiskBase): An instance of a risk management strategy defining stop loss and take profit levels.
         maximum_cash (float): The maximum amount of cash allocated for this position.
 
     The class requires market data and a risk management strategy to initialize. It calculates
@@ -40,7 +40,7 @@ class Position:
                 'close': [1.10, 1.15, 1.08, 1.12, 1.15],
                 'spread': [0.01, 0.01, 0.01, 0.01, 0.01]
             }, index=pd.date_range(start="2020-01-01", periods=5))
-        >>> risk_strategy = LossProfitManagementBase(stop_loss=0.05, take_profit=0.1)
+        >>> risk_strategy = RiskBase(stop_loss=0.05, take_profit=0.1)
         >>> position = Position(
                 start_date=pd.Timestamp("2020-01-01"),
                 market=market_data,
@@ -57,7 +57,7 @@ class Position:
     start_date: pandas.Timestamp
     market: pandas.DataFrame
     position_type: str  # 'long' or 'short'
-    risk_management: LossProfitManagementBase
+    risk_management: RiskBase
     maximum_cash: float
 
     def __post_init__(self):

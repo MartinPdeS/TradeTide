@@ -7,45 +7,31 @@ from typing import NoReturn
 import matplotlib
 from TradeTide.indicators.base_indicator import BaseIndicator
 
+from dataclasses import dataclass
 
-class MovingAverageCrossing(BaseIndicator):
+
+@dataclass(kw_only=True)
+class MAC(BaseIndicator):
     """
-    Implements a Moving Average Crossing indicator as an extension of the BaseIndicator class.
+    Implements a Moving Average Crossing (MAC) indicator as an extension of the BaseIndicator class.
 
     This indicator involves two moving averages of a series: a "short" and a "long" moving average. A typical trading signal
     is generated when the short moving average crosses above (bullish signal) or below (bearish signal) the long moving average.
     The indicator is commonly used to identify the momentum and direction of a trend.
 
     Attributes:
-        short_window (int): The window size of the short moving average.
-        long_window (int): The window size of the long moving average.
+        short_window (int | str): The window size of the short moving average.
+        long_window (int | str): The window size of the long moving average.
         min_period (int): The minimum number of observations in the window required to have a value (otherwise result is NA).
         value_type (str): The type of price data to use for the moving average calculation. Typically one of ['high', 'low', 'open', 'close'].
 
     Methods:
         add_to_ax: Plots the short and long moving averages on a given Matplotlib axis.
     """
-
-    def __init__(
-            self,
-            short_window: int = 30,
-            long_window: int = 150,
-            min_period: int = 10,
-            value_type: str = 'close'):
-        """
-        Initializes a new instance of the MovingAverageCrossing indicator with specified parameters.
-
-        Parameters:
-            short_window (int): Number of periods to use for the short moving average. Default is 30.
-            long_window (int): Number of periods to use for the long moving average. Default is 150.
-            min_period (int): Minimum number of observations in the window required to perform the operation. Default is 10.
-            value_type (str): The type of price to be used in the moving average calculation. Default is 'close'.
-        """
-
-        self.short_window = short_window
-        self.long_window = long_window
-        self.min_period = min_period
-        self.value_type = value_type
+    short_window: int | str = 30
+    long_window: int | str = 150
+    min_period: int = 10
+    value_type: str = 'close'
 
     def add_to_ax(self, ax: matplotlib.axes.Axes) -> NoReturn:
         """
@@ -68,7 +54,6 @@ class MovingAverageCrossing(BaseIndicator):
             label='short window',
             linewidth=2,
         )
-        ax.set_ylabel('SMA crossing')
 
     @BaseIndicator.post_generate_signal
     def generate_signal(self, market_data: pandas.DataFrame) -> pandas.DataFrame:

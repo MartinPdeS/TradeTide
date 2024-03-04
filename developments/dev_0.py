@@ -1,21 +1,23 @@
-from TradeTide import BackTester, RelativeStrengthIndex, get_market_data
+from TradeTide import BackTester, indicators, get_market_data
 
-market_data = get_market_data('eur', 'usd', year=2023)
+market_data = get_market_data('eur', 'usd', year=2023, spread=0, time_span='30day')
 
-strategy = RelativeStrengthIndex(period='30min', overbought_threshold=90, oversold_threshold=10)
+strategy = indicators.RSI(period='30min', overbought_threshold=90, oversold_threshold=10)
 
 strategy.generate_signal(market_data)
 
-backtester = BackTester(market=market_data, strategy=strategy)
+strategy.plot()
 
-backtester.back_test(stop_loss='.1%', take_profit='.1%', spread=0)
+# backtester = BackTester(market=market_data, strategy=strategy)
 
-portfolio = backtester.portfolio
+# backtester.back_test(stop_loss='.1%', take_profit='.1%', spread=0)
 
-backtester.plot()
+# portfolio = backtester.portfolio
 
-backtester.calculate_performance_metrics()
+# backtester.plot()
 
-final_portfolio_value = backtester.get_final_portfolio_value()
+# backtester.calculate_performance_metrics()
 
-print(f"Final Portfolio Value: {final_portfolio_value}")
+# final_portfolio_value = backtester.get_final_portfolio_value()
+
+# print(f"Final Portfolio Value: {final_portfolio_value}")

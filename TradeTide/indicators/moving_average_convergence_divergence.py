@@ -7,8 +7,11 @@ import pandas
 import matplotlib.pyplot as plt
 from TradeTide.indicators.base_indicator import BaseIndicator
 
+from dataclasses import dataclass, field
 
-class MovingAverageConvergenceDivergence(BaseIndicator):
+
+@dataclass(kw_only=True)
+class MACD(BaseIndicator):
     """
     Implements the Moving Average Convergence Divergence (MACD) trading strategy as an extension of the BaseIndicator class.
 
@@ -17,8 +20,8 @@ class MovingAverageConvergenceDivergence(BaseIndicator):
     and the MACD histogram (the difference between the MACD line and the signal line).
 
     Attributes:
-        short_period (int): The period for the short-term EMA. Commonly set to 12.
-        long_period (int): The period for the long-term EMA. Commonly set to 26.
+        short_period (int | str): The period for the short-term EMA. Commonly set to 12.
+        long_period (int | str): The period for the long-term EMA. Commonly set to 26.
         signal_period (int): The period for the signal line EMA. Commonly set to 9.
         value_type (str): The column name from the input DataFrame on which the MACD calculation is based, usually 'close'.
 
@@ -27,25 +30,10 @@ class MovingAverageConvergenceDivergence(BaseIndicator):
         generate_signal: Calculates the MACD line, signal line, and histogram, and generates buy/sell signals.
     """
 
-    def __init__(
-            self,
-            short_period: int = 12,
-            long_period: int = 26,
-            signal_period: int = 9,
-            value_type: str = 'close'):
-        """
-        Initializes a new instance of the MovingAverageConvergenceDivergence strategy with specified parameters.
-
-        Parameters:
-            short_period (int): The period for the short-term EMA. Default is 12.
-            long_period (int): The period for the long-term EMA. Default is 26.
-            signal_period (int): The period for the signal line EMA. Default is 9.
-            value_type (str): The type of price to be used in MACD calculation (e.g., 'close', 'open'). Default is 'close'.
-        """
-        self.short_period = short_period
-        self.long_period = long_period
-        self.signal_period = signal_period
-        self.value_type = value_type
+    short_period: int | str = 12
+    long_period: int | str = 26
+    signal_period: int = 9
+    value_type: str = field(default='close', repr=False)
 
     def add_to_ax(self, ax: plt.Axes) -> NoReturn:
         """
@@ -77,7 +65,6 @@ class MovingAverageConvergenceDivergence(BaseIndicator):
         )
 
         ax.legend()
-        ax.set_ylabel('MACD')
 
     def get_features(self, drop_na: bool = True) -> pandas.DataFrame:
         features = self.data[['macd', 'signal_line', 'histogram']].copy()

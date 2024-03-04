@@ -10,16 +10,16 @@ strategy = Strategy(indicator_0, indicator_1)
 
 backtester = BackTester(market=market_data, strategy=strategy)
 
-loss_profit_managment = risk_management.DirectLossProfitManagement(
+risk = risk_management.DirectLossProfitManagement(
     stop_loss='.1%',
     take_profit='.1%',
 )
 
 capital_managment = capital_managment.LimitedCapital(
     initial_capital=1_000,
-    risk_management=loss_profit_managment,
+    risk_management=risk,
     max_cap_per_trade=100,
-    limit_of_positions=3
+    limit_of_positions=1
 )
 
 backtester.backtest(capital_managment=capital_managment)
@@ -28,7 +28,7 @@ backtester.backtest(capital_managment=capital_managment)
 
 backtester.calculate_performance_metrics()
 
-backtester.print()
+backtester.print_metrics()
 
 # final_portfolio_value = backtester.get_final_portfolio_value()
 

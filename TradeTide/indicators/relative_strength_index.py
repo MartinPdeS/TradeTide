@@ -6,8 +6,11 @@ from typing import NoReturn
 import matplotlib
 from TradeTide.indicators.base_indicator import BaseIndicator
 
+from dataclasses import dataclass, field
 
-class RelativeStrengthIndex(BaseIndicator):
+
+@dataclass(kw_only=True)
+class RSI(BaseIndicator):
     """
     Implements the Relative Strength Index (RSI) trading indicator as an extension of the BaseIndicator class.
 
@@ -16,7 +19,7 @@ class RelativeStrengthIndex(BaseIndicator):
     these conditions to suggest potential buy or sell opportunities.
 
     Attributes:
-        period (int): The number of periods used to calculate the RSI. Commonly set to 14.
+        period (int | str): The number of periods used to calculate the RSI. Commonly set to 14.
         overbought_threshold (int): The RSI level above which the asset is considered overbought. Typically set to 70.
         oversold_threshold (int): The RSI level below which the asset is considered oversold. Typically set to 30.
         value_type (str): The column name from the input DataFrame on which the RSI calculation is based. Usually set to 'close'.
@@ -25,26 +28,10 @@ class RelativeStrengthIndex(BaseIndicator):
         add_to_ax: Plots the RSI and its thresholds on a given Matplotlib axis.
         generate_signal: Calculates the RSI values based on price changes and generates buy/sell signals.
     """
-
-    def __init__(
-            self,
-            period: int = 14,
-            overbought_threshold: int = 80,
-            oversold_threshold: int = 20,
-            value_type: str = 'close'):
-        """
-        Initializes a new instance of the RelativeStrengthIndex indicator with specified parameters.
-
-        Parameters:
-            period (int): The lookback period for RSI calculation. Default is 14.
-            overbought_threshold (int): The RSI value above which the market is considered overbought. Default is 80.
-            oversold_threshold (int): The RSI value below which the market is considered oversold. Default is 20.
-            value_type (str): The type of price to be used in RSI calculation (e.g., 'close', 'open'). Default is 'close'.
-        """
-        self.period = period
-        self.overbought_threshold = overbought_threshold
-        self.oversold_threshold = oversold_threshold
-        self.value_type = value_type
+    period: int | str = 14
+    overbought_threshold: int = field(default=80, repr=False)
+    oversold_threshold: int = field(default=20, repr=False)
+    value_type: str = field(default='close', repr=False)
 
     def add_to_ax(self, ax: matplotlib.axes.Axes) -> NoReturn:
         """
@@ -77,8 +64,6 @@ class RelativeStrengthIndex(BaseIndicator):
             linewidth=2,
             label='oversold'
         )
-
-        ax.set_ylabel('RSI')
 
     @BaseIndicator.post_generate_signal
     def generate_signal(self, market_data: pandas.DataFrame) -> pandas.DataFrame:

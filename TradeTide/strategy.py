@@ -6,6 +6,7 @@ import pandas
 import numpy
 from TradeTide.indicators.base_indicator import BaseIndicator
 import matplotlib.pyplot as plt
+from mpl_interactions import ioff, panhandler, zoom_factory
 
 
 class Strategy:
@@ -65,12 +66,13 @@ class Strategy:
 
         title: str = 'Trading Indicators Overview'
 
-        self.figure, self.axis = plt.subplots(
-            nrows=(n_strategy + 1),
-            ncols=1,
-            figsize=(10, 3 * n_strategy + 1),
-            sharex=True,
-        )
+        with ioff:
+            self.figure, self.axis = plt.subplots(
+                nrows=(n_strategy + 1),
+                ncols=1,
+                figsize=(10, 3 * n_strategy + 1),
+                sharex=True,
+            )
 
         self.axis = numpy.atleast_1d(self.axis)
 
@@ -109,6 +111,11 @@ class Strategy:
 
         plt.subplots_adjust(wspace=0, hspace=0.1)
         plt.legend()
+
+        for ax in self.axis:
+            zoom_factory(ax)
+
+        panhandler(self.figure)
 
         plt.show()
 

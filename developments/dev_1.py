@@ -3,14 +3,17 @@ from TradeTide import capital_managment, risk_management
 
 market_data = get_market_data('eur', 'usd', year=2023, time_span='9 days', spread=0)
 
-indicator_0 = indicators.StochRSIIndicator()
-indicator_1 = indicators.RelativeStrengthIndex()
+indicator_0 = indicators.SRSII()
+indicator_1 = indicators.RSI()
 
 strategy = Strategy(indicator_0, indicator_1)
 
+strategy.generate_signal(market_data)
+strategy.plot()
+
 backtester = BackTester(market=market_data, strategy=strategy)
 
-risk = risk_management.DirectLossProfitManagement(
+risk = risk_management.DirectLossProfit(
     stop_loss='.1%',
     take_profit='.1%',
 )
@@ -24,7 +27,7 @@ capital_managment = capital_managment.LimitedCapital(
 
 backtester.backtest(capital_managment=capital_managment)
 
-# backtester.plot(show_price=True)
+backtester.plot(show_price=True)
 
 backtester.calculate_performance_metrics()
 

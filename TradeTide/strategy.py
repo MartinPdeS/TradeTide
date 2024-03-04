@@ -61,7 +61,7 @@ class Strategy:
         pass
 
     def plot(self) -> NoReturn:
-        n_strategy = len(self.strategies)
+        n_strategy = len(self.indicators)
 
         title: str = 'Trading Indicators Overview'
 

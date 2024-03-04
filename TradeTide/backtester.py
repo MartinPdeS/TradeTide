@@ -7,7 +7,8 @@ import numpy
 from TradeTide.strategy import Strategy
 from TradeTide.plottings import PlotTrade
 from TradeTide.capital_managment import LimitedCapital, UnlimitedCapital
-from datetime import timedelta
+
+from tabulate import tabulate
 
 
 class BackTester():
@@ -187,55 +188,155 @@ class BackTester():
 
         return final_portfolio_value
 
-    def calculate_performance_metrics(self) -> NoReturn:
+    def calculate_total_return(self) -> float:
         """
-        Calculates and displays key performance metrics for the trading strategy based on the backtest results.
+        Calculates the total return of the trading strategy.
 
-        This method computes several important metrics, including total return, annualized return, maximum drawdown,
-        Sharpe ratio, and the win-loss ratio. These metrics provide a quantitative evaluation of the strategy's effectiveness
-        and risk characteristics over the backtesting period.
+        Returns:
+            float: The total return as a percentage.
+        """
+        return (self.portfolio['total'].iloc[-1] / self.capital_managment.initial_capital) - 1
 
-        The calculated metrics are printed to the console for review and analysis.
+    def calculate_annualized_return(self, total_return: float) -> float:
+        """
+        Calculates the annualized return given the total return.
 
-        Preconditions:
-            - The backtest must have been executed, and the `portfolio` attribute should contain the trading results.
-            - The `initial_capital` attribute must be set to the initial capital used in the backtest.
+        Args:
+            total_return (float): The total return of the strategy.
 
-        Note:
-            If the portfolio is not yet populated (i.e., the backtest has not been run), the method will print a message
-            indicating that the backtest should be executed first.
+        Returns:
+            float: The annualized return as a percentage.
+        """
+        trading_seconds = (self.market.index[-1] - self.market.index[0]).seconds
+        return ((1 + total_return) ** (365.0 * 24 * 60 * 60 / trading_seconds)) - 1
+
+    def calculate_max_drawdown(self) -> float:
+        """
+        Calculates the maximum drawdown of the portfolio.
+
+        Returns:
+            float: The maximum drawdown as a percentage.
+        """
+        rolling_max = self.portfolio['total'].cummax()
+        drawdown = self.portfolio['total'] / rolling_max - 1.0
+        return drawdown.min()
+
+    def calculate_sharpe_ratio(self) -> float:
+        """
+        Calculates the Sharpe ratio, which measures the performance of an investment
+        compared to a risk-free asset, after adjusting for its risk.
+
+        Returns:
+            float: The Sharpe ratio. A higher value indicates better risk-adjusted return.
+        """
+        daily_returns = self.portfolio['returns']
+        return daily_returns.mean() / daily_returns.std() * numpy.sqrt(252)
+
+    def calculate_win_loss_ratio(self) -> float:
+        """
+        Calculates the win-loss ratio of the trading positions.
+
+        Returns:
+            float: The ratio of wins to losses. A value of numpy.inf indicates no losses.
+        """
+        wins = sum(1 for pos in self.position_list if pos.is_win == 1)
+        losses = sum(1 for pos in self.position_list if pos.is_win == -1)
+        return wins / losses if losses != 0 else numpy.inf
+
+    def calculate_equity(self) -> float:
+        """
+        Calculates the final equity of the portfolio.
+
+        Returns:
+            float: The ending equity value.
+        """
+        return self.portfolio['total'].iloc[-1]
+
+    def calculate_duration(self) -> int:
+        """
+        Calculates the duration of the backtest in days.
+
+        Returns:
+            int: The duration of the backtest.
+        """
+        return (self.market.index[-1] - self.market.index[0]).days
+
+    def calculate_volatility(self) -> float:
+        """
+        Calculates the volatility of daily returns, which measures the dispersion of returns.
+
+        Returns:
+            float: The annualized volatility as a percentage.
+        """
+        return self.portfolio['returns'].std() * numpy.sqrt(252)
+
+    def calculate_sortino_ratio(self) -> float:
+        """
+        Calculates the Sortino ratio, similar to the Sharpe ratio but only considers downside volatility,
+        which provides a better measure of the risk-adjusted return for asymmetrical return distributions.
+
+        Returns:
+            float: The Sortino ratio. A higher value indicates a better return per unit of bad risk taken.
+        """
+        daily_returns = self.portfolio['returns']
+        negative_returns = daily_returns[daily_returns < 0]
+        downside_std = numpy.sqrt((negative_returns ** 2).mean()) * numpy.sqrt(252)
+        annualized_return = self.calculate_annualized_return(self.calculate_total_return())
+        return annualized_return / downside_std if downside_std != 0 else numpy.inf
+
+    def calculate_performance_metrics(self) -> dict:
+        """
+        Calculates and compiles key performance metrics for the trading strategy.
+
+        This includes total return, annualized return, maximum drawdown, Sharpe ratio, Sortino ratio,
+        win-loss ratio, equity, duration, and volatility. These metrics quantify the strategy's
+        effectiveness and risk characteristics.
+
+        Returns:
+            dict: A dictionary containing all calculated performance metrics.
         """
         if self.portfolio is None:
             print("Backtest the strategy first before calculating performance metrics.")
-            return
+            return {}
 
-        # Total Return
-        total_return = (self.portfolio['total'].iloc[-1] / self.capital_managment.initial_capital) - 1
+        total_return = self.calculate_total_return()
+        annualized_return = self.calculate_annualized_return(total_return)
+        max_drawdown = self.calculate_max_drawdown()
+        sharpe_ratio = self.calculate_sharpe_ratio()
+        sortino_ratio = self.calculate_sortino_ratio()
+        win_loss_ratio = self.calculate_win_loss_ratio()
+        equity = self.calculate_equity()
+        duration = self.calculate_duration()
+        volatility = self.calculate_volatility()
 
-        # Annualized Return
-        trading_days = self.market.time_span.total_seconds() / timedelta(days=1).total_seconds()
+        self.performance_dict = {
+            "start_date": self.market.index[0],
+            "stop_date": self.market.index[-1],
+            "duration": f"{duration} days",
+            "total_return": f"{total_return * 100:.2f}%",
+            "annualized_return": f"{annualized_return * 100:.2f}%",
+            "max_drawdown": f"{max_drawdown * 100:.2f}%",
+            "sharpe_ratio": f"{sharpe_ratio:.2f}",
+            "sortino_ratio": f"{sortino_ratio:.2f}",
+            "total_positions": f"{len(self.position_list)}",
+            "win_loss_ratio": f"{win_loss_ratio:.2f}",
+            "equity": f"${equity:,.2f}",
+            "volatility": f"{volatility * 100:.2f}%"
+        }
 
-        annualized_return = ((1 + total_return) ** (365.0 / trading_days)) - 1
+        return self.performance_dict
 
-        # Maximum Drawdown.
-        rolling_max = self.portfolio['total'].cummax()
-        drawdown = self.portfolio['total'] / rolling_max - 1.0
-        max_drawdown = drawdown.min()
+    def print_metrics(self) -> NoReturn:
 
-        # Sharpe Ratio (Assuming risk-free rate is 0 for simplicity)
-        daily_returns = self.portfolio['returns']
-        sharpe_ratio = daily_returns.mean() / daily_returns.std() * numpy.sqrt(252)
+        property_dict = {
+            "Property": self.performance_dict.keys(), "value": self.performance_dict.values()
+        }
 
-        # Win-Loss Ratio
-        wins = len(self.portfolio[self.portfolio['returns'] > 0])
-        losses = len(self.portfolio[self.portfolio['returns'] < 0])
-        win_loss_ratio = wins / losses if losses != 0 else numpy.inf
+        table = tabulate(
+            property_dict,
+            headers="keys"
+        )
+        print(table)
 
-        # Print the metrics
-        print(f"Total Return: {total_return * 100:.2f}%")
-        print(f"Annualized Return: {annualized_return * 100:.2f}%")
-        print(f"Maximum Drawdown: {max_drawdown * 100:.2f}%")
-        print(f"Sharpe Ratio: {sharpe_ratio:.2f}")
-        print(f"Win-Loss Ratio: {win_loss_ratio:.2f}")
 
 # -

@@ -35,7 +35,7 @@ def get_data_path(currency_0: str, currency_1: str, year: int) -> pathlib.Path:
     return data_file
 
 
-def get_market_data(currency_0: str, currency_1: str, year: int, time_span: str = None) -> pandas.DataFrame:
+def get_market_data(currency_0: str, currency_1: str, year: int, time_span: str = None, spread: None | float = None) -> pandas.DataFrame:
     """
     Reads currency exchange data from a CSV file into a pandas DataFrame and processes it.
 
@@ -61,6 +61,12 @@ def get_market_data(currency_0: str, currency_1: str, year: int, time_span: str 
         filepath_or_buffer=data_file.with_suffix('.csv'),
         names=['date', 'open', 'high', 'low', 'close', 'volume', 'spread']
     )
+
+    if spread is not None:
+        dataframe.spread = spread
+
+    if dataframe.spread.isna().any():
+        raise ValueError('Spread value is not specified')
 
     dataframe['date'] = pandas.to_datetime(dataframe['date'])
 

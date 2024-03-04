@@ -1,10 +1,10 @@
 # Import necessary modules and classes from the TradeTide package
 from TradeTide import BackTester, indicators, get_market_data
 from TradeTide.capital_managment import LimitedCapital
-from TradeTide.loss_profit_managment import DirectLossProfitManagement
+from TradeTide.risk_management import DirectLossProfitManagement
 
 # Load historical market data for EUR/USD pair for the year 2023 and limit to 4000 data points
-market_data = get_market_data('eur', 'usd', year=2023, time_span='30day')
+market_data = get_market_data('eur', 'usd', year=2023, time_span='30day', spread=0)
 
 # Initialize a Moving Average Crossing indicator with specific window settings and minimum period
 indicator = indicators.BollingerBands(periods=20)
@@ -27,8 +27,7 @@ loss_profit_managment = DirectLossProfitManagement(
 # Configure capital management strategy with initial capital, spread, and trading constraints
 capital_managment = LimitedCapital(
     initial_capital=1_000,  # Starting capital
-    spread=0,  # Spread cost per trade
-    loss_profit_managment=loss_profit_managment,  # Loss and profit management strategy
+    risk_management=loss_profit_managment,  # Loss and profit management strategy
     max_cap_per_trade=100,  # Maximum capital allocated per trade
     limit_of_positions=3  # Maximum number of concurrent open positions
 )
@@ -47,8 +46,7 @@ backtester.plot(show_price=True)
 backtester.calculate_performance_metrics()
 
 # Retrieve and print the final total value of the portfolio after completing the backtest
-final_portfolio_value = backtester.get_final_portfolio_value()
-print(f"Final Portfolio Value: {final_portfolio_value}")
+backtester.print_metrics()
 
 
 # -

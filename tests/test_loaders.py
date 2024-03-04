@@ -15,10 +15,6 @@ currency_pairs = [
 
 @pytest.mark.parametrize("currency_pair", currency_pairs)
 def test_load_dataframe(currency_pair: tuple) -> None:
-    data_frame = get_market_data('eur', 'usd', year=2023)
-
-    print(data_frame.columns)
-
-    data_frame = get_market_data('usd', 'eur', year=2023)
+    _ = get_market_data(*currency_pair, year=2023, spread=0)
 
 # -

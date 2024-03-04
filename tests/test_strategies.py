@@ -10,7 +10,7 @@ strategy_list = TradeTide.indicators.__all__
 
 @pytest.mark.parametrize("strategy", strategy_list, ids=strategy_list)
 def test_strategy(strategy):
-    market_data = get_market_data('eur', 'usd', year=2023)
+    market_data = get_market_data('eur', 'usd', year=2023, spread=0)
 
     market_data = market_data[:10_000].copy()
 

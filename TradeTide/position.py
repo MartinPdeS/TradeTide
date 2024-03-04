@@ -7,52 +7,79 @@ import numpy
 import matplotlib.pyplot as plt
 
 from dataclasses import dataclass
+from TradeTide.risk_management import LossProfitManagementBase
 
 
 @dataclass
 class Position:
     """
-    Represents a trading position, optimized for efficient calculation and visualization of
-    entry, exit, and risk management strategies. Supports both long and short positions.
+    Represents a financial trading position with functionality for risk management,
+    performance analysis, and visualization. It incorporates both long and short positions,
+    taking into account entry and exit strategies based on predefined risk management parameters.
 
     Attributes:
-        start_date (pd.Timestamp): The date the position is opened.
-        stop_loss (float): The stop-loss level as a percentage of the entry price.
-        take_profit (float): The take-profit level as a percentage of the entry price.
-        market (pd.DataFrame): The market data containing at least 'close' prices.
-        units (float): The number of units involved in the position.
-        entry_price (float): The price at which the position is entered.
-        position_type (str): Specifies the position type, either 'long' or 'short'.
+        start_date (pd.Timestamp): Date when the position is initiated.
+        market (pd.DataFrame): DataFrame containing market data with at least 'close' and 'spread' prices.
+        position_type (str): Type of the position ('long' or 'short').
+        risk_management (LossProfitManagementBase): An instance of a risk management strategy defining stop loss and take profit levels.
+        maximum_cash (float): The maximum amount of cash allocated for this position.
+
+    The class requires market data and a risk management strategy to initialize. It calculates
+    the entry price, number of units, and cost at initiation. It also computes the precise levels
+    for stop loss and take profit based on the provided strategy and market conditions at the start date.
 
     Methods:
-        __post_init__: Validates the market data and computes initial values for triggers and exit information.
-        validate_market_data: Ensures the market DataFrame contains a 'close' column.
-        compute_triggers: Calculates the stop-loss and take-profit trigger levels and dates.
-        compute_exit_info: Determines the exit price, date, and profit or loss for the position.
-        plot: Visualizes the position's lifecycle on the market data, highlighting key levels and events.
+        initialize(): Prepares the position by setting stop loss and take profit prices based on the risk management strategy.
+        update_portfolio_dataframe(dataframe: pd.DataFrame): Updates a given portfolio DataFrame with the position's details.
+        compute_exit_info(): Calculates the exit price based on market data and updates the cash balance accordingly.
+        compute_triggers(): Identifies trigger points for stop loss and take profit based on market movements post-entry.
+        plot(): Visualizes the position lifecycle on a price chart, highlighting key events and levels.
 
-    Example:
-        >>> market_data = pd.DataFrame({'close': [...]}, index=pd.date_range(start="2020-01-01", periods=100))
-        >>> position = OptimizedPosition(
-                start_date="2020-01-10",
-                stop_loss=0.05,
-                take_profit=0.1,
+    Usage Example:
+        >>> market_data = pd.DataFrame({
+                'close': [1.10, 1.15, 1.08, 1.12, 1.15],
+                'spread': [0.01, 0.01, 0.01, 0.01, 0.01]
+            }, index=pd.date_range(start="2020-01-01", periods=5))
+        >>> risk_strategy = LossProfitManagementBase(stop_loss=0.05, take_profit=0.1)
+        >>> position = Position(
+                start_date=pd.Timestamp("2020-01-01"),
                 market=market_data,
-                units=100,
-                entry_price=50,
-                position_type='long'
+                position_type='long',
+                risk_management=risk_strategy,
+                maximum_cash=1000
             )
+        >>> position.initialize()
         >>> position.plot()
+
+    This class simplifies the management of trading positions by automating risk calculations and providing
+    visual insights into the trading strategy's execution, making it an essential tool for backtesting trading strategies.
     """
     start_date: pandas.Timestamp
-    stop_loss_price: float
-    take_profit_price: float
     market: pandas.DataFrame
-    units: float
-    entry_price: float
     position_type: str  # 'long' or 'short'
+    risk_management: LossProfitManagementBase
+    maximum_cash: float
 
     def __post_init__(self):
+        # Initial setup: calculates entry price, units, and validates position feasibility.
+        self.spread = self.market.spread[self.start_date]
+        self.entry_price = self.market.close[self.start_date]
+
+        self.units = (self.maximum_cash - self.spread) / self.entry_price
+
+        self.cost = self.units * self.entry_price + self.spread
+
+        if self.units < 1:
+            self.is_valid = False
+
+        self.is_valid = True
+
+    def initialize(self) -> NoReturn:
+        self.stop_loss_price, self.take_profit_price = self.risk_management.get_loss_profit_price(
+            position_type=self.position_type,
+            entry_price=self.entry_price
+        )
+
         self.compute_triggers()
         self.entry_value = self.entry_price * self.units
         self.generate_holding_time()
@@ -114,6 +141,13 @@ class Position:
         """
         dataframe.loc[self.start_date:self.stop_date, 'holdings'] += self.units * self.market.close
 
+    def compute_exit_info(self) -> None:
+        """
+        Determines and sets the exit price of the position based on market data and the position type.
+        This is a placeholder method; the actual implementation should compute the exit price.
+        """
+        self.exit_price = self.market.shift().loc[self.stop_date, 'close'] if self.stop_date else numpy.nan
+
     def update_cash(self, dataframe: pandas.DataFrame) -> NoReturn:
         """
         Updates the cash balance within a portfolio DataFrame based on the entry and exit of the trading position.
@@ -121,7 +155,7 @@ class Position:
         Parameters:
             dataframe (pandas.DataFrame): The portfolio DataFrame to be updated with cash balance changes.
         """
-        self.exit_price = self.market.shift().loc[self.stop_date, 'close'] if self.stop_date else numpy.nan
+        self.compute_exit_info()
 
         self.entry_spend = self.entry_price * self.units
         self.exit_get = self.exit_price * self.units
@@ -148,6 +182,30 @@ class Position:
         self.stop_loss_trigger = market_after_start[condition_for_stop].first_valid_index()
         self.take_profit_trigger = market_after_start[condition_for_profit].first_valid_index()
         self.stop_date = min(filter(pandas.notna, [self.stop_loss_trigger, self.take_profit_trigger, self.market.index[-1]]))
+
+    @property
+    def is_win(self) -> int:
+        """
+        Determines the outcome of the position.
+
+        Returns:
+            int: 0 if neither stop loss nor take profit is triggered,
+                 +1 if take profit is triggered first,
+                 -1 if stop loss is triggered first.
+        """
+        # Ensure both triggers are computed, they could be None if not triggered
+        stop_loss_triggered = self.stop_loss_trigger is not None
+        take_profit_triggered = self.take_profit_trigger is not None
+
+        # If neither is triggered, return 0
+        if not stop_loss_triggered and not take_profit_triggered:
+            return 0
+        # If stop loss is triggered but take profit isn't, or it's triggered first
+        if stop_loss_triggered and (not take_profit_triggered or self.stop_loss_trigger < self.take_profit_trigger):
+            return -1
+        # If take profit is triggered but stop loss isn't, or it's triggered first
+        if take_profit_triggered and (not stop_loss_triggered or self.take_profit_trigger < self.stop_loss_trigger):
+            return +1
 
     def generate_holding_time(self) -> NoReturn:
         """
@@ -231,8 +289,9 @@ class Position:
 
     def plot(self) -> NoReturn:
         """
-        Generates and displays a matplotlib plot visualizing the lifecycle of the trading position. The plot includes
-        the market price, entry and exit points, stop-loss and take-profit levels, and the holding period.
+        Visualizes the trading position on a price chart. Highlights include the entry and exit points,
+        stop loss and take profit levels, and the duration of the position. This method provides a graphical
+        overview of the position's performance within the market context.
         """
         ax = self.market.close.plot(
             figsize=(10, 6),

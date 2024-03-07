@@ -10,7 +10,7 @@ from TradeTide.indicators.base_indicator import BaseIndicator
 from dataclasses import dataclass, field
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, repr=False)
 class MACD(BaseIndicator):
     """
     Implements the Moving Average Convergence Divergence (MACD) trading strategy as an extension of the BaseIndicator class.
@@ -42,6 +42,8 @@ class MACD(BaseIndicator):
         Parameters:
             ax (plt.Axes): The Matplotlib axis object where the MACD plot will be added.
         """
+        ax.set_ylabel(self.__repr__())
+
         ax.plot(
             self.data['macd'],
             label='MACD',

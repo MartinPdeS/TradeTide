@@ -49,8 +49,8 @@ class Strategy:
         signals_df = pandas.DataFrame(index=market_data.index)
 
         # Collect signals from each strategy
-        for i, strategy in enumerate(self.indicators):
-            signals_df[f'signal_{i}'] = strategy.generate_signal(market_data)
+        for i, indicator in enumerate(self.indicators):
+            signals_df[f'signal_{i}'] = indicator.generate_signal(market_data)
 
         # Apply weights to the signals
         weighted_signals = signals_df.mul(self.weights, axis=1)
@@ -115,7 +115,7 @@ class Strategy:
         for ax in self.axis:
             zoom_factory(ax)
 
-        panhandler(self.figure)
+        _ = panhandler(self.figure)
 
         plt.show()
 

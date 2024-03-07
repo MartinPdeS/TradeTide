@@ -10,7 +10,7 @@ from TradeTide.indicators.base_indicator import BaseIndicator
 from dataclasses import dataclass, field
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, repr=False)
 class BB(BaseIndicator):
     """
     Implements the Bollinger Bands (BB) trading indicator as an extension of the BaseIndicator class.
@@ -51,6 +51,8 @@ class BB(BaseIndicator):
         Parameters:
             ax (matplotlib.axes.Axes): The Matplotlib axis object where the Bollinger Bands plot will be added.
         """
+        ax.set_ylabel(self.__repr__())
+
         ax.fill_between(
             x=self.data.index,
             y1=self.data.lower_band,

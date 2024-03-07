@@ -5,6 +5,7 @@ from typing import NoReturn
 
 from TradeTide import directories
 import pandas
+# import modin.pandas as pandas
 import pathlib
 from TradeTide.tools import parse_time_string_to_delta
 # data taken from https://forexsb.com/historical-forex-data

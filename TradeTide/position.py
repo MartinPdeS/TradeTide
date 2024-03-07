@@ -11,7 +11,7 @@ from TradeTide.risk_management import RiskBase
 
 
 @dataclass
-class Position:
+class BasePosition:
     """
     Represents a financial trading position with functionality for risk management,
     performance analysis, and visualization. It incorporates both long and short positions,
@@ -20,7 +20,6 @@ class Position:
     Attributes:
         start_date (pd.Timestamp): Date when the position is initiated.
         market (pd.DataFrame): DataFrame containing market data with at least 'close' and 'spread' prices.
-        position_type (str): Type of the position ('long' or 'short').
         risk_management (RiskBase): An instance of a risk management strategy defining stop loss and take profit levels.
         maximum_cash (float): The maximum amount of cash allocated for this position.
 
@@ -44,7 +43,6 @@ class Position:
         >>> position = Position(
                 start_date=pd.Timestamp("2020-01-01"),
                 market=market_data,
-                position_type='long',
                 risk_management=risk_strategy,
                 maximum_cash=1000
             )
@@ -56,7 +54,6 @@ class Position:
     """
     start_date: pandas.Timestamp
     market: pandas.DataFrame
-    position_type: str  # 'long' or 'short'
     risk_management: RiskBase
     maximum_cash: float
 
@@ -76,7 +73,7 @@ class Position:
 
     def initialize(self) -> NoReturn:
         self.stop_loss_price, self.take_profit_price = self.risk_management.get_loss_profit_price(
-            position_type=self.position_type,
+            position_type=self.type,
             entry_price=self.entry_price
         )
 
@@ -101,18 +98,6 @@ class Position:
         self.add_position_to_dataframe(dataframe=dataframe)
         self.add_units_to_dataframe(dataframe=dataframe)
         self.update_cash(dataframe=dataframe)
-
-    def add_position_to_dataframe(self, dataframe: pandas.DataFrame) -> NoReturn:
-        """
-        Marks the trading position as either long or short in the specified portfolio DataFrame during the holding period.
-
-        Parameters:
-            dataframe (pandas.DataFrame): The portfolio DataFrame to be updated with the position type information.
-        """
-        if self.position_type == 'short':
-            dataframe.loc[self.start_date:self.stop_date, 'short_positions'] += 1
-        else:
-            dataframe.loc[self.start_date:self.stop_date, 'long_positions'] += 1
 
     def add_total_position_to_dataframe(self, dataframe: pandas.DataFrame) -> NoReturn:
         """
@@ -141,13 +126,6 @@ class Position:
         """
         dataframe.loc[self.start_date:self.stop_date, 'holdings'] += self.units * self.market.close
 
-    def compute_exit_info(self) -> None:
-        """
-        Determines and sets the exit price of the position based on market data and the position type.
-        This is a placeholder method; the actual implementation should compute the exit price.
-        """
-        self.exit_price = self.market.shift().loc[self.stop_date, 'close'] if self.stop_date else numpy.nan
-
     def update_cash(self, dataframe: pandas.DataFrame) -> NoReturn:
         """
         Updates the cash balance within a portfolio DataFrame based on the entry and exit of the trading position.
@@ -155,7 +133,7 @@ class Position:
         Parameters:
             dataframe (pandas.DataFrame): The portfolio DataFrame to be updated with cash balance changes.
         """
-        self.compute_exit_info()
+        self.exit_price = self.compute_exit_info()
 
         self.entry_spend = self.entry_price * self.units
         self.exit_get = self.exit_price * self.units
@@ -165,23 +143,6 @@ class Position:
         idx = dataframe.index.get_loc(self.stop_date) + 1
 
         dataframe.iloc[idx:, dataframe.columns.get_loc('cash')] += self.exit_get
-
-    def compute_triggers(self) -> NoReturn:
-        """
-        Computes the trigger levels and dates for stop-loss and take-profit based on the market data and the position type.
-        Sets the respective attributes for stop-loss and take-profit prices, as well as the earliest trigger date.
-        """
-        market_after_start = self.market.close.loc[self.start_date:]
-        if self.position_type == 'short':
-            condition_for_stop = market_after_start >= self.stop_loss_price
-            condition_for_profit = market_after_start <= self.take_profit_price
-        else:  # long position
-            condition_for_stop = market_after_start <= self.stop_loss_price
-            condition_for_profit = market_after_start >= self.take_profit_price
-
-        self.stop_loss_trigger = market_after_start[condition_for_stop].first_valid_index()
-        self.take_profit_trigger = market_after_start[condition_for_profit].first_valid_index()
-        self.stop_date = min(filter(pandas.notna, [self.stop_loss_trigger, self.take_profit_trigger, self.market.index[-1]]))
 
     @property
     def is_win(self) -> int:
@@ -299,10 +260,101 @@ class Position:
             label='Market Close'
         )
 
+        self.market.high.plot(
+            ax=ax,
+            figsize=(10, 6),
+            title='Position Overview',
+            label='Market High'
+        )
+
+        self.market.low.plot(
+            ax=ax,
+            figsize=(10, 6),
+            title='Position Overview',
+            label='Market Low'
+        )
+
         self._add_holding_area_to_ax(ax=ax)
         self._add_triggers_to_ax(ax=ax)
         self._add_stop_loss_to_ax(ax=ax)
         plt.legend()
         plt.show()
+
+
+class Long(BasePosition):
+    type = 'long'
+
+    def compute_triggers(self) -> NoReturn:
+        """
+        Computes the trigger levels and dates for stop-loss and take-profit based on the market data and the position type.
+        Sets the respective attributes for stop-loss and take-profit prices, as well as the earliest trigger date.
+        """
+
+        market_after_start = self.market.loc[self.start_date:]
+        condition_for_stop = market_after_start.low <= self.stop_loss_price
+        condition_for_profit = market_after_start.high >= self.take_profit_price
+
+        self.stop_loss_trigger = market_after_start[condition_for_stop].first_valid_index()
+        self.take_profit_trigger = market_after_start[condition_for_profit].first_valid_index()
+
+        self.stop_date = min(filter(pandas.notna, [self.stop_loss_trigger, self.take_profit_trigger, self.market.index[-1]]))
+
+    def compute_exit_info(self) -> float:
+        """
+        Determines and sets the exit price of the position based on market data and the position type.
+        This is a placeholder method; the actual implementation should compute the exit price.
+        """
+        if self.stop_date is None:
+            return numpy.nan
+
+        return self.take_profit_price if self.is_win else self.stop_loss_price
+
+    def add_position_to_dataframe(self, dataframe: pandas.DataFrame) -> NoReturn:
+        """
+        Marks the trading position as either long or short in the specified portfolio DataFrame during the holding period.
+
+        Parameters:
+            dataframe (pandas.DataFrame): The portfolio DataFrame to be updated with the position type information.
+        """
+        dataframe.loc[self.start_date:self.stop_date, 'long_positions'] += 1
+
+
+class Short(BasePosition):
+    type = 'short'
+
+    def add_position_to_dataframe(self, dataframe: pandas.DataFrame) -> NoReturn:
+        """
+        Marks the trading position as either long or short in the specified portfolio DataFrame during the holding period.
+
+        Parameters:
+            dataframe (pandas.DataFrame): The portfolio DataFrame to be updated with the position type information.
+        """
+
+        dataframe.loc[self.start_date:self.stop_date, 'short_positions'] += 1
+
+    def compute_exit_info(self) -> float:
+        """
+        Determines and sets the exit price of the position based on market data and the position type.
+        This is a placeholder method; the actual implementation should compute the exit price.
+        """
+        if self.stop_date is None:
+            return numpy.nan
+
+        return self.stop_loss_price if self.is_win else self.take_profit_price
+
+    def compute_triggers(self) -> NoReturn:
+        """
+        Computes the trigger levels and dates for stop-loss and take-profit based on the market data and the position type.
+        Sets the respective attributes for stop-loss and take-profit prices, as well as the earliest trigger date.
+        """
+
+        market_after_start = self.market.loc[self.start_date:]
+        condition_for_stop = market_after_start.high >= self.stop_loss_price
+        condition_for_profit = market_after_start.low <= self.take_profit_price
+
+        self.stop_loss_trigger = market_after_start[condition_for_stop].first_valid_index()
+        self.take_profit_trigger = market_after_start[condition_for_profit].first_valid_index()
+
+        self.stop_date = min(filter(pandas.notna, [self.stop_loss_trigger, self.take_profit_trigger, self.market.index[-1]]))
 
 # -

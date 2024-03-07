@@ -10,7 +10,7 @@ from TradeTide.indicators.base_indicator import BaseIndicator
 from dataclasses import dataclass, field
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, repr=False)
 class ATR(BaseIndicator):
     """
     Implements the Average True Range (ATR) trading indicator as an extension of the BaseIndicator class.
@@ -39,6 +39,8 @@ class ATR(BaseIndicator):
         Parameters:
             ax (matplotlib.axes.Axes): The Matplotlib axis object where the ATR plot will be added.
         """
+        ax.set_ylabel(self.__repr__())
+
         ax.plot(
             self.data.index,
             self.data.ATR,
@@ -46,7 +48,6 @@ class ATR(BaseIndicator):
             linewidth=1,
             color='C1'
         )
-        ax.set_ylabel('Average True Range')
 
     def generate_signal(self, market_data: pandas.DataFrame) -> pandas.DataFrame:
         """

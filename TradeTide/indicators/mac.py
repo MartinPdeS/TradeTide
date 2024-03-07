@@ -43,15 +43,17 @@ class MAC(BaseIndicator):
         Parameters:
             ax (matplotlib.axes.Axes): The Matplotlib axis object where the moving averages will be plotted.
         """
+        ax.set_ylabel(self.__repr__())
+
         ax.plot(
             self.data['short_window_array'],
             linewidth=2,
-            label='long window'
+            label='short window'
         )
 
         ax.plot(
             self.data['long_window_array'],
-            label='short window',
+            label='long window',
             linewidth=2,
         )
 
@@ -87,5 +89,5 @@ class MAC(BaseIndicator):
             min_periods=self.min_period
         ).mean(engine='numba')
 
-        self.data['signal'] = numpy.where(self.data['short_window_array'] > self.data['long_window_array'], 1, 0)
+        self.data['signal'] = numpy.where(self.data['short_window_array'] > self.data['long_window_array'], 1, -1)
 # -

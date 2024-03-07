@@ -9,7 +9,7 @@ from TradeTide.indicators.base_indicator import BaseIndicator
 from dataclasses import dataclass, field
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, repr=False)
 class RMI(BaseIndicator):
     """
     Implements the Relative Momentum Index (RMI) trading indicator, an extension of the BaseIndicator class.
@@ -43,6 +43,8 @@ class RMI(BaseIndicator):
         Parameters:
             ax (plt.Axes): The Matplotlib axis object where the RMI plot will be added.
         """
+        ax.set_ylabel(self.__repr__())
+
         ax.plot(
             self.data['rmi'],
             label='RMI',

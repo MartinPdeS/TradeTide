@@ -4,7 +4,7 @@
 from typing import NoReturn
 import pandas
 import numpy
-from TradeTide.position import Position
+from TradeTide.position import Short, Long
 from TradeTide.risk_management import DirectLossProfit, ATRLossProfit
 
 
@@ -100,10 +100,11 @@ class LimitedCapital(CapitalManagement):
 
             maximum_cash: float = min(self.time_info.cash[date], self.max_cap_per_trade)
 
-            position = Position(
+            position_class = Short if position_type == 'short' else Long
+
+            position = position_class(
                 start_date=date,
                 market=market,
-                position_type=position_type,
                 risk_management=self.risk_management,
                 maximum_cash=maximum_cash
 
@@ -161,10 +162,11 @@ class UnlimitedCapital(CapitalManagement):
 
             position_type = 'long' if signal > 0 else 'short'
 
-            position = Position(
+            position_class = Short if position_type == 'short' else Long
+
+            position = position_class(
                 start_date=date,
                 market=market,
-                position_type=position_type,
                 risk_management=self.risk_management,
                 maximum_cash=self.max_cap_per_trade
 

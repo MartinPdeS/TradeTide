@@ -9,7 +9,7 @@ from TradeTide.indicators.base_indicator import BaseIndicator
 from dataclasses import dataclass, field
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, repr=False)
 class RSI(BaseIndicator):
     """
     Implements the Relative Strength Index (RSI) trading indicator as an extension of the BaseIndicator class.
@@ -40,6 +40,8 @@ class RSI(BaseIndicator):
         Parameters:
             ax (matplotlib.axes.Axes): The Matplotlib axis object where the RSI plot will be added.
         """
+        ax.set_ylabel(self.__repr__())
+
         ax.plot(
             self.data['rsi'],
             label='RSI',

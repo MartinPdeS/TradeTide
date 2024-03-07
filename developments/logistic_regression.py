@@ -10,13 +10,13 @@ from TradeTide import indicators
 # Sample DataFrame loading
 # Replace this with loading your forex market data
 # For this example, assume 'close' is the closing price of a forex pair
-market_data = get_market_data('eur', 'usd', year=2023, time_span='100day')
+market_data = get_market_data('eur', 'usd', year=2023, time_span='199day', spread=0)
 # print(market_data)
 market_data.drop(['volume', 'spread'], inplace=True, axis=1)
 
 
 # Feature Engineering
-indicator = indicators.MovingAverageConvergenceDivergence()
+indicator = indicators.MACD()
 indicator.generate_signal(market_data)
 
 # Calculate the target variable: 1 for "buy" signal, -1 for "sell" signal, based on future price movement

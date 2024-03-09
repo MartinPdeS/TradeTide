@@ -21,10 +21,10 @@ class BasePosition:
         start_date (pd.Timestamp): Date when the position is initiated.
         market (pd.DataFrame): DataFrame containing market data with at least 'close' and 'spread' prices.
         risk_management (RiskBase): An instance of a risk management strategy defining stop loss and take profit levels.
-        maximum_cash (float): The maximum amount of cash allocated for this position.
+        available_cash (float): The maximum amount of cash allocated for this position.
 
     The class requires market data and a risk management strategy to initialize. It calculates
-    the entry price, number of units, and cost at initiation. It also computes the precise levels
+    the entry price, number of units (size), and cost at initiation. It also computes the precise levels
     for stop loss and take profit based on the provided strategy and market conditions at the start date.
 
     Methods:
@@ -34,61 +34,50 @@ class BasePosition:
         compute_triggers(): Identifies trigger points for stop loss and take profit based on market movements post-entry.
         plot(): Visualizes the position lifecycle on a price chart, highlighting key events and levels.
 
-    Usage Example:
-        >>> market_data = pd.DataFrame({
-                'close': [1.10, 1.15, 1.08, 1.12, 1.15],
-                'spread': [0.01, 0.01, 0.01, 0.01, 0.01]
-            }, index=pd.date_range(start="2020-01-01", periods=5))
-        >>> risk_strategy = RiskBase(stop_loss=0.05, take_profit=0.1)
-        >>> position = Position(
-                start_date=pd.Timestamp("2020-01-01"),
-                market=market_data,
-                risk_management=risk_strategy,
-                maximum_cash=1000
-            )
-        >>> position.initialize()
-        >>> position.plot()
-
     This class simplifies the management of trading positions by automating risk calculations and providing
     visual insights into the trading strategy's execution, making it an essential tool for backtesting trading strategies.
     """
     start_date: pandas.Timestamp
     market: pandas.DataFrame
     risk_management: RiskBase
-    maximum_cash: float
+    available_cash: float
 
     def __post_init__(self):
-        # Initial setup: calculates entry price, units, and validates position feasibility.
+        # Initial setup: calculates entry price, size, and validates position feasibility.
         self.spread = self.market.spread[self.start_date]
         self.entry_price = self.market.close[self.start_date]
+        self.size = (self.available_cash - self.spread) / self.entry_price
+        self.cost = self.size * self.entry_price + self.spread
 
-        self.units = (self.maximum_cash - self.spread) / self.entry_price
-
-        self.cost = self.units * self.entry_price + self.spread
-
-        if self.units < 1:
+        if self.size < 1:
             self.is_valid = False
-
-        self.is_valid = True
+        else:
+            self.is_valid = True
 
     def initialize(self) -> NoReturn:
-        self.stop_loss_price, self.take_profit_price = self.risk_management.get_loss_profit_price(
-            position_type=self.type,
-            entry_price=self.entry_price
-        )
-
+        self.get_loss_profit_prices()
         self.compute_triggers()
-        self.entry_value = self.entry_price * self.units
+        self.compute_is_win()
+        self.entry_value = self.entry_price * self.size
         self.generate_holding_time()
+
+    def get_loss_profit_prices(self) -> NoReturn:
+        if isinstance(self, Long):
+            self.stop_loss_price = self.entry_price - self.risk_management.stop_loss
+            self.take_profit_price = self.entry_price + self.risk_management.take_profit
+
+        else:
+            self.stop_loss_price = self.entry_price + self.risk_management.stop_loss
+            self.take_profit_price = self.entry_price - self.risk_management.take_profit
 
     @property
     def profit_loss(self) -> float:
-        """ Retunrs the cash value that this position made over time """
+        """ Return the cash value that this position made over time """
         return self.exit_get - self.entry_spend
 
     def update_portfolio_dataframe(self, dataframe: pandas.DataFrame) -> NoReturn:
         """
-        Updates the given portfolio DataFrame with details about the trading position, including units held, holding value,
+        Updates the given portfolio DataFrame with details about the trading position, including size held, holding value,
         position status (long or short), and cash balance adjustments.
 
         Parameters:
@@ -115,7 +104,7 @@ class BasePosition:
         Parameters:
             dataframe (pandas.DataFrame): The portfolio DataFrame to be updated with the position type information.
         """
-        dataframe.loc[self.start_date:self.stop_date, 'units'] += self.units
+        dataframe.loc[self.start_date:self.stop_date, 'units'] += self.size
 
     def add_holding_to_dataframe(self, dataframe: pandas.DataFrame) -> NoReturn:
         """
@@ -124,7 +113,7 @@ class BasePosition:
         Parameters:
             dataframe (pandas.DataFrame): The portfolio DataFrame to be updated with holding value information.
         """
-        dataframe.loc[self.start_date:self.stop_date, 'holdings'] += self.units * self.market.close
+        dataframe.loc[self.start_date:self.stop_date, 'holdings'] += self.size * self.market.close
 
     def update_cash(self, dataframe: pandas.DataFrame) -> NoReturn:
         """
@@ -135,8 +124,8 @@ class BasePosition:
         """
         self.exit_price = self.compute_exit_info()
 
-        self.entry_spend = self.entry_price * self.units
-        self.exit_get = self.exit_price * self.units
+        self.entry_spend = self.entry_price * self.size
+        self.exit_get = self.exit_price * self.size
 
         dataframe.loc[self.start_date:, 'cash'] -= self.entry_spend
 
@@ -144,8 +133,7 @@ class BasePosition:
 
         dataframe.iloc[idx:, dataframe.columns.get_loc('cash')] += self.exit_get
 
-    @property
-    def is_win(self) -> int:
+    def compute_is_win(self) -> int:
         """
         Determines the outcome of the position.
 
@@ -160,13 +148,13 @@ class BasePosition:
 
         # If neither is triggered, return 0
         if not stop_loss_triggered and not take_profit_triggered:
-            return 0
+            self.is_win = 0
         # If stop loss is triggered but take profit isn't, or it's triggered first
         if stop_loss_triggered and (not take_profit_triggered or self.stop_loss_trigger < self.take_profit_trigger):
-            return -1
+            self.is_win = -1
         # If take profit is triggered but stop loss isn't, or it's triggered first
         if take_profit_triggered and (not stop_loss_triggered or self.take_profit_trigger < self.stop_loss_trigger):
-            return +1
+            self.is_win = +1
 
     def generate_holding_time(self) -> NoReturn:
         """
@@ -210,25 +198,27 @@ class BasePosition:
         Parameters:
             ax (plt.Axes): The matplotlib axis object where the trigger events will be visualized.
         """
-        if self.take_profit_trigger:
-            ax.scatter(
-                x=self.take_profit_trigger,
-                y=self.market.at[self.take_profit_trigger, 'close'],
-                color='green',
-                s=10,
-                label='Take-profit Triggered',
-                zorder=5
-            )
 
-        if self.stop_loss_trigger:
-            ax.scatter(
-                x=self.stop_loss_trigger,
-                y=self.market.at[self.stop_loss_trigger, 'close'],
-                color='red',
-                s=10,
-                label='Stop-loss Triggered',
-                zorder=5
-            )
+        match self.is_win:
+            case 1:
+                ax.scatter(
+                    x=self.take_profit_trigger,
+                    y=self.market.at[self.take_profit_trigger, 'close'],
+                    color='green',
+                    s=10,
+                    label='Take-profit Triggered',
+                    zorder=5
+                )
+
+            case -1:
+                ax.scatter(
+                    x=self.stop_loss_trigger,
+                    y=self.market.at[self.stop_loss_trigger, 'close'],
+                    color='red',
+                    s=10,
+                    label='Stop-loss Triggered',
+                    zorder=5
+                )
 
     def _add_holding_area_to_ax(self, ax: plt.Axes) -> NoReturn:
         """
@@ -256,21 +246,17 @@ class BasePosition:
         """
         ax = self.market.close.plot(
             figsize=(10, 6),
-            title='Position Overview',
+            title=f'Position Overview [{self.type}]',
             label='Market Close'
         )
 
         self.market.high.plot(
             ax=ax,
-            figsize=(10, 6),
-            title='Position Overview',
             label='Market High'
         )
 
         self.market.low.plot(
             ax=ax,
-            figsize=(10, 6),
-            title='Position Overview',
             label='Market Low'
         )
 

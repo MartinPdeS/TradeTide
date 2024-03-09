@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8; py-indent-offset:4 -*-
 
-
 import pandas
 from TradeTide.tools import percent_to_float
 from TradeTide.indicators import ATR
+from TradeTide import position
 
 
 class RiskBase:
@@ -34,39 +34,88 @@ class RiskBase:
 
 class DirectLossProfit(RiskBase):
     """
-    Manages loss and profit calculations using direct stop_loss and take_profit values.
-
-    This class allows for setting fixed stop loss and take profit levels as either
-    percentages or direct values, which are then used to calculate corresponding
-    loss and profit prices for a trading position.
+    A class to manage loss and profit calculations for trading positions using direct or percentage-based stop_loss and take_profit values, incorporating broker leverage.
+    Inherits from RiskBase to leverage foundational risk management functionalities.
     """
 
-    def __init__(self, stop_loss: float | str, take_profit: float | str) -> None:
+    def __init__(
+            self,
+            market: pandas.DataFrame,
+            stop_loss: float | str,
+            take_profit: float | str,
+            leverage: int = 1) -> None:
         """
-        Initializes the management class with stop loss and take profit levels.
+        Initializes the DirectLossProfit instance with market data, stop loss, take profit levels, and broker leverage.
 
         Parameters:
-            stop_loss (float | str): The stop loss level, either as a percentage string or direct float.
-            take_profit (float | str): The take profit level, either as a percentage string or direct float.
+            market (pandas.DataFrame): Market data, used to determine the pip value based on the currency pair.
+            stop_loss (float | str): The stop loss level, can be a direct value (float) or a percentage (str, e.g., "1.5%").
+            take_profit (float | str): The take profit level, can be a direct value (float) or a percentage (str, e.g., "2%").
+            leverage (int): The leverage provided by the broker, influencing the size of the position that can be controlled.
         """
-        self.stop_loss = percent_to_float(stop_loss)
-        self.take_profit = percent_to_float(take_profit)
+        super().__init__()  # Initialize the base class, if necessary.
+        self.market = market
+        self.pip_value = self._determine_pip_value(market)
+        self.stop_loss = self._parse_input(stop_loss)
+        self.take_profit = self._parse_input(take_profit)
+        self.leverage = leverage
+        self.reward_risk_ratio = self._calculate_reward_risk_ratio()
 
-    def get_loss_profit_price(self, position_type: str, entry_price: float) -> tuple[float, float]:
+    def _determine_pip_value(self, market: pandas.DataFrame) -> float:
         """
-        Calculates and returns stop loss and take profit prices using direct levels.
+        Determines the pip value based on the currency pair in the market data.
 
         Parameters:
-            position_type (str): The type of trading position ('long' or 'short').
-            entry_price (float): The entry price for the trading position.
+            market (pandas.DataFrame): Market data containing currency information.
 
         Returns:
-            tuple[float, float]: The calculated stop loss and take profit prices.
+            float: The pip value for calculations.
         """
-        adjustment = entry_price * (self.stop_loss if position_type == 'long' else self.take_profit)
-        stop_loss_price = entry_price - adjustment if position_type == 'long' else entry_price + adjustment
-        take_profit_price = entry_price + adjustment if position_type == 'long' else entry_price - adjustment
-        return stop_loss_price, take_profit_price
+        if market.attrs['currencies'] == {'usd', 'jpy'}:
+            return 1e-2
+        else:
+            return 1e-4
+
+    def _parse_input(self, value: float | str) -> float:
+        """
+        Parses the input value for stop loss or take profit to determine its pip value.
+
+        Parameters:
+            value (float | str): Input value as either a percentage string or direct float value.
+
+        Returns:
+            float: The value converted to pip value if specified in pips or remains as is if already a float.
+        """
+        if isinstance(value, str) and 'pip' in value:
+            return float(value.strip('pip')) * self.pip_value
+        elif isinstance(value, str) and '%' in value:
+            # Assuming some default percentage-to-pip conversion if needed; needs clarification.
+            return float(value.strip('%')) * self.pip_value
+        elif isinstance(value, float):
+            return value
+        else:
+            raise ValueError("Invalid input for stop loss or take profit.")
+
+    def _calculate_reward_risk_ratio(self) -> float:
+        """
+        Calculates the risk-reward ratio based on the stop loss and take profit pip values.
+
+        Returns:
+            float: The risk-reward ratio.
+        """
+        return self.take_profit / self.stop_loss if self.stop_loss else float('inf')
+
+    def calculate_margin_requirement(self, position_size: float) -> float:
+        """
+        Calculates the margin requirement for a given position size using the broker's leverage.
+
+        Parameters:
+            position_size (float): The size of the position in units of the base currency.
+
+        Returns:
+            float: The required margin to open the position, based on the broker's leverage.
+        """
+        return position_size / self.leverage
 
 
 class ATRLossProfit(RiskBase):
@@ -91,20 +140,27 @@ class ATRLossProfit(RiskBase):
         self.ATR_value = self.ATR_indicator.generate_signal(market)['ATR']
         self.ATR_multiplier = ATR_multiplier
 
-    def get_loss_profit_price(self, position_type: str, entry_price: float) -> tuple[float, float]:
+    def get_loss_profit_price(self, pos: str, entry_price: float) -> tuple[float, float]:
         """
         Calculates and returns stop loss and take profit prices based on the ATR indicator.
 
         Parameters:
-            position_type (str): The type of trading position ('long' or 'short').
+            position_type (position.Long | position.Short): The type of trading position ('long' or 'short').
             entry_price (float): The entry price for the trading position.
 
         Returns:
             tuple[float, float]: The calculated stop loss and take profit prices, adjusted for market volatility.
         """
         adjustment = self.ATR_value * self.ATR_multiplier
-        stop_loss_price = entry_price - adjustment if position_type == 'long' else entry_price + adjustment
-        take_profit_price = entry_price + adjustment if position_type == 'long' else entry_price - adjustment
+
+        if isinstance(pos, position.Long):
+            stop_loss_price = entry_price - adjustment
+            take_profit_price = entry_price + adjustment
+
+        else:
+            stop_loss_price = entry_price + adjustment
+            take_profit_price = entry_price - adjustment
+
         return stop_loss_price, take_profit_price
 
 

@@ -10,7 +10,7 @@ from TradeTide.indicators.base_indicator import BaseIndicator
 from dataclasses import dataclass
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, repr=False)
 class MAC(BaseIndicator):
     """
     Implements a Moving Average Crossing (MAC) indicator as an extension of the BaseIndicator class.

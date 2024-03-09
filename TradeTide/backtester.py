@@ -317,6 +317,7 @@ class BackTester():
             "Start Date": self.market.index[0],
             "Stop Date": self.market.index[-1],
             "Duration": f"{duration} days",
+            "Reward-Risk ratio": self.capital_managment.risk_management.reward_risk_ratio,
             "Returns": f"{total_return * 100:.2f}%",
             "Returns [annualized]": f"{annualized_return * 100:.2f}%",
             "Maximum drawdown": f"{max_drawdown * 100:.2f}%",

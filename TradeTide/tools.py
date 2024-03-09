@@ -20,6 +20,10 @@ def percent_to_float(string_value: str | float) -> float:
     Returns:
         float: The input percentage as a decimal if the input is a string, or the original numeric value if the input is a number.
     """
+    if 'pip' in string_value.lower():
+        pip_number = string_value.split('pip')
+        return float(pip_number[0])
+
     if isinstance(string_value, numbers.Number):
         return string_value
 

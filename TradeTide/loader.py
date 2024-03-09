@@ -95,7 +95,8 @@ def get_market_data(currency_0: str, currency_1: str, year: int, time_span: str 
 
         dataframe = dataframe.loc[mask]
 
-    dataframe.time_span = dataframe.index[-1] - dataframe.index[0]
+    dataframe.attrs['currencies'] = set((currency_0, currency_1))
+    dataframe.attrs['time_span'] = dataframe.index[-1] - dataframe.index[0]
 
     return dataframe
 

@@ -98,7 +98,7 @@ class LimitedCapital(CapitalManagement):
 
             position_type = 'long' if signal > 0 else 'short'
 
-            maximum_cash: float = min(self.time_info.cash[date], self.max_cap_per_trade)
+            available_cash: float = min(self.time_info.cash[date], self.max_cap_per_trade)
 
             position_class = Short if position_type == 'short' else Long
 
@@ -106,7 +106,7 @@ class LimitedCapital(CapitalManagement):
                 start_date=date,
                 market=market,
                 risk_management=self.risk_management,
-                maximum_cash=maximum_cash
+                available_cash=available_cash
 
             )
 

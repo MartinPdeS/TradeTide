@@ -9,7 +9,7 @@ from TradeTide.indicators.base_indicator import BaseIndicator
 from dataclasses import dataclass
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, repr=False)
 class Custom(BaseIndicator):
     """
     A custom trading signal generator that integrates user-defined signals into market data.

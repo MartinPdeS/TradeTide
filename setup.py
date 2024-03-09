@@ -4,7 +4,12 @@
 from setuptools import setup
 from distutils.core import Extension
 
-module = Extension('cpp_position', sources=['TradeTide/cpp/position.cpp'], language='c++')
+module = Extension(
+    name='TradeTide.binaries.interface',
+    sources=['TradeTide/cpp/interface.cpp'],
+    language='c++',
+    extra_compile_args=['-std=c++11']
+)
 
 setup(
     ext_modules=[module]

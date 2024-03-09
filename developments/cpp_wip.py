@@ -1,10 +1,4 @@
-import cpp_position
+from TradeTide.binaries.interface import Position
 
-
-print(dir(cpp_position))
-
-
-pos = cpp_position.Position(1.0, 2.0)
-print(pos)
-
-print(pos.profit())
+pos = Position(entry_price=10, exit_price=150)
+print("Profit:", pos.profit())

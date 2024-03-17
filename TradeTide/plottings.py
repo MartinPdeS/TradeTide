@@ -134,7 +134,7 @@ class PlotTrade():
 
         # Plot the cumulative positions over time
         ax.plot(
-            self.portfolio.index,
+            self.portfolio.date,
             self.portfolio.long_positions,
             linewidth=2,
             color='C0',
@@ -142,7 +142,7 @@ class PlotTrade():
         )
 
         ax.plot(
-            self.portfolio.index,
+            self.portfolio.date,
             self.portfolio.short_positions,
             linewidth=2,
             color='C1',
@@ -167,7 +167,7 @@ class PlotTrade():
 
         # Plot the total units over time
         ax.plot(
-            self.portfolio.index,
+            self.portfolio.date,
             self.portfolio.holdings,
             linewidth=2,
             color='C0',
@@ -190,21 +190,12 @@ class PlotTrade():
         ax.set_ylabel('Portfolio Value')
 
         ax.plot(
-            self.portfolio.index,
+            self.portfolio.date,
             self.portfolio.total,
             label='Total',
             linewidth=2,
             color='black'
         )
-
-        # for position in self.backtester.position_list:
-        #     ax.axvspan(
-        #         xmin=position.start_date,
-        #         xmax=position.stop_date,
-        #         alpha=0.2,
-        #         label='Open position',
-        #         color='black'
-        #     )
 
         ax.get_yaxis().get_major_formatter().set_useOffset(False)
         ax.get_yaxis().get_major_formatter().set_scientific(False)
@@ -227,24 +218,15 @@ class PlotTrade():
         ax.set_ylabel('Assets Value and Cash')
 
         ax.plot(
-            self.portfolio.index,
+            self.portfolio.date,
             self.portfolio.total,
             label='Total',
             linewidth=2,
             color='black'
         )
 
-        for position in self.backtester.position_list:
-            ax.axvspan(
-                xmin=position.start_date,
-                xmax=position.stop_date,
-                alpha=0.2,
-                label='Open position',
-                color='black'
-            )
-
         ax.plot(
-            self.portfolio.index,
+            self.portfolio.date,
             self.portfolio.cash,
             label='Cash',
             linewidth=2,
@@ -275,10 +257,19 @@ class PlotTrade():
 
         # Price and signals plot
         ax.plot(
-            self.market['close'],
+            self.market.date,
+            self.market.close,
             label='Close Price',
             color='C0',
             linewidth=2
+        )
+
+        ax.fill_between(
+            x=self.market.date,
+            y1=self.market.high,
+            y2=self.market.low,
+            color='grey',
+            alpha=0.2,
         )
 
         # # Aggregate units from all positions in the portfolio
@@ -298,7 +289,7 @@ class PlotTrade():
 
     def _add_buy_sell_signal_to_ax(self, ax: plt.Axes) -> NoReturn:
         ax.fill_between(
-            x=self.market.index,
+            x=self.market.date,
             y1=0,
             y2=1,
             where=self.strategy.data['signal'] == -1,
@@ -309,7 +300,7 @@ class PlotTrade():
         )
 
         ax.fill_between(
-            x=self.market.index,
+            x=self.market.date,
             y1=0,
             y2=1,
             where=self.strategy.data['signal'] == +1,

@@ -6,6 +6,7 @@ import pandas
 import numpy
 from TradeTide.position import Short, Long
 from TradeTide.risk_management import DirectLossProfit, ATRLossProfit
+from TradeTide.time_state import TimeState
 
 
 class CapitalManagement:
@@ -18,7 +19,8 @@ class CapitalManagement:
             self,
             risk_management: DirectLossProfit | ATRLossProfit,
             max_cap_per_trade: float,
-            limit_of_positions: int = numpy.inf):
+            limit_of_positions: int = numpy.inf,
+            micro_lot: int = 1000):
         """
         Initializes the CapitalManagement object with common trading parameters.
 
@@ -31,6 +33,7 @@ class CapitalManagement:
         self.max_cap_per_trade = max_cap_per_trade
         self.limit_of_positions = limit_of_positions
         self.risk_management = risk_management
+        self.micro_lot = micro_lot
 
     def manage(self, backtester: object, market: pandas.DataFrame) -> NoReturn:
         """
@@ -54,7 +57,8 @@ class LimitedCapital(CapitalManagement):
             risk_management: DirectLossProfit | ATRLossProfit,
             initial_capital: float,
             max_cap_per_trade: float,
-            limit_of_positions: int = numpy.inf):
+            limit_of_positions: int = numpy.inf,
+            micro_lot: int = 1_000):
         """
         Initializes the LimitedCapital object with trading parameters and limitations on capital and positions.
 
@@ -64,7 +68,8 @@ class LimitedCapital(CapitalManagement):
         super().__init__(
             risk_management=risk_management,
             max_cap_per_trade=max_cap_per_trade,
-            limit_of_positions=limit_of_positions
+            limit_of_positions=limit_of_positions,
+            micro_lot=micro_lot
         )
 
         self.initial_capital = initial_capital
@@ -80,43 +85,36 @@ class LimitedCapital(CapitalManagement):
         """
         self.market = market
 
-        self.time_info = pandas.DataFrame(index=market.index, columns=['cash'])
-        self.time_info['cash'] = float(self.initial_capital)
-        self.time_info['open_positions'] = int(0)
-
         # Initialize or clear the list to store Position objects
+        self.time_state = TimeState(initial_capital=self.initial_capital)
         backtester.position_list = []
 
         # Iterate over signals and open new positions where indicated
-        for date in market.index[backtester.strategy.signal != 0]:
-            open_postion_at_date: int = self.time_info.open_positions[date]
+        for idx, row in market[backtester.strategy.signal != 0].iterrows():
+            self.time_state.update_date(row.date)
 
-            if open_postion_at_date >= self.limit_of_positions:
+            if self.time_state.active_positions >= self.limit_of_positions:
                 continue
 
-            signal = backtester.strategy.signal.loc[date]
+            available_cash: float = min(self.time_state.cash, self.max_cap_per_trade)
 
-            position_type = 'long' if signal > 0 else 'short'
+            position_class = Long if backtester.strategy.signal[idx] == 1 else Short
+            size = numpy.floor((available_cash - row.spread) / row.close)
+            cost = size * row.close + row.spread
 
-            available_cash: float = min(self.time_info.cash[date], self.max_cap_per_trade)
-
-            position_class = Short if position_type == 'short' else Long
+            if size < self.micro_lot:
+                continue
 
             position = position_class(
-                start_date=date,
+                start_date=row.date,
                 market=market,
                 risk_management=self.risk_management,
-                available_cash=available_cash
-
+                entry_price=row.close,
+                size=size,
+                cost=cost
             )
 
-            if position.is_valid is False:
-                continue
-
-            position.initialize()
-
-            position.update_cash(dataframe=self.time_info)
-            position.add_total_position_to_dataframe(dataframe=self.time_info)
+            self.time_state.add_position(position)
 
             backtester.position_list.append(position)
 

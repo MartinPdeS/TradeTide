@@ -8,7 +8,7 @@ module = Extension(
     name='TradeTide.binaries.interface',
     sources=['TradeTide/cpp/interface.cpp'],
     language='c++',
-    extra_compile_args=['-std=c++11']
+    extra_compile_argss=['-std=c++11']
 )
 
 setup(

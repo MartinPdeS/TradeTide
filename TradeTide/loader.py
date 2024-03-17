@@ -79,24 +79,24 @@ def get_market_data(currency_0: str, currency_1: str, year: int, time_span: str 
 
     dataframe['time_delta'] = dataframe['date'].diff()
 
-    dataframe = dataframe.set_index('date')
+    # dataframe = dataframe.set_index('date')
 
     if time_span is not None:
 
         time_span = parse_time_string_to_delta(time_span)
 
-        time_stop = dataframe.index[0] + time_span
+        time_stop = dataframe.date[0] + time_span
 
-        if time_stop > dataframe.index[-1]:
-            total_span = dataframe.index[-1] - dataframe.index[0]
+        if time_stop > dataframe.date.iloc[-1]:
+            total_span = dataframe.date.iloc[-1] - dataframe.date.iloc[0]
             raise ValueError(f'Time span value is too large for the dataset, largest time span available is: {total_span.days}')
 
-        mask = dataframe.index < time_stop
+        mask = dataframe.date < time_stop
 
         dataframe = dataframe.loc[mask]
 
     dataframe.attrs['currencies'] = set((currency_0, currency_1))
-    dataframe.attrs['time_span'] = dataframe.index[-1] - dataframe.index[0]
+    dataframe.attrs['time_span'] = dataframe.date.iloc[-1] - dataframe.date.iloc[0]
 
     return dataframe
 

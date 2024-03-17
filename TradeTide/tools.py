@@ -65,4 +65,63 @@ def parse_time_string_to_delta(time_string: str):
         raise ValueError("Unsupported time unit.")
 
 
+
+
+class Node:
+    def __init__(self, data=None):
+        self.data = data
+        self.next = None
+
+
+
+class LinkedList:
+    def __init__(self):
+        self.head = None
+        self.current = None  # This will be used for iteration
+
+    def append(self, data):
+        new_node = Node(data)
+        if not self.head:
+            self.head = new_node
+            return
+        last = self.head
+        while last.next:
+            last = last.next
+        last.next = new_node
+
+    def __iter__(self):
+        self.current = self.head
+        return self
+
+    def __next__(self):
+        if self.current:
+            data = self.current.data
+            self.current = self.current.next
+            return data
+        else:
+            raise StopIteration
+
+    def delete(self, key):
+        cur_node = self.head
+        if cur_node and cur_node.data == key:
+            self.head = cur_node.next
+            cur_node = None
+            return
+        prev = None
+        while cur_node and cur_node.data != key:
+            prev = cur_node
+            cur_node = cur_node.next
+        if cur_node is None:
+            return
+        prev.next = cur_node.next
+        cur_node = None
+
+    def print_list(self):
+        current = self.head
+        while current:
+            print(current.data)
+            current = current.next
+
+
+
 # -

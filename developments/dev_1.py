@@ -15,36 +15,37 @@ backtester = BackTester(market=market_data, strategy=strategy)
 risk = risk_management.DirectLossProfit(
     market=market_data,
     stop_loss='20pip',
-    take_profit='20pip',
+    take_profit='10pip',
 )
 
 capital_managment = capital_managment.LimitedCapital(
-    initial_capital=1_000,
+    initial_capital=100_000,
     risk_management=risk,
     # add leverage
-    max_cap_per_trade=100,
-    limit_of_positions=1
+    max_cap_per_trade=10_000,
+    limit_of_positions=1,
+    micro_lot=1_000
 )
 
 backtester.backtest(capital_managment=capital_managment)
 
-# backtester.plot(
-#     show_price=True,
-#     show_total=True,
-#     show_assets=True,
-#     show_units=True,
-#     show_positions=True
-# )
+backtester.plot(
+    show_price=True,
+    show_total=True,
+    show_assets=True,
+    # show_units=True,
+    # show_positions=True
+)
 
 backtester.calculate_performance_metrics()
 
 backtester.print_metrics()
 
 
-ls = backtester.position_list[0]
+# ls = backtester.position_list[0]
 
 
-ls.plot()
+# ls.plot()
 
 
 # final_portfolio_value = backtester.get_final_portfolio_value()

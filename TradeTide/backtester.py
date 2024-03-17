@@ -123,9 +123,9 @@ class BackTester():
         self.portfolio = pandas.DataFrame(
             0.0,
             index=self.market.index,
-            columns=['units', 'holdings', 'short_positions', 'long_positions', 'cash']
+            columns=['date', 'units', 'holdings', 'short_positions', 'long_positions', 'cash']
         )
-
+        self.portfolio['date'] = self.market['date']
         self.portfolio['cash'] = float(capital_managment.initial_capital)
 
         capital_managment.manage(
@@ -207,7 +207,7 @@ class BackTester():
         Returns:
             float: The annualized return as a percentage.
         """
-        trading_days = (self.market.index[-1] - self.market.index[0]).days
+        trading_days = (self.market.date.iloc[-1] - self.market.date.iloc[0]).days
 
         if trading_days == 0:
             return numpy.nan
@@ -263,7 +263,7 @@ class BackTester():
         Returns:
             int: The duration of the backtest.
         """
-        return (self.market.index[-1] - self.market.index[0]).days
+        return (self.market.date.iloc[-1] - self.market.date.iloc[0]).days
 
     def calculate_volatility(self) -> float:
         """
@@ -314,8 +314,8 @@ class BackTester():
         volatility = self.calculate_volatility()
 
         self.performance_dict = {
-            "Start Date": self.market.index[0],
-            "Stop Date": self.market.index[-1],
+            "Start Date": self.market.date.iloc[0],
+            "Stop Date": self.market.date.iloc[-1],
             "Duration": f"{duration} days",
             "Reward-Risk ratio": self.capital_managment.risk_management.reward_risk_ratio,
             "Returns": f"{total_return * 100:.2f}%",

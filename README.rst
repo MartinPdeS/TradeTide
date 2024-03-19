@@ -29,27 +29,41 @@ Coding example
 
 .. code-block:: python
 
-   from TradeTide import BackTester, RelativeStrengthIndex, get_market_data
+   from TradeTide import BackTester, indicators, get_market_data
+   from TradeTide import capital_managment, risk_management
 
-   market_data = get_market_data('eur', 'usd', year=2023)
+   market_data = get_market_data('eur', 'usd', year=2023, time_span='30day', spread=0)
 
-   strategy = RelativeStrengthIndex(period='30min', overbought_threshold=90, oversold_threshold=10)
+   indicator = indicators.BB(periods=20)
 
-   strategy.generate_signal(market_data)
+   indicator.generate_signal(market_data)
 
-   backtester = BackTester(market=market_data, strategy=strategy)
+   indicator.plot()
 
-   backtester.back_test(stop_loss='.1%', take_profit='.1%', spread=0)
+   backtester = BackTester(market=market_data, strategy=indicator)
 
-   portfolio = backtester.portfolio
+   risk = risk_management.DirectLossProfit(
+       market=market_data,
+       stop_loss='10pip',
+       take_profit='10pip',
+   )
 
-   backtester.plot()
+   capital_managment = capital_managment.LimitedCapital(
+       initial_capital=100_000,
+       risk_management=risk,
+       max_cap_per_trade=10_000,
+       limit_of_positions=1,
+       micro_lot=1_000
+   )
 
-   backtester.calculate_performance_metrics()
+   backtester.backtest(capital_managment=capital_managment)
 
-   final_portfolio_value = backtester.get_final_portfolio_value()
 
-   print(f"Final Portfolio Value: {final_portfolio_value}")
+   backtester.plot(show_price=True)
+
+   metrics = backtester.metrics
+
+   metrics.print()
 
 
 |example_image|

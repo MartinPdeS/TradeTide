@@ -200,7 +200,7 @@ class PlotTrade():
         ax.get_yaxis().get_major_formatter().set_useOffset(False)
         ax.get_yaxis().get_major_formatter().set_scientific(False)
 
-        ax.get_yaxis().get_major_formatter().offset = self.backtester.capital_managment.initial_capital
+        ax.get_yaxis().get_major_formatter().offset = self.backtester.capital_management.initial_capital
 
     def _add_asset_to_ax(self, ax: plt.Axes) -> None:
         """

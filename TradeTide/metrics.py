@@ -10,10 +10,10 @@ from tabulate import tabulate
 
 
 class Metrics():
-    def __init__(self, portfolio: pandas.DataFrame, position_list: list, capital_managment, market: pandas.DataFrame):
+    def __init__(self, portfolio: pandas.DataFrame, position_list: list, capital_management, market: pandas.DataFrame):
         self.portfolio = portfolio
         self.position_list = position_list
-        self.capital_managment = capital_managment
+        self.capital_management = capital_management
         self.market = market
 
         self.calculate_performance_metrics()
@@ -44,7 +44,7 @@ class Metrics():
         Returns:
             float: The total return as a percentage.
         """
-        return (self.portfolio['total'].iloc[-1] / self.capital_managment.initial_capital) - 1
+        return (self.portfolio['total'].iloc[-1] / self.capital_management.initial_capital) - 1
 
     def calculate_annualized_return(self, total_return: float) -> float:
         """
@@ -169,7 +169,7 @@ class Metrics():
             "Start Date": self.market.date.iloc[0],
             "Stop Date": self.market.date.iloc[-1],
             "Duration": duration,
-            "Reward-Risk ratio": self.capital_managment.risk_management.reward_risk_ratio,
+            "Reward-Risk ratio": self.capital_management.risk_management.reward_risk_ratio,
             "Returns": f"{total_return * 100:.2f}%",
             "Returns [annualized]": f"{annualized_return * 100:.2f}%",
             "Maximum drawdown": f"{max_drawdown * 100:.2f}%",

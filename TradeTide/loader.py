@@ -79,8 +79,6 @@ def get_market_data(currency_0: str, currency_1: str, year: int, time_span: str 
 
     dataframe['time_delta'] = dataframe['date'].diff()
 
-    # dataframe = dataframe.set_index('date')
-
     if time_span is not None:
 
         time_span = parse_time_string_to_delta(time_span)

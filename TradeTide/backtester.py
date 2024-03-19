@@ -6,7 +6,7 @@ import pandas
 import numpy
 from TradeTide.strategy import Strategy
 from TradeTide.plottings import PlotTrade
-from TradeTide.capital_managment import LimitedCapital, UnlimitedCapital
+from TradeTide.capital_management import LimitedCapital, UnlimitedCapital
 from TradeTide.metrics import Metrics
 
 
@@ -85,7 +85,7 @@ class BackTester():
         # Fill initial NaN values with 0 (no position at start)
         self.portfolio['positions'].fillna(0, inplace=True)
 
-    def backtest(self, capital_managment: LimitedCapital | UnlimitedCapital) -> pandas.DataFrame:
+    def backtest(self, capital_management: LimitedCapital | UnlimitedCapital) -> pandas.DataFrame:
         """
         Conducts a backtest on a trading strategy using historical market data, applying either a limited or unlimited
         capital position strategy.
@@ -95,7 +95,7 @@ class BackTester():
         costs, and the capital allocation per trade, to compute the performance of the trading portfolio over time.
 
         Parameters:
-            capital_managment (LimitedCapital | UnlimitedCapital): An instance of a position strategy, which determines
+            capital_management (LimitedCapital | UnlimitedCapital): An instance of a position strategy, which determines
             the trading behavior based on capital limitations. The strategy must be one of the following:
                 - LimitedCapital: A strategy that enforces a maximum limit on the capital allocated per trade.
                 - UnlimitedCapital: A strategy with no limit on the capital allocation per trade, implying the availability
@@ -117,17 +117,18 @@ class BackTester():
             - This method does not return additional data frames with extra backtest-related data. For detailed trade or
               market condition analysis, modifications to the method or strategy implementation may be required.
         """
-        self.capital_managment = capital_managment
+        self.capital_management = capital_management
 
         self.portfolio = pandas.DataFrame(
             0.0,
             index=self.market.index,
             columns=['date', 'units', 'holdings', 'short_positions', 'long_positions', 'cash']
         )
-        self.portfolio['date'] = self.market['date']
-        self.portfolio['cash'] = float(capital_managment.initial_capital)
 
-        capital_managment.manage(
+        self.portfolio['date'] = self.market['date']
+        self.portfolio['cash'] = float(capital_management.initial_capital)
+
+        capital_management.manage(
             backtester=self,
             market=self.market,
         )
@@ -137,7 +138,7 @@ class BackTester():
         self.metrics = Metrics(
             portfolio=self.portfolio,
             position_list=self.position_list,
-            capital_managment=self.capital_managment,
+            capital_management=self.capital_management,
             market=self.market
         )
 

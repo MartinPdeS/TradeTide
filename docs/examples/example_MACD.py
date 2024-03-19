@@ -1,7 +1,7 @@
 
 # Import necessary modules and classes from the TradeTide package
 from TradeTide import BackTester, indicators, get_market_data
-from TradeTide import capital_managment, risk_management
+from TradeTide import capital_management, risk_management
 
 # Load historical market data for EUR/USD pair for the year 2023 and limit to 4000 data points
 market_data = get_market_data('eur', 'usd', year=2023, time_span='3day', spread=0)
@@ -30,7 +30,7 @@ risk = risk_management.DirectLossProfit(
 )
 
 # Configure capital management strategy with initial capital, spread, and trading constraints
-capital_managment = capital_managment.LimitedCapital(
+capital_management = capital_management.LimitedCapital(
     initial_capital=100_000,
     risk_management=risk,
     max_cap_per_trade=10_000,
@@ -39,7 +39,7 @@ capital_managment = capital_managment.LimitedCapital(
 )
 
 # Execute the backtest using the configured capital management strategy
-backtester.backtest(capital_managment=capital_managment)
+backtester.backtest(capital_management=capital_management)
 
 
 # Visualize the backtest results, showing the strategy's performance against the market price

@@ -165,24 +165,24 @@ class BasePosition:
         Parameters:
             ax (plt.Axes): The matplotlib axis object where the stop-loss level will be visualized.
         """
-        ax.hlines(
-            y=self.stop_loss_price,
+        ax.fill_between(
+            x=self.market.date,
+            y1=self.stop_loss_price,
+            y2=self.market.close,
+            where=self.holding == 1,
+            alpha=0.3,
             color='red',
-            linestyle='--',
-            linewidth=1,
             label='Stop-loss',
-            xmin=self.start_date,
-            xmax=self.stop_date
         )
 
-        ax.hlines(
-            y=self.take_profit_price,
+        ax.fill_between(
+            x=self.market.date,
+            y1=self.take_profit_price,
+            y2=self.market.close,
+            where=self.holding == 1,
+            alpha=0.3,
             color='green',
-            linestyle='--',
-            linewidth=1,
             label='Take-profit',
-            xmin=self.start_date,
-            xmax=self.stop_date
         )
 
     def get_is_open_at_date(self, date: object) -> bool:

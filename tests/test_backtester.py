@@ -20,15 +20,15 @@ class MockStrategy:
         self.data['signal'] = 0
 
         # Set a buy signal (1) on even days and a sell signal (-1) on odd days
-        self.data[self.data.index.day == 1] = +1
+        self.data[market_data.date.dt.day_name() == 'Monday'] = +1
 
         self.signal = self.data['signal']
 
 
 @pytest.fixture
 def mock_data() -> pandas.DataFrame:
-    market_data = get_market_data('eur', 'usd', year=2023, spread=0)
-    return market_data[:1_000]
+    market_data = get_market_data('eur', 'usd', time_span='3day', year=2023, spread=0)
+    return market_data
 
 
 @pytest.fixture
@@ -40,8 +40,9 @@ def backtester(mock_data: pandas.DataFrame) -> BackTester:
 
 
 @pytest.fixture
-def capital_managment():
+def capital_managment(mock_data):
     loss_profit_managment = DirectLossProfit(
+        market=mock_data,
         stop_loss='.1%',
         take_profit='.1%',
     )
@@ -56,9 +57,10 @@ def capital_managment():
     return capital_managment
 
 
-def test_signal_generation(backtester):
-    for date, row in backtester.strategy.data.iterrows():
-        expected_signal = 1 if date.day == 1 else 0
+def test_signal_generation(backtester, mock_data):
+    for index, row in backtester.strategy.data.iterrows():
+        day = mock_data.iloc[index].date.day_name()
+        expected_signal = 1 if day == 'Monday' else 0
         assert row['signal'] == expected_signal, "Signal generation failed."
 
 
@@ -72,10 +74,8 @@ def test_performance_metrics(backtester, capital_managment):
 
     backtester.backtest(capital_managment=capital_managment)
     # Mock the performance calculation to simplify the test
-    backtester.calculate_performance_metrics = lambda: {'Total Return': 0.1}
-    performance_metrics = backtester.calculate_performance_metrics()
-    assert 'Total Return' in performance_metrics, "Performance metrics calculation failed."
-    assert performance_metrics['Total Return'] == 0.1, "Incorrect total return calculated."
-
+    backtester.metrics.print()
+    assert 'Returns' in backtester.metrics.performance_dict, "Performance metrics calculation failed."
+    assert backtester.metrics.performance_dict['Returns'] == '0.00%', "Incorrect total return calculated."
 
 # -

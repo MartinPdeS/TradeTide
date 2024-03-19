@@ -271,10 +271,7 @@ class BasePosition:
         plt.legend()
         plt.show()
 
-    def _compute_stop_date(self, condition_for_stop, condition_for_profit) -> NoReturn:
-        self.stop_loss_trigger_idx = condition_for_stop.replace(False, numpy.nan).first_valid_index()
-        self.take_profit_trigger_idx = condition_for_profit.replace(False, numpy.nan).first_valid_index()
-
+    def _compute_stop_date(self) -> NoReturn:
         self.stop_date_idx = min(
             filter(pandas.notna, [self.stop_loss_trigger_idx, self.take_profit_trigger_idx, len(self.market) - 1])
         )
@@ -294,10 +291,15 @@ class Long(BasePosition):
         Computes the trigger levels and dates for stop-loss and take-profit based on the market data and the position type.
         Sets the respective attributes for stop-loss and take-profit prices, as well as the earliest trigger date.
         """
-        condition_for_stop = (self.market.low <= self.stop_loss_price) & (self.market.date > self.start_date)
-        condition_for_profit = (self.market.high >= self.take_profit_price) & (self.market.date > self.start_date)
+        self.stop_loss_trigger_idx = self.market.close \
+            .where(self.market.date > self.start_date) \
+            .where(self.market.low.le(self.stop_loss_price)).first_valid_index()
 
-        self._compute_stop_date(condition_for_stop, condition_for_profit)
+        self.take_profit_trigger_idx = self.market.close \
+            .where(self.market.date > self.start_date) \
+            .where(self.market.high.ge(self.take_profit_price)).first_valid_index()
+
+        self._compute_stop_date()
 
     def add_position_to_dataframe(self, dataframe: pandas.DataFrame) -> NoReturn:
         """
@@ -334,10 +336,15 @@ class Short(BasePosition):
         Computes the trigger levels and dates for stop-loss and take-profit based on the market data and the position type.
         Sets the respective attributes for stop-loss and take-profit prices, as well as the earliest trigger date.
         """
-        condition_for_stop = (self.market.high >= self.stop_loss_price) & (self.market.date > self.start_date)
-        condition_for_profit = (self.market.low <= self.take_profit_price) & (self.market.date > self.start_date)
+        self.stop_loss_trigger_idx = self.market.close \
+            .where(self.market.date > self.start_date) \
+            .where(self.market.high.ge(self.stop_loss_price)).first_valid_index()
 
-        self._compute_stop_date(condition_for_stop, condition_for_profit)
+        self.take_profit_trigger_idx = self.market.close \
+            .where(self.market.date > self.start_date) \
+            .where(self.market.high.le(self.take_profit_price)).first_valid_index()
+
+        self._compute_stop_date()
 
     def calculate_profit_loss(self) -> NoReturn:
         """ Return the cash value that this position made over time """

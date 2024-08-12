@@ -5,8 +5,8 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "TradeTide"
 dynamic = ["version"]
-description = "A package for stocks market backtesting."
-license = {file = "LICENSE"
+description = "A package for stocks market backtesting"
+license = {file = "LICENSE"}
 readme = "README.rst"
 requires-python = ">=3.10"
 authors = [{name="Martin Poinsinet de Sivry-Houle", email="martin.poinsinet.de.sivry@gmail.com"}]

@@ -7,10 +7,8 @@ import TradeTide
 
 root_path = Path(TradeTide.__path__[0])
 
-cwd = os.getcwd()
+repository = Path(root_path)
 
-repository = Path(cwd)
-
-data = repository / 'TradeTide' / 'TradeTide' / 'data'
+data = repository / 'data'
 
 usd_eur = eur_usd = data.joinpath('eur_usd')

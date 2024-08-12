@@ -6,7 +6,7 @@ from sphinx_gallery.sorting import FileNameSortKey
 from MPSPlots.styles import use_mpsplots_style
 import TradeTide
 
-from TradeTide.tools.directories import project_path, doc_css_pathc_css_path
+from TradeTide.directories import project_path, doc_css_path
 
 sys.path.insert(0, project_path)
 sys.path.insert(0, project_path.joinpath('TradeTide'))

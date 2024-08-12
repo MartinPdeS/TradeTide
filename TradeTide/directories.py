@@ -3,14 +3,14 @@
 
 from pathlib import Path
 import os
-import git
+import TradeTide
+
+root_path = Path(TradeTide.__path__[0])
 
 cwd = os.getcwd()
 
-repository = git.Repo('.', search_parent_directories=True)
+repository = Path(cwd)
 
-repository = Path(repository.working_tree_dir)
-
-data = repository / 'TradeTide' / 'data'
+data = repository / 'TradeTide' / 'TradeTide' / 'data'
 
 usd_eur = eur_usd = data.joinpath('eur_usd')

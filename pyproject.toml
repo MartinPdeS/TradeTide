@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "TradeTide"
 dynamic = ["version"]
-description = "A package for stocks market backtesting"
+description = "A package for stocks market backtesting."
 license = {file = "LICENSE"}
 readme = "README.rst"
 requires-python = ">=3.10"
@@ -28,6 +28,9 @@ dependencies = [
     "mpl-interactions"
 ]
 
+
+[tool.setuptools]
+packages = ["TradeTide"]
 
 [tool.setuptools_scm]
 write_to = "TradeTide/_version.py"

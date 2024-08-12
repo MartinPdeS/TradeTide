@@ -7,7 +7,7 @@ import TradeTide
 
 root_path = Path(TradeTide.__path__[0])
 
-repository = Path(root_path)
+repository = project_path = Path(root_path)
 
 data = repository / 'data'
 

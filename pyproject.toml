@@ -23,6 +23,7 @@ keywords = ["backtesting", "stocks", "market"]
 
 dependencies = [
     "pydantic>=2.6.3",
+    "GitPython",
     "numpy",
     "matplotlib",
     "mpl-interactions"

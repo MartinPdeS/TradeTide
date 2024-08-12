@@ -24,6 +24,7 @@ keywords = ["backtesting", "stocks", "market"]
 dependencies = [
     "pydantic>=2.6.3",
     "MPSPlots",
+    "tabulate",
     "pandas",
     "GitPython",
     "numpy",

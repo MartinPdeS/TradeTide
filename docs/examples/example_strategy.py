@@ -9,7 +9,7 @@ from TradeTide import capital_management, risk_management
 
 
 # Load historical market data for EUR/USD pair for the year 2023 and limit to 4000 data points
-market_data = get_market_data('eur', 'usd', year=2023, time_span='30day', spread=0)
+market_data = get_market_data('eur', 'usd', year=2023, time_span='3day', spread=0)
 
 # Initialize a Moving Average Crossing indicator with specific window settings and minimum period
 indicator_0 = indicators.BB()
@@ -47,16 +47,17 @@ capital_management = capital_management.LimitedCapital(
 # Execute the backtest using the configured capital management strategy
 backtester.backtest(capital_management=capital_management)
 
-
+# %%
 # Visualize the backtest results, showing the strategy's performance against the market price
-backtester.plot(show_price=True)
+backtester.plot(show_price=True).show()
 
 # Calculate and display key performance metrics for the trading strategy
 metrics = backtester.metrics
 
-# %%
+
 # Retrieve and print the final total value of the portfolio after completing the backtest
 metrics.print()
+
 
 
 # -

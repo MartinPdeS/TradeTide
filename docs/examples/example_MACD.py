@@ -46,8 +46,9 @@ capital_management = capital_management.LimitedCapital(
 backtester.backtest(capital_management=capital_management)
 
 
+# %%
 # Visualize the backtest results, showing the strategy's performance against the market price
-backtester.plot(show_price=True)
+backtester.plot(show_price=True).show()
 
 # Calculate and display key performance metrics for the trading strategy
 metrics = backtester.metrics

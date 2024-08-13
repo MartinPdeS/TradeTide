@@ -1,7 +1,9 @@
 |Logo|
 
 |python|
-
+|docs|
+|PyPi|
+|PyPi_download|
 
 TradeTide
 =========
@@ -87,4 +89,11 @@ Email:`martin.poinsinet-de-sivry@polymtl.ca <mailto:martin.poinsinet-de-sivry@po
 
 .. |example_image| image:: https://github.com/MartinPdeS/TradeTide/raw/master/docs/images/image_example.png
 
+.. |docs| image:: https://readthedocs.org/projects/tradetide/badge/?version=latest
+    :target: https://tradetide.readthedocs.io/en/latest/
 
+.. |PyPi| image:: https://badge.fury.io/py/TradeTide.svg
+    :target: https://badge.fury.io/py/TradeTide
+
+.. |PyPi_download| image:: https://img.shields.io/pypi/dm/TradeTide.svg
+    :target: https://pypistats.org/packages/tradetide

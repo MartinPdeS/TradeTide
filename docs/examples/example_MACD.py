@@ -1,3 +1,7 @@
+"""
+Moving Average Crossing indicator
+=================================
+"""
 
 # Import necessary modules and classes from the TradeTide package
 from TradeTide import BackTester, indicators, get_market_data

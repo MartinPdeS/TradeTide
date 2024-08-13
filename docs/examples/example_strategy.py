@@ -1,3 +1,8 @@
+"""
+Strategy
+========
+"""
+
 # Import necessary modules and classes from the TradeTide package
 from TradeTide import BackTester, indicators, get_market_data, Strategy
 from TradeTide import capital_management, risk_management

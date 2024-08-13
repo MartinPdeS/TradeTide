@@ -53,6 +53,7 @@ backtester.plot(show_price=True)
 # Calculate and display key performance metrics for the trading strategy
 metrics = backtester.metrics
 
+# %%
 # Retrieve and print the final total value of the portfolio after completing the backtest
 metrics.print()
 

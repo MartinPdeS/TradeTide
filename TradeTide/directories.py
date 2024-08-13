@@ -2,7 +2,6 @@
 # -*- coding: utf-8; py-indent-offset:4 -*-
 
 from pathlib import Path
-import os
 import TradeTide
 
 root_path = Path(TradeTide.__path__[0])

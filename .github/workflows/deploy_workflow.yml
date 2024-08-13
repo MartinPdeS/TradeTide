@@ -27,7 +27,7 @@ jobs:
         steps:
           - uses: MartinPdeS/MPSActions/publish_coverage@master
             with:
-                package-name: PyFinitDiff
+                package-name: TradeTide
                 python-version: "3.11"
                 auth: ${{ secrets.GIST_TOKEN }}
                 gistID: 19aef38017fa4be1dc71b6f5d853a932

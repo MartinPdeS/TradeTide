@@ -15,31 +15,14 @@ A gallery of examples and that showcase how TradeTide can be used. Some examples
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Boilinger Band">
-
-.. only:: html
-
-  .. image:: /gallery/images/thumb/sphx_glr_example_BB_thumb.png
-    :alt:
-
-  :ref:`sphx_glr_gallery_example_BB.py`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Boilinger Band</div>
-    </div>
-
-
-.. raw:: html
-
     <div class="sphx-glr-thumbcontainer" tooltip="Moving Average Crossing indicator">
 
 .. only:: html
 
-  .. image:: /gallery/images/thumb/sphx_glr_example_MACD_thumb.png
+  .. image:: /gallery/images/thumb/sphx_glr_plot_MACD_thumb.png
     :alt:
 
-  :ref:`sphx_glr_gallery_example_MACD.py`
+  :ref:`sphx_glr_gallery_plot_MACD.py`
 
 .. raw:: html
 
@@ -49,18 +32,18 @@ A gallery of examples and that showcase how TradeTide can be used. Some examples
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Relative Momentum Index">
+    <div class="sphx-glr-thumbcontainer" tooltip="Boilinger Band">
 
 .. only:: html
 
-  .. image:: /gallery/images/thumb/sphx_glr_example_RMI_thumb.png
+  .. image:: /gallery/images/thumb/sphx_glr_plot_BB_thumb.png
     :alt:
 
-  :ref:`sphx_glr_gallery_example_RMI.py`
+  :ref:`sphx_glr_gallery_plot_BB.py`
 
 .. raw:: html
 
-      <div class="sphx-glr-thumbnail-title">Relative Momentum Index</div>
+      <div class="sphx-glr-thumbnail-title">Boilinger Band</div>
     </div>
 
 
@@ -70,10 +53,10 @@ A gallery of examples and that showcase how TradeTide can be used. Some examples
 
 .. only:: html
 
-  .. image:: /gallery/images/thumb/sphx_glr_example_RSI_thumb.png
+  .. image:: /gallery/images/thumb/sphx_glr_plot_RSI_thumb.png
     :alt:
 
-  :ref:`sphx_glr_gallery_example_RSI.py`
+  :ref:`sphx_glr_gallery_plot_RSI.py`
 
 .. raw:: html
 
@@ -83,14 +66,31 @@ A gallery of examples and that showcase how TradeTide can be used. Some examples
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="Relative Momentum Index">
+
+.. only:: html
+
+  .. image:: /gallery/images/thumb/sphx_glr_plot_RMI_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_gallery_plot_RMI.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Relative Momentum Index</div>
+    </div>
+
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="Moving Average Crossing">
 
 .. only:: html
 
-  .. image:: /gallery/images/thumb/sphx_glr_example_SMA_thumb.png
+  .. image:: /gallery/images/thumb/sphx_glr_plot_SMA_thumb.png
     :alt:
 
-  :ref:`sphx_glr_gallery_example_SMA.py`
+  :ref:`sphx_glr_gallery_plot_SMA.py`
 
 .. raw:: html
 
@@ -104,10 +104,10 @@ A gallery of examples and that showcase how TradeTide can be used. Some examples
 
 .. only:: html
 
-  .. image:: /gallery/images/thumb/sphx_glr_example_strategy_thumb.png
+  .. image:: /gallery/images/thumb/sphx_glr_plot_strategy_thumb.png
     :alt:
 
-  :ref:`sphx_glr_gallery_example_strategy.py`
+  :ref:`sphx_glr_gallery_plot_strategy.py`
 
 .. raw:: html
 
@@ -123,12 +123,12 @@ A gallery of examples and that showcase how TradeTide can be used. Some examples
 .. toctree::
    :hidden:
 
-   /gallery/example_BB
-   /gallery/example_MACD
-   /gallery/example_RMI
-   /gallery/example_RSI
-   /gallery/example_SMA
-   /gallery/example_strategy
+   /gallery/plot_MACD
+   /gallery/plot_BB
+   /gallery/plot_RSI
+   /gallery/plot_RMI
+   /gallery/plot_SMA
+   /gallery/plot_strategy
 
 
 

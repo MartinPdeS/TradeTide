@@ -98,8 +98,7 @@ class BackTester():
             capital_management (LimitedCapital | UnlimitedCapital): An instance of a position strategy, which determines
             the trading behavior based on capital limitations. The strategy must be one of the following:
                 - LimitedCapital: A strategy that enforces a maximum limit on the capital allocated per trade.
-                - UnlimitedCapital: A strategy with no limit on the capital allocation per trade, implying the availability
-                  of unlimited capital for trading.
+                - UnlimitedCapital: A strategy with no limit on the capital allocation per trade, implying the availability of unlimited capital for trading.
 
         Returns:
             pandas.DataFrame: A DataFrame that chronicles the performance of the trading portfolio over the course of the

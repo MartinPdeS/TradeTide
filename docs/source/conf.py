@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from sphinx_gallery.sorting import FileNameSortKey
 from MPSPlots.styles import use_mpsplots_style
 import TradeTide
 
@@ -19,7 +18,6 @@ def setup(app):
 autodoc_mock_imports = [
     'numpy',
     'matplotlib',
-    'scipy'
     'numpydoc',
     'MPSPlots',
 ]
@@ -55,7 +53,6 @@ sphinx_gallery_conf = {
     'reset_modules': reset_mpl,
     'line_numbers': False,
     'remove_config_comments': True,
-    'within_subsection_order': FileNameSortKey,
     'capture_repr': ('_repr_html_', '__repr__'),
     'nested_sections': True,
 }

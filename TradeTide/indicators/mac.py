@@ -82,12 +82,12 @@ class MAC(BaseIndicator):
         self.data['long_window_array'] = self.data[self.value_type].rolling(
             window=self.long_window,
             min_periods=self.min_period
-        ).mean(engine='numba')
+        ).mean()
 
         self.data['short_window_array'] = self.data[self.value_type].rolling(
             window=self.short_window,
             min_periods=self.min_period
-        ).mean(engine='numba')
+        ).mean()
 
         self.data['signal'] = numpy.where(self.data['short_window_array'] > self.data['long_window_array'], 1, -1)
 # -

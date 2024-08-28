@@ -97,3 +97,7 @@ Email:`martin.poinsinet-de-sivry@polymtl.ca <mailto:martin.poinsinet-de-sivry@po
 
 .. |PyPi_download| image:: https://img.shields.io/pypi/dm/TradeTide.svg
     :target: https://pypistats.org/packages/tradetide
+
+.. |coverage| image:: https://raw.githubusercontent.com/MartinPdeS/TradeTide/python-coverage-comment-action-data/badge.svg
+   :alt: Unittest coverage
+   :target: https://htmlpreview.github.io/?https://github.com/MartinPdeS/TradeTide/blob/python-coverage-comment-action-data/htmlcov/index.html

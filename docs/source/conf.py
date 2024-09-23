@@ -73,7 +73,7 @@ pygments_style = "sphinx"
 
 # Sphinx-gallery configuration
 binder_branch = "main"
-major, minor, _ = version.split('.')
+major, minor = version[:2]
 binder_branch = f"v{major}.{minor}.x"
 
 html_theme_options = {

@@ -42,8 +42,6 @@ jobs:
           python -m build --wheel
           python -m pip install .[documentation]
 
-
-
       - name: Install dependencies
         run: |
           pip install sphinx sphinx_rtd_theme myst_parser
@@ -54,30 +52,9 @@ jobs:
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
-        # if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
         with:
           publish_branch: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: _build/
           force_orphan: true
-
-
-
-
-
-
-
-
-      # - name: "Build: documentation"
-      #   shell: bash
-      #   run: |
-      #       make -C docs html
-
-      # - name: "Upload: GitHub Pages"
-      #   if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-      #   uses: crazy-max/ghaction-github-pages@v3
-      #   with:
-      #       target_branch: gh-pages
-      #       build_dir: docs/build/html
-      #   env:
-      #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

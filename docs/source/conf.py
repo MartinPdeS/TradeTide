@@ -80,7 +80,7 @@ html_theme_options = {
     "logo": {
         "alt_text": "TradeTide's logo",
         "text": "TradeTide",
-        "link": "https://your-github-username.github.io/TradeTide/",  # Update this for GitHub Pages
+        "link": "https://MartinPdeS.github.io/TradeTide/",  # Update this for GitHub Pages
     },
     "icon_links": [
         {
@@ -100,8 +100,8 @@ html_theme_options = {
     "show_version_warning_banner": True,
     "footer_start": ["copyright"],
     "footer_end": ["sphinx-version", "theme-version"],
-    "pygment_light_style": "default",
-    "pygment_dark_style": "github-dark",
+    "pygments_light_style": "default",
+    "pygments_dark_style": "github-dark",
 }
 
 htmlhelp_basename = 'TradeTidedoc'

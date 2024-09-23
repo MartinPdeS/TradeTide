@@ -90,7 +90,7 @@ Email:`martin.poinsinet-de-sivry@polymtl.ca <mailto:martin.poinsinet-de-sivry@po
 .. |example_image| image:: https://github.com/MartinPdeS/TradeTide/raw/master/docs/images/image_example.png
 
 .. |docs| image:: https://github.com/martinpdes/tradetide/actions/workflows/deploy_documentation.yml/badge.svg
-   :target: https://tradetide.readthedocs.io/en/latest/code.html
+   :target: https://martinpdes.github.io/TradeTide/
    :alt: Documentation Status
 
 .. |PyPi| image:: https://badge.fury.io/py/TradeTide.svg

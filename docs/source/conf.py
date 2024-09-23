@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# conf.py adjustments
 
 import sys
 from MPSPlots.styles import use_mpsplots_style
@@ -22,14 +21,11 @@ autodoc_mock_imports = [
     'MPSPlots',
 ]
 
-
 project = 'TradeTide'
 copyright = '2024, Martin Poinsinet de Sivry-Houle'
 author = 'Martin Poinsinet de Sivry-Houle'
 
-
 version = TradeTide.__version__
-
 
 extensions = [
     'sphinx.ext.mathjax',
@@ -37,10 +33,8 @@ extensions = [
     'sphinx_gallery.gen_gallery',
 ]
 
-
 def reset_mpl(gallery_conf, fname):
     use_mpsplots_style()
-
 
 sphinx_gallery_conf = {
     'examples_dirs': '../examples',
@@ -57,7 +51,6 @@ sphinx_gallery_conf = {
     'nested_sections': True,
 }
 
-
 autodoc_default_options = {
     'members': False,
     'members-order': 'bysource',
@@ -68,34 +61,26 @@ autodoc_default_options = {
 numpydoc_show_class_members = False
 
 source_suffix = '.rst'
-
 master_doc = 'index'
-
 language = 'en'
-
 highlight_language = 'python3'
 
 html_theme = "pydata_sphinx_theme"
-
-# -- Options for HTML output -------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 exclude_trees = []
 default_role = "autolink"
 pygments_style = "sphinx"
 
-# -- Sphinx-gallery configuration --------------------------------------------
+# Sphinx-gallery configuration
 binder_branch = "main"
-
-major, minor = version[:2]
+major, minor, _ = version.split('.')
 binder_branch = f"v{major}.{minor}.x"
 
 html_theme_options = {
-    # Navigation bar
     "logo": {
         "alt_text": "TradeTide's logo",
         "text": "TradeTide",
-        "link": "https://tradetide.readthedocs.io/en/master/",
+        "link": "https://your-github-username.github.io/TradeTide/",  # Update this for GitHub Pages
     },
     "icon_links": [
         {
@@ -113,29 +98,22 @@ html_theme_options = {
     "navbar_end": ["version-switcher", "navbar-icon-links"],
     "show_prev_next": False,
     "show_version_warning_banner": True,
-    # Footer
     "footer_start": ["copyright"],
     "footer_end": ["sphinx-version", "theme-version"],
-    # Other
     "pygment_light_style": "default",
     "pygment_dark_style": "github-dark",
 }
 
 htmlhelp_basename = 'TradeTidedoc'
-
 latex_elements = {}
-
-
 latex_documents = [
     (master_doc, 'TradeTide.tex', 'TradeTide Documentation',
      'Martin Poinsinet de Sivry-Houle', 'manual'),
 ]
-
 man_pages = [
     (master_doc, 'tradetide', 'TradeTide Documentation',
      [author], 1)
 ]
-
 texinfo_documents = [
     (master_doc, 'TradeTide', 'TradeTide Documentation',
      author, 'TradeTide', 'One line description of project.',
@@ -143,10 +121,7 @@ texinfo_documents = [
 ]
 
 epub_title = project
-
 html_static_path = ['_static']
 templates_path = ['_templates']
 html_css_files = ['default.css']
 epub_exclude_files = ['search.html']
-
-# -

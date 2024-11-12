@@ -23,8 +23,7 @@ requirements:
     - setuptools-scm >=8.0
     - pip
   run:
-    - flexparser <0.4  # This is due to a dataclass inheritance problem coming from the pint package
-    - pint ~= 0.24
+    - pandas
     - martinpdes::mpsplots
     - pyyaml ~=6.0
     - requests ~=2.31
@@ -36,8 +35,8 @@ requirements:
 about:
   home: https://github.com/MartinPdeS/TradeTide
   license: MIT
-  summary: "A package for refractive index values."
-  description: PyOptik is a library that helps the end-user to build it's own refractive index library.
+  summary: "A package Forex stocks backtesting."
+  description: The library is a tool for strategies testing for the Forex current exchange market.
   dev_url: https://github.com/MartinPdeS/TradeTide
   doc_url: https://martinpdes.github.io/TradeTide/
   license_file: LICENSE

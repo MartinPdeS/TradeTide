@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:13.167** total execution time for 6 files **from gallery/strategies**:
+**00:12.452** total execution time for 6 files **from gallery/strategies**:
 
 .. container::
 
@@ -33,20 +33,20 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_gallery_strategies_plot_MACD.py` (``plot_MACD.py``)
-     - 00:03.526
+     - 00:03.653
      - 0.0
    * - :ref:`sphx_glr_gallery_strategies_plot_SMA.py` (``plot_SMA.py``)
-     - 00:02.532
-     - 0.0
-   * - :ref:`sphx_glr_gallery_strategies_plot_strategy.py` (``plot_strategy.py``)
-     - 00:02.253
+     - 00:02.338
      - 0.0
    * - :ref:`sphx_glr_gallery_strategies_plot_RMI.py` (``plot_RMI.py``)
-     - 00:02.058
+     - 00:01.997
+     - 0.0
+   * - :ref:`sphx_glr_gallery_strategies_plot_strategy.py` (``plot_strategy.py``)
+     - 00:01.795
      - 0.0
    * - :ref:`sphx_glr_gallery_strategies_plot_RSI.py` (``plot_RSI.py``)
-     - 00:01.687
+     - 00:01.422
      - 0.0
    * - :ref:`sphx_glr_gallery_strategies_plot_BB.py` (``plot_BB.py``)
-     - 00:01.111
+     - 00:01.247
      - 0.0

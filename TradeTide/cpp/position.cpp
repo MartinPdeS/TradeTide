@@ -1,57 +1,88 @@
-// Position.h
-#include <Python.h>
+#include <iostream>
+#include <string>
+#include <chrono>
+#include <ctime>
 
 class Position {
+private:
+    bool is_long;              // true for long, false for short
+    double entry_price;        // Price at which the position is opened
+    double exit_price;         // Price at which the position is closed
+    double lot_size;           // Size of the position in lots
+    double pip_price;          // Pip value for the position
+    double stop_loss;          // Stop-loss price level
+    double take_profit;        // Take-profit price level
+    bool is_closed;            // Status of the position
+    std::chrono::system_clock::time_point start_time; // Time when position was opened
+    std::chrono::system_clock::time_point close_time; // Time when position was closed
+
 public:
-    PyObject* start_date;
-    PyObject* market;
-    double entry_price, exit_price;
+    // Constructor
+    Position(bool long_position, double price, double lots, double pip_val, double stop, double profit)
+        : is_long(long_position), entry_price(price), lot_size(lots), pip_price(pip_val),
+          stop_loss(stop), take_profit(profit), exit_price(0.0), is_closed(false) {}
 
-    Position(PyObject* start_date, PyObject* market): start_date(start_date), market(market)
-    {
-        Py_INCREF(this->start_date);
-        Py_INCREF(this->market);
-        this->extract_entry_price();
+    // Open Position
+    void open(double price) {
+        entry_price = price;
+        is_closed = false;
+        start_time = std::chrono::system_clock::now();
     }
 
-    ~Position() {
-        Py_DECREF(this->start_date);
-        Py_DECREF(this->market);
-    }
-
-    void extract_entry_price() {
-        PyDateTime_IMPORT;
-
-        // Assuming 'start_date' is a Python datetime object and 'market' is a DataFrame
-        PyObject* pyStrDate = PyObject_Str(start_date);
-
-        // Access the 'loc' attribute of the DataFrame to get the row by date
-        PyObject* loc = PyObject_GetAttrString(market, "loc");
-
-        // Use 'loc' to access the row corresponding to 'start_date'
-        PyObject* args = PyTuple_Pack(1, pyStrDate);
-        PyObject* row = PyObject_CallObject(loc, args);
-
-        Py_DECREF(args);
-        if (!row) {
-            Py_DECREF(loc);
-            Py_DECREF(pyStrDate);
-            return; // Handle error
+    // Close the position and calculate profit or loss
+    void close(double market_price) {
+        if (!is_closed) {
+            exit_price = market_price;
+            is_closed = true;
+            close_time = std::chrono::system_clock::now();
         }
+    }
 
-        // Extract the 'close' column value from the row
-        PyObject* closeValue = PyObject_GetAttrString(row, "close");
-        if (closeValue && PyFloat_Check(closeValue)) {
-            entry_price = PyFloat_AsDouble(closeValue);
+    // Check if stop-loss or take-profit is hit
+    bool check_exit_conditions(double high_price, double low_price) {
+        if (is_closed) return false;
+
+        if (is_long) {
+            if (low_price <= stop_loss) {
+                close(stop_loss); // Hit stop-loss
+                return true;
+            }
+            if (high_price >= take_profit) {
+                close(take_profit); // Hit take-profit
+                return true;
+            }
         } else {
-            // Handle case where 'close' is not a float or does not exist
-            PyErr_SetString(PyExc_RuntimeError, "The 'close' column is missing or not a float.");
+            if (high_price >= stop_loss) {
+                close(stop_loss); // Hit stop-loss
+                return true;
+            }
+            if (low_price <= take_profit) {
+                close(take_profit); // Hit take-profit
+                return true;
+            }
         }
-
-        Py_XDECREF(closeValue);
-        Py_DECREF(row);
-        Py_DECREF(loc);
-        Py_DECREF(pyStrDate);
+        return false;
     }
 
+    // Calculate profit or loss
+    double calculate_pnl() const {
+        if (!is_closed) return 0.0; // No PnL if the position is still open
+
+        double price_difference = is_long ? (exit_price - entry_price) : (entry_price - exit_price);
+        return price_difference * lot_size * pip_price;
+    }
+
+    // Display Position Info
+    void display() const {
+        std::cout << "Position Type: " << (is_long ? "Long" : "Short") << "\n"
+                  << "Entry Price: " << entry_price << "\n"
+                  << "Exit Price: " << (is_closed ? std::to_string(exit_price) : "N/A") << "\n"
+                  << "Stop Loss: " << stop_loss << "\n"
+                  << "Take Profit: " << take_profit << "\n"
+                  << "Lot Size: " << lot_size << "\n"
+                  << "Pip Price: " << pip_price << "\n"
+                  << "Position Status: " << (is_closed ? "Closed" : "Open") << "\n";
+    }
+
+    bool get_is_closed() const { return is_closed; }
 };

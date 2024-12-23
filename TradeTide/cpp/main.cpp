@@ -15,7 +15,7 @@ int main() {
     signal.generate_random();
 
     // Initialize Risk Management and Portfolio
-    RiskManagement risk_manager(100000, 1.0, 50);
+    RiskManagement risk_manager(100000, 1.0, 50, 50);
     Portfolio portfolio(risk_manager);
 
     // Process signals with pip price, stop-loss, and take-profit

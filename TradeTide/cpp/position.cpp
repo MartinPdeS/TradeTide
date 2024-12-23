@@ -4,7 +4,7 @@
 #include <ctime>
 
 class Position {
-private:
+public:
     bool is_long;              // true for long, false for short
     double entry_price;        // Price at which the position is opened
     double exit_price;         // Price at which the position is closed
@@ -18,9 +18,9 @@ private:
 
 public:
     // Constructor
-    Position(bool long_position, double price, double lots, double pip_val, double stop, double profit)
+    Position(bool long_position, double price, double lots, double pip_val, double stop_loss, double take_profit)
         : is_long(long_position), entry_price(price), lot_size(lots), pip_price(pip_val),
-          stop_loss(stop), take_profit(profit), exit_price(0.0), is_closed(false) {}
+          stop_loss(stop_loss), take_profit(take_profit), exit_price(0.0), is_closed(false) {}
 
     // Open Position
     void open(double price) {

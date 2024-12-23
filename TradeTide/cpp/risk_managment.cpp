@@ -4,14 +4,16 @@
 
 class RiskManagement {
 public:
-    double account_balance; // Current balance of the portfolio
-    double max_risk_per_trade; // Maximum percentage of the account balance to risk per trade
-    double stop_loss_distance; // Distance (in pips) for stop-loss from the entry price
+    double account_balance;       // Current balance of the portfolio
+    double max_risk_per_trade;    // Maximum percentage of the account balance to risk per trade
+    double stop_loss_distance;    // Distance (in pips) for stop-loss from the entry price
+    double take_profit_distance;  // Distance (in pips) for take-profit from the entry price
 
 public:
     // Constructor
-    RiskManagement(double initial_balance, double risk_per_trade, double stop_loss)
-        : account_balance(initial_balance), max_risk_per_trade(risk_per_trade), stop_loss_distance(stop_loss) {}
+    RiskManagement(double initial_balance, double risk_per_trade, double stop_loss, double take_profit)
+        : account_balance(initial_balance), max_risk_per_trade(risk_per_trade),
+          stop_loss_distance(stop_loss), take_profit_distance(take_profit) {}
 
     // Update account balance
     void update_balance(double new_balance) {
@@ -32,7 +34,7 @@ public:
     // Enforce risk parameters for a new position
     bool validate_position(double entry_price, double lot_size, double current_price, bool is_long) const {
         // Calculate stop-loss and maximum risk
-double stop_loss_price = entry_price - (is_long ? stop_loss_distance : -stop_loss_distance);
+        double stop_loss_price = entry_price - (is_long ? stop_loss_distance : -stop_loss_distance);
         double potential_loss = abs(entry_price - stop_loss_price) * lot_size;
 
         return potential_loss <= (max_risk_per_trade / 100.0) * account_balance;
@@ -41,4 +43,5 @@ double stop_loss_price = entry_price - (is_long ? stop_loss_distance : -stop_los
     // Getters
     double get_max_risk_per_trade() const { return max_risk_per_trade; }
     double get_stop_loss_distance() const { return stop_loss_distance; }
+    double get_take_profit_distance() const { return take_profit_distance; }
 };

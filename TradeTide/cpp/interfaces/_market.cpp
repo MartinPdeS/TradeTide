@@ -22,8 +22,8 @@ PYBIND11_MODULE(MarketInterface, m) {
         .def(py::init<const std::string>(), py::arg("currencies"))
 
         // Binding member functions
-        .def("generate_random_market_data_days", &Market::generate_random_market_data<std::chrono::days>, py::arg("start"), py::arg("end"))
-        .def("generate_random_market_data_minutes", &Market::generate_random_market_data<std::chrono::minutes>, py::arg("start"), py::arg("end"))
+        .def("generate_random_market_data", &Market::generate_random_market_data<std::chrono::days>, py::arg("start"), py::arg("end"))
+        .def("generate_random_market_data", &Market::generate_random_market_data<std::chrono::minutes>, py::arg("start"), py::arg("end"))
         .def("get_open_prices", &Market::get_open_prices)
         .def("get_close_prices", &Market::get_close_prices)
         .def("get_high_prices", &Market::get_high_prices)

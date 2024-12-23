@@ -47,12 +47,8 @@ public:
         }
 
     template <typename Duration>
-    void generate_random_market_data(const TimePoint start_date, const TimePoint end_date) {
-        // Calculate the number of days between start_date and end_date
-
-        auto duration = std::chrono::duration_cast<Duration>(end_date - start_date).count();
-
-        if (duration <= 0) {
+    void generate_random_market_data(const TimePoint& start_date, const TimePoint& end_date, const Duration& interval) {
+        if (start_date >= end_date) {
             std::cerr << "Invalid date range provided.\n";
             return;
         }
@@ -61,7 +57,7 @@ public:
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_real_distribution<> dist_price(1.0, 100.0); // Prices between $1 and $100
-        std::uniform_real_distribution<> dist_volatility(0.01, 0.05); // Daily volatility between 1% and 5%
+        std::uniform_real_distribution<> dist_volatility(0.01, 0.05); // Volatility between 1% and 5%
 
         open_prices.clear();
         close_prices.clear();
@@ -70,7 +66,7 @@ public:
 
         double prev_close = dist_price(gen); // Start with a random price
 
-        for (int i = 0; i <= duration; ++i) {
+        for (TimePoint current_time = start_date; current_time <= end_date; current_time += interval) {
             double open = prev_close;
             double volatility = dist_volatility(gen);
             double high = open * (1 + volatility);

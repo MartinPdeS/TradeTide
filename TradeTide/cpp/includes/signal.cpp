@@ -4,11 +4,13 @@
 #include <chrono>
 #include "market.cpp"
 
+typedef std::chrono::system_clock::time_point TimePoint;
+
 class Signal {
 private:
     std::vector<int> signal_array; // Array of -1 (sell), 0 (hold), +1 (buy)
-    std::chrono::system_clock::time_point start_date; // Start date
-    std::chrono::system_clock::time_point end_date;   // End date
+    TimePoint start_date; // Start date
+    TimePoint end_date;   // End date
 
 public:
     // Constructor with Market input

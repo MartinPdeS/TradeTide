@@ -9,23 +9,41 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Type of build" FORCE)
 
 
-# Directories
-set(TRADETIDE_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/TradeTide/cpp/includes")
-set(TRADETIDE_INTERFACE_DIR "${CMAKE_SOURCE_DIR}/TradeTide/cpp/interfaces")
+# Set the output directory for libraries
+set(TRADETIDE_CXX_DIR "${CMAKE_SOURCE_DIR}/TradeTide/cpp")
 set(TRADETIDE_BIN_DIR "${CMAKE_SOURCE_DIR}/TradeTide/binary")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${TRADETIDE_BIN_DIR}")
+
+
+# Compiler and linker options
+add_compile_options(-fPIC -Wall -Wextra -Wno-uninitialized)
 
 find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
 find_package(pybind11 CONFIG REQUIRED)
 
-# Function to add PyMieSim modules
-function(add_pymiesim_module name source)
-    pybind11_add_module(${name} MODULE "${TRADETIDE_CXX_DIR}/${source}")
-    set_target_properties(${name} PROPERTIES OUTPUT_NAME ${name})
-    target_include_directories(${name} PRIVATE "${TRADETIDE_INCLUDE_DIR}")
-endfunction()
+# Print some messages
+message(STATUS "TradeTide version is: ${TRADETIDE_VERSION}")
+message(STATUS "TradeTide includes directory is: ${TRADETIDE_CXX_DIR}")
+message(STATUS "Python version to be compiled against: ${PYBIND11_PYTHON_VERSION}")
+message(STATUS "Binary will be installed in location: ${TRADETIDE_BIN_DIR}")
 
-add_pymiesim_module(MarketInterface "${TRADETIDE_INTERFACE_DIR}/_market.cpp")
-add_pymiesim_module(PositionInterface "${TRADETIDE_INTERFACE_DIR}/_position.cpp")
-add_pymiesim_module(RiskManagmentInterface "${TRADETIDE_INTERFACE_DIR}/_risk_managment.cpp")
-add_pymiesim_module(PortfolioInterface "${TRADETIDE_INTERFACE_DIR}/_portfolio.cpp")
+
+add_subdirectory(TradeTide/cpp/position)          # position
+add_subdirectory(TradeTide/cpp/market)            # market
+add_subdirectory(TradeTide/cpp/signal)            # signal
+add_subdirectory(TradeTide/cpp/risk_managment)    # risk_managment
+add_subdirectory(TradeTide/cpp/portfolio)         # portfolio
+add_subdirectory(TradeTide/cpp/backtester)        # backtester
+
+
+set(
+    ALL_TARGETS
+    cpp_position cpp_market cpp_signal cpp_risk_managment cpp_backtester
+    interface_position interface_market interface_risk_managment
+)
+
+install(
+    TARGETS ${ALL_TARGETS}
+    LIBRARY DESTINATION ${TRADETIDE_BIN_DIR}
+    ARCHIVE DESTINATION ${TRADETIDE_BIN_DIR}
+    RUNTIME DESTINATION ${TRADETIDE_BIN_DIR}
+)

@@ -1,14 +1,14 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
-#include "position.cpp"
+#include "position.h"
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(PositionInterface, m) {
-    m.doc() = "Python bindings for the Portfolio class";
+PYBIND11_MODULE(PositionInterface, module) {
+    module.doc() = "Python bindings for the Portfolio class";
 
     // Bind the Position class
-    py::class_<Position, std::shared_ptr<Position>>(m, "Position")
+    py::class_<Position, std::shared_ptr<Position>>(module, "Position")
         .def(py::init<bool, double, double, double, double, double>(),
             py::arg("is_long"),
             py::arg("entry_price"),

@@ -1,15 +1,14 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
-#include "portfolio.cpp"
-#include "risk_managment.cpp"
+#include "portfolio.h"
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(PortfolioInterface, m) {
-    m.doc() = "Python bindings for the Portfolio class";
+PYBIND11_MODULE(PortfolioInterface, module) {
+    module.doc() = "Python bindings for the Portfolio class";
 
     // Bind the Portfolio class
-    py::class_<Portfolio>(m, "Portfolio")
+    py::class_<Portfolio>(module, "Portfolio")
         .def(py::init<RiskManagement&>(), py::arg("risk_manager"))
         .def("add_position", &Portfolio::add_position,
              py::arg("is_long"),

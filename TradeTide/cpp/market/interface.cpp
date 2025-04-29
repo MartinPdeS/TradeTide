@@ -1,29 +1,30 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
-#include "market.cpp" // Replace with the actual path to your Market class header
+#include "market.h" // Replace with the actual path to your Market class header
 
 namespace py = pybind11;
 typedef std::chrono::system_clock::time_point TimePoint;
 
-PYBIND11_MODULE(MarketInterface, m) {
-    py::class_<Market>(m, "Market")
+PYBIND11_MODULE(MarketInterface, module) {
+    py::class_<Market>(module, "Market")
         // Binding the constructor for predefined data
-        .def(py::init<const std::string, const TimePoint, const TimePoint, const std::vector<double>&, const std::vector<double>&, const std::vector<double>&, const std::vector<double>&>(),
-             py::arg("currencies"),
-             py::arg("start_date"),
-             py::arg("end_date"),
-             py::arg("input_open"),
-             py::arg("input_close"),
-             py::arg("input_high"),
-             py::arg("input_low"))
+        .def(
+            py::init<const std::string, const TimePoint, const TimePoint, const std::vector<double>&, const std::vector<double>&, const std::vector<double>&, const std::vector<double>&>(),
+            py::arg("currencies"),
+            py::arg("start_date"),
+            py::arg("end_date"),
+            py::arg("input_open"),
+            py::arg("input_close"),
+            py::arg("input_high"),
+            py::arg("input_low"))
 
         // Binding the constructor for random data generation
         .def(py::init<const std::string>(), py::arg("currencies"))
 
         // Binding member functions
-        .def("generate_random_market_data", &Market::generate_random_market_data<std::chrono::days>, py::arg("start"), py::arg("end"))
-        .def("generate_random_market_data", &Market::generate_random_market_data<std::chrono::minutes>, py::arg("start"), py::arg("end"))
+        .def("generate_random_market_data", &Market::generate_random_market_data<std::chrono::days>, py::arg("start"), py::arg("end"), py::arg("interval_day"))
+        .def("generate_random_market_data", &Market::generate_random_market_data<std::chrono::minutes>, py::arg("start"), py::arg("end"), py::arg("interval_minute"))
         .def("get_open_prices", &Market::get_open_prices)
         .def("get_close_prices", &Market::get_close_prices)
         .def("get_high_prices", &Market::get_high_prices)
@@ -34,5 +35,6 @@ PYBIND11_MODULE(MarketInterface, m) {
 
         // Binding properties
         .def_readwrite("start_date", &Market::start_date)
-        .def_readwrite("end_date", &Market::end_date);
+        .def_readwrite("end_date", &Market::end_date)
+        ;
 }

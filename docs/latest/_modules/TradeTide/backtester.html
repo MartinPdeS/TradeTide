@@ -29,8 +29,8 @@
   <link href="../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
 <link href="../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-    <link rel="stylesheet" type="text/css" href="/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/docs/source/_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="/opt/hostedtoolcache/Python/3.11.12/x64/lib/python3.11/site-packages/docs/source/_static/default.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
@@ -438,18 +438,18 @@
 <span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8; py-indent-offset:4 -*-</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">NoReturn</span>
-<span class="kn">import</span> <span class="nn">pandas</span>
-<span class="kn">import</span> <span class="nn">numpy</span>
-<span class="kn">from</span> <span class="nn">TradeTide.strategy</span> <span class="kn">import</span> <span class="n">Strategy</span>
-<span class="kn">from</span> <span class="nn">TradeTide.plottings</span> <span class="kn">import</span> <span class="n">PlotTrade</span>
-<span class="kn">from</span> <span class="nn">TradeTide.capital_management</span> <span class="kn">import</span> <span class="n">LimitedCapital</span><span class="p">,</span> <span class="n">UnlimitedCapital</span>
-<span class="kn">from</span> <span class="nn">TradeTide.metrics</span> <span class="kn">import</span> <span class="n">Metrics</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NoReturn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.strategy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Strategy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.plottings</span><span class="w"> </span><span class="kn">import</span> <span class="n">PlotTrade</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.capital_management</span><span class="w"> </span><span class="kn">import</span> <span class="n">LimitedCapital</span><span class="p">,</span> <span class="n">UnlimitedCapital</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">Metrics</span>
 
 
 <div class="viewcode-block" id="BackTester">
 <a class="viewcode-back" href="../../code.html#TradeTide.backtester.BackTester">[docs]</a>
-<span class="k">class</span> <span class="nc">BackTester</span><span class="p">():</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BackTester</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class for backtesting forex trading strategies.</span>
 
@@ -458,7 +458,7 @@
 <span class="sd">    allowing for the evaluation of the strategy&#39;s effectiveness.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">market</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">strategy</span><span class="p">:</span> <span class="n">Strategy</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">market</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">strategy</span><span class="p">:</span> <span class="n">Strategy</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initializes a new instance of the BackTester class with specified market data and trading strategy.</span>
 
@@ -492,7 +492,7 @@
 
 <div class="viewcode-block" id="BackTester.signals_to_positions">
 <a class="viewcode-back" href="../../code.html#TradeTide.backtester.BackTester.signals_to_positions">[docs]</a>
-    <span class="k">def</span> <span class="nf">signals_to_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">signals_to_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Transforms trading signals into positions by interpreting changes in the signals.</span>
 
@@ -529,7 +529,7 @@
 
 <div class="viewcode-block" id="BackTester.backtest">
 <a class="viewcode-back" href="../../code.html#TradeTide.backtester.BackTester.backtest">[docs]</a>
-    <span class="k">def</span> <span class="nf">backtest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capital_management</span><span class="p">:</span> <span class="n">LimitedCapital</span> <span class="o">|</span> <span class="n">UnlimitedCapital</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">backtest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capital_management</span><span class="p">:</span> <span class="n">LimitedCapital</span> <span class="o">|</span> <span class="n">UnlimitedCapital</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Conducts a backtest on a trading strategy using historical market data, applying either a limited or unlimited</span>
 <span class="sd">        capital position strategy.</span>
@@ -590,7 +590,7 @@
 
 <div class="viewcode-block" id="BackTester.generate_portfolio">
 <a class="viewcode-back" href="../../code.html#TradeTide.backtester.BackTester.generate_portfolio">[docs]</a>
-    <span class="k">def</span> <span class="nf">generate_portfolio</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_portfolio</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
         <span class="c1"># Calculate cumulative holdings and cash, considering the units bought and the entry price</span>
         <span class="k">for</span> <span class="n">position</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">position_list</span><span class="p">:</span>
             <span class="n">position</span><span class="o">.</span><span class="n">update_portfolio_dataframe</span><span class="p">(</span><span class="n">dataframe</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">portfolio</span><span class="p">)</span>
@@ -602,7 +602,7 @@
 
 <div class="viewcode-block" id="BackTester.plot">
 <a class="viewcode-back" href="../../code.html#TradeTide.backtester.BackTester.plot">[docs]</a>
-    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generates a visual representation of the backtest results using the PlotTrade class.</span>
 
@@ -679,7 +679,7 @@
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     <br/>
   </p>
 </div>

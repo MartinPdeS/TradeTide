@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8; py-indent-offset:4 -*-
 
-from typing import NoReturn
-
 from TradeTide import directories
 import pandas
-# import modin.pandas as pandas
 import pathlib
 from TradeTide.tools import parse_time_string_to_delta
 # data taken from https://forexsb.com/historical-forex-data
@@ -99,7 +96,7 @@ def get_market_data(currency_0: str, currency_1: str, year: int, time_span: str 
     return dataframe
 
 
-def convert_xlsx_to_csv(currency_0: str, currency_1: str, year: int) -> NoReturn:
+def convert_xlsx_to_csv(currency_0: str, currency_1: str, year: int) -> None:
     """
     Converts an Excel file containing currency data to a CSV format.
 

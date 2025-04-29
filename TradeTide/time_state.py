@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8; py-indent-offset:4 -*-
-
-from typing import NoReturn
-
 import numpy
 from TradeTide.position import Short, Long
 from datetime import date as DateTime
@@ -20,11 +17,11 @@ class TimeState:
         total_returns_closed_positions = sum(pos.return_ for pos in self.closed_positions)  # Replace pos.return_ with your actual return attribute
         self.time_info.loc[date, 'cash'] = self.initial_capital - total_cost_open_positions + total_returns_closed_positions
 
-    def add_position(self, position: Long | Short) -> NoReturn:
+    def add_position(self, position: Long | Short) -> None:
         self.open_positions.append(position)
         self.cash -= position.cost
 
-    def update_date(self, date) -> NoReturn:
+    def update_date(self, date) -> None:
         closing_position = list(
             filter(lambda x: x.stop_date < date, self.open_positions)
         )

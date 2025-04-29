@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8; py-indent-offset:4 -*-
-
-from typing import NoReturn
-
 import pandas
 import numpy
 from datetime import timedelta
@@ -183,7 +180,7 @@ class Metrics():
 
         return self.performance_dict
 
-    def print(self) -> NoReturn:
+    def print(self) -> None:
 
         property_dict = {
             "Property": self.performance_dict.keys(), "value": self.performance_dict.values()

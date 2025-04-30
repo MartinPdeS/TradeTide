@@ -6,36 +6,49 @@ typedef std::chrono::system_clock::time_point TimePoint;
 // Generate random signals
 void
 Signal::generate_random() {
-    // Calculate the number of days between start_date and end_date
-    auto duration = end_date - start_date;
-    int days = std::chrono::duration_cast<std::chrono::days>(duration).count();
-    if (days <= 0) {
-        std::cerr << "Invalid date range provided.\n";
-        return;
-    }
 
-    // Initialize random number generator
+    // 1) build a random raw state series
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dist(-1, 1); // Generate values -1, 0, or +1
+    std::uniform_int_distribution<> dist(-1, 1);
 
-    signal_array.clear();
-    for (int i = 0; i <= days; ++i) {
-        signal_array.push_back(dist(gen));
+    size_t n = this->market.dates.size();
+    std::vector<int> raw;
+    raw.reserve(n);
+    for (size_t i = 0; i < n; ++i) {
+        raw.push_back(dist(gen));
+    }
+
+    // 2) compute the transition-array
+    trade_signal.clear();
+    trade_signal.reserve(n);
+    if (n == 0) return;
+
+    // at index 0 we assume “no prior state” → no transition
+    trade_signal.push_back(0);
+
+    for (size_t i = 1; i < n; ++i) {
+        if (raw[i] ==  1 && raw[i-1] !=  1)
+            trade_signal.push_back( 1);
+        else if (raw[i] == -1 && raw[i-1] != -1)
+            trade_signal.push_back(-1);
+        else
+            trade_signal.push_back( 0);
     }
 }
 
 // Get signal array
 const std::vector<int>&
 Signal::get_signals() const {
-    return signal_array;
+    return trade_signal;
 }
 
 // Display signals
 void
 Signal::display_signals() const {
     std::cout << "Signals:\n";
-    for (size_t i = 0; i < signal_array.size(); ++i) {
-        std::cout << "Day " << i + 1 << ": " << signal_array[i] << "\n";
-    }
+
+    for (size_t i = 0; i < trade_signal.size(); ++i)
+        std::cout << "Day " << i + 1 << ": " << trade_signal[i] << "\n";
+
 }

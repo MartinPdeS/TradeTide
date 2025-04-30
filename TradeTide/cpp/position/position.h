@@ -3,6 +3,7 @@
 #include <string>
 #include <chrono>
 #include <ctime>
+#include "../market/market.h"
 
 class Position {
 public:
@@ -32,13 +33,84 @@ public:
     void close(double market_price);
 
     // Check if stop-loss or take-profit is hit
-    bool check_exit_conditions(double high_price, double low_price);
+    bool check_exit_conditions(const double high_price, const double low_price);
 
     // Calculate profit or loss
     double calculate_pnl() const;
 
-    // Display Position Info
     void display() const;
 
-    bool get_is_closed() const;
 };
+
+
+
+class BasePosition{
+    public:
+        const Market* market;
+        double entry_price;        // Price at which the position is opened
+        double exit_price;         // Price at which the position is closed
+        double lot_size;           // Size of the position in lots
+        double pip_price;          // Pip value for the position
+        double stop_loss;          // Stop-loss price level
+        double take_profit;        // Take-profit price level
+        bool is_closed;            // Status of the position
+        size_t start_idx;
+
+        std::chrono::system_clock::time_point start_time; // Time when position was opened
+        std::chrono::system_clock::time_point close_time; // Time when position was closed
+
+        BasePosition() = default;
+        virtual ~BasePosition() = default;
+
+        BasePosition(const Market* market, const double entry_price, const double lot_size, const double pip_val, const double stop_loss, const double take_profit, const size_t start_idx)
+        :
+            market(market),
+            entry_price(entry_price),
+            exit_price(0.0),
+            lot_size(lot_size),
+            pip_price(pip_val),
+            stop_loss(stop_loss),
+            take_profit(take_profit),
+            is_closed(false),
+            start_idx(start_idx) {
+                start_time = this->market->dates[start_idx];
+            }
+
+        // Open the position for a certain market_price
+        void open(const double price);
+
+        // Close the position for a certain market_price
+        void close(const double market_price);
+
+        // Calculate profit or loss
+        virtual double calculate_pnl() const = 0;
+
+        // Display Position Info
+        virtual void display() const = 0;
+
+        // Check if stop-loss or take-profit is hit
+        virtual void check_exit_conditions(const size_t time_idx) = 0;
+};
+
+class Long : public BasePosition {
+    public:
+        using BasePosition::BasePosition;
+
+        double calculate_pnl()  const override;
+
+        void display() const override;
+
+        void check_exit_conditions(const size_t time_idx) override;
+    };
+
+
+class Short : public BasePosition {
+    public:
+        using BasePosition::BasePosition;
+
+        double calculate_pnl() const override;
+
+        void display() const override;
+
+        void check_exit_conditions(const size_t time_idx) override;
+    };

@@ -30,7 +30,7 @@ Portfolio::check_exit_conditions(const Market& market, size_t day_index) {
 
     for (auto& position : positions) {
         // Check if the position hits stop-loss or take-profit
-        if (!position->get_is_closed() && position->check_exit_conditions(high_price, low_price)) {
+        if (!position->is_closed && position->check_exit_conditions(high_price, low_price)) {
             // Calculate profit or loss and update portfolio capital
             double pnl = position->calculate_pnl();
             update_capital(pnl);

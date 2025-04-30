@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 #include <chrono>
 #include <random>
@@ -9,12 +11,11 @@ typedef std::chrono::system_clock::time_point TimePoint;
 
 class Signal {
 public:
-    std::vector<int> signal_array; // Array of -1 (sell), 0 (hold), +1 (buy)
-    TimePoint start_date; // Start date
-    TimePoint end_date;   // End date
+    Market market;
+    std::vector<int> trade_signal;
 
     // Constructor with Market input
-    Signal(const Market& market) : start_date(market.start_date), end_date(market.end_date) {}
+    Signal(const Market& market) : market(market) {}
 
     // Generate random signals
     void generate_random();
@@ -24,4 +25,6 @@ public:
 
     // Display signals
     void display_signals() const;
+
+    std::vector<int> compute_trade_signal();
 };

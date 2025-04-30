@@ -9,7 +9,8 @@
 #include <sstream>
 #include <iomanip>
 
-typedef std::chrono::system_clock::time_point TimePoint;
+using Duration    = std::chrono::system_clock::duration;
+using TimePoint   = std::chrono::system_clock::time_point;
 
 class Market {
 public:
@@ -23,7 +24,7 @@ public:
     std::vector<double> spreads;
 
     std::vector<TimePoint> dates;
-    TimePoint interval;
+    Duration interval;
 
 
 

@@ -23,6 +23,7 @@ public:
     std::vector<double> spreads;
 
     std::vector<TimePoint> dates;
+    TimePoint interval;
 
 
 
@@ -62,7 +63,7 @@ public:
     std::chrono::system_clock::time_point parse_date_time(const std::string& datetime_string);
 
     template <typename Duration>
-    void load_from_csv(const std::string& filename, Duration time_span);
+    void load_from_csv(const std::string& filename, const Duration &time_span);
 
 
 

@@ -27,5 +27,6 @@ PYBIND11_MODULE(interface_position_collection, module) {
         .def("get_exit_prices", &PositionCollection::get_exit_prices)
 
         .def_readwrite("number_of_trade", &PositionCollection::number_of_trade)
+        .def_readonly("market", &PositionCollection::market)
         ;
 }

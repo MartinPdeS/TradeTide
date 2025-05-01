@@ -104,7 +104,7 @@ std::vector<std::chrono::system_clock::time_point>
 Portfolio::get_open_dates() const {
     std::vector<std::chrono::system_clock::time_point> open_dates;
     for (const auto& position : positions) {
-        open_dates.push_back(position->start_time);
+        open_dates.push_back(position->start_date);
     }
     return open_dates;
 }
@@ -115,7 +115,7 @@ std::vector<std::chrono::system_clock::time_point>
 Portfolio::get_close_dates() const {
     std::vector<std::chrono::system_clock::time_point> close_dates;
     for (const auto& position : positions) {
-        close_dates.push_back(position->start_time);
+        close_dates.push_back(position->start_date);
     }
     return close_dates;
 }

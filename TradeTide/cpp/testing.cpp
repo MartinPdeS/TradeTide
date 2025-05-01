@@ -12,7 +12,7 @@ int main()
     Signal signal(market);
     signal.generate_random();
 
-    RiskManagement risk_managment(1000, 10, 10, 10);
+    RiskManagment risk_managment(1000, 100, 10, 10);
 
     std::unique_ptr<BasePosition> position;
 

@@ -9,8 +9,14 @@
 #include <sstream>
 #include <iomanip>
 
-using Duration    = std::chrono::system_clock::duration;
-using TimePoint   = std::chrono::system_clock::time_point;
+using Duration = std::chrono::system_clock::duration;
+using TimePoint = std::chrono::system_clock::time_point;
+
+enum MarketType {
+    Call,
+    Bid,
+    Mean
+};
 
 class Market {
 public:
@@ -26,10 +32,12 @@ public:
     std::vector<TimePoint> dates;
     Duration interval;
 
+    double current_price_per_lots;
 
 
 
-    Market(const std::string currencies) : currencies(currencies) {}
+
+    Market(const std::string& currencies) : currencies(currencies) {}
 
     // Constructor for predefined data
     Market(
@@ -49,8 +57,8 @@ public:
 
         }
 
-    template <typename Duration>
-    void generate_random_market_data(const TimePoint& start_date, const TimePoint& end_date, const Duration& interval);
+
+    void generate_random_market_data(const TimePoint& start_date, const TimePoint& end_date, const std::chrono::system_clock::duration& interval);
 
     // Getters for market data
     const std::vector<double>& get_open_prices() const { return open_prices; }
@@ -63,9 +71,7 @@ public:
 
     std::chrono::system_clock::time_point parse_date_time(const std::string& datetime_string);
 
-    template <typename Duration>
-    void load_from_csv(const std::string& filename, const Duration &time_span);
-
+    void load_from_csv(const std::string& filename, const std::chrono::system_clock::duration& time_span);
 
 
 };

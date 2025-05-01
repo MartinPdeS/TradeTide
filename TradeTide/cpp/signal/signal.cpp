@@ -1,7 +1,5 @@
 #include "signal.h"
 
-typedef std::chrono::system_clock::time_point TimePoint;
-
 
 // Generate random signals
 void
@@ -45,10 +43,10 @@ Signal::get_signals() const {
 
 // Display signals
 void
-Signal::display_signals() const {
+Signal::display_signal() const {
     std::cout << "Signals:\n";
 
     for (size_t i = 0; i < trade_signal.size(); ++i)
-        std::cout << "Day " << i + 1 << ": " << trade_signal[i] << "\n";
+        std::cout << "Interval " << i + 1 << ": " << trade_signal[i] << "\n";
 
 }

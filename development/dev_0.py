@@ -1,39 +1,53 @@
-from TradeTide.binary import Portfolio, Position, Market, RiskManagement
+from TradeTide.binary.interface_market import Market
+from TradeTide.binary.interface_signal import Signal
+from TradeTide.binary.interface_risk_managment import RiskManagment
+from TradeTide.binary.interface_position_collection import PositionCollection
+
 from datetime import datetime, timedelta
 
 
+market = Market("usd/cad")
 
-# Define start and end dates
-start_date = datetime(2023, 1, 1)
-end_date = datetime(2023, 1, 3)
 
-risk_manager = RiskManagement(
-    initial_balance=100000,
-    risk_per_trade=1.0,
-    stop_loss=50,
-    take_profit=50
+now = datetime.now()
+tomorrow = now + timedelta(days=1)
+interval = timedelta(hours=1)
+
+
+market.generate_random_market_data(
+    start=now,
+    end=tomorrow,
+    interval=interval
 )
-
-
-market = Market(currencies="EUR/USD")
-
-market.load_from_csv(
-    "TradeTide/TradeTide/data/eur_usd/2023/data.csv",
-    time_span=timedelta(days=1)
-)
-
-# market.generate_random_market_data_minutes(
-#     start=start_date,
-#     end=end_date,
-# )
-
 
 # market.display_market_data()
 
-# portfolio = Portfolio(risk_manager=risk_manager)
+signal = Signal(market=market)
 
-# portfolio.process_signals(
 
-# )
+signal.generate_random()
+#
+signal.display_signal()
+# dsa
+# print(signal.trade_signal)
 
-# portfolio.print_metrics(risk_free_rate=2.0)
+
+risk_managment = RiskManagment(
+    initial_balance=1000,
+    risk_per_trade=10,
+    stop_loss=10,
+    take_profit=10
+)
+
+position_collection = PositionCollection(
+    market=market,
+    signal=signal,
+    risk_managment=risk_managment
+)
+
+position_collection.open_positions()
+
+print('number_of_trade', position_collection.number_of_trade)
+
+
+# position_collection.display()

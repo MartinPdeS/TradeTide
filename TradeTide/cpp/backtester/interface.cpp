@@ -4,7 +4,7 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(BacktesterInterface, module) {
+PYBIND11_MODULE(interface_backtester, module) {
     module.doc() = "Python bindings for the Portfolio class";
 
     // Bind the Position class

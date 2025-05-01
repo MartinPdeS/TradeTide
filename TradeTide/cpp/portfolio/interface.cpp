@@ -4,12 +4,12 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(PortfolioInterface, module) {
+PYBIND11_MODULE(interface_portfolio, module) {
     module.doc() = "Python bindings for the Portfolio class";
 
     // Bind the Portfolio class
     py::class_<Portfolio>(module, "Portfolio")
-        .def(py::init<RiskManagement&>(), py::arg("risk_manager"))
+        .def(py::init<RiskManagment&>(), py::arg("risk_manager"))
         .def("add_position", &Portfolio::add_position,
              py::arg("is_long"),
              py::arg("entry_price"),

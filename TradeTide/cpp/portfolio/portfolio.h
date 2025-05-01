@@ -12,14 +12,14 @@ class Portfolio {
 private:
     std::vector<std::shared_ptr<Position>> positions; // List of positions
     double capital;                                   // Current capital in the portfolio
-    RiskManagement risk_manager;                     // Risk management instance
+    RiskManagment risk_manager;                     // Risk management instance
     size_t day;
 
 public:
     // Constructor
     Portfolio() = default;
 
-    Portfolio(RiskManagement& risk_manager) : capital(risk_manager.account_balance), risk_manager(risk_manager) {}
+    Portfolio(RiskManagment& risk_manager) : capital(risk_manager.account_balance), risk_manager(risk_manager) {}
 
     // Add a new position with stop-loss and take-profit
     bool add_position(bool is_long, double entry_price, double pip_price, double lot_size, double stop_loss, double take_profit);

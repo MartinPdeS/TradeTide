@@ -6,9 +6,8 @@
 namespace py = pybind11;
 typedef std::chrono::system_clock::time_point TimePoint;
 
-PYBIND11_MODULE(MarketInterface, module) {
+PYBIND11_MODULE(interface_market, module) {
     py::class_<Market>(module, "Market")
-        // Binding the constructor for predefined data
         .def(
             py::init<const std::string, const TimePoint, const TimePoint, const std::vector<double>&, const std::vector<double>&, const std::vector<double>&, const std::vector<double>&>(),
             py::arg("currencies"),
@@ -23,17 +22,17 @@ PYBIND11_MODULE(MarketInterface, module) {
         .def(py::init<const std::string>(), py::arg("currencies"))
 
         // Binding member functions
-        .def("generate_random_market_data", &Market::generate_random_market_data<std::chrono::days>, py::arg("start"), py::arg("end"), py::arg("interval_day"))
-        .def("generate_random_market_data", &Market::generate_random_market_data<std::chrono::minutes>, py::arg("start"), py::arg("end"), py::arg("interval_minute"))
-        .def("get_open_prices", &Market::get_open_prices)
-        .def("get_close_prices", &Market::get_close_prices)
-        .def("get_high_prices", &Market::get_high_prices)
-        .def("get_low_prices", &Market::get_low_prices)
+        .def("generate_random_market_data", &Market::generate_random_market_data, py::arg("start"), py::arg("end"), py::arg("interval"))
+
         .def("display_market_data", &Market::display_market_data)
-        .def("load_from_csv", &Market::load_from_csv<std::chrono::minutes>, py::arg("filename"), py::arg("time_span"))
-        .def("load_from_csv", &Market::load_from_csv<std::chrono::days>, py::arg("filename"), py::arg("time_span"))
+        .def("load_from_csv", &Market::load_from_csv, py::arg("filename"), py::arg("time_span"))
 
         // Binding properties
+        .def_readwrite("open_prices", &Market::open_prices)
+        .def_readwrite("close_prices", &Market::close_prices)
+        .def_readwrite("low_prices", &Market::low_prices)
+        .def_readwrite("high_prices", &Market::high_prices)
+
         .def_readwrite("start_date", &Market::start_date)
         .def_readwrite("end_date", &Market::end_date)
         ;

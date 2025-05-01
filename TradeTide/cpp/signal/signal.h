@@ -7,8 +7,6 @@
 #include "../market/market.h"
 
 
-typedef std::chrono::system_clock::time_point TimePoint;
-
 class Signal {
 public:
     Market market;
@@ -24,7 +22,7 @@ public:
     const std::vector<int>& get_signals() const;
 
     // Display signals
-    void display_signals() const;
+    void display_signal() const;
 
     std::vector<int> compute_trade_signal();
 };

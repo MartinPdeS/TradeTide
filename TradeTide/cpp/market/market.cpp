@@ -2,8 +2,9 @@
 
 
 
-template <typename Duration> void
-Market::generate_random_market_data(const TimePoint& start_date, const TimePoint& end_date, const Duration& interval) {
+void
+Market::generate_random_market_data(const TimePoint& start_date, const TimePoint& end_date, const std::chrono::system_clock::duration& interval)
+{
     if (start_date >= end_date) {
         std::cerr << "Invalid date range provided.\n";
         return;
@@ -14,28 +15,36 @@ Market::generate_random_market_data(const TimePoint& start_date, const TimePoint
     // Initialize random number generator
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_real_distribution<> dist_price(1.0, 100.0); // Prices between $1 and $100
+    std::uniform_real_distribution<> dist_price(1.0, 100.0);      // Prices between $1 and $100
     std::uniform_real_distribution<> dist_volatility(0.01, 0.05); // Volatility between 1% and 5%
+    std::uniform_real_distribution<> dist_spread(0.001, 0.005);   // Spread between 0.1% and 0.5% of the price
 
-    this->open_prices.clear();
-    this->close_prices.clear();
-    this->high_prices.clear();
-    this->low_prices.clear();
-    this->dates.clear();
+    // Clear previous data
+    open_prices.clear();
+    close_prices.clear();
+    high_prices.clear();
+    low_prices.clear();
+    dates.clear();
+    spreads.clear();
 
     double prev_close = dist_price(gen); // Start with a random price
 
     for (TimePoint current_time = start_date; current_time <= end_date; current_time += interval) {
-        double open = prev_close;
+        double open       = prev_close;
         double volatility = dist_volatility(gen);
-        double high = open * (1 + volatility);
-        double low = open * (1 - volatility);
-        double close = low + (high - low) * dist_volatility(gen);
+        double high       = open * (1 + volatility);
+        double low        = open * (1 - volatility);
+        double close      = low + (high - low) * dist_volatility(gen);
+
+        // Compute a small random spread around the mid-price
+        double mid_price = (high + low) / 2.0;
+        double spread    = mid_price * dist_spread(gen);
 
         open_prices.push_back(open);
-        close_prices.push_back(close);
         high_prices.push_back(high);
         low_prices.push_back(low);
+        close_prices.push_back(close);
+        spreads.push_back(spread);
         dates.push_back(current_time);
 
         prev_close = close;
@@ -43,18 +52,22 @@ Market::generate_random_market_data(const TimePoint& start_date, const TimePoint
 }
 
 
-// Display market data
+
+// Display market data with tabs between fields
 void
 Market::display_market_data() const {
     std::cout << "Market Data:\n";
-    for (size_t i = 0; i < open_prices.size(); ++i)
+    for (size_t i = 0; i < open_prices.size(); ++i) {
         std::cout
-            << "Day " << i + 1 << ": "
-            << "Open: " << open_prices[i] << ", "
-            << "High: " << high_prices[i] << ", "
-            << "Low: " << low_prices[i] << ", "
-            << "Close: " << close_prices[i] << "\n";
+            << "Day "    << (i + 1)                     << '\t'
+            << "Open: "  << open_prices[i]              << '\t'
+            << "High: "  << high_prices[i]              << '\t'
+            << "Low: "   << low_prices[i]               << '\t'
+            << "Close: " << close_prices[i]             << '\t'
+            << "Spread: "<< spreads[i]                  << '\n';
+    }
 }
+
 
 std::chrono::system_clock::time_point
 Market::parse_date_time(const std::string& datetime_string) {
@@ -67,12 +80,11 @@ Market::parse_date_time(const std::string& datetime_string) {
     return std::chrono::system_clock::from_time_t(std::mktime(&tm));
 }
 
-template <typename Duration> void
-Market::load_from_csv(const std::string& filename, const Duration &time_span) {
+void Market::load_from_csv(const std::string& filename, const std::chrono::system_clock::duration& time_span) {
+
     std::ifstream file(filename);
     if (!file.is_open())
         throw std::runtime_error("Could not open file: " + filename);
-
 
     std::string line;
     // Skip the header line

@@ -4,11 +4,11 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(RiskManagmentInterface, module) {
+PYBIND11_MODULE(interface_risk_managment, module) {
     module.doc() = "Python bindings for the Portfolio class";
 
-    // Bind the RiskManagement class
-    py::class_<RiskManagement>(module, "RiskManagement")
+    // Bind the RiskManagment class
+    py::class_<RiskManagment>(module, "RiskManagment")
         .def(
             py::init<double, double, double, double>(),
             py::arg("initial_balance"),
@@ -16,9 +16,6 @@ PYBIND11_MODULE(RiskManagmentInterface, module) {
             py::arg("stop_loss"),
             py::arg("take_profit")
         )
-
-        .def("calculate_position_size", &RiskManagement::calculate_position_size)
-        .def("update_balance", &RiskManagement::update_balance)
         ;
 
 }

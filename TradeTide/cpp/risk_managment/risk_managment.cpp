@@ -15,7 +15,7 @@ RiskManagment::calculate_position_size(const double entry_price, const double pi
     double max_risk_dollars = (max_risk_per_trade / 100.0) * account_balance;
 
     // Lot size based on maximum risk and stop-loss distance
-    double lot_size = max_risk_dollars / (stop_loss_distance * pip_value);
+    double lot_size = max_risk_dollars / (this->stop_loss * pip_value);
 
     return lot_size;
 }
@@ -27,7 +27,7 @@ RiskManagment::update_position_lot_size(BasePosition &position, const double cur
     double max_risk_dollars = (this->max_risk_per_trade / 100.0) * this->account_balance;
 
     // Lot size based on maximum risk and stop-loss distance
-    double lot_size = max_risk_dollars / (stop_loss_distance * currency_per_pip);
+    double lot_size = max_risk_dollars / (this->stop_loss * currency_per_pip);
 
     position.lot_size = lot_size;
 }
@@ -37,7 +37,7 @@ RiskManagment::update_position_lot_size(BasePosition &position, const double cur
 bool
 RiskManagment::validate_position(const double entry_price, const double lot_size, const double current_price, const bool is_long) const {
     // Calculate stop-loss and maximum risk
-    double stop_loss_price = entry_price - (is_long ? stop_loss_distance : -stop_loss_distance);
+    double stop_loss_price = entry_price - (is_long ? this->stop_loss : -this->stop_loss);
     double potential_loss = abs(entry_price - stop_loss_price) * lot_size;
 
     return potential_loss <= (max_risk_per_trade / 100.0) * account_balance;

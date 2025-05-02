@@ -3,18 +3,18 @@
 
 void PositionCollection::open_positions(){
 
-    for (size_t idx = 0; idx < number_of_trade; idx++){
+    for (size_t idx = 0; idx < this->market.dates.size(); idx++){
         int signal_value = signal.trade_signal[idx];
-        double entry_price = this->market.close_prices[idx];
+
+        if (signal_value == 0)
+            continue;
 
         PositionPtr position;
 
-        position = std::make_unique<Long>(market, risk_managment, 1, 1, 1, idx);
-
         if (signal_value == 1)
-            position = std::make_unique<Long>(market, risk_managment, entry_price, 1, 1, idx);
+            position = std::make_unique<Long>(market, risk_managment, 1, idx);
         else
-            position = std::make_unique<Short>(market, risk_managment, entry_price, 1, 1, idx);
+            position = std::make_unique<Short>(market, risk_managment, 1, idx);
 
         this->risk_managment.update_position_lot_size(*position, 10);
         positions.push_back(std::move(position));
@@ -23,8 +23,7 @@ void PositionCollection::open_positions(){
 
 void PositionCollection::close_positions(){
     for (const auto& position : this->positions){
-
-        for (size_t time_idx = position->start_idx; time_idx < this->market.dates.size(); time_idx++){
+        for (size_t time_idx = position->start_idx + 1; time_idx < this->market.dates.size(); time_idx++){
             position->check_exit_conditions(time_idx);
 
             if (position->is_closed)
@@ -33,8 +32,16 @@ void PositionCollection::close_positions(){
     }
 }
 
+void PositionCollection::terminate_open_positions() {
+    for (const auto& position : this->positions)
+        if (!position->is_closed)
+            position->close(this->market.dates.size() - 1);  // Set to last element of market
+
+}
+
 
 void PositionCollection::display(){
     for (const PositionPtr& e : this->positions)
         e->display();
 }
+

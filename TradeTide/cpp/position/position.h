@@ -40,7 +40,7 @@ public:
     bool check_exit_conditions(const double high_price, const double low_price);
 
     // Calculate profit or loss
-    double calculate_pnl() const;
+    double calculate_profite_and_loss() const;
 
     void display() const;
 
@@ -55,7 +55,6 @@ class BasePosition {
         double entry_price;        // Price at which the position is opened
         double exit_price;         // Price at which the position is closed
         double lot_size;           // Size of the position in lots
-        double pip_price;          // Pip value for the position
         bool is_closed;            // Status of the position
         size_t start_idx;
 
@@ -64,27 +63,23 @@ class BasePosition {
 
         virtual ~BasePosition() = default;
 
-        BasePosition(const Market& market, const RiskManagment& risk_managment, const double entry_price, const double lot_size, const double pip_val, const size_t start_idx)
+        BasePosition(const Market& market, const RiskManagment& risk_managment, const double lot_size, const size_t start_idx)
         :
             market(market),
             risk_managment(risk_managment),
-            entry_price(entry_price),
+            entry_price(0.0),
             exit_price(0.0),
             lot_size(lot_size),
-            pip_price(pip_val),
             is_closed(false),
-            start_idx(start_idx) {
-                start_date = this->market.dates[start_idx];
-            }
-
-        // Open the position for a certain market_price
-        void open(const double price);
+            start_idx(start_idx) {}
 
         // Close the position for a certain market_price
-        void close(const double market_price);
+        virtual void close(const size_t time_idx) = 0;
+        virtual void close_stop_loss(const size_t time_idx) = 0;
+        virtual void close_take_profit(const size_t time_idx) = 0;
 
         // Calculate profit or loss
-        virtual double calculate_pnl() const = 0;
+        virtual double calculate_profite_and_loss() const = 0;
 
         // Display Position Info
         virtual void display() const = 0;
@@ -95,9 +90,21 @@ class BasePosition {
 
 class Long : public BasePosition {
     public:
-        using BasePosition::BasePosition;
+        Long(const Market& market, const RiskManagment& risk_managment, const double lot_size, const size_t start_idx)
+        : BasePosition(market, risk_managment, lot_size, start_idx){
+            this->start_date = this->market.dates[start_idx];
+            this->open(start_idx);
+        }
 
-        double calculate_pnl()  const override;
+        // Open the position for a certain market_price
+        void open(const size_t time_idx);
+
+        // Close the position for a certain market_price
+        void close(const size_t time_idx) override;
+        void close_stop_loss(const size_t time_idx) override;
+        void close_take_profit(const size_t time_idx) override;
+
+        double calculate_profite_and_loss() const override;
 
         void display() const override;
 
@@ -107,9 +114,21 @@ class Long : public BasePosition {
 
 class Short : public BasePosition {
     public:
-        using BasePosition::BasePosition;
+        Short(const Market& market, const RiskManagment& risk_managment, const double lot_size, const size_t start_idx)
+        : BasePosition(market, risk_managment, lot_size, start_idx){
+            this->start_date = this->market.dates[start_idx];
+            this->open(start_idx);
+        }
 
-        double calculate_pnl() const override;
+        // Open the position for a certain market_price
+        void open(const size_t time_idx);
+
+        // Close the position for a certain market_price
+        void close(const size_t time_idx) override;
+        void close_stop_loss(const size_t time_idx) override;
+        void close_take_profit(const size_t time_idx) override;
+
+        double calculate_profite_and_loss() const override;
 
         void display() const override;
 

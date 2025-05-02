@@ -20,7 +20,7 @@ PYBIND11_MODULE(interface_position, module) {
             py::arg("take_profit")
         )
         .def("display", &Position::display)
-        .def("calculate_pnl", &Position::calculate_pnl)
+        .def("calculate_profite_and_loss", &Position::calculate_profite_and_loss)
 
         .def_readwrite("entry_price", &Position::entry_price)
         .def_readwrite("lot_size", &Position::lot_size)
@@ -36,30 +36,26 @@ PYBIND11_MODULE(interface_position, module) {
         .def_readwrite("start_date", &BasePosition::start_date)
         .def_readwrite("close_date", &BasePosition::close_date)
         .def("display", &BasePosition::display)
-        .def("calculate_pnl", &BasePosition::calculate_pnl)
+        .def("calculate_profite_and_loss", &BasePosition::calculate_profite_and_loss)
     ;
 
 
     py::class_<Long, BasePosition>(module, "Long")
         .def(
-            py::init<const Market&, const RiskManagment&, const double, const double, const double, const size_t>(),
+            py::init<const Market&, const RiskManagment&, const double, const size_t>(),
             py::arg("market"),
             py::arg("risk_managment"),
-            py::arg("entry_price"),
             py::arg("lot_size"),
-            py::arg("pip_val"),
             py::arg("start_idx")
         )
         ;
 
         py::class_<Short, BasePosition>(module, "Long")
         .def(
-            py::init<const Market&, const RiskManagment&, const double, const double, const double, const size_t>(),
+            py::init<const Market&, const RiskManagment&, const double, const size_t>(),
             py::arg("market"),
             py::arg("risk_managment"),
-            py::arg("entry_price"),
             py::arg("lot_size"),
-            py::arg("pip_val"),
             py::arg("start_idx")
         )
         ;

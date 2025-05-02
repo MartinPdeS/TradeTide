@@ -53,7 +53,7 @@ Position::check_exit_conditions(const double high_price, const double low_price)
 
 // Calculate profit or loss
 double
-Position::calculate_pnl() const {
+Position::calculate_profite_and_loss() const {
     if (!is_closed) return 0.0; // No PnL if the position is still open
 
     double price_difference = is_long ? (exit_price - entry_price) : (entry_price - exit_price);
@@ -77,56 +77,71 @@ Position::display() const {
 
 
 
-
-
-
-// Base Position---------------------------------------------
+// Long Position---------------------------------------------
+// Check if stop-loss or take-profit is hit
 void
-BasePosition::open(const double price) {
-    entry_price = price;
+Long::open(const size_t time_idx) {
+    entry_price = (*this->market.ask.price)[time_idx];
     is_closed = false;
-    start_date = std::chrono::system_clock::now();
+    start_date = this->market.dates[time_idx];
 }
 
-// Close the position and calculate profit or loss
+
 void
-BasePosition::close(const double market_price) {
-    if (!is_closed) {
-        exit_price = market_price;
-        is_closed = true;
-        close_date = std::chrono::system_clock::now();
+Long::close(const size_t time_idx) {
+    if (!this->is_closed) {
+        this->exit_price = (*this->market.bid.price)[time_idx];
+        this->is_closed = true;
+        this->close_date = this->market.dates[time_idx];
+    }
+}
+
+void
+Long::close_stop_loss(const size_t time_idx) {
+    if (!this->is_closed) {
+        this->exit_price = (*this->market.bid.price)[time_idx] - this->risk_managment.stop_loss;
+        this->is_closed = true;
+        this->close_date = this->market.dates[time_idx];
+    }
+}
+
+void
+Long::close_take_profit(const size_t time_idx) {
+    if (!this->is_closed) {
+        this->exit_price = (*this->market.bid.price)[time_idx] + this->risk_managment.take_profit;
+        this->is_closed = true;
+        this->close_date = this->market.dates[time_idx];
     }
 }
 
 
 
 
-// Long Position---------------------------------------------
-// Check if stop-loss or take-profit is hit
 void
 Long::check_exit_conditions(const size_t time_idx) {
     if (is_closed)
         return;
 
-    if (this->market.low_prices[time_idx] <= this->risk_managment.stop_loss_distance) {    // Hit stop-loss
-        this->close(this->risk_managment.stop_loss_distance);
-        this->close_date = this->market.dates[time_idx];
+    if (this->market.bid.low[time_idx] <= this->entry_price - this->risk_managment.stop_loss * 1e-4) {    // Hit stop-loss
+        this->close_stop_loss(time_idx);
+        return;
     }
-    if (this->market.high_prices[time_idx] >= this->risk_managment.take_profit_distance) {  // Hit take-profit
-        this->close(this->risk_managment.take_profit_distance);
-        this->close_date = this->market.dates[time_idx];
+    if (this->market.bid.high[time_idx] >= this->entry_price + this->risk_managment.take_profit * 1e-4) {  // Hit take-profit
+        this->close_take_profit(time_idx);
+        return;
     }
 
 }
 
 // Calculate profit or loss
 double
-Long::calculate_pnl() const {
+Long::calculate_profite_and_loss() const {
     if (!is_closed)
         return 0.0; // No PnL if the position is still open
 
     double price_difference = exit_price - entry_price;
-    return price_difference * lot_size * pip_price;
+
+    return price_difference * lot_size * this->market.pip_value;
 }
 
 // Display Position Info
@@ -138,10 +153,10 @@ Long::display() const {
         << "Stop Time: " << close_date << "\n"
         << "Entry Price: " << entry_price << "\n"
         << "Exit Price: " << (is_closed ? std::to_string(exit_price) : "N/A") << "\n"
-        << "Stop Loss: " << this->risk_managment.stop_loss_distance << "\n"
-        << "Take Profit: " << this->risk_managment.take_profit_distance << "\n"
+        << "Stop Loss: " << this->risk_managment.stop_loss << "\n"
+        << "Take Profit: " << this->risk_managment.take_profit << "\n"
         << "Lot Size: " << lot_size << "\n"
-        << "Pip Price: " << pip_price << "\n"
+        << "Pip Price: " << this->market.pip_value << "\n"
         << "Position Status: " << (is_closed ? "Closed" : "Open") << "\n\n"
     ;
 }
@@ -150,6 +165,40 @@ Long::display() const {
 
 
 // Short Position---------------------------------------------
+void
+Short::open(const size_t time_idx) {
+    entry_price = (*this->market.bid.price)[time_idx];
+    is_closed = false;
+    start_date = this->market.dates[time_idx];
+}
+
+void
+Short::close(const size_t time_idx) {
+    if (!is_closed) {
+        exit_price = (*this->market.ask.price)[time_idx];
+        is_closed = true;
+        close_date = this->market.dates[time_idx];
+    }
+}
+
+void
+Short::close_stop_loss(const size_t time_idx) {
+    if (!this->is_closed) {
+        this->exit_price = (*this->market.ask.price)[time_idx] + this->risk_managment.stop_loss;
+        this->is_closed = true;
+        this->close_date = this->market.dates[time_idx];
+    }
+}
+
+void
+Short::close_take_profit(const size_t time_idx) {
+    if (!this->is_closed) {
+        this->exit_price = (*this->market.ask.price)[time_idx] - this->risk_managment.take_profit;
+        this->is_closed = true;
+        this->close_date = this->market.dates[time_idx];
+    }
+}
+
 
 // Check if stop-loss or take-profit is hit
 void
@@ -157,26 +206,25 @@ Short::check_exit_conditions(const size_t time_idx) {
     if (is_closed)
         return;
 
-    if (this->market.high_prices[time_idx] >= this->risk_managment.stop_loss_distance) {  // Hit stop-loss
-        this->close(this->risk_managment.stop_loss_distance);
-        this->close_date = this->market.dates[time_idx];
-
-
+    if (this->market.ask.high[time_idx] >= this->entry_price + this->risk_managment.stop_loss * 1e-4) {  // Hit stop-loss
+        this->close_stop_loss(time_idx);
+        return;
     }
-    if (this->market.low_prices[time_idx] <= this->risk_managment.take_profit_distance) {  // Hit take-profit
-        this->close(this->risk_managment.take_profit_distance);
-        this->close_date = this->market.dates[time_idx];
+
+    if (this->market.ask.low[time_idx] <= this->entry_price - this->risk_managment.take_profit * 1e-4) {  // Hit take-profit
+        this->close_take_profit(time_idx);
+        return;
     }
 }
 
 // Calculate profit or loss
 double
-Short::calculate_pnl() const {
+Short::calculate_profite_and_loss() const {
     if (!is_closed)
         return 0.0; // No PnL if the position is still open
 
     double price_difference = entry_price - exit_price;
-    return price_difference * lot_size * pip_price;
+    return price_difference * lot_size * this->market.pip_value;
 }
 
 // Display Position Info
@@ -188,10 +236,10 @@ Short::display() const {
         << "Stop Time: " << close_date << "\n"
         << "Entry Price: " << entry_price << "\n"
         << "Exit Price: " << (is_closed ? std::to_string(exit_price) : "N/A") << "\n"
-        << "Stop Loss: " << this->risk_managment.stop_loss_distance << "\n"
-        << "Take Profit: " << this->risk_managment.take_profit_distance << "\n"
+        << "Stop Loss: " << this->risk_managment.stop_loss << "\n"
+        << "Take Profit: " << this->risk_managment.take_profit << "\n"
         << "Lot Size: " << lot_size << "\n"
-        << "Pip Price: " << pip_price << "\n"
+        << "Pip Price: " << this->market.pip_value << "\n"
         << "Position Status: " << (is_closed ? "Closed" : "Open") << "\n\n"
     ;
 }

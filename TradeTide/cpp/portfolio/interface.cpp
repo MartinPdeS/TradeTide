@@ -18,7 +18,6 @@ PYBIND11_MODULE(interface_portfolio, module) {
              py::arg("stop_loss"),
              py::arg("take_profit")
              )
-        .def("process_signals", &Portfolio::process_signals)
         .def("update_capital", &Portfolio::update_capital)
         .def("display_positions", &Portfolio::display_positions)
         .def("get_capital", &Portfolio::get_capital)

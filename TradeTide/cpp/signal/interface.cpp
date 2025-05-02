@@ -14,7 +14,7 @@ PYBIND11_MODULE(interface_signal, module) {
             py::arg("market")
         )
 
-        .def("generate_random", &Signal::generate_random)
+        .def("generate_random", &Signal::generate_random, py::arg("probability"))
         .def("display_signal", &Signal::display_signal)
 
         .def_readwrite("trade_signal", &Signal::trade_signal)

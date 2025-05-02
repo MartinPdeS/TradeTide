@@ -25,9 +25,10 @@ class PositionCollection{
             positions.reserve(number_of_trade);
         }
 
+        const PositionPtr& operator[](size_t i) const { return this->positions[i]; }
         void open_positions();
-
         void close_positions();
+        void terminate_open_positions();
 
         void display();
 
@@ -58,4 +59,6 @@ class PositionCollection{
         std::vector<double> get_exit_prices(){
             return this->extract_vector<double>([](const PositionPtr& p){return p->exit_price;});
         }
+
+        const Market& get_market() const { return market; }
 };

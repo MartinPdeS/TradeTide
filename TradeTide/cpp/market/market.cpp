@@ -10,6 +10,7 @@ Market::generate_random_market_data(const TimePoint& start_date, const TimePoint
         return;
     }
 
+    this->pip_value = 0.0001;
     this->interval = interval;
 
     // Initialize random number generator
@@ -49,6 +50,8 @@ Market::generate_random_market_data(const TimePoint& start_date, const TimePoint
 
         prev_close = close;
     }
+
+    this->number_of_elements = close_prices.size();
 }
 
 
@@ -140,4 +143,77 @@ void Market::load_from_csv(const std::string& filename, const std::chrono::syste
     }
 
     file.close();
+}
+
+
+std::vector<double> add_value(const std::vector<double>& vector, const std::vector<double> &spread){
+    std::vector<double> output;
+    output.reserve(vector.size());
+
+    for (size_t idx = 0; idx < vector.size(); idx++)
+        output.push_back(vector[idx] + 1e-4 * spread[idx]);
+
+    return output;
+}
+
+std::vector<double> substract_value(const std::vector<double>& vector, const std::vector<double> &spread){
+    std::vector<double> output;
+    output.reserve(vector.size());
+
+    for (size_t idx = 0; idx < vector.size(); idx++)
+        output.push_back(vector[idx] - 1e-4 * spread[idx]);
+
+    return output;
+}
+
+void Market::set_prices(const std::string& type, const bool is_bid) {
+
+    if (is_bid){
+        this->bid = Bid(
+            this->open_prices,
+            this->close_prices,
+            this->high_prices,
+            this->low_prices
+        );
+
+        this->ask = Ask(
+            add_value(this->open_prices, this->spreads),
+            add_value(this->close_prices, this->spreads),
+            add_value(this->high_prices, this->spreads),
+            add_value(this->low_prices, this->spreads)
+        );
+    }
+
+    else {
+        this->ask = Ask(
+            this->open_prices,
+            this->close_prices,
+            this->high_prices,
+            this->low_prices
+        );
+
+        this->bid = Bid(
+            substract_value(this->open_prices, this->spreads),
+            substract_value(this->close_prices, this->spreads),
+            substract_value(this->high_prices, this->spreads),
+            substract_value(this->low_prices, this->spreads)
+        );
+    }
+
+    // Set the prices based on the type (open/close/high/low)
+    if (type == "open") {
+        this->ask.price = &this->ask.open;
+        this->bid.price = &this->bid.open;
+    } else if (type == "close") {
+        this->ask.price = &this->ask.close;
+        this->bid.price = &this->bid.close;
+    } else if (type == "high") {
+        this->ask.price = &this->ask.high;
+        this->bid.price = &this->bid.high;
+    } else if (type == "low") {
+        this->ask.price = &this->ask.low;
+        this->bid.price = &this->bid.low;
+    } else {
+        throw std::invalid_argument("Invalid price type: must be 'open', 'close', 'high', or 'low'");
+    }
 }

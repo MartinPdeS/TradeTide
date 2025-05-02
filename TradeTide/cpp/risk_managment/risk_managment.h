@@ -8,8 +8,8 @@ class RiskManagment {
 public:
     double account_balance;       // Current balance of the portfolio
     double max_risk_per_trade;    // Maximum percentage of the account balance to risk per trade
-    double stop_loss_distance;    // Distance (in pips) for stop-loss from the entry price
-    double take_profit_distance;  // Distance (in pips) for take-profit from the entry price
+    double stop_loss;    // Distance (in pips) for stop-loss from the entry price
+    double take_profit;  // Distance (in pips) for take-profit from the entry price
 
     // Constructor
     RiskManagment() = default;
@@ -18,8 +18,8 @@ public:
     :
         account_balance(initial_balance),
         max_risk_per_trade(max_risk_per_trade),
-        stop_loss_distance(stop_loss),
-        take_profit_distance(take_profit) {}
+        stop_loss(stop_loss),
+        take_profit(take_profit) {}
 
     // Update account balance
     void update_balance(double new_balance);

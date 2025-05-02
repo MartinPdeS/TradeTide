@@ -1,8 +1,9 @@
 from TradeTide.binary.interface_market import Market
 from TradeTide.binary.interface_signal import Signal
 from TradeTide.binary.interface_risk_managment import RiskManagment
-from TradeTide.binary import interface_position_collection
 from TradeTide.loader import get_data_path
+from MPSPlots.styles import mps
+from TradeTide.position_collection import PositionCollection
 
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
@@ -22,33 +23,24 @@ market.load_from_csv(
     time_span=timedelta(hours=3),
 )
 
+print(market.spreads)
+
+market.set_price_type(type="open", is_bid=False)
+
 signal = Signal(market=market)
 
 
-signal.generate_random()
+signal.generate_random(probability=0.03)
 
 signal.display_signal()
 
-
-
 risk_managment = RiskManagment(
-    initial_balance=1000,
+    initial_balance=100,
     risk_per_trade=10,
     stop_loss=10,
     take_profit=10
 )
 
-
-
-class PositionCollection(interface_position_collection.PositionCollection):
-    pass
-
-
-    def plot(self, figsize: tuple = (12, 4)) -> None:
-        figure, ax = plt.subplots(1, 1, figsize=figsize)
-        ax.plot(self.market.close_prices)
-
-        plt.show()
 
 position_collection = PositionCollection(
     market=market,
@@ -60,6 +52,7 @@ position_collection.open_positions()
 
 position_collection.close_positions()
 
-position_collection.plot()
+position_collection.terminate_open_positions()
 
-# position_collection.display()
+position_collection.display()
+position_collection.plot()

@@ -21,44 +21,8 @@ Portfolio::add_position(bool is_long, double entry_price, double pip_price, doub
         return true;
 }
 
-// Check and close positions hitting stop-loss or take-profit
-void
-Portfolio::check_exit_conditions(const Market& market, size_t day_index) {
-    // Get high and low prices for the current day
-    double high_price = market.get_high_prices()[day_index];
-    double low_price = market.get_low_prices()[day_index];
 
-    for (auto& position : positions) {
-        // Check if the position hits stop-loss or take-profit
-        if (!position->is_closed && position->check_exit_conditions(high_price, low_price)) {
-            // Calculate profit or loss and update portfolio capital
-            double pnl = position->calculate_pnl();
-            update_capital(pnl);
-            std::cout << "Position closed with PnL: " << pnl << " USD\n";
-        }
-    }
-}
 
-// Process signals and execute trades
-void
-Portfolio::process_signals(const Signal& signal, const Market& market, double pip_price, double stop_loss_offset, double take_profit_offset) {
-    const auto& signal_array = signal.get_signals();
-    const auto& close_prices = market.get_close_prices();
-
-    std::cout << "Processing signals...\n";
-
-    day = 0;
-    for (size_t day = 0; day < signal_array.size(); ++day) {
-        // Check for positions hitting stop-loss or take-profit
-        check_exit_conditions(market, day);
-
-        // Handle new signals for opening positions
-        if (signal_array[day] == 1) // Open a long position with calculated stop-loss and take-profit
-            add_position(true, close_prices[day], pip_price, 1.0, close_prices[day] - stop_loss_offset, close_prices[day] + take_profit_offset);
-        else if (signal_array[day] == -1) // Open a short position with calculated stop-loss and take-profit
-            add_position(false, close_prices[day], pip_price, 1.0, close_prices[day] + stop_loss_offset, close_prices[day] - take_profit_offset);
-    }
-}
 
 // Update portfolio capital
 void

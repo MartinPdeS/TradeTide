@@ -440,7 +440,7 @@
 
 <span class="n">market_data</span> <span class="o">=</span> <span class="n">get_market_data</span><span class="p">(</span><span class="s1">&#39;eur&#39;</span><span class="p">,</span> <span class="s1">&#39;usd&#39;</span><span class="p">,</span> <span class="n">year</span><span class="o">=</span><span class="mi">2023</span><span class="p">,</span> <span class="n">time_span</span><span class="o">=</span><span class="s1">&#39;30day&#39;</span><span class="p">,</span> <span class="n">spread</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-<span class="n">indicator</span> <span class="o">=</span> <span class="n">indicators</span><span class="o">.</span><span class="n">BB</span><span class="p">(</span><span class="n">periods</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">indicator</span> <span class="o">=</span>  <span class="n">indicators</span><span class="o">.</span><span class="n">BB</span><span class="p">(</span><span class="n">periods</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
 
 <span class="n">indicator</span><span class="o">.</span><span class="n">generate_signal</span><span class="p">(</span><span class="n">market_data</span><span class="p">)</span>
 

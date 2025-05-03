@@ -1,6 +1,6 @@
 #include "market.h"
 
-
+using namespace std::chrono;
 
 void
 Market::generate_random_market_data(const TimePoint& start_date, const TimePoint& end_date, const std::chrono::system_clock::duration& interval)
@@ -71,81 +71,6 @@ Market::display_market_data() const {
     }
 }
 
-
-std::chrono::system_clock::time_point
-Market::parse_date_time(const std::string& datetime_string) {
-    std::tm tm = {};
-    std::istringstream ss(datetime_string);
-    ss >> std::get_time(&tm, "%Y-%m-%d %H:%M");
-    if (ss.fail())
-        throw std::runtime_error("Failed to parse date-time string: " + datetime_string);
-
-    return std::chrono::system_clock::from_time_t(std::mktime(&tm));
-}
-
-void Market::load_from_csv(const std::string& filename, const std::chrono::system_clock::duration& time_span) {
-
-    std::ifstream file(filename);
-    if (!file.is_open())
-        throw std::runtime_error("Could not open file: " + filename);
-
-    std::string line;
-    // Skip the header line
-    if (!std::getline(file, line)) {
-        throw std::runtime_error("File is empty or missing header: " + filename);
-    }
-
-    bool first_entry = true;
-    std::chrono::system_clock::time_point start_time;
-
-    // Read each line of the CSV
-    while (std::getline(file, line)) {
-        std::istringstream ss(line);
-        std::string date_str, open_str, high_str, low_str, close_str, spread_str;
-
-        // Parse each comma-separated value
-        if (!std::getline(ss, date_str, ',') ||
-            !std::getline(ss, open_str, ',') ||
-            !std::getline(ss, high_str, ',') ||
-            !std::getline(ss, low_str, ',') ||
-            !std::getline(ss, close_str, ',') ||
-            !std::getline(ss, spread_str, ',')) {
-            throw std::runtime_error("Malformed line in CSV: " + line);
-        }
-
-        // Convert date string to time_point
-        auto current_time = parse_date_time(date_str);
-
-        // Initialize start_time with the date of the first entry
-        if (first_entry) {
-            start_time = current_time;
-            first_entry = false;
-        }
-
-        // Calculate the elapsed time
-        auto elapsed_time = current_time - start_time;
-
-        // Stop loading if the elapsed time exceeds the specified time_span
-        if (elapsed_time > time_span)
-            break;
-
-        // Convert strings to appropriate types and store
-        try {
-            dates.push_back(current_time);
-            open_prices.push_back(std::stod(open_str));
-            high_prices.push_back(std::stod(high_str));
-            low_prices.push_back(std::stod(low_str));
-            close_prices.push_back(std::stod(close_str));
-            spreads.push_back(std::stod(spread_str));
-        } catch (const std::exception& e) {
-            throw std::runtime_error(std::string("Error parsing line: ") + e.what() + " Line: " + line);
-        }
-    }
-
-    file.close();
-}
-
-
 std::vector<double> add_value(const std::vector<double>& vector, const std::vector<double> &spread){
     std::vector<double> output;
     output.reserve(vector.size());
@@ -166,9 +91,10 @@ std::vector<double> substract_value(const std::vector<double>& vector, const std
     return output;
 }
 
-void Market::set_prices(const std::string& type, const bool is_bid) {
+void Market::set_is_bid(const bool is_bid) {
+    this->is_bid = is_bid;
 
-    if (is_bid){
+    if (this->is_bid){
         this->bid = Bid(
             this->open_prices,
             this->close_prices,
@@ -200,6 +126,11 @@ void Market::set_prices(const std::string& type, const bool is_bid) {
         );
     }
 
+
+}
+
+void Market::set_price(const std::string& type) {
+
     // Set the prices based on the type (open/close/high/low)
     if (type == "open") {
         this->ask.price = &this->ask.open;
@@ -217,3 +148,172 @@ void Market::set_prices(const std::string& type, const bool is_bid) {
         throw std::invalid_argument("Invalid price type: must be 'open', 'close', 'high', or 'low'");
     }
 }
+
+TimePoint Market::parse_date_time(const std::string& s) {
+    std::tm tm = {};
+    std::istringstream ss(s);
+    ss >> std::get_time(&tm, "%Y-%m-%d %H:%M");
+    if (ss.fail()) {
+        throw std::runtime_error("Invalid date format: " + s);
+    }
+    return std::chrono::system_clock::from_time_t(std::mktime(&tm));
+}
+
+Market::ColumnIndices Market::parse_header(const std::string& header_line) {
+    ColumnIndices idx;
+    std::istringstream ss(header_line);
+    std::string col;
+    size_t i = 0;
+    while (std::getline(ss, col, ',')) {
+        if      (col == "date")   idx.date   = i;
+        else if (col == "open")   idx.open   = i;
+        else if (col == "high")   idx.high   = i;
+        else if (col == "low")    idx.low    = i;
+        else if (col == "close")  idx.close  = i;
+        else if (col == "volume") idx.volume = i;
+        else if (col == "spread") idx.spread = i;
+        ++i;
+    }
+    // sanity check
+    if (idx.date   == SIZE_MAX ||
+        idx.open   == SIZE_MAX ||
+        idx.high   == SIZE_MAX ||
+        idx.low    == SIZE_MAX ||
+        idx.close  == SIZE_MAX)
+    {
+        throw std::runtime_error("Header missing required columns");
+    }
+    return idx;
+}
+
+std::vector<std::string>
+Market::split_csv_line(const std::string& line) {
+    std::vector<std::string> out;
+    std::istringstream ss(line);
+    std::string field;
+    while (std::getline(ss, field, ',')) {
+        out.push_back(field);
+    }
+    return out;
+}
+
+
+
+
+// std::nullopt
+void Market::load_from_csv(
+    const std::string& filename,
+    const Duration& time_span,
+    std::optional<double> spread_override,
+    std::optional<bool> is_bid_override)
+{
+    std::ifstream file(filename);
+    if (!file.is_open())
+        throw std::runtime_error("Cannot open file: " + filename);
+
+    std::string line, header_line;
+
+    // 1) Metadata block
+    while (std::getline(file, line)) {
+        if (line.empty()) continue;
+
+        if (line[0] == '#') {
+            auto meta = line.substr(1);  // drop '#'
+            if (!is_bid_override) {
+                if (meta.rfind("is_bid=", 0) == 0) {
+                    auto val = meta.substr(7);
+                    is_bid = (val == "1" || val == "true" || val == "True");
+                }
+            }
+            continue;
+        }
+        // first non-# line
+        header_line = line;
+        break;
+    }
+    if (header_line.empty())
+        throw std::runtime_error("Missing CSV header in: " + filename);
+
+    // 2) Figure out which fields exist
+    ColumnIndices cols = parse_header(header_line);
+
+    // 3) Read data
+    bool first_entry = true;
+    while (std::getline(file, line)) {
+        if (line.empty()) continue;
+
+        auto fields = split_csv_line(line);
+        try {
+            parse_record(
+                fields,
+                cols,
+                /*first_ts=*/ dates.empty() ? TimePoint{} : dates.front(),
+                time_span,
+                /*fallback_spread=*/ spread_override.value_or(0.0),
+                spread_override,
+                first_entry
+            );
+        }
+        catch (const std::out_of_range&) {
+            // time_span exceeded
+            break;
+        }
+        catch (const std::exception& e) {
+            throw std::runtime_error(std::string("Error parsing line: ") + e.what());
+        }
+    }
+
+    // 4) Now apply the bid/ask setting:
+    if (is_bid_override) {
+        // user explicitly overrode → use their value
+        this->set_is_bid(*is_bid_override);
+    } else {
+        // no override → use whatever we parsed from metadata
+        this->set_is_bid(is_bid);
+    }
+}
+
+void Market::parse_record(
+    const std::vector<std::string>& fields,
+    const ColumnIndices& cols,
+    const TimePoint& first_ts,
+    const Duration& time_span,
+    double fallback_spread,
+    std::optional<double> spread_override,
+    bool& first_entry)
+{
+    // 1) parse timestamp
+    TimePoint t = parse_date_time(fields[cols.date]);
+
+    // 2) push it (and enforce time_span)
+    if (first_entry) {
+        first_entry = false;
+        dates.push_back(t);
+    } else {
+        if (t - first_ts > time_span) {
+            throw std::out_of_range("time_span exceeded");
+        }
+        dates.push_back(t);
+    }
+
+    // 3) parse prices
+    open_prices .push_back(std::stod(fields[cols.open]));
+    high_prices .push_back(std::stod(fields[cols.high]));
+    low_prices  .push_back(std::stod(fields[cols.low]));
+    close_prices.push_back(std::stod(fields[cols.close]));
+
+    if (cols.volume != SIZE_MAX)
+        volumes.push_back(std::stod(fields[cols.volume]));
+
+    // 4) spread logic
+    if (spread_override) {
+        spreads.push_back(*spread_override);
+    }
+    else if (cols.spread != SIZE_MAX) {
+        spreads.push_back(std::stod(fields[cols.spread]));
+    }
+    else {
+        spreads.push_back(fallback_spread);
+    }
+}
+

@@ -1,14 +1,14 @@
-from TradeTide.binary.interface_market import Market
+from TradeTide.market import Market
 from TradeTide.binary.interface_signal import Signal
 from TradeTide.binary.interface_risk_managment import RiskManagment
 from TradeTide.loader import get_data_path
 from MPSPlots.styles import mps
 from TradeTide.position_collection import PositionCollection
-
+from TradeTide.currencies import Currency
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 
-market = Market("usd/cad")
+market = Market()
 
 
 now = datetime.now()
@@ -18,14 +18,18 @@ interval = timedelta(minutes=1)
 
 filename = get_data_path('cad', 'usd', year=2023)
 
-market.load_from_csv(
-    filename=str(filename) + '.csv',
+market.load_from_database(
+    currency_0=Currency.CAD,
+    currency_1=Currency.USD,
+    year=2023,
     time_span=timedelta(hours=3),
+    spread_override=10,
+    is_bid_override=True
 )
 
-print(market.spreads)
+# market.set_price_type(type="open", is_bid=False)
 
-market.set_price_type(type="open", is_bid=False)
+market.plot()
 
 signal = Signal(market=market)
 
@@ -37,8 +41,8 @@ signal.display_signal()
 risk_managment = RiskManagment(
     initial_balance=100,
     risk_per_trade=10,
-    stop_loss=10,
-    take_profit=10
+    stop_loss=20,
+    take_profit=20
 )
 
 

@@ -35,18 +35,41 @@ PYBIND11_MODULE(interface_market, module) {
         )
 
         // Binding the constructor for random data generation
-        .def(py::init<const std::string>(), py::arg("currencies"))
+        .def(py::init<>())
 
         // Binding member functions
         .def("generate_random_market_data", &Market::generate_random_market_data, py::arg("start"), py::arg("end"), py::arg("interval"))
 
+
+        // Expose load_from_csv with two optional overrides
+        .def("load_from_csv",
+            // use the overload taking optional<double> and optional<bool>
+            py::overload_cast<const std::string&, const Duration&, std::optional<double>, std::optional<bool>>(&Market::load_from_csv),
+            py::arg("filename"),
+            py::arg("time_span"),
+            py::arg("spread_override") = std::nullopt,
+            py::arg("is_bid_override") = std::nullopt,
+            R"(
+               load_from_csv(
+                   filename: str,
+                   time_span: datetime.timedelta,
+                   spread_override: Optional[float] = None,
+                   is_bid_override: Optional[bool] = None
+               ) -> None
+
+               Load market data from `filename` up to `time_span` from the first row.
+               If `spread_override` is given, it replaces any spread in the CSV.
+               If `is_bid_override` is given, it replaces the #is_bid metadata.
+            )"
+       )
+
         .def("display_market_data", &Market::display_market_data)
-        .def("load_from_csv", &Market::load_from_csv, py::arg("filename"), py::arg("time_span"))
-        .def("set_price_type", &Market::set_prices, py::arg("type"), py::arg("is_bid"))
 
-        // Binding properties
+        .def("set_price_type", &Market::set_price, py::arg("type"))
+        .def("set_is_bid", &Market::set_is_bid, py::arg("is_bid"))
+
+        // Optionally expose the raw data vectors as read‐only properties:
         .def_readwrite("dates", &Market::dates)
-
         .def_readwrite("start_date", &Market::start_date)
         .def_readwrite("end_date", &Market::end_date)
         .def_readonly("ask", &Market::ask)

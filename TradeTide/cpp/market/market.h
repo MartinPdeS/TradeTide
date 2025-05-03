@@ -58,6 +58,7 @@ public:
     std::vector<double> low_prices;
 public:
     std::vector<double> spreads;
+    std::vector<double> volumes;
     Bid bid;
     Ask ask;
 
@@ -70,7 +71,7 @@ public:
     double current_price_per_lots;
 
 
-    Market(const std::string& currencies) : currencies(currencies), is_bid(true) {}
+    Market() : is_bid(true) {}
 
     // Constructor for predefined data
     Market(
@@ -103,11 +104,42 @@ public:
     // Display market data
     void display_market_data() const;
 
-    std::chrono::system_clock::time_point parse_date_time(const std::string& datetime_string);
-
-    void load_from_csv(const std::string& filename, const std::chrono::system_clock::duration& time_span);
+    TimePoint parse_date_time(const std::string& datetime_string);
 
     void set_prices(const std::string& type, bool is_bid);
+
+
+    /// If `spread_override` has a value, ALWAYS use that value
+    /// instead of any “spread” column in the CSV.
+    /// If `is_bid_override` has a value, ALWAYS use that value
+    /// instead of any `#is_bid=` metadata.
+    void load_from_csv(const std::string& filename, const Duration& time_span, std::optional<double> spread_override = std::nullopt, std::optional<bool> is_bid_override = std::nullopt);
+
+
+    /// Figure out which column index each named field lives in.
+    struct ColumnIndices {
+        size_t date   = SIZE_MAX;
+        size_t open   = SIZE_MAX;
+        size_t high   = SIZE_MAX;
+        size_t low    = SIZE_MAX;
+        size_t close  = SIZE_MAX;
+        size_t volume = SIZE_MAX;  // optional
+        size_t spread = SIZE_MAX;  // optional
+    };
+
+    static ColumnIndices parse_header(const std::string& header_line);
+
+    /// Parse a single CSV line (already split into vector<string>) according
+    /// to the `cols` mapping.  Fills in all the Market data vectors.
+    void parse_record(const std::vector<std::string>& fields, const ColumnIndices& cols, const TimePoint& first_ts, const Duration& time_span, double fallback_spread, std::optional<double> spread_override, bool& first_entry);
+
+    /// Split a single CSV line by commas (no quoted-field support).
+    static std::vector<std::string> split_csv_line(const std::string& line);
+
+    void set_is_bid(const bool is_bid);
+    void set_price(const std::string& type);
+
+
 
 
 };

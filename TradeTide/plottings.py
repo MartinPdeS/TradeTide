@@ -4,9 +4,6 @@
 import matplotlib.pyplot as plt
 import pandas
 from TradeTide.strategy import Strategy
-from typing import NoReturn
-import MPSPlots.render2D
-# plt.style.use('ggplot')
 
 
 class PlotTrade():
@@ -52,7 +49,7 @@ class PlotTrade():
             show_metric: bool = False,
             show_assets: bool = False,
             show_units: bool = False,
-            show_positions: bool = False) -> NoReturn:
+            show_positions: bool = False) -> None:
         """
         Constructs and displays a comprehensive figure that visualizes various aspects of the trading strategy,
         including market prices, trading signals, portfolio metrics, and specific indicators related to assets
@@ -233,7 +230,7 @@ class PlotTrade():
             color='C1'
         )
 
-    def _add_strategy_to_ax(self, ax: plt.Axes) -> NoReturn:
+    def _add_strategy_to_ax(self, ax: plt.Axes) -> None:
         """
         Adds strategy-specific metrics or indicators to a specified matplotlib axis. This method utilizes the
         `add_to_ax` method of the strategy object, allowing for flexible integration of various strategy indicators.
@@ -245,7 +242,7 @@ class PlotTrade():
 
         self._add_buy_sell_signal_to_ax(ax=ax)
 
-    def _add_price_and_signal_to_ax(self, ax: plt.Axes) -> NoReturn:
+    def _add_price_and_signal_to_ax(self, ax: plt.Axes) -> None:
         """
         Plots the market closing prices and trading signals (buy/sell) on a specified matplotlib axis. This method
         provides a visual representation of when trades were opened or closed in relation to the market price movements.
@@ -287,7 +284,7 @@ class PlotTrade():
                 color='black'
             )
 
-    def _add_buy_sell_signal_to_ax(self, ax: plt.Axes) -> NoReturn:
+    def _add_buy_sell_signal_to_ax(self, ax: plt.Axes) -> None:
         ax.fill_between(
             x=self.market.date,
             y1=0,
@@ -310,7 +307,7 @@ class PlotTrade():
             transform=ax.get_xaxis_transform(),
         )
 
-    def _format_legend(self, ax: plt.Axes) -> NoReturn:
+    def _format_legend(self, ax: plt.Axes) -> None:
         """
         Removes duplicate entries from the legend of a given matplotlib axis. This method ensures that each
         legend entry is unique, improving the clarity of the plot.

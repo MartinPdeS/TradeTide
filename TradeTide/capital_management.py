@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8; py-indent-offset:4 -*-
 
-from typing import NoReturn
 import pandas
 import numpy
-from TradeTide.position import Short, Long
 from TradeTide.risk_management import DirectLossProfit, ATRLossProfit
 from TradeTide.time_state import TimeState
-
+from TradeTide.position import Long, Short
 
 class CapitalManagement:
     """
@@ -37,7 +35,7 @@ class CapitalManagement:
         self.micro_lot = micro_lot
         self.max_spread = max_spread
 
-    def manage(self, backtester: object, market: pandas.DataFrame) -> NoReturn:
+    def manage(self, backtester: object, market: pandas.DataFrame) -> None:
         """
         Manages trading positions based on the strategy's signals, market data, and the subclass's
         specific capital management strategy. This method should be implemented by subclasses.
@@ -79,7 +77,7 @@ class LimitedCapital(CapitalManagement):
         self.initial_capital = initial_capital
         self.limit_of_positions = limit_of_positions
 
-    def manage(self, backtester: object, market: pandas.DataFrame) -> NoReturn:
+    def manage(self, backtester: object, market: pandas.DataFrame) -> None:
         """
         Implements the capital management strategy for a trading scenario with limited capital and positions.
 
@@ -147,7 +145,7 @@ class UnlimitedCapital(CapitalManagement):
             max_spread=max_spread
         )
 
-    def manage(self, backtester: object, market: pandas.DataFrame) -> NoReturn:
+    def manage(self, backtester: object, market: pandas.DataFrame) -> None:
         """
         Implements the capital management strategy for a trading scenario with limited capital and positions.
 

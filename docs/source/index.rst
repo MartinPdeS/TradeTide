@@ -1,6 +1,3 @@
-TradeTide's documentation
-============================
-
 **Date**: |today|, **Version**: |version|
 
 

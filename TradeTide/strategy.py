@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8; py-indent-offset:4 -*-
-
-from typing import NoReturn
 import pandas
 import numpy
 from TradeTide.indicators.base_indicator import BaseIndicator
@@ -58,10 +56,10 @@ class Strategy:
         # Aggregate weighted signals to produce a final signal
         self.signal = self.data['signal'] = weighted_signals.sum(axis=1).apply(numpy.sign)
 
-    def add_to_ax(self, ax) -> NoReturn:
+    def add_to_ax(self, ax) -> None:
         pass
 
-    def plot(self) -> NoReturn:
+    def plot(self) -> None:
         n_strategy = len(self.indicators)
 
         title: str = 'Trading Indicators Overview'

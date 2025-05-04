@@ -36,7 +36,7 @@ Coding example
 
    market_data = get_market_data('eur', 'usd', year=2023, time_span='30day', spread=0)
 
-   indicator = indicators.BB(periods=20)
+   indicator =  indicators.BB(periods=20)
 
    indicator.generate_signal(market_data)
 

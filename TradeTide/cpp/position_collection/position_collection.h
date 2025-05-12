@@ -16,9 +16,11 @@ class PositionCollection{
         std::vector<PositionPtr> positions;
         size_t number_of_trade;
 
+        bool save_price_data = false; // Save the limit price for the position
 
-        PositionCollection(const Market& market, PipManager &risk_managment, const Signal& signal)
-        : market(market), risk_managment(risk_managment), signal(signal)
+
+        PositionCollection(const Market& market, PipManager &risk_managment, const Signal& signal, const bool save_price_data)
+        : market(market), risk_managment(risk_managment), signal(signal), save_price_data(save_price_data)
         {
             this->number_of_trade = std::count_if(signal.trade_signal.begin(), signal.trade_signal.end(), [](int x){ return x != 0; });
 

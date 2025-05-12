@@ -6,6 +6,8 @@
 #include "../market/market.h"
 
 
+using TimePoint   = std::chrono::system_clock::time_point;
+
 class PipManager;  // forward declaration
 
 
@@ -19,12 +21,17 @@ class BasePosition {
         bool is_closed;            // Status of the position
         size_t start_idx;
 
-        std::chrono::system_clock::time_point start_date; // Time when position was opened
-        std::chrono::system_clock::time_point close_date; // Time when position was closed
+        bool save_price_data = false; // Save the limit price for the position
+        std::vector<TimePoint> dates; // Dates for the position
+        std::vector<double> stop_losses; // Stop-loss prices
+        std::vector<double> take_profits; // Take-profit prices
+
+        TimePoint start_date; // Time when position was opened
+        TimePoint close_date; // Time when position was closed
 
         virtual ~BasePosition() = default;
 
-        BasePosition(const Market& market, PipManager& risk_managment, const double lot_size, const size_t start_idx)
+        BasePosition(const Market& market, PipManager& risk_managment, const double lot_size, const size_t start_idx, const bool save_price_data)
         :
             market(market),
             risk_managment(risk_managment),
@@ -32,7 +39,8 @@ class BasePosition {
             exit_price(0.0),
             lot_size(lot_size),
             is_closed(false),
-            start_idx(start_idx) {}
+            start_idx(start_idx),
+            save_price_data(save_price_data) {}
 
         // Close the position for a certain market_price
         virtual void close(const size_t time_idx) = 0;
@@ -51,8 +59,8 @@ class BasePosition {
 
 class Long : public BasePosition {
     public:
-        Long(const Market& market, PipManager& risk_managment, const double lot_size, const size_t start_idx)
-        : BasePosition(market, risk_managment, lot_size, start_idx){
+        Long(const Market& market, PipManager& risk_managment, const double lot_size, const size_t start_idx, const bool save_price_data)
+        : BasePosition(market, risk_managment, lot_size, start_idx, save_price_data){
             this->start_date = this->market.dates[start_idx];
             this->open(start_idx);
         }
@@ -75,8 +83,8 @@ class Long : public BasePosition {
 
 class Short : public BasePosition {
     public:
-        Short(const Market& market, PipManager& risk_managment, const double lot_size, const size_t start_idx)
-        : BasePosition(market, risk_managment, lot_size, start_idx){
+        Short(const Market& market, PipManager& risk_managment, const double lot_size, const size_t start_idx, const bool save_price_data)
+        : BasePosition(market, risk_managment, lot_size, start_idx, save_price_data){
             this->start_date = this->market.dates[start_idx];
             this->open(start_idx);
         }

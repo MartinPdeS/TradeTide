@@ -65,12 +65,16 @@ Long::check_exit_conditions(const size_t time_idx) {
         return;
 
     double stop_loss = this->risk_managment.get_stop_loss(this->entry_price);
+    double take_profit = this->risk_managment.get_take_profit(this->entry_price);
+
+    if (this->save_limit_price) {
+        this->dates.push_back(this->market.dates[time_idx]);
+        this->stop_losses.push_back(stop_loss);
+        this->take_profits.push_back(take_profit);
+    }
 
     if (this->market.bid.low[time_idx] <= this->entry_price - stop_loss * this->market.pip_size)     // Hit stop-loss
         return this->close_stop_loss(time_idx);
-
-
-    double take_profit = this->risk_managment.get_take_profit(this->entry_price);
 
     if (this->market.bid.high[time_idx] >= this->entry_price + take_profit * this->market.pip_size)   // Hit take-profit
         return this->close_take_profit(time_idx);
@@ -159,12 +163,17 @@ Short::check_exit_conditions(const size_t time_idx) {
         return;
 
     double stop_loss = this->risk_managment.get_stop_loss(this->entry_price);
+    double take_profit = this->risk_managment.get_take_profit(this->entry_price);
+
+    if (this->save_price_data) {
+        this->dates.push_back(this->market.dates[time_idx]);
+        this->stop_losses.push_back(stop_loss);
+        this->take_profits.push_back(take_profit);
+    }
+
 
     if (this->market.ask.high[time_idx] >= this->entry_price + stop_loss * this->market.pip_size)  // Hit stop-loss
         return this->close_stop_loss(time_idx);
-
-
-    double take_profit = this->risk_managment.get_take_profit(this->entry_price);
 
     if (this->market.ask.low[time_idx] <= this->entry_price - take_profit * this->market.pip_size)  // Hit take-profit
         return this->close_take_profit(time_idx);

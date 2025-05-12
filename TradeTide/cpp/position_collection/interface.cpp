@@ -19,6 +19,10 @@ PYBIND11_MODULE(interface_position_collection, module) {
         .def("display", &BasePosition::display)
         .def("calculate_profite_and_loss", &BasePosition::calculate_profite_and_loss)
         .def_readonly("is_closed", &BasePosition::is_closed)
+        .def_readonly("save_price_data", &BasePosition::save_price_data)
+        .def_readonly("dates", &BasePosition::dates)
+        .def_readonly("stop_losses", &BasePosition::stop_losses)
+        .def_readonly("take_profits", &BasePosition::take_profits)
     ;
 
     py::class_<Long, BasePosition>(module, "Long")
@@ -75,5 +79,6 @@ PYBIND11_MODULE(interface_position_collection, module) {
 
         .def_readwrite("number_of_trade", &PositionCollection::number_of_trade)
         .def("get_market", &PositionCollection::get_market)
+        .def_readonly("save_price_data", &PositionCollection::save_price_data)
         ;
 }

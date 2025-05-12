@@ -1,5 +1,5 @@
 from TradeTide.market import Market
-from TradeTide.binary.interface_risk_managment import StaticPipManager
+from TradeTide.binary.interface_risk_managment import StaticPipManager, TrailingPipManager
 from TradeTide.loader import get_data_path
 from TradeTide.position_collection import PositionCollection
 from TradeTide.currencies import Currency
@@ -33,7 +33,7 @@ signal.generate_random(probability=0.03)
 
 signal.display_signal()
 
-risk_managment = StaticPipManager(
+risk_managment = TrailingPipManager(
     stop_loss=3,
     take_profit=3
 )

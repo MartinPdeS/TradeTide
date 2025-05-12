@@ -1,3 +1,5 @@
+import numpy
+
 from TradeTide.binary import interface_position_collection
 from MPSPlots.styles import mps
 
@@ -13,7 +15,7 @@ class PositionCollection(interface_position_collection.PositionCollection):
         self.close_positions()
         self.terminate_open_positions()
 
-    def plot(self, figsize: tuple = (12, 4)) -> None:
+    def plot(self, figsize: tuple = (12, 4), max_number_of_position: int = numpy.inf) -> None:
         market = self.get_market()
 
         with plt.style.context(mps):
@@ -25,15 +27,19 @@ class PositionCollection(interface_position_collection.PositionCollection):
             ax.set_xlabel('Date')
             ax.set_ylabel('Close price')
 
-            for idx in range(3):
+            for idx in range(min(max_number_of_position, len(self))):
+
                 position = self[idx]
+
+                if not position.is_closed:
+                    continue
 
                 ax.fill_between(
                     [position.start_date, position.close_date],
                     y1=0,
                     y2=1,
                     transform=ax.get_xaxis_transform(),
-                    color=f'C0',
+                    color='green' if isinstance(position, interface_position_collection.Long) else 'red',
                     alpha=0.3,
                     edgecolor='black'
                 )

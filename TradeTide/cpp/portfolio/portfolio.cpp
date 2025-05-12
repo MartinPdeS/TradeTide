@@ -15,9 +15,9 @@ Portfolio::add_position(bool is_long, double entry_price, double pip_price, doub
         std::cout << "Day " << day + 1 << ": Executed open position at price " << entry_price << "is long: "<< is_long << "\n";
 
         // Create and open a new position with stop-loss and take-profit
-        auto position = std::make_shared<Position>(is_long, entry_price, lot_size, pip_price, stop_loss, take_profit);
+        auto position = std::make_shared<BasePosition>(is_long, entry_price, lot_size, pip_price, stop_loss, take_profit);
         positions.push_back(position);
-        position->open(entry_price);
+        // position->open(entry_price);
         return true;
 }
 

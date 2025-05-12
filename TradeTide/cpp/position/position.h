@@ -6,52 +6,13 @@
 #include "../market/market.h"
 
 
-class RiskManagment;  // forward declaration
-
-
-class Position {
-public:
-    bool is_long;              // true for long, false for short
-    double entry_price;        // Price at which the position is opened
-    double exit_price;         // Price at which the position is closed
-    double lot_size;           // Size of the position in lots
-    double pip_price;          // Pip value for the position
-    double stop_loss;          // Stop-loss price level
-    double take_profit;        // Take-profit price level
-    bool is_closed;            // Status of the position
-    std::chrono::system_clock::time_point start_date; // Time when position was opened
-    std::chrono::system_clock::time_point close_date; // Time when position was closed
-
-public:
-    // Constructor
-    Position() = default;
-
-    Position(bool long_position, double price, double lots, double pip_val, double stop_loss, double take_profit)
-        : is_long(long_position), entry_price(price), exit_price(0.0), lot_size(lots), pip_price(pip_val),
-          stop_loss(stop_loss), take_profit(take_profit), is_closed(false) {}
-
-    // Open Position
-    void open(double price);
-
-    // Close the position and calculate profit or loss
-    void close(double market_price);
-
-    // Check if stop-loss or take-profit is hit
-    bool check_exit_conditions(const double high_price, const double low_price);
-
-    // Calculate profit or loss
-    double calculate_profite_and_loss() const;
-
-    void display() const;
-
-};
-
+class PipManager;  // forward declaration
 
 
 class BasePosition {
     public:
         const Market& market;
-        const PipManager& risk_managment;
+        PipManager& risk_managment;
         double entry_price;        // Price at which the position is opened
         double exit_price;         // Price at which the position is closed
         double lot_size;           // Size of the position in lots
@@ -63,7 +24,7 @@ class BasePosition {
 
         virtual ~BasePosition() = default;
 
-        BasePosition(const Market& market, const PipManager& risk_managment, const double lot_size, const size_t start_idx)
+        BasePosition(const Market& market, PipManager& risk_managment, const double lot_size, const size_t start_idx)
         :
             market(market),
             risk_managment(risk_managment),
@@ -90,7 +51,7 @@ class BasePosition {
 
 class Long : public BasePosition {
     public:
-        Long(const Market& market, const RiskManagment& risk_managment, const double lot_size, const size_t start_idx)
+        Long(const Market& market, PipManager& risk_managment, const double lot_size, const size_t start_idx)
         : BasePosition(market, risk_managment, lot_size, start_idx){
             this->start_date = this->market.dates[start_idx];
             this->open(start_idx);
@@ -114,7 +75,7 @@ class Long : public BasePosition {
 
 class Short : public BasePosition {
     public:
-        Short(const Market& market, const RiskManagment& risk_managment, const double lot_size, const size_t start_idx)
+        Short(const Market& market, PipManager& risk_managment, const double lot_size, const size_t start_idx)
         : BasePosition(market, risk_managment, lot_size, start_idx){
             this->start_date = this->market.dates[start_idx];
             this->open(start_idx);

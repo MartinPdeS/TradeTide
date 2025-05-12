@@ -18,14 +18,35 @@ PYBIND11_MODULE(interface_position_collection, module) {
         .def_readwrite("close_date", &BasePosition::close_date)
         .def("display", &BasePosition::display)
         .def("calculate_profite_and_loss", &BasePosition::calculate_profite_and_loss)
+        .def_readonly("is_closed", &BasePosition::is_closed)
     ;
+
+    py::class_<Long, BasePosition>(module, "Long")
+        .def(
+            py::init<const Market&, PipManager&, const double, const size_t>(),
+            py::arg("market"),
+            py::arg("risk_managment"),
+            py::arg("lot_size"),
+            py::arg("start_idx")
+        )
+        ;
+
+    py::class_<Short, BasePosition>(module, "Short")
+        .def(
+            py::init<const Market&, PipManager&, const double, const size_t>(),
+            py::arg("market"),
+            py::arg("risk_managment"),
+            py::arg("lot_size"),
+            py::arg("start_idx")
+        )
+        ;
 
 
 
     // Bind the Position class
     py::class_<PositionCollection>(module, "PositionCollection")
         .def(
-            py::init<const Market&, const RiskManagment&, const Signal&>(),
+            py::init<const Market&, PipManager&, const Signal&>(),
             py::arg("market"),
             py::arg("risk_managment"),
             py::arg("signal")
@@ -43,7 +64,9 @@ PYBIND11_MODULE(interface_position_collection, module) {
                 return self.positions[i].get();                   // return pointer
             },
             py::return_value_policy::reference_internal       // keep parent alive
-       )
+        )
+
+        .def("__len__", [](PositionCollection &pc){ return pc.positions.size(); })
 
         .def("get_start_dates", &PositionCollection::get_start_dates)
         .def("get_stop_dates", &PositionCollection::get_stop_dates)

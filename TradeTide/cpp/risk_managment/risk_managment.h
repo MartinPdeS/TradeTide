@@ -40,15 +40,16 @@ public:
 
 class PipManager {
 public:
+    PipManager() = default;
     virtual ~PipManager() = default;
 
     // Pure virtual functions to be implemented by derived classes
-    virtual const double& get_stop_loss(const double& price) = 0;
-    virtual const double& get_take_profit(const double& price) = 0;
+    virtual double& get_stop_loss(const double& price) = 0;
+    virtual double& get_take_profit(const double& price) = 0;
 
 };
 
-class StaticPipManager : PipManager {
+class StaticPipManager : public PipManager {
     public:
         double stop_loss;    // Distance (in pips) for stop-loss from the entry price
         double take_profit;  // Distance (in pips) for take-profit from the entry price
@@ -61,17 +62,17 @@ class StaticPipManager : PipManager {
             stop_loss(stop_loss),
             take_profit(take_profit) {}
 
-        const double& get_stop_loss(const double& price) {
+        double& get_stop_loss(const double&) {
             return this->stop_loss;
         }
 
-        const double& get_take_profit(const double& price) {
+        double& get_take_profit(const double&) {
             return this->take_profit;
         }
     };
 
 
-class TrailingPipManager : PipManager {
+class TrailingPipManager : public PipManager {
     public:
         double stop_loss;    // Distance (in pips) for stop-loss from the entry price
         double take_profit;  // Distance (in pips) for take-profit from the entry price
@@ -90,7 +91,7 @@ class TrailingPipManager : PipManager {
             stop_loss(stop_loss),
             take_profit(take_profit) {}
 
-        const double& get_stop_loss(const double& price) {
+        double& get_stop_loss(const double& price) {
             if (price > this->previous_stop_loss) {
                 this->trailing_stop_loss = price - stop_loss;
                 this->previous_stop_loss = trailing_stop_loss;
@@ -98,7 +99,7 @@ class TrailingPipManager : PipManager {
             return trailing_stop_loss;
         }
 
-        const double& get_take_profit(const double& price) {
+        double& get_take_profit(const double& price) {
             if (price < this->previous_take_profit) {
                 this->trailing_take_profit = price + take_profit;
                 this->previous_take_profit = trailing_take_profit;

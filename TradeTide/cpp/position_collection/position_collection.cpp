@@ -16,7 +16,6 @@ void PositionCollection::open_positions(){
         else
             position = std::make_unique<Short>(market, risk_managment, 1, idx);
 
-        this->risk_managment.update_position_lot_size(*position, 10);
         positions.push_back(std::move(position));
     }
 }
@@ -45,3 +44,37 @@ void PositionCollection::display(){
         e->display();
 }
 
+
+inline std::vector<Long*> PositionCollection::get_long_positions(size_t count) const {
+    std::vector<Long*> result;
+    result.reserve(std::min(count, positions.size()));
+    for (const auto& up : positions) {
+        if (auto ptr = dynamic_cast<Long*>(up.get())) {
+            result.push_back(ptr);
+            if (result.size() >= count) break;
+        }
+    }
+    return result;
+}
+
+inline std::vector<Short*> PositionCollection::get_short_positions(size_t count) const {
+    std::vector<Short*> result;
+    result.reserve(std::min(count, positions.size()));
+    for (const auto& up : positions) {
+        if (auto ptr = dynamic_cast<Short*>(up.get())) {
+            result.push_back(ptr);
+            if (result.size() >= count) break;
+        }
+    }
+    return result;
+}
+
+inline std::vector<BasePosition*> PositionCollection::get_all_positions(size_t count) const {
+    std::vector<BasePosition*> result;
+    result.reserve(std::min(count, positions.size()));
+    for (const auto& up : positions) {
+        result.push_back(up.get());
+        if (result.size() >= count) break;
+    }
+    return result;
+}

@@ -10,7 +10,7 @@
 
 class Portfolio {
 private:
-    std::vector<std::shared_ptr<Position>> positions; // List of positions
+    std::vector<std::shared_ptr<BasePosition>> positions; // List of positions
     double capital;                                   // Current capital in the portfolio
     RiskManagment risk_manager;                       // Risk management instance
     size_t day;

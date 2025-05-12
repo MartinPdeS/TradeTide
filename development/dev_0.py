@@ -1,11 +1,9 @@
 from TradeTide.market import Market
-from TradeTide.binary.interface_risk_managment import RiskManagment
+from TradeTide.binary.interface_risk_managment import StaticPipManager
 from TradeTide.loader import get_data_path
-from MPSPlots.styles import mps
 from TradeTide.position_collection import PositionCollection
 from TradeTide.currencies import Currency
 from datetime import datetime, timedelta
-import matplotlib.pyplot as plt
 from TradeTide.signal import Signal
 
 market = Market()
@@ -23,11 +21,11 @@ market.load_from_database(
     currency_1=Currency.USD,
     year=2023,
     time_span=timedelta(hours=3),
-    spread_override=2,
+    spread_override=1,
     is_bid_override=True
 )
 
-market.plot()
+# market.plot()
 
 signal = Signal(market=market)
 
@@ -35,11 +33,9 @@ signal.generate_random(probability=0.03)
 
 signal.display_signal()
 
-risk_managment = RiskManagment(
-    initial_balance=100,
-    risk_per_trade=10,
-    stop_loss=5,
-    take_profit=5
+risk_managment = StaticPipManager(
+    stop_loss=3,
+    take_profit=3
 )
 
 

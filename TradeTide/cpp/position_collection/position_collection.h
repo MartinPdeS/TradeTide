@@ -11,13 +11,13 @@ using TimePoint   = std::chrono::system_clock::time_point;
 class PositionCollection{
     public:
         const Market &market;
-        const RiskManagment &risk_managment;
+        PipManager &risk_managment;
         const Signal &signal;
         std::vector<PositionPtr> positions;
         size_t number_of_trade;
 
 
-        PositionCollection(const Market& market, const RiskManagment &risk_managment, const Signal& signal)
+        PositionCollection(const Market& market, PipManager &risk_managment, const Signal& signal)
         : market(market), risk_managment(risk_managment), signal(signal)
         {
             this->number_of_trade = std::count_if(signal.trade_signal.begin(), signal.trade_signal.end(), [](int x){ return x != 0; });
@@ -61,4 +61,13 @@ class PositionCollection{
         }
 
         const Market& get_market() const { return market; }
+
+        /// @brief Return up to `count` Long positions (or all if count==SIZE_MAX).
+        std::vector<Long*> get_long_positions(size_t count = SIZE_MAX) const;
+
+        /// @brief Return up to `count` Short positions (or all if count==SIZE_MAX).
+        std::vector<Short*> get_short_positions(size_t count = SIZE_MAX) const;
+
+        /// @brief Return up to `count` of all positions (Long and Short).
+        std::vector<BasePosition*> get_all_positions(size_t count = SIZE_MAX) const;
 };

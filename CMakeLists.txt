@@ -26,25 +26,10 @@ message(STATUS "TradeTide includes directory is: ${TRADETIDE_CXX_DIR}")
 message(STATUS "Python version to be compiled against: ${PYBIND11_PYTHON_VERSION}")
 message(STATUS "Binary will be installed in location: ${TRADETIDE_BIN_DIR}")
 
-
-add_subdirectory(TradeTide/cpp/position)             # position
 add_subdirectory(TradeTide/cpp/market)               # market
+add_subdirectory(TradeTide/cpp/position)             # position
 add_subdirectory(TradeTide/cpp/signal)               # signal
 add_subdirectory(TradeTide/cpp/risk_managment)       # risk_managment
-add_subdirectory(TradeTide/cpp/portfolio)            # portfolio
-add_subdirectory(TradeTide/cpp/position_collection)  # backtester
-add_subdirectory(TradeTide/cpp/backtester)           # backtester
-
-
-set(
-    ALL_TARGETS
-    cpp_position cpp_market cpp_signal cpp_risk_managment cpp_backtester cpp_signal cpp_position_collection
-    interface_position interface_market interface_risk_managment interface_signal interface_risk_managment interface_position_collection
-)
-
-install(
-    TARGETS ${ALL_TARGETS}
-    LIBRARY DESTINATION ${TRADETIDE_BIN_DIR}
-    ARCHIVE DESTINATION ${TRADETIDE_BIN_DIR}
-    RUNTIME DESTINATION ${TRADETIDE_BIN_DIR}
-)
+# add_subdirectory(TradeTide/cpp/portfolio)            # portfolio
+add_subdirectory(TradeTide/cpp/position_collection)  # position collection
+# add_subdirectory(TradeTide/cpp/backtester)           # backtester

@@ -19,7 +19,7 @@ class PositionCollection{
         bool save_price_data = false; // Save the limit price for the position
 
 
-        PositionCollection(const Market& market, PipManager &risk_managment, const Signal& signal, const bool save_price_data)
+        PositionCollection(const Market& market, PipManager &risk_managment, const Signal& signal, const bool save_price_data = false)
         : market(market), risk_managment(risk_managment), signal(signal), save_price_data(save_price_data)
         {
             this->number_of_trade = std::count_if(signal.trade_signal.begin(), signal.trade_signal.end(), [](int x){ return x != 0; });

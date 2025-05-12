@@ -12,9 +12,9 @@ void PositionCollection::open_positions(){
         PositionPtr position;
 
         if (signal_value == 1)
-            position = std::make_unique<Long>(market, risk_managment, 1, idx);
+            position = std::make_unique<Long>(market, risk_managment, 1, idx, this->save_price_data);
         else
-            position = std::make_unique<Short>(market, risk_managment, 1, idx);
+            position = std::make_unique<Short>(market, risk_managment, 1, idx, this->save_price_data);
 
         positions.push_back(std::move(position));
     }

@@ -31,7 +31,7 @@ class BasePosition {
 
         virtual ~BasePosition() = default;
 
-        BasePosition(const Market& market, PipManager& risk_managment, const double lot_size, const size_t start_idx, const bool save_price_data)
+        BasePosition(const Market& market, PipManager& risk_managment, const double lot_size, const size_t start_idx, const bool &save_price_data)
         :
             market(market),
             risk_managment(risk_managment),
@@ -59,7 +59,7 @@ class BasePosition {
 
 class Long : public BasePosition {
     public:
-        Long(const Market& market, PipManager& risk_managment, const double lot_size, const size_t start_idx, const bool save_price_data)
+        Long(const Market& market, PipManager& risk_managment, const double lot_size, const size_t start_idx, const bool &save_price_data = false)
         : BasePosition(market, risk_managment, lot_size, start_idx, save_price_data){
             this->start_date = this->market.dates[start_idx];
             this->open(start_idx);
@@ -83,7 +83,7 @@ class Long : public BasePosition {
 
 class Short : public BasePosition {
     public:
-        Short(const Market& market, PipManager& risk_managment, const double lot_size, const size_t start_idx, const bool save_price_data)
+        Short(const Market& market, PipManager& risk_managment, const double lot_size, const size_t start_idx, const bool &save_price_data = false)
         : BasePosition(market, risk_managment, lot_size, start_idx, save_price_data){
             this->start_date = this->market.dates[start_idx];
             this->open(start_idx);

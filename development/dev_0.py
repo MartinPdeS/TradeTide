@@ -33,19 +33,20 @@ signal.generate_random(probability=0.03)
 
 signal.display_signal()
 
-risk_managment = TrailingPipManager(
-    stop_loss=3,
-    take_profit=3
+risk_managment = StaticPipManager(
+    stop_loss=10,
+    take_profit=10
 )
 
 
 position_collection = PositionCollection(
     market=market,
     signal=signal,
-    risk_managment=risk_managment
+    risk_managment=risk_managment,
+    save_price_data=True,
 )
 
 position_collection.run()
 
 position_collection.display()
-position_collection.plot()
+position_collection.plot(max_positions=2)

@@ -50,10 +50,11 @@ PYBIND11_MODULE(interface_position_collection, module) {
     // Bind the Position class
     py::class_<PositionCollection>(module, "PositionCollection")
         .def(
-            py::init<const Market&, PipManager&, const Signal&>(),
+            py::init<const Market&, PipManager&, const Signal&, const bool&>(),
             py::arg("market"),
             py::arg("risk_managment"),
-            py::arg("signal")
+            py::arg("signal"),
+            py::arg("save_price_data") = false
         )
 
         .def("open_positions", &PositionCollection::open_positions)

@@ -19,6 +19,39 @@ const std::vector<TimePoint>& BasePosition::dates() const {
     return this->risk_managment->dates;
 }
 
+
+void
+BasePosition::close_at_stop_loss(const size_t time_idx) {
+    if (this->is_closed)
+        return;
+
+    double price = (*this->market.bid.price)[time_idx];
+    this->risk_managment->update_price(this, time_idx, price);
+
+    this->exit_price = this->risk_managment->stop_loss_price;
+    this->is_closed = true;
+    this->close_date = this->market.dates[time_idx];
+}
+
+void
+BasePosition::close_at_take_profit(const size_t time_idx) {
+    if (this->is_closed)
+        return;
+
+
+    double price = (*this->market.bid.price)[time_idx];
+    this->risk_managment->update_price(this, time_idx, price);
+
+    this->exit_price = this->risk_managment->take_profit_price;
+    this->is_closed = true;
+    this->close_date = this->market.dates[time_idx];
+
+}
+
+
+
+
+
 // Long Position---------------------------------------------
 // Check if stop-loss or take-profit is hit
 void
@@ -40,34 +73,6 @@ Long::close(const size_t time_idx) {
 
 }
 
-void
-Long::close_stop_loss(const size_t time_idx) {
-    if (this->is_closed)
-        return;
-
-    double price = (*this->market.bid.price)[time_idx];
-    double stop_loss = this->risk_managment->get_stop_loss(price);
-
-    this->exit_price = price - stop_loss;
-    this->is_closed = true;
-    this->close_date = this->market.dates[time_idx];
-
-}
-
-void
-Long::close_take_profit(const size_t time_idx) {
-    if (this->is_closed)
-        return;
-
-    double take_profit = this->risk_managment->get_take_profit(this->entry_price);
-
-
-    this->exit_price = (*this->market.bid.price)[time_idx] + take_profit;
-    this->is_closed = true;
-    this->close_date = this->market.dates[time_idx];
-
-}
-
 
 
 
@@ -76,14 +81,15 @@ Long::check_exit_conditions(const size_t time_idx) {
     if (is_closed)
         return;
 
+    double current_price = (*this->market.bid.price)[time_idx];
 
-    this->risk_managment->update_price(this, time_idx);
+    this->risk_managment->update_price(this, time_idx, current_price);
 
     if (this->market.bid.low[time_idx] <= this->risk_managment->stop_loss_price)     // Hit stop-loss
-        return this->close_stop_loss(time_idx);
+        return this->close_at_stop_loss(time_idx);
 
     if (this->market.bid.high[time_idx] >= this->risk_managment->take_profit_price)   // Hit take-profit
-        return this->close_take_profit(time_idx);
+        return this->close_at_take_profit(time_idx);
 
 
 }
@@ -134,33 +140,6 @@ Short::close(const size_t time_idx) {
     }
 }
 
-void
-Short::close_stop_loss(const size_t time_idx) {
-    if (this->is_closed)
-        return;
-
-    double stop_loss = this->risk_managment->get_stop_loss(this->entry_price);
-
-    this->exit_price = (*this->market.ask.price)[time_idx] + stop_loss;
-    this->is_closed = true;
-    this->close_date = this->market.dates[time_idx];
-
-}
-
-void
-Short::close_take_profit(const size_t time_idx) {
-    if (this->is_closed)
-        return;
-
-
-    double take_profit = this->risk_managment->get_take_profit(this->entry_price);
-
-    this->exit_price = (*this->market.ask.price)[time_idx] - take_profit;
-    this->is_closed = true;
-    this->close_date = this->market.dates[time_idx];
-
-}
-
 
 // Check if stop-loss or take-profit is hit
 void
@@ -168,13 +147,15 @@ Short::check_exit_conditions(const size_t time_idx) {
     if (is_closed)
         return;
 
-    this->risk_managment->update_price(this, time_idx);
+    double current_price = (*this->market.ask.price)[time_idx];
+
+    this->risk_managment->update_price(this, time_idx, current_price);
 
     if (this->market.ask.high[time_idx] >= this->risk_managment->stop_loss_price)  // Hit stop-loss
-        return this->close_stop_loss(time_idx);
+        return this->close_at_stop_loss(time_idx);
 
     if (this->market.ask.low[time_idx] <= this->risk_managment->take_profit_price)  // Hit take-profit
-        return this->close_take_profit(time_idx);
+        return this->close_at_take_profit(time_idx);
 
 }
 

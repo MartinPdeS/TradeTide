@@ -27,20 +27,19 @@ class BasePosition {
 
         virtual ~BasePosition() = default;
 
-        BasePosition(const Market& market, std::unique_ptr<PipManager> risk_managment, const double lot_size, const size_t start_idx)
+        BasePosition(const Market& market, std::unique_ptr<PipManager> risk_managment, const size_t start_idx)
         :
             market(market),
             risk_managment(std::move(risk_managment)),
             entry_price(0.0),
             exit_price(0.0),
-            lot_size(lot_size),
             is_closed(false),
             start_idx(start_idx) {}
 
         // Close the position for a certain market_price
         virtual void close(const size_t time_idx) = 0;
-        virtual void close_stop_loss(const size_t time_idx) = 0;
-        virtual void close_take_profit(const size_t time_idx) = 0;
+        void close_at_stop_loss(const size_t time_idx);
+        void close_at_take_profit(const size_t time_idx);
 
         // Calculate profit or loss
         virtual double calculate_profite_and_loss() const = 0;
@@ -59,8 +58,8 @@ class BasePosition {
 
 class Long : public BasePosition {
     public:
-        Long(const Market& market, std::unique_ptr<PipManager> risk_managment, const double lot_size, const size_t start_idx)
-        : BasePosition(market, std::move(risk_managment), lot_size, start_idx){
+        Long(const Market& market, std::unique_ptr<PipManager> risk_managment, const size_t start_idx)
+        : BasePosition(market, std::move(risk_managment), start_idx){
             this->start_date = this->market.dates[start_idx];
             this->open(start_idx);
         }
@@ -70,8 +69,6 @@ class Long : public BasePosition {
 
         // Close the position for a certain market_price
         void close(const size_t time_idx) override;
-        void close_stop_loss(const size_t time_idx) override;
-        void close_take_profit(const size_t time_idx) override;
 
         double calculate_profite_and_loss() const override;
 
@@ -83,8 +80,8 @@ class Long : public BasePosition {
 
 class Short : public BasePosition {
     public:
-        Short(const Market& market, std::unique_ptr<PipManager> risk_managment, const double lot_size, const size_t start_idx)
-        : BasePosition(market, std::move(risk_managment), lot_size, start_idx){
+        Short(const Market& market, std::unique_ptr<PipManager> risk_managment, const size_t start_idx)
+        : BasePosition(market, std::move(risk_managment), start_idx){
             this->start_date = this->market.dates[start_idx];
             this->open(start_idx);
         }
@@ -94,8 +91,6 @@ class Short : public BasePosition {
 
         // Close the position for a certain market_price
         void close(const size_t time_idx) override;
-        void close_stop_loss(const size_t time_idx) override;
-        void close_take_profit(const size_t time_idx) override;
 
         double calculate_profite_and_loss() const override;
 

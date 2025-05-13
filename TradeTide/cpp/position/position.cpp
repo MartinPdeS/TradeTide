@@ -7,6 +7,18 @@
 #include "../risk_managment/risk_managment.h"
 
 
+const std::vector<double>& BasePosition::stop_loss_prices() const {
+    return this->risk_managment->stop_loss_prices;
+}
+
+const std::vector<double>& BasePosition::take_profit_prices() const {
+    return this->risk_managment->take_profit_prices;
+}
+
+const std::vector<TimePoint>& BasePosition::dates() const {
+    return this->risk_managment->dates;
+}
+
 // Long Position---------------------------------------------
 // Check if stop-loss or take-profit is hit
 void
@@ -34,7 +46,7 @@ Long::close_stop_loss(const size_t time_idx) {
         return;
 
     double price = (*this->market.bid.price)[time_idx];
-    double stop_loss = this->risk_managment.get_stop_loss(price);
+    double stop_loss = this->risk_managment->get_stop_loss(price);
 
     this->exit_price = price - stop_loss;
     this->is_closed = true;
@@ -47,7 +59,7 @@ Long::close_take_profit(const size_t time_idx) {
     if (this->is_closed)
         return;
 
-    double take_profit = this->risk_managment.get_take_profit(this->entry_price);
+    double take_profit = this->risk_managment->get_take_profit(this->entry_price);
 
 
     this->exit_price = (*this->market.bid.price)[time_idx] + take_profit;
@@ -64,21 +76,13 @@ Long::check_exit_conditions(const size_t time_idx) {
     if (is_closed)
         return;
 
-    double stop_loss = this->risk_managment.get_stop_loss(this->entry_price);
-    double take_profit = this->risk_managment.get_take_profit(this->entry_price);
-    double loss_limit = this->entry_price - stop_loss * this->market.pip_size;
-    double profit_limit = this->entry_price + take_profit * this->market.pip_size;
 
-    if (this->save_price_data) {
-        this->dates.push_back(this->market.dates[time_idx]);
-        this->stop_losses.push_back(loss_limit);
-        this->take_profits.push_back(profit_limit);
-    }
+    this->risk_managment->update_price(this, time_idx);
 
-    if (this->market.bid.low[time_idx] <= loss_limit)     // Hit stop-loss
+    if (this->market.bid.low[time_idx] <= this->risk_managment->stop_loss_price)     // Hit stop-loss
         return this->close_stop_loss(time_idx);
 
-    if (this->market.bid.high[time_idx] >= profit_limit)   // Hit take-profit
+    if (this->market.bid.high[time_idx] >= this->risk_managment->take_profit_price)   // Hit take-profit
         return this->close_take_profit(time_idx);
 
 
@@ -135,7 +139,7 @@ Short::close_stop_loss(const size_t time_idx) {
     if (this->is_closed)
         return;
 
-    double stop_loss = this->risk_managment.get_stop_loss(this->entry_price);
+    double stop_loss = this->risk_managment->get_stop_loss(this->entry_price);
 
     this->exit_price = (*this->market.ask.price)[time_idx] + stop_loss;
     this->is_closed = true;
@@ -149,7 +153,7 @@ Short::close_take_profit(const size_t time_idx) {
         return;
 
 
-    double take_profit = this->risk_managment.get_take_profit(this->entry_price);
+    double take_profit = this->risk_managment->get_take_profit(this->entry_price);
 
     this->exit_price = (*this->market.ask.price)[time_idx] - take_profit;
     this->is_closed = true;
@@ -164,23 +168,12 @@ Short::check_exit_conditions(const size_t time_idx) {
     if (is_closed)
         return;
 
-    double stop_loss = this->risk_managment.get_stop_loss(this->entry_price);
-    double take_profit = this->risk_managment.get_take_profit(this->entry_price);
+    this->risk_managment->update_price(this, time_idx);
 
-    double loss_limit = this->entry_price + stop_loss * this->market.pip_size;
-    double profit_limit = this->entry_price - take_profit * this->market.pip_size;
-
-    if (this->save_price_data) {
-        this->dates.push_back(this->market.dates[time_idx]);
-        this->stop_losses.push_back(loss_limit);
-        this->take_profits.push_back(profit_limit);
-    }
-
-
-    if (this->market.ask.high[time_idx] >= loss_limit)  // Hit stop-loss
+    if (this->market.ask.high[time_idx] >= this->risk_managment->stop_loss_price)  // Hit stop-loss
         return this->close_stop_loss(time_idx);
 
-    if (this->market.ask.low[time_idx] <= profit_limit)  // Hit take-profit
+    if (this->market.ask.low[time_idx] <= this->risk_managment->take_profit_price)  // Hit take-profit
         return this->close_take_profit(time_idx);
 
 }

@@ -33,9 +33,10 @@ signal.generate_random(probability=0.03)
 
 signal.display_signal()
 
-risk_managment = StaticPipManager(
-    stop_loss=10,
-    take_profit=10
+risk_managment = TrailingPipManager(
+    stop_loss=100,
+    take_profit=100,
+    save_price_data=True
 )
 
 
@@ -43,7 +44,6 @@ position_collection = PositionCollection(
     market=market,
     signal=signal,
     risk_managment=risk_managment,
-    save_price_data=True,
 )
 
 position_collection.run()

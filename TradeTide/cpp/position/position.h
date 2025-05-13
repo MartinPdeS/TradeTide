@@ -14,33 +14,28 @@ class PipManager;  // forward declaration
 class BasePosition {
     public:
         const Market& market;
-        PipManager& risk_managment;
+        std::unique_ptr<PipManager> risk_managment;
         double entry_price;        // Price at which the position is opened
         double exit_price;         // Price at which the position is closed
         double lot_size;           // Size of the position in lots
         bool is_closed;            // Status of the position
         size_t start_idx;
 
-        bool save_price_data = false; // Save the limit price for the position
-        std::vector<TimePoint> dates; // Dates for the position
-        std::vector<double> stop_losses; // Stop-loss prices
-        std::vector<double> take_profits; // Take-profit prices
-
         TimePoint start_date; // Time when position was opened
         TimePoint close_date; // Time when position was closed
 
+
         virtual ~BasePosition() = default;
 
-        BasePosition(const Market& market, PipManager& risk_managment, const double lot_size, const size_t start_idx, const bool &save_price_data)
+        BasePosition(const Market& market, std::unique_ptr<PipManager> risk_managment, const double lot_size, const size_t start_idx)
         :
             market(market),
-            risk_managment(risk_managment),
+            risk_managment(std::move(risk_managment)),
             entry_price(0.0),
             exit_price(0.0),
             lot_size(lot_size),
             is_closed(false),
-            start_idx(start_idx),
-            save_price_data(save_price_data) {}
+            start_idx(start_idx) {}
 
         // Close the position for a certain market_price
         virtual void close(const size_t time_idx) = 0;
@@ -55,12 +50,17 @@ class BasePosition {
 
         // Check if stop-loss or take-profit is hit
         virtual void check_exit_conditions(const size_t time_idx) = 0;
+
+
+        const std::vector<double>& stop_loss_prices() const;
+        const std::vector<double>& take_profit_prices() const;
+        const std::vector<TimePoint>& dates() const;
 };
 
 class Long : public BasePosition {
     public:
-        Long(const Market& market, PipManager& risk_managment, const double lot_size, const size_t start_idx, const bool &save_price_data = false)
-        : BasePosition(market, risk_managment, lot_size, start_idx, save_price_data){
+        Long(const Market& market, std::unique_ptr<PipManager> risk_managment, const double lot_size, const size_t start_idx)
+        : BasePosition(market, std::move(risk_managment), lot_size, start_idx){
             this->start_date = this->market.dates[start_idx];
             this->open(start_idx);
         }
@@ -83,8 +83,8 @@ class Long : public BasePosition {
 
 class Short : public BasePosition {
     public:
-        Short(const Market& market, PipManager& risk_managment, const double lot_size, const size_t start_idx, const bool &save_price_data = false)
-        : BasePosition(market, risk_managment, lot_size, start_idx, save_price_data){
+        Short(const Market& market, std::unique_ptr<PipManager> risk_managment, const double lot_size, const size_t start_idx)
+        : BasePosition(market, std::move(risk_managment), lot_size, start_idx){
             this->start_date = this->market.dates[start_idx];
             this->open(start_idx);
         }

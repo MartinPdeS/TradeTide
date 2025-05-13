@@ -93,9 +93,9 @@ class PositionCollection(PositionCollection):
                 ax.axvspan(start, end, facecolor=fill_color, edgecolor="black", alpha=0.2)
 
                 # SL and TP lines
-                ax.plot(position.dates, position.stop_losses,
+                ax.plot(position.dates(), position.stop_loss_prices(),
                         linestyle="--", color=sl_color, linewidth=1, label="_nolegend_")
-                ax.plot(position.dates, position.take_profits,
+                ax.plot(position.dates(), position.take_profit_prices(),
                         linestyle="--", color=tp_color, linewidth=1, label="_nolegend_")
 
                 drawn += 1

@@ -10,11 +10,12 @@ void PositionCollection::open_positions(){
             continue;
 
         PositionPtr position;
+        std::unique_ptr<PipManager> risk_manager_copy = risk_managment.clone();
 
         if (signal_value == 1)
-            position = std::make_unique<Long>(market, risk_managment, 1, idx, this->save_price_data);
+            position = std::make_unique<Long>(market, std::move(risk_manager_copy), 1, idx);
         else
-            position = std::make_unique<Short>(market, risk_managment, 1, idx, this->save_price_data);
+            position = std::make_unique<Short>(market, std::move(risk_manager_copy), 1, idx);
 
         positions.push_back(std::move(position));
     }

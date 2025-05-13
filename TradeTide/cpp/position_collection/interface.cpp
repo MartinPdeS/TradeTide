@@ -19,31 +19,14 @@ PYBIND11_MODULE(interface_position_collection, module) {
         .def("display", &BasePosition::display)
         .def("calculate_profite_and_loss", &BasePosition::calculate_profite_and_loss)
         .def_readonly("is_closed", &BasePosition::is_closed)
-        .def_readonly("save_price_data", &BasePosition::save_price_data)
-        .def_readonly("dates", &BasePosition::dates)
-        .def_readonly("stop_losses", &BasePosition::stop_losses)
-        .def_readonly("take_profits", &BasePosition::take_profits)
+        .def("stop_loss_prices", &BasePosition::stop_loss_prices)
+        .def("take_profit_prices", &BasePosition::take_profit_prices)
+        .def("dates", &BasePosition::dates)
     ;
 
-    py::class_<Long, BasePosition>(module, "Long")
-        .def(
-            py::init<const Market&, PipManager&, const double, const size_t>(),
-            py::arg("market"),
-            py::arg("risk_managment"),
-            py::arg("lot_size"),
-            py::arg("start_idx")
-        )
-        ;
+    py::class_<Long, BasePosition>(module, "Long");
 
-    py::class_<Short, BasePosition>(module, "Short")
-        .def(
-            py::init<const Market&, PipManager&, const double, const size_t>(),
-            py::arg("market"),
-            py::arg("risk_managment"),
-            py::arg("lot_size"),
-            py::arg("start_idx")
-        )
-        ;
+    py::class_<Short, BasePosition>(module, "Short");
 
 
 

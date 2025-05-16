@@ -11,40 +11,6 @@ using TimePoint = std::chrono::system_clock::time_point;
 
 class BasePosition;
 
-class RiskManagment {
-public:
-    double stop_loss;    // Distance (in pips) for stop-loss from the entry price
-    double take_profit;  // Distance (in pips) for take-profit from the entry price
-
-
-    // Constructor
-    RiskManagment() = default;
-
-    RiskManagment(double stop_loss, double take_profit)
-    :
-        stop_loss(stop_loss),
-        take_profit(take_profit) {}
-
-    // Update account balance
-    void update_balance(double new_balance);
-
-    // Calculate position size
-    double calculate_position_size(const double entry_price, const double currency_per_pip) const;
-    void update_position_lot_size(BasePosition &position, const double currency_per_pip) const;
-
-    // Enforce risk parameters for a new position
-    bool validate_position(const double entry_price, const double lot_size, const double current_price, const bool is_long) const;
-
-
-    const double& get_stop_loss() const {
-        return this->stop_loss;
-    }
-
-    const double& get_take_profit() const {
-        return this->take_profit;
-    }
-};
-
 
 class PipManager {
     public:
@@ -60,10 +26,6 @@ class PipManager {
         bool save_price_data = false; // Save the limit price for the position
 
         PipManager(const bool& save_price_data = false): save_price_data(save_price_data) {}
-
-        // Pure virtual functions to be implemented by derived classes
-        // virtual double& get_stop_loss(const double& price) = 0;
-        // virtual double& get_take_profit(const double& price) = 0;
 
         virtual std::unique_ptr<PipManager> clone() const = 0;
 

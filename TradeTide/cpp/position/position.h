@@ -27,6 +27,10 @@ class BasePosition {
 
         virtual ~BasePosition() = default;
 
+        BasePosition(const Market& market, std::unique_ptr<PipManager> risk_managment, const double entry_price, const TimePoint start_date)
+        : market(market), risk_managment(std::move(risk_managment)), entry_price(entry_price), start_date(start_date)
+        {}
+
         BasePosition(const Market& market, std::unique_ptr<PipManager> risk_managment, const size_t start_idx)
         :
             market(market),
@@ -64,6 +68,10 @@ class Long : public BasePosition {
             this->open(start_idx);
         }
 
+        Long(const Market& market, std::unique_ptr<PipManager> risk_managment, const double entry_price, const TimePoint start_date)
+        : BasePosition(market, std::move(risk_managment), start_date)
+        {}
+
         // Open the position for a certain market_price
         void open(const size_t time_idx);
 
@@ -85,6 +93,10 @@ class Short : public BasePosition {
             this->start_date = this->market.dates[start_idx];
             this->open(start_idx);
         }
+
+        Short(const Market& market, std::unique_ptr<PipManager> risk_managment, const double entry_price, const TimePoint start_date)
+        : BasePosition(market, std::move(risk_managment), entry_price, start_date)
+        {}
 
         // Open the position for a certain market_price
         void open(const size_t time_idx);

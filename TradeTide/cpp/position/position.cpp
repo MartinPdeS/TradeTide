@@ -43,7 +43,6 @@ Long::propagate() {
             this->close_date = this->market.dates[time_idx + 1];
             break;
         }
-
     }
 }
 

@@ -34,8 +34,8 @@ signal.generate_random(probability=0.03)
 signal.display_signal()
 
 risk_managment = TrailingPipManager(
-    stop_loss=100,
-    take_profit=100,
+    stop_loss=8,
+    take_profit=8,
     save_price_data=True
 )
 
@@ -49,4 +49,4 @@ position_collection = PositionCollection(
 position_collection.run()
 
 position_collection.display()
-position_collection.plot(max_positions=2)
+position_collection.plot(max_positions=1)

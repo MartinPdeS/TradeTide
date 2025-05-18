@@ -12,30 +12,31 @@ void PositionCollection::open_positions(){
         PositionPtr position;
         std::unique_ptr<PipManager> risk_manager_copy = risk_managment.clone();
 
-        if (signal_value == 1)
-            position = std::make_unique<Long>(market, std::move(risk_manager_copy), idx);
-        else
-            position = std::make_unique<Short>(market, std::move(risk_manager_copy), idx);
+        if (signal_value == 1){
+            double entry_price = (*this->market.ask.price)[idx];
+            TimePoint start_date = this->market.dates[idx];
+            position = std::make_unique<Long>(market, std::move(risk_manager_copy), entry_price, start_date, idx);
+        }
+        else {
+            double entry_price = (*this->market.bid.price)[idx];
+            TimePoint start_date = this->market.dates[idx];
+            position = std::make_unique<Short>(market, std::move(risk_manager_copy), entry_price, start_date, idx);
+        }
 
         positions.push_back(std::move(position));
     }
 }
 
 void PositionCollection::close_positions(){
-    for (const auto& position : this->positions){
-        for (size_t time_idx = position->start_idx + 1; time_idx < this->market.dates.size(); time_idx++){
-            position->check_exit_conditions(time_idx);
-
-            if (position->is_closed)
-                break;
-        }
-    }
+    for (const auto& position : this->positions)
+        position->propagate();
 }
 
+
 void PositionCollection::terminate_open_positions() {
-    for (const auto& position : this->positions)
-        if (!position->is_closed)
-            position->close(this->market.dates.size() - 1);  // Set to last element of market
+    // for (const auto& position : this->positions)
+    //     if (!position->is_closed)
+    //         position->close(this->market.dates.size() - 1);  // Set to last element of market
 
 }
 

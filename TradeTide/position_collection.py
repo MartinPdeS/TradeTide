@@ -4,7 +4,8 @@ from matplotlib.patches import Patch
 from matplotlib.lines import Line2D
 from typing import Tuple, Union, Optional
 
-from TradeTide.binary.interface_position_collection import PositionCollection, Long
+from TradeTide.binary.interface_position_collection import PositionCollection
+from TradeTide.binary.interface_position import Long
 from MPSPlots.styles import mps
 
 import matplotlib.pyplot as plt

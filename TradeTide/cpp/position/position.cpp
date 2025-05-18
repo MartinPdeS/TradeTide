@@ -26,7 +26,7 @@ BasePosition::close_at_stop_loss(const size_t time_idx) {
         return;
 
     double price = (*this->market.bid.price)[time_idx];
-    this->risk_managment->update_price(this, time_idx, price);
+    this->risk_managment->update_price(*this, time_idx, price);
 
     this->exit_price = this->risk_managment->stop_loss_price;
     this->is_closed = true;
@@ -40,7 +40,7 @@ BasePosition::close_at_take_profit(const size_t time_idx) {
 
 
     double price = (*this->market.bid.price)[time_idx];
-    this->risk_managment->update_price(this, time_idx, price);
+    this->risk_managment->update_price(*this, time_idx, price);
 
     this->exit_price = this->risk_managment->take_profit_price;
     this->is_closed = true;
@@ -55,44 +55,29 @@ BasePosition::close_at_take_profit(const size_t time_idx) {
 // Long Position---------------------------------------------
 // Check if stop-loss or take-profit is hit
 void
-Long::open(const size_t time_idx) {
-    entry_price = (*this->market.ask.price)[time_idx];
-    is_closed = false;
-    start_date = this->market.dates[time_idx];
+Long::propagate() {
+    for (size_t time_idx = this->start_idx; time_idx < this->market.dates.size(); time_idx++) {
+        double current_price = (*this->market.bid.price)[time_idx];
+
+        this->risk_managment->update_price(*this, time_idx, current_price);
+
+        if (this->market.bid.low[time_idx] <= this->risk_managment->stop_loss_price) {     // Hit stop-loss
+            this->exit_price = this->risk_managment->stop_loss_price;
+            this->is_closed = true;
+            this->close_date = this->market.dates[time_idx + 1];
+            break;
+        }
+
+        if (this->market.bid.high[time_idx] >= this->risk_managment->take_profit_price) {   // Hit take-profit
+            this->exit_price = this->risk_managment->take_profit_price;
+            this->is_closed = true;
+            this->close_date = this->market.dates[time_idx + 1];
+            break;
+        }
+
+    }
 }
 
-
-void
-Long::close(const size_t time_idx) {
-    if (this-is_closed)
-        return;
-
-    this->exit_price = (*this->market.bid.price)[time_idx];
-    this->is_closed = true;
-    this->close_date = this->market.dates[time_idx];
-
-}
-
-
-
-
-void
-Long::check_exit_conditions(const size_t time_idx) {
-    if (is_closed)
-        return;
-
-    double current_price = (*this->market.bid.price)[time_idx];
-
-    this->risk_managment->update_price(this, time_idx, current_price);
-
-    if (this->market.bid.low[time_idx] <= this->risk_managment->stop_loss_price)     // Hit stop-loss
-        return this->close_at_stop_loss(time_idx);
-
-    if (this->market.bid.high[time_idx] >= this->risk_managment->take_profit_price)   // Hit take-profit
-        return this->close_at_take_profit(time_idx);
-
-
-}
 
 // Calculate profit or loss
 double
@@ -125,39 +110,29 @@ Long::display() const {
 
 // Short Position---------------------------------------------
 void
-Short::open(const size_t time_idx) {
-    entry_price = (*this->market.bid.price)[time_idx];
-    is_closed = false;
-    start_date = this->market.dates[time_idx];
-}
+Short::propagate() {
+    for (size_t time_idx = this->start_idx; time_idx < this->market.dates.size(); time_idx++) {
+        double current_price = (*this->market.ask.price)[time_idx];
 
-void
-Short::close(const size_t time_idx) {
-    if (!is_closed) {
-        exit_price = (*this->market.ask.price)[time_idx];
-        is_closed = true;
-        close_date = this->market.dates[time_idx];
+        this->risk_managment->update_price(*this, time_idx, current_price);
+
+        if (this->market.ask.high[time_idx] >= this->risk_managment->stop_loss_price) {  // Hit stop-loss
+            this->exit_price = this->risk_managment->stop_loss_price;
+            this->is_closed = true;
+            this->close_date = this->market.dates[time_idx + 1];
+            break;
+        }
+
+        if (this->market.ask.low[time_idx] <= this->risk_managment->take_profit_price) {  // Hit take-profit
+            this->exit_price = this->risk_managment->take_profit_price;
+            this->is_closed = true;
+            this->close_date = this->market.dates[time_idx + 1];
+            break;
+        }
     }
 }
 
 
-// Check if stop-loss or take-profit is hit
-void
-Short::check_exit_conditions(const size_t time_idx) {
-    if (is_closed)
-        return;
-
-    double current_price = (*this->market.ask.price)[time_idx];
-
-    this->risk_managment->update_price(this, time_idx, current_price);
-
-    if (this->market.ask.high[time_idx] >= this->risk_managment->stop_loss_price)  // Hit stop-loss
-        return this->close_at_stop_loss(time_idx);
-
-    if (this->market.ask.low[time_idx] <= this->risk_managment->take_profit_price)  // Hit take-profit
-        return this->close_at_take_profit(time_idx);
-
-}
 
 // Calculate profit or loss
 double

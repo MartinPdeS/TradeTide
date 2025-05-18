@@ -7,7 +7,7 @@ namespace py = pybind11;
 PYBIND11_MODULE(interface_risk_managment, module) {
     module.doc() = "Python bindings for the Portfolio class";
 
-    py::class_<PipManager>(module, "PipManager") ;
+    py::class_<PipManager>(module, "PipManager");
 
     // Bind the RiskManagment class
     py::class_<StaticPipManager, PipManager>(module, "StaticPipManager")

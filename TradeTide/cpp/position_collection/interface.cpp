@@ -103,5 +103,14 @@ PYBIND11_MODULE(interface_position_collection, module) {
             R"pbdoc(
                 Whether SL/TP data was saved for each position over time.
             )pbdoc")
+
+        .def("to_csv", &PositionCollection::to_csv,
+            py::arg("filepath"),
+            R"pbdoc(
+                Export the position collection to a CSV file.
+
+                Args:
+                    filepath (str): Path to the output CSV file.
+            )pbdoc")
         ;
 }

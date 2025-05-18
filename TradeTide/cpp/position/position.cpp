@@ -50,7 +50,7 @@ Long::propagate() {
 
 // Calculate profit or loss
 [[nodiscard]] double
-Long::calculate_profite_and_loss() const {
+Long::calculate_profit_and_loss() const {
     if (!is_closed)
         return 0.0; // No PnL if the position is still open
 
@@ -105,7 +105,7 @@ Short::propagate() {
 
 // Calculate profit or loss
 double
-Short::calculate_profite_and_loss() const {
+Short::calculate_profit_and_loss() const {
     if (!is_closed)
         return 0.0; // No PnL if the position is still open
 

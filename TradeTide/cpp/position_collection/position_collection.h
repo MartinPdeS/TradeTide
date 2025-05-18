@@ -56,6 +56,8 @@ class PositionCollection{
 
         [[nodiscard]] size_t size() const { return this->positions.size(); }
 
+        void to_csv(const std::string& filepath) const;
+
         const PositionPtr& operator[](size_t i) const { return this->positions[i]; }
 
 

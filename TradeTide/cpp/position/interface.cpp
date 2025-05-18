@@ -34,7 +34,7 @@ PYBIND11_MODULE(interface_position, module) {
             R"pbdoc(
                 Print a summary of the position details to the console.
             )pbdoc")
-        .def("calculate_profite_and_loss", &BasePosition::calculate_profite_and_loss,
+        .def("calculate_profit_and_loss", &BasePosition::calculate_profit_and_loss,
             R"pbdoc(
                 Calculate the total profit or loss of the position.
 

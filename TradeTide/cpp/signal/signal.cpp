@@ -26,7 +26,7 @@ void Signal::generate_random(const double probability) {
         if (random_value < p_zero) {
             raw.push_back(0);  // 90% chance to get 0
         } else if (random_value < p_zero + p_non_zero / 2) {
-            raw.push_back(1);  // 5% chance to get +1
+            raw.push_back(1);  // 5%cchance to get +1
         } else {
             raw.push_back(-1); // 5% chance to get -1
         }

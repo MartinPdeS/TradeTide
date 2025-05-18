@@ -1,5 +1,38 @@
+#include <fstream>
+#include <iomanip>
 #include "position_collection.h"
 
+void PositionCollection::to_csv(const std::string& filepath) const {
+    std::ofstream file(filepath);
+    if (!file.is_open())
+        throw std::runtime_error("Failed to open file for writing: " + filepath);
+
+    // CSV header
+    file << "start_date,close_date,entry_price,exit_price,lot_size,is_long,is_closed,profit_and_loss\n";
+
+    for (const auto& position : positions) {
+        auto format_time = [](const TimePoint& tp) -> std::string {
+            std::time_t t = std::chrono::system_clock::to_time_t(tp);
+            std::tm tm = *std::localtime(&t);
+            std::ostringstream oss;
+            oss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
+            return oss.str();
+        };
+
+        file
+            << format_time(position->start_date) << ","
+            << format_time(position->close_date) << ","
+            << position->entry_price << ","
+            << position->exit_price << ","
+            << position->lot_size << ","
+            << (position->is_long ? "True" : "False") << ","
+            << (position->is_closed ? "True" : "False") << ","
+            << position->calculate_profit_and_loss()
+            << "\n";
+    }
+
+    file.close();
+}
 
 void PositionCollection::open_positions(){
 

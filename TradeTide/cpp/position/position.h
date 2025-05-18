@@ -45,7 +45,7 @@ class BasePosition {
         void close_at_take_profit(const size_t time_idx);
 
         // Calculate profit or loss
-        [[nodiscard]] virtual double calculate_profite_and_loss() const = 0;
+        [[nodiscard]] virtual double calculate_profit_and_loss() const = 0;
 
         // Display Position Info
         virtual void display() const = 0;
@@ -73,7 +73,7 @@ class Long : public BasePosition {
         // Close the position for a certain market_price
         void propagate() override;
 
-        double calculate_profite_and_loss() const override;
+        double calculate_profit_and_loss() const override;
 
         void display() const override;
 
@@ -95,7 +95,7 @@ class Short : public BasePosition {
         // Close the position for a certain market_price
         void propagate() override;
 
-        double calculate_profite_and_loss() const override;
+        double calculate_profit_and_loss() const override;
 
         void display() const override;
 

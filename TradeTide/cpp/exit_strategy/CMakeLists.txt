@@ -1,6 +1,6 @@
 # cpp/detector/CMakeLists.txt
 
-set(NAME "risk_managment")
+set(NAME "exit_strategy")
 
 # Create a shared library for functionality.
 add_library("cpp_${NAME}" STATIC "${NAME}.cpp")

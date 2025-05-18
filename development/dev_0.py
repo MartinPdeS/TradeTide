@@ -1,5 +1,5 @@
 from TradeTide.market import Market
-from TradeTide.binary.interface_risk_managment import StaticPipManager, TrailingPipManager
+from TradeTide.binary.interface_exit_strategy import StaticExitStrategy, TrailingExitStrategy, BreakEvenExitStrategy
 from TradeTide.loader import get_data_path
 from TradeTide.position_collection import PositionCollection
 from TradeTide.currencies import Currency
@@ -33,9 +33,10 @@ signal.generate_random(probability=0.03)
 
 signal.display_signal()
 
-risk_managment = TrailingPipManager(
-    stop_loss=8,
-    take_profit=8,
+risk_managment = BreakEvenExitStrategy(
+    stop_loss=12,
+    take_profit=12,
+    break_even_trigger_pip=2,
     save_price_data=True
 )
 
@@ -49,4 +50,4 @@ position_collection = PositionCollection(
 position_collection.run()
 
 position_collection.display()
-position_collection.plot(max_positions=1)
+position_collection.plot()

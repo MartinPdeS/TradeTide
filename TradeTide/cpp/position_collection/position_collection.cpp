@@ -10,7 +10,7 @@ void PositionCollection::open_positions(){
             continue;
 
         PositionPtr position;
-        std::unique_ptr<PipManager> risk_manager_copy = risk_managment.clone();
+        std::unique_ptr<ExitStrategy> risk_manager_copy = exit_strategy.clone();
 
         if (signal_value == 1){
             double entry_price = (*this->market.ask.price)[idx];
@@ -34,9 +34,9 @@ void PositionCollection::close_positions(){
 
 
 void PositionCollection::terminate_open_positions() {
-    // for (const auto& position : this->positions)
-    //     if (!position->is_closed)
-    //         position->close(this->market.dates.size() - 1);  // Set to last element of market
+    for (const auto& position : this->positions)
+        if (!position->is_closed)
+            position->close(this->market.dates.size() - 1);  // Set to last element of market
 
 }
 

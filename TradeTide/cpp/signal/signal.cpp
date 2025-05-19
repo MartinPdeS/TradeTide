@@ -1,70 +1,69 @@
 #include "signal.h"
 
 
+void Signal::generate_random(double probability) {
+    std::mt19937 rng(std::random_device{}());
+    std::uniform_real_distribution<double> dist(0.0, 1.0);
+    std::bernoulli_distribution direction(0.5);
 
-
-// Generate random signals
-void Signal::generate_random(const double probability) {
-    // 1) build a random raw state series with adjusted probabilities
-    std::random_device rd;
-    std::mt19937 gen(rd());
-
-    // Define probability distributions for 0, 1, and -1
-    double p_non_zero = probability;
-    double p_zero = 1 - probability;
-
-    std::uniform_real_distribution<> dist(0.0, 1.0);
-
-    size_t n = this->market.dates.size();
-    std::vector<int> raw;
-    raw.reserve(n);
-
-    // Generate signal values based on the adjusted probabilities
-    for (size_t i = 0; i < n; ++i) {
-        double random_value = dist(gen);
-
-        if (random_value < p_zero) {
-            raw.push_back(0);  // 90% chance to get 0
-        } else if (random_value < p_zero + p_non_zero / 2) {
-            raw.push_back(1);  // 5%cchance to get +1
+    this->trade_signal.clear();
+    for (size_t i = 0; i < this->market.dates.size(); ++i) {
+        if (dist(rng) < probability) {
+            this->trade_signal.push_back(direction(rng) ? 1 : -1);
         } else {
-            raw.push_back(-1); // 5% chance to get -1
+            this->trade_signal.push_back(0);
         }
     }
+}
 
-    // 2) Compute the transition array
-    trade_signal.clear();
-    trade_signal.reserve(n);
+const std::vector<int>& Signal::get_signals() const {
+    return this->trade_signal;
+}
 
-    if (n == 0) return;
-
-    // At index 0, we assume “no prior state” → no transition
-    trade_signal.push_back(0);
-
-    for (size_t i = 1; i < n; ++i) {
-        if (raw[i] == 1 && raw[i-1] != 1)
-            trade_signal.push_back(1);
-        else if (raw[i] == -1 && raw[i-1] != -1)
-            trade_signal.push_back(-1);
-        else
-            trade_signal.push_back(0);
+void Signal::display(size_t max_count) const {
+    std::cout << "Trade Signals [timestamp, signal]:\n";
+    for (size_t i = 0; i < std::min(max_count, this->trade_signal.size()); ++i) {
+        std::time_t t = std::chrono::system_clock::to_time_t(this->market.dates[i]);
+        std::cout << std::put_time(std::localtime(&t), "%Y-%m-%d %H:%M:%S")
+                    << " => " << this->trade_signal[i] << "\n";
+    }
+    if (this->trade_signal.size() > max_count) {
+        std::cout << "... (" << this->trade_signal.size() << " total signals)\n";
     }
 }
 
+void Signal::to_csv(const std::string& filepath) const {
+    std::ofstream file(filepath);
+    if (!file.is_open())
+        throw std::runtime_error("Unable to open file: " + filepath);
 
-
-// Get signal array
-const std::vector<int>&
-Signal::get_signals() const {
-    return trade_signal;
+    file << "timestamp,signal\n";
+    for (size_t i = 0; i < this->trade_signal.size(); ++i) {
+        std::time_t t = std::chrono::system_clock::to_time_t(this->market.dates[i]);
+        file << std::put_time(std::localtime(&t), "%Y-%m-%d %H:%M:%S") << ","
+                << this->trade_signal[i] << "\n";
+    }
+    file.close();
 }
 
-// Display signals
-void
-Signal::display_signal() const {
-    std::cout << "Signals:\n";
 
-    for (size_t i = 0; i < trade_signal.size(); ++i)
-        std::cout << "Interval " << i + 1 << ": " << trade_signal[i] << "\n";
-
+std::pair<size_t, size_t> Signal::count_signals() const {
+    size_t long_count = 0, short_count = 0;
+    for (int s : this->trade_signal) {
+        if (s == 1) ++long_count;
+        else if (s == -1) ++short_count;
+    }
+    return { long_count, short_count };
 }
+
+
+bool Signal::validate_against_market() const {
+    return this->trade_signal.size() == this->market.dates.size();
+}
+
+
+std::vector<int> Signal::compute_trade_signal() {
+    // Could be implemented based on price movement or technical rules.
+    return this->trade_signal;
+}
+

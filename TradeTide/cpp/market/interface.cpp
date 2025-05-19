@@ -72,8 +72,10 @@ PYBIND11_MODULE(interface_market, module) {
         .def_readwrite("dates", &Market::dates)
         .def_readwrite("start_date", &Market::start_date)
         .def_readwrite("end_date", &Market::end_date)
+        .def_readwrite("pip_value", &Market::pip_value)
         .def_readonly("ask", &Market::ask)
         .def_readonly("bid", &Market::bid)
         .def_readonly("spreads", &Market::spreads)
+
         ;
 }

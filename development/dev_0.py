@@ -1,5 +1,6 @@
 from TradeTide.market import Market
 from TradeTide.binary.interface_exit_strategy import StaticExitStrategy, TrailingExitStrategy, BreakEvenExitStrategy
+from TradeTide.portfolio import Portfolio
 from TradeTide.loader import get_data_path
 from TradeTide.position_collection import PositionCollection
 from TradeTide.currencies import Currency
@@ -20,23 +21,22 @@ market.load_from_database(
     currency_0=Currency.CAD,
     currency_1=Currency.USD,
     year=2023,
-    time_span=timedelta(hours=3),
+    time_span=timedelta(hours=30),
     spread_override=1,
     is_bid_override=True
 )
+market.pip_value = 0.0001
 
-# market.plot()
 
 signal = Signal(market=market)
 
 signal.generate_random(probability=0.03)
 
-signal.display_signal()
+# signal.display_signal()
 
-risk_managment = BreakEvenExitStrategy(
+exit_strategy = StaticExitStrategy(
     stop_loss=12,
     take_profit=12,
-    break_even_trigger_pip=2,
     save_price_data=True
 )
 
@@ -44,10 +44,22 @@ risk_managment = BreakEvenExitStrategy(
 position_collection = PositionCollection(
     market=market,
     signal=signal,
-    risk_managment=risk_managment,
+    exit_strategy=exit_strategy,
 )
 
 position_collection.run()
 
-position_collection.display()
-position_collection.plot()
+portfolio  = Portfolio(
+    position_collection=position_collection,
+    initial_capital=10000,
+    max_concurrent_positions=1,
+    max_lot_size=10,
+    max_capital_at_risk=100000
+)
+
+portfolio.simulate()
+
+
+portfolio.display()
+
+portfolio.plot()

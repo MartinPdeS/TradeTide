@@ -7,7 +7,7 @@ namespace py = pybind11;
 PYBIND11_MODULE(interface_exit_strategy, module) {
     module.doc() = "Python bindings for various exit strategies used in trading positions.";
 
-    py::class_<ExitStrategy>(module, "ExitStrategy")
+    py::class_<ExitStrategy, ExitStrategyPtr>(module, "ExitStrategy")
         .doc() = R"pbdoc(
             Abstract base class for SL/TP (stop-loss/take-profit) exit strategies.
 
@@ -15,7 +15,7 @@ PYBIND11_MODULE(interface_exit_strategy, module) {
             behaviors for how stop-loss and take-profit prices are managed over time.
         )pbdoc";
 
-    py::class_<StaticExitStrategy, ExitStrategy>(module, "StaticExitStrategy")
+    py::class_<StaticExitStrategy, ExitStrategy, std::shared_ptr<StaticExitStrategy>>(module, "StaticExitStrategy")
         .def(
             py::init<double, double, const bool>(),
             py::arg("stop_loss"),
@@ -33,7 +33,7 @@ PYBIND11_MODULE(interface_exit_strategy, module) {
                 save_price_data (bool): Whether to store SL/TP evolution data.
         )pbdoc";
 
-    py::class_<TrailingExitStrategy, ExitStrategy>(module, "TrailingExitStrategy")
+    py::class_<TrailingExitStrategy, ExitStrategy, std::shared_ptr<TrailingExitStrategy>>(module, "TrailingExitStrategy")
         .def(
             py::init<double, double, const bool>(),
             py::arg("stop_loss"),
@@ -52,7 +52,7 @@ PYBIND11_MODULE(interface_exit_strategy, module) {
                 save_price_data (bool): Whether to store SL/TP evolution data.
         )pbdoc";
 
-    py::class_<BreakEvenExitStrategy, ExitStrategy>(module, "BreakEvenExitStrategy")
+    py::class_<BreakEvenExitStrategy, ExitStrategy, std::shared_ptr<BreakEvenExitStrategy>>(module, "BreakEvenExitStrategy")
         .def(
             py::init<double, double, double, const bool>(),
             py::arg("stop_loss"),

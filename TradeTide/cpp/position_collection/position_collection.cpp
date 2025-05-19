@@ -43,7 +43,7 @@ void PositionCollection::open_positions(){
             continue;
 
         PositionPtr position;
-        std::unique_ptr<ExitStrategy> risk_manager_copy = exit_strategy.clone();
+        std::unique_ptr<ExitStrategy> risk_manager_copy = exit_strategy_ptr->clone();
 
         if (signal_value == 1){
             double entry_price = (*this->market.ask.price)[idx];
@@ -60,7 +60,9 @@ void PositionCollection::open_positions(){
     }
 }
 
-void PositionCollection::close_positions(){
+void PositionCollection::propagate_positions() {
+
+    #pragma omp parallel for
     for (const auto& position : this->positions)
         position->propagate();
 }
@@ -71,6 +73,12 @@ void PositionCollection::terminate_open_positions() {
         if (!position->is_closed)
             position->close(this->market.dates.size() - 1);  // Set to last element of market
 
+
+        std::sort(
+            this->positions.begin(),
+            this->positions.end(),
+            [](const PositionPtr& a, const PositionPtr& b) {return a->start_date < b->start_date;}
+        );
 }
 
 

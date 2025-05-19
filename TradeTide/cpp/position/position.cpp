@@ -20,7 +20,6 @@ const std::vector<TimePoint>& BasePosition::strategy_dates() const {
 }
 
 
-
 // Long Position---------------------------------------------
 // Check if stop-loss or take-profit is hit
 void
@@ -31,16 +30,13 @@ Long::propagate() {
         this->exit_strategy->update_price(*this, time_idx, current_price);
 
         if (this->market.bid.low[time_idx] <= this->exit_strategy->stop_loss_price) {     // Hit stop-loss
-            this->exit_price = this->exit_strategy->stop_loss_price;
-            this->is_closed = true;
-            this->close_date = this->market.dates[time_idx + 1];
+            BasePosition::close(this->exit_strategy->stop_loss_price, time_idx + 1);
             break;
         }
 
         if (this->market.bid.high[time_idx] >= this->exit_strategy->take_profit_price) {   // Hit take-profit
-            this->exit_price = this->exit_strategy->take_profit_price;
-            this->is_closed = true;
-            this->close_date = this->market.dates[time_idx + 1];
+            BasePosition::close(this->exit_strategy->take_profit_price, time_idx + 1);
+
             break;
         }
     }
@@ -53,9 +49,9 @@ Long::calculate_profit_and_loss() const {
     if (!is_closed)
         return 0.0; // No PnL if the position is still open
 
-    double price_difference = exit_price - entry_price;
+    double price_difference = this->exit_price - this->entry_price;
 
-    return price_difference * lot_size * this->market.pip_value;
+    return price_difference * this->lot_size * this->market.pip_value;
 }
 
 // Display Position Info
@@ -108,8 +104,9 @@ Short::calculate_profit_and_loss() const {
     if (!is_closed)
         return 0.0; // No PnL if the position is still open
 
-    double price_difference = entry_price - exit_price;
-    return price_difference * lot_size * this->market.pip_value;
+    double price_difference = this->entry_price - this->exit_price;
+
+    return price_difference * this->lot_size * this->market.pip_value;
 }
 
 // Display Position Info

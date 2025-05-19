@@ -1,47 +1,43 @@
 #pragma once
 
-#include <iostream>
 #include <memory>
 #include <vector>
 
-#include "../risk_managment/risk_managment.h"
-#include "../signal/signal.h"
-#include "../position/position.h"
+#include "../position_collection/position_collection.h"
 
 class Portfolio {
-private:
-    std::vector<std::shared_ptr<BasePosition>> positions; // List of positions
-    double capital;                                   // Current capital in the portfolio
-    RiskManagment risk_manager;                       // Risk management instance
-    size_t day;
+    public:
+        Portfolio(PositionCollection& position_collection, double initial_capital, size_t max_concurrent_positions, double max_lot_size, double max_capital_at_risk)
+        : position_collection(position_collection),
+          initial_capital(initial_capital),
+          equity(initial_capital),
+          max_lot_size(max_lot_size),
+          max_capital_at_risk(max_capital_at_risk),
+          max_concurrent_positions(max_concurrent_positions) {};
 
-public:
-    // Constructor
-    Portfolio() = default;
+        void simulate();
 
-    Portfolio(RiskManagment& risk_manager) : risk_manager(risk_manager) {}
+        [[nodiscard]] double final_equity() const;
+        [[nodiscard]] double peak_equity() const;
+        [[nodiscard]] std::vector<double> equity_curve() const;
 
-    // Add a new position with stop-loss and take-profit
-    bool add_position(bool is_long, double entry_price, double pip_price, double lot_size, double stop_loss, double take_profit);
+        void display() const;
+        [[nodiscard]] std::vector<size_t> open_position_count_over_time() const;
+        [[nodiscard]] const std::vector<TimePoint>& get_market_dates() const;
+        [[nodiscard]] std::vector<double> equity_over_time() const;
 
-    // Update portfolio capital
-    void update_capital(double amount);
+    private:
+        PositionCollection& position_collection;
 
-    // Display all positions
-    void display_positions() const;
+        double initial_capital;
+        double equity;
+        double max_lot_size;
+        double max_capital_at_risk;
+        size_t max_concurrent_positions;
 
-    // Get current capital
-    double get_capital() const { return capital; }
+        std::vector<PositionPtr> active_positions;
+        std::vector<PositionPtr> executed_positions;
+        std::vector<double> equity_history;
 
-    // Method to get entry prices of all positions
-    std::vector<double> get_entry_prices() const;
 
-    // Method to get entry prices of all positions
-    std::vector<double> get_exit_prices() const;
-
-    // Method to get open dates of all positions
-    std::vector<std::chrono::system_clock::time_point> get_open_dates() const;
-
-    // Method to get open dates of all positions
-    std::vector<std::chrono::system_clock::time_point> get_close_dates() const;
-};
+    };

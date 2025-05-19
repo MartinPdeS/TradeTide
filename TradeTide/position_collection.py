@@ -17,7 +17,7 @@ class PositionCollection(PositionCollection):
 
     def run(self) -> None:
         self.open_positions()
-        self.close_positions()
+        self.propagate_positions()
         self.terminate_open_positions()
 
 

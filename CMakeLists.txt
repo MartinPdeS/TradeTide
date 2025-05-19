@@ -19,6 +19,7 @@ add_compile_options(-fPIC -Wall -Wextra -Wno-uninitialized)
 
 find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
 find_package(pybind11 CONFIG REQUIRED)
+find_package(OpenMP REQUIRED)
 
 # Print some messages
 message(STATUS "TradeTide version is: ${TRADETIDE_VERSION}")
@@ -30,6 +31,6 @@ add_subdirectory(TradeTide/cpp/market)               # market
 add_subdirectory(TradeTide/cpp/position)             # position
 add_subdirectory(TradeTide/cpp/signal)               # signal
 add_subdirectory(TradeTide/cpp/exit_strategy)        # exit_strategy
-# add_subdirectory(TradeTide/cpp/portfolio)            # portfolio
+add_subdirectory(TradeTide/cpp/portfolio)            # portfolio
 add_subdirectory(TradeTide/cpp/position_collection)  # position collection
 # add_subdirectory(TradeTide/cpp/backtester)           # backtester

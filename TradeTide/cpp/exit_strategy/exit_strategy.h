@@ -179,3 +179,6 @@ class BreakEvenExitStrategy : public ExitStrategy {
                 take_profit_price = position.entry_price - take_profit_pip * position.market.pip_size;
         }
     };
+
+
+    using ExitStrategyPtr = std::shared_ptr<ExitStrategy>;

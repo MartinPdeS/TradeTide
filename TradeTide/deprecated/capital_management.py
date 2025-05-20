@@ -5,7 +5,7 @@ import pandas
 import numpy
 from TradeTide.risk_management import DirectLossProfit, ATRLossProfit
 from TradeTide.time_state import TimeState
-from TradeTide.position import Long, Short
+from TradeTide.TradeTide.position_ import Long, Short
 
 class CapitalManagement:
     """

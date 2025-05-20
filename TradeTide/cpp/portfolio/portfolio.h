@@ -31,9 +31,10 @@ class Portfolio {
         void compute_equity_over_time();
         [[nodiscard]] const std::vector<TimePoint>& get_market_dates() const;
         [[nodiscard]] std::vector<double> equity_over_time() const;
+        [[nodiscard]] const Market& get_market(){return this->position_collection.market;}
+        [[nodiscard]] const std::vector<PositionPtr>& get_positions(){return this->selected_positions;}
 
     private:
-
         std::vector<PositionPtr> selected_positions; // <- filled from position_collection.positions
         std::vector<PositionPtr> active_positions;
         std::vector<PositionPtr> executed_positions;
@@ -42,6 +43,7 @@ class Portfolio {
         void finalize_closed_positions();
         void activate_positions_at(const TimePoint& current_time, const std::vector<PositionPtr>& all_positions, size_t& position_index);
         void finalize_remaining_open_positions();
+
 
 
     };

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8; py-indent-offset:4 -*-
 import numpy
-from TradeTide.position import Short, Long
+from TradeTide.TradeTide.position_ import Short, Long
 from datetime import date as DateTime
 
 

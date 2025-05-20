@@ -93,6 +93,7 @@ PYBIND11_MODULE(interface_portfolio, module) {
                     List[float]: Portfolio equity at each market time step, including realized PnL.
             )pbdoc")
 
-
+        .def_property_readonly("market", &Portfolio::get_market)
+        .def_property_readonly("positions", &Portfolio::get_positions)
         ;
 }

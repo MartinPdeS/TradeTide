@@ -12,6 +12,7 @@ PYBIND11_MODULE(interface_market, module) {
         .def_readonly("close", &Ask::close)
         .def_readonly("high", &Ask::high)
         .def_readonly("low", &Ask::low)
+        .def_property_readonly("price", &Ask::get_price)
     ;
 
     py::class_<Bid>(module, "Bid")
@@ -19,6 +20,7 @@ PYBIND11_MODULE(interface_market, module) {
         .def_readonly("close", &Bid::close)
         .def_readonly("high", &Bid::high)
         .def_readonly("low", &Bid::low)
+        .def_property_readonly("price", &Bid::get_price)
     ;
 
     py::class_<Market>(module, "Market")

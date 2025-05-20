@@ -1,4 +1,3 @@
-# from TradeTide.binary.PortfolioInterface import Portfolio
-# from TradeTide.binary.PositionInterface import Position
-# from TradeTide.binary.MarketInterface import Market
-# from TradeTide.binary.RiskManagmentInterface import RiskManagement
+from TradeTide.binary import interface_capital_management as capital_management
+from TradeTide.binary import interface_exit_strategy as exit_strategy
+from TradeTide.binary import interface_position as position

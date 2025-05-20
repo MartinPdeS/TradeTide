@@ -17,7 +17,7 @@ PYBIND11_MODULE(interface_capital_management, module) {
         .doc() = "Abstract base class for capital (lot size) management strategies.";
 
 
-    py::class_<FixedFractionalCapitalManagement, BaseCapitalManagement, std::shared_ptr<FixedFractionalCapitalManagement>>(module, "FixedFractionalCapitalManagement")
+    py::class_<FixedFractionalCapitalManagement, BaseCapitalManagement, std::shared_ptr<FixedFractionalCapitalManagement>>(module, "FixedFractional")
         .def(
             py::init<double, double, size_t, double, size_t>(),
             py::arg("capital"),

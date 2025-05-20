@@ -12,16 +12,12 @@
 using Duration = std::chrono::system_clock::duration;
 using TimePoint = std::chrono::system_clock::time_point;
 
-enum MarketType {
-    Call,
-    Bid_,
-    Mean
-};
-
 
 class Ask {
     public:
         std::vector<double> open, close, high, low, *price;
+
+        [[nodiscard]] const std::vector<double>& get_price(){return *this->price;}
 
         Ask() = default;
         Ask(
@@ -36,6 +32,8 @@ class Bid {
     public:
         std::vector<double> open, close, high, low, *price;
 
+        [[nodiscard]] const std::vector<double>& get_price(){return *this->price;}
+
         Bid() = default;
         Bid(
             const std::vector<double> &open,
@@ -47,28 +45,24 @@ class Bid {
 
 
 class Market {
-public:
-    std::string currencies;
-    TimePoint start_date;
-    TimePoint end_date;
     private:
     std::vector<double> open_prices;
     std::vector<double> close_prices;
     std::vector<double> high_prices;
     std::vector<double> low_prices;
 public:
+    std::string currencies;
+    TimePoint start_date;
+    TimePoint end_date;
     std::vector<double> spreads;
     std::vector<double> volumes;
     Bid bid;
     Ask ask;
-
     size_t number_of_elements;
-    double pip_size;
     double pip_value;
     bool is_bid;
     std::vector<TimePoint> dates;
     Duration interval;
-    double current_price_per_lots;
 
 
     Market() : is_bid(true) {}
@@ -85,13 +79,13 @@ public:
         const double pip_value
     )
         :
-            currencies(currencies),
-            start_date(start_date),
-            end_date(end_date),
             open_prices(input_open),
             close_prices(input_close),
             high_prices(input_high),
             low_prices(input_low),
+            currencies(currencies),
+            start_date(start_date),
+            end_date(end_date),
             pip_value(pip_value),
             is_bid(true)
         {
@@ -105,9 +99,6 @@ public:
     void display_market_data() const;
 
     TimePoint parse_date_time(const std::string& datetime_string);
-
-    void set_prices(const std::string& type, bool is_bid);
-
 
     /// If `spread_override` has a value, ALWAYS use that value
     /// instead of any “spread” column in the CSV.
@@ -138,8 +129,4 @@ public:
 
     void set_is_bid(const bool is_bid);
     void set_price(const std::string& type);
-
-
-
-
 };

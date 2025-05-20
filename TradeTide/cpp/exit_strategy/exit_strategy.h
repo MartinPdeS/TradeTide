@@ -65,16 +65,16 @@ class StaticExitStrategy : public ExitStrategy {
 
         void update_stop_loss_price(BasePosition& position, const double&) override {
             if (position.is_long)
-                this->stop_loss_price = position.entry_price - this->stop_loss_pip * position.market.pip_size;
+                this->stop_loss_price = position.entry_price - this->stop_loss_pip * position.market.pip_value;
             else
-                this->stop_loss_price = position.entry_price + this->stop_loss_pip * position.market.pip_size;
+                this->stop_loss_price = position.entry_price + this->stop_loss_pip * position.market.pip_value;
         }
 
         void update_take_profit_price(BasePosition& position, const double&) override {
             if (position.is_long)
-                this->take_profit_price = position.entry_price + this->take_profit_pip * position.market.pip_size;
+                this->take_profit_price = position.entry_price + this->take_profit_pip * position.market.pip_value;
             else
-                this->take_profit_price = position.entry_price - this->take_profit_pip * position.market.pip_size;
+                this->take_profit_price = position.entry_price - this->take_profit_pip * position.market.pip_value;
         }
     };
 
@@ -93,7 +93,7 @@ class TrailingExitStrategy : public ExitStrategy {
 
         void update_stop_loss_price(BasePosition& position, const double& current_price) override {
             if (position.is_long) {
-                double current_stop_loss_price = current_price - this->stop_loss_pip * position.market.pip_size;
+                double current_stop_loss_price = current_price - this->stop_loss_pip * position.market.pip_value;
 
                 if (!this->stop_loss_initialized) {
                     this->stop_loss_price = current_stop_loss_price;
@@ -104,7 +104,7 @@ class TrailingExitStrategy : public ExitStrategy {
                     this->stop_loss_price = current_stop_loss_price;
             }
             else {
-                double current_stop_loss_price = current_price + this->stop_loss_pip * position.market.pip_size;
+                double current_stop_loss_price = current_price + this->stop_loss_pip * position.market.pip_value;
 
                 if (!this->stop_loss_initialized) {
                     this->stop_loss_price = current_stop_loss_price;
@@ -118,7 +118,7 @@ class TrailingExitStrategy : public ExitStrategy {
 
         void update_take_profit_price(BasePosition& position, const double& current_price) override {
             if (position.is_long) {
-                double current_take_profit_price = current_price + this->take_profit_pip * position.market.pip_size;
+                double current_take_profit_price = current_price + this->take_profit_pip * position.market.pip_value;
 
                 if (!this->take_profit_initialized) {
                     this->take_profit_price = current_take_profit_price;
@@ -129,7 +129,7 @@ class TrailingExitStrategy : public ExitStrategy {
                     this->take_profit_price = current_take_profit_price;
             }
             else {
-                double current_take_profit_price = current_price - this->take_profit_pip * position.market.pip_size;
+                double current_take_profit_price = current_price - this->take_profit_pip * position.market.pip_value;
 
                 if (!this->take_profit_initialized) {
                     this->take_profit_price = current_take_profit_price;
@@ -160,11 +160,11 @@ class BreakEvenExitStrategy : public ExitStrategy {
             if (!break_even_triggered) {
                 // Normal SL until break-even level is hit
                 if (position.is_long)
-                    stop_loss_price = position.entry_price - stop_loss_pip * position.market.pip_size;
+                    stop_loss_price = position.entry_price - stop_loss_pip * position.market.pip_value;
                 else
-                    stop_loss_price = position.entry_price + stop_loss_pip * position.market.pip_size;
+                    stop_loss_price = position.entry_price + stop_loss_pip * position.market.pip_value;
 
-                double distance_moved = std::abs(current_price - position.entry_price) / position.market.pip_size;
+                double distance_moved = std::abs(current_price - position.entry_price) / position.market.pip_value;
                 if (distance_moved >= break_even_trigger_pip) {
                     stop_loss_price = position.entry_price;
                     break_even_triggered = true;
@@ -174,9 +174,9 @@ class BreakEvenExitStrategy : public ExitStrategy {
 
         void update_take_profit_price(BasePosition& position, const double&) override {
             if (position.is_long)
-                take_profit_price = position.entry_price + take_profit_pip * position.market.pip_size;
+                take_profit_price = position.entry_price + take_profit_pip * position.market.pip_value;
             else
-                take_profit_price = position.entry_price - take_profit_pip * position.market.pip_size;
+                take_profit_price = position.entry_price - take_profit_pip * position.market.pip_value;
         }
     };
 

@@ -36,10 +36,9 @@ class FixedFractionalCapitalManagement : public BaseCapitalManagement {
         void compute_lot_size(BasePosition& position) const override {
             const double entry_price = position.entry_price;
             const double stop_price = position.exit_strategy->stop_loss_price;
-            const double pip_size = position.market.pip_size;
             const double pip_value = position.market.pip_value;
 
-            double pip_risk = std::abs(entry_price - stop_price) / pip_size;
+            double pip_risk = std::abs(entry_price - stop_price) / pip_value;
             if (pip_risk <= 0.0 || pip_value <= 0.0)
                 return;  // fallback
 

@@ -1,7 +1,5 @@
 #include "market.h"
 
-using namespace std::chrono;
-
 void
 Market::generate_random_market_data(const TimePoint& start_date, const TimePoint& end_date, const std::chrono::system_clock::duration& interval)
 {
@@ -201,10 +199,10 @@ Market::split_csv_line(const std::string& line) {
 
 
 void Market::load_from_csv(
-    const std::string&            filename,
-    const Duration&               time_span,
-    std::optional<double>         spread_override,
-    std::optional<bool>           is_bid_override)
+    const std::string& filename,
+    const Duration& time_span,
+    std::optional<double> spread_override,
+    std::optional<bool> is_bid_override)
 {
     std::ifstream file(filename);
     if (!file.is_open())
@@ -227,7 +225,7 @@ void Market::load_from_csv(
             // pip_size=…  → set Market::pip_size if not overridden by code
             if (meta.rfind("pip_size=", 0) == 0) {
                 auto val = meta.substr(std::string{"pip_size="}.size());
-                pip_size = std::stod(val);
+                this->pip_value = std::stod(val);
             }
 
             // is_bid=…   → set Market::is_bid if user did not pass is_bid_override

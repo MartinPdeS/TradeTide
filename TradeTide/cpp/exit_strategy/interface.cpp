@@ -15,7 +15,7 @@ PYBIND11_MODULE(interface_exit_strategy, module) {
             behaviors for how stop-loss and take-profit prices are managed over time.
         )pbdoc";
 
-    py::class_<StaticExitStrategy, ExitStrategy, std::shared_ptr<StaticExitStrategy>>(module, "StaticExitStrategy")
+    py::class_<StaticExitStrategy, ExitStrategy, std::shared_ptr<StaticExitStrategy>>(module, "Static")
         .def(
             py::init<double, double, const bool>(),
             py::arg("stop_loss"),
@@ -33,7 +33,7 @@ PYBIND11_MODULE(interface_exit_strategy, module) {
                 save_price_data (bool): Whether to store SL/TP evolution data.
         )pbdoc";
 
-    py::class_<TrailingExitStrategy, ExitStrategy, std::shared_ptr<TrailingExitStrategy>>(module, "TrailingExitStrategy")
+    py::class_<TrailingExitStrategy, ExitStrategy, std::shared_ptr<TrailingExitStrategy>>(module, "Trailing")
         .def(
             py::init<double, double, const bool>(),
             py::arg("stop_loss"),
@@ -52,7 +52,7 @@ PYBIND11_MODULE(interface_exit_strategy, module) {
                 save_price_data (bool): Whether to store SL/TP evolution data.
         )pbdoc";
 
-    py::class_<BreakEvenExitStrategy, ExitStrategy, std::shared_ptr<BreakEvenExitStrategy>>(module, "BreakEvenExitStrategy")
+    py::class_<BreakEvenExitStrategy, ExitStrategy, std::shared_ptr<BreakEvenExitStrategy>>(module, "BreakEven")
         .def(
             py::init<double, double, double, const bool>(),
             py::arg("stop_loss"),

@@ -1,12 +1,11 @@
 from TradeTide.market import Market
-from TradeTide.binary.interface_exit_strategy import StaticExitStrategy, TrailingExitStrategy, BreakEvenExitStrategy
 from TradeTide.portfolio import Portfolio
 from TradeTide.loader import get_data_path
 from TradeTide.position_collection import PositionCollection
 from TradeTide.currencies import Currency
 from datetime import datetime, timedelta
 from TradeTide.signal import Signal
-from TradeTide.binary.interface_capital_management import FixedFractionalCapitalManagement
+from TradeTide import capital_management, exit_strategy
 
 market = Market()
 
@@ -26,16 +25,13 @@ market.load_from_database(
     spread_override=1,
     is_bid_override=True
 )
-market.pip_value = 0.0001
-
 
 signal = Signal(market=market)
 
 signal.generate_random(probability=0.03 * 4)
 
-# signal.display_signal()
 
-exit_strategy = StaticExitStrategy(
+exit_strategy = exit_strategy.Static(
     stop_loss=5,
     take_profit=5,
     save_price_data=True
@@ -52,12 +48,12 @@ position_collection.run()
 
 position_collection.display()
 
-capital_management = FixedFractionalCapitalManagement(
+capital_management = capital_management.FixedFractional(
     capital=1000,
     risk_per_trade=1,
-    max_lot_size=10,
+    max_lot_size=2,
     max_capital_at_risk=100000,
-    max_concurrent_positions=5,
+    max_concurrent_positions=1,
 )
 
 portfolio  = Portfolio(
@@ -67,7 +63,7 @@ portfolio  = Portfolio(
 
 portfolio.simulate()
 
-
 portfolio.display()
 
-portfolio.plot()
+# portfolio.plot()
+portfolio.plot_positions(max_positions=10)

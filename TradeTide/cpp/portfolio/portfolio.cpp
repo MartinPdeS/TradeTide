@@ -54,15 +54,15 @@ void Portfolio::finalize_closed_positions() {
         if (position->is_closed) {
             this->capital_management.current_equity += position->calculate_profit_and_loss();
             it = this->active_positions.erase(it);
-        } else {
+        } else
             ++it;
-        }
     }
 }
 
 void Portfolio::activate_positions_at(const TimePoint& current_time, const std::vector<PositionPtr>& all_positions, size_t& position_index) {
     while (position_index < all_positions.size() && all_positions[position_index]->start_date == current_time) {
 
+        std::cout<<this->active_positions.size()<<"   :: "<<this->capital_management.max_concurrent_positions<<"\n";
         if (this->active_positions.size() >= this->capital_management.max_concurrent_positions)
             break;
 

@@ -5,16 +5,15 @@ from matplotlib.lines import Line2D
 from typing import Tuple, Union, Optional
 
 from TradeTide.binary.interface_position_collection import PositionCollection
-from TradeTide.binary.interface_position import Long
-from MPSPlots.styles import mps
+from TradeTide import position
 
+from MPSPlots.styles import mps
 import matplotlib.pyplot as plt
 
+Long = position.Long
+Short = position.Short
 
 class PositionCollection(PositionCollection):
-    pass
-
-
     def run(self) -> None:
         self.open_positions()
         self.propagate_positions()

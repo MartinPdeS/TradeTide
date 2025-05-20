@@ -28,7 +28,8 @@ public:
 
     TimePoint start_date;         ///< Timestamp when position is opened
     TimePoint close_date;         ///< Timestamp when position is closed
-    size_t start_idx = 0;         ///< Index in market data when position opens
+    size_t open_idx = 0;          ///< Index in market data when position opens
+    size_t close_idx = 0;
 
     bool is_long = true;          ///< True if this is a long position
     bool is_closed = false;       ///< True if this position has been closed
@@ -49,13 +50,13 @@ public:
                  std::unique_ptr<ExitStrategy> exit_strategy,
                  double entry_price,
                  TimePoint start_date,
-                 size_t start_idx,
+                 size_t open_idx,
                  bool is_long)
         : market(market),
           exit_strategy(std::move(exit_strategy)),
           entry_price(entry_price),
           start_date(start_date),
-          start_idx(start_idx),
+          open_idx(open_idx),
           is_long(is_long),
           is_closed(false)
     {}
@@ -80,6 +81,7 @@ public:
      * @return PnL as a double (positive = profit, negative = loss)
      */
     [[nodiscard]] virtual double calculate_profit_and_loss() const = 0;
+    [[nodiscard]] virtual double calculate_profit_and_loss_time(const size_t&) const = 0;
 
     /**
      * @brief Prints position summary to console.
@@ -107,6 +109,7 @@ public:
     void close(const double& price, const size_t& time_idx) {
         this->exit_price = price;
         this->close_date = this->market.dates[time_idx];
+        this->close_idx = time_idx;
         this->is_closed = true;
     }
 
@@ -114,6 +117,12 @@ public:
      * @brief Closes the position at the market price at the given index.
      */
     virtual void close(const size_t time_idx) = 0;
+
+    bool is_open(const TimePoint& date) {
+        if (date > this->start_date && date < this->close_date)
+            return true;
+        return false;
+    }
 };
 
 /**
@@ -131,6 +140,7 @@ public:
 
     void propagate() override;
     [[nodiscard]] double calculate_profit_and_loss() const override;
+    [[nodiscard]] double calculate_profit_and_loss_time(const size_t& time_idx) const override;
     void display() const override;
 
     void close(const size_t time_idx) override {
@@ -155,6 +165,7 @@ public:
 
     void propagate() override;
     [[nodiscard]] double calculate_profit_and_loss() const override;
+    [[nodiscard]] double calculate_profit_and_loss_time(const size_t&) const override;
     void display() const override;
 
     void close(const size_t time_idx) override {

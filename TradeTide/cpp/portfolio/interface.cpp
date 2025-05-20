@@ -16,12 +16,9 @@ PYBIND11_MODULE(interface_portfolio, module) {
 
     py::class_<Portfolio>(module, "Portfolio")
         .def(
-            py::init<PositionCollection&, double, size_t, double, double>(),
+            py::init<PositionCollection&, BaseCapitalManagement&>(),
             py::arg("position_collection"),
-            py::arg("initial_capital"),
-            py::arg("max_concurrent_positions"),
-            py::arg("max_lot_size"),
-            py::arg("max_capital_at_risk"),
+            py::arg("capital_management"),
             R"pbdoc(
                 Initialize a new Portfolio simulation.
 
@@ -71,7 +68,7 @@ PYBIND11_MODULE(interface_portfolio, module) {
                 Print a summary of portfolio performance to the console.
             )pbdoc")
 
-        .def("open_position_count_over_time", &Portfolio::open_position_count_over_time,
+        .def_readonly("open_positions_count", &Portfolio::open_position_count,
             R"pbdoc(
                 Returns a list indicating how many positions were open at each market time step.
 
@@ -79,7 +76,7 @@ PYBIND11_MODULE(interface_portfolio, module) {
                     List[int]: Number of open positions aligned with market timestamps.
             )pbdoc")
 
-        .def("get_market_dates", &Portfolio::get_market_dates,
+        .def_property_readonly("dates", &Portfolio::get_market_dates,
             py::return_value_policy::reference_internal,
             R"pbdoc(
                 Return the list of market timestamps used in the portfolio.
@@ -88,7 +85,7 @@ PYBIND11_MODULE(interface_portfolio, module) {
                     List[datetime]: Time series aligned with market data and position signals.
             )pbdoc")
 
-        .def("get_equity_over_time", &Portfolio::equity_over_time,
+        .def_readonly("equity", &Portfolio::equity_history,
             R"pbdoc(
                 Returns a list of equity values over time.
 

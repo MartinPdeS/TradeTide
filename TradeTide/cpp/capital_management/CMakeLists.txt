@@ -1,6 +1,6 @@
 # cpp/detector/CMakeLists.txt
 
-set(NAME "capital_managment")
+set(NAME "capital_management")
 
 # Create a shared library for functionality.
 add_library("cpp_${NAME}" STATIC "${NAME}.cpp")
@@ -12,4 +12,9 @@ pybind11_add_module("interface_${NAME}" MODULE interface.cpp)
 set_target_properties("interface_${NAME}" PROPERTIES OUTPUT_NAME "interface_${NAME}")
 target_link_libraries("interface_${NAME}" PRIVATE "cpp_${NAME}")
 
-list(APPEND ALL_TARGETS cpp_${NAME} interface_${NAME})
+install(
+    TARGETS cpp_${NAME} interface_${NAME}
+    LIBRARY DESTINATION ${TRADETIDE_BIN_DIR}
+    ARCHIVE DESTINATION ${TRADETIDE_BIN_DIR}
+    RUNTIME DESTINATION ${TRADETIDE_BIN_DIR}
+)

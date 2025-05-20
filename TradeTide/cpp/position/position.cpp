@@ -24,7 +24,7 @@ const std::vector<TimePoint>& BasePosition::strategy_dates() const {
 // Check if stop-loss or take-profit is hit
 void
 Long::propagate() {
-    for (size_t time_idx = this->start_idx; time_idx < this->market.dates.size(); time_idx++) {
+    for (size_t time_idx = this->open_idx; time_idx < this->market.dates.size(); time_idx++) {
         double current_price = (*this->market.bid.price)[time_idx];
 
         this->exit_strategy->update_price(*this, time_idx, current_price);
@@ -54,6 +54,18 @@ Long::calculate_profit_and_loss() const {
     return price_difference * this->lot_size * this->market.pip_value;
 }
 
+// Calculate profit or loss
+[[nodiscard]] double
+Long::calculate_profit_and_loss_time(const size_t& time_idx) const {
+    if (time_idx < this->open_idx)
+        return 0.0; // No PnL if the position is still open
+
+    if (time_idx < this->close_idx)
+        return ((*this->market.bid.price)[time_idx] - this->entry_price) * this->lot_size;
+
+    return (this->exit_price - this->entry_price) * this->lot_size;
+}
+
 // Display Position Info
 void
 Long::display() const {
@@ -75,7 +87,7 @@ Long::display() const {
 // Short Position---------------------------------------------
 void
 Short::propagate() {
-    for (size_t time_idx = this->start_idx; time_idx < this->market.dates.size(); time_idx++) {
+    for (size_t time_idx = this->open_idx; time_idx < this->market.dates.size(); time_idx++) {
         double current_price = (*this->market.ask.price)[time_idx];
 
         this->exit_strategy->update_price(*this, time_idx, current_price);
@@ -107,6 +119,18 @@ Short::calculate_profit_and_loss() const {
     double price_difference = this->entry_price - this->exit_price;
 
     return price_difference * this->lot_size * this->market.pip_value;
+}
+
+// Calculate profit or loss
+[[nodiscard]] double
+Short::calculate_profit_and_loss_time(const size_t& time_idx) const {
+    if (time_idx < this->open_idx)
+        return 0.0; // No PnL if the position is still open
+
+    if (time_idx < this->close_idx)
+        return ((*this->market.ask.price)[time_idx] - this->entry_price) * this->lot_size;
+
+    return (this->exit_price - this->entry_price) * this->lot_size;
 }
 
 // Display Position Info

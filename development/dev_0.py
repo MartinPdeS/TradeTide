@@ -6,6 +6,7 @@ from TradeTide.position_collection import PositionCollection
 from TradeTide.currencies import Currency
 from datetime import datetime, timedelta
 from TradeTide.signal import Signal
+from TradeTide.binary.interface_capital_management import FixedFractionalCapitalManagement
 
 market = Market()
 
@@ -30,13 +31,13 @@ market.pip_value = 0.0001
 
 signal = Signal(market=market)
 
-signal.generate_random(probability=0.03)
+signal.generate_random(probability=0.03 * 4)
 
 # signal.display_signal()
 
 exit_strategy = StaticExitStrategy(
-    stop_loss=12,
-    take_profit=12,
+    stop_loss=5,
+    take_profit=5,
     save_price_data=True
 )
 
@@ -49,12 +50,19 @@ position_collection = PositionCollection(
 
 position_collection.run()
 
-portfolio  = Portfolio(
-    position_collection=position_collection,
-    initial_capital=10000,
-    max_concurrent_positions=1,
+position_collection.display()
+
+capital_management = FixedFractionalCapitalManagement(
+    capital=1000,
+    risk_per_trade=1,
     max_lot_size=10,
-    max_capital_at_risk=100000
+    max_capital_at_risk=100000,
+    max_concurrent_positions=5,
+)
+
+portfolio  = Portfolio(
+    capital_management=capital_management,
+    position_collection=position_collection,
 )
 
 portfolio.simulate()

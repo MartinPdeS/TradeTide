@@ -33,6 +33,7 @@ public:
 
     bool is_long = true;          ///< True if this is a long position
     bool is_closed = false;       ///< True if this position has been closed
+    bool is_terminated = false;
 
     virtual ~BasePosition() = default;
 
@@ -93,14 +94,6 @@ public:
      */
     const std::vector<TimePoint>& strategy_dates() const;
 
-    /**
-     * @brief Helper method to close position at a specific price and time index.
-     */
-    void set_close_condition(const double& price, const size_t& time_idx) {
-        this->exit_price = price;
-        this->close_date = this->market.dates[time_idx];
-        this->close_idx = time_idx;
-    }
 
     /**
      * @brief Closes the position at the market price at the given index.

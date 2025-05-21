@@ -61,10 +61,11 @@ void PositionCollection::open_positions(){
 }
 
 void PositionCollection::propagate_positions() {
-
     #pragma omp parallel for
-    for (const auto& position : this->positions)
+    for (const auto& position : this->positions) {
         position->propagate();
+
+    }
 }
 
 

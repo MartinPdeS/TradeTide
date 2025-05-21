@@ -25,30 +25,35 @@ const std::vector<TimePoint>& BasePosition::strategy_dates() const {
 void
 Long::propagate() {
     for (size_t time_idx = this->open_idx; time_idx < this->market.dates.size(); time_idx++) {
+
         double current_price = (*this->market.bid.price)[time_idx];
 
         this->exit_strategy->update_price(*this, time_idx, current_price);
 
         if (this->market.bid.low[time_idx] <= this->exit_strategy->stop_loss_price) {     // Hit stop-loss
-            BasePosition::set_close_condition(this->exit_strategy->stop_loss_price, time_idx + 1);
-            break;
+            this->exit_price = this->exit_strategy->stop_loss_price;
+            this->close_date = this->market.dates[time_idx + 1];
+            this->close_idx = time_idx + 1;
+            this->is_terminated = true;
+
+            return;
         }
 
         if (this->market.bid.high[time_idx] >= this->exit_strategy->take_profit_price) {   // Hit take-profit
-            BasePosition::set_close_condition(this->exit_strategy->take_profit_price, time_idx + 1);
-            break;
+            this->exit_price = this->exit_strategy->take_profit_price;
+            this->close_date = this->market.dates[time_idx + 1];
+            this->close_idx = time_idx + 1;
+            this->is_terminated = true;
+
+            return;
         }
     }
-    std::logic_error("Couldn't propagate positions.");
 }
 
 
 // Calculate profit or loss
 [[nodiscard]] double
 Long::calculate_profit_and_loss() const {
-    if (!is_closed)
-        return 0.0; // No PnL if the position is still open
-
     double price_difference = this->exit_price - this->entry_price;
 
     return price_difference * this->lot_size * this->market.pip_value;
@@ -57,9 +62,6 @@ Long::calculate_profit_and_loss() const {
 // Calculate profit or loss
 [[nodiscard]] double
 Long::calculate_profit_and_loss_time(const size_t& time_idx) const {
-    if (time_idx < this->open_idx)
-        return 0.0; // No PnL if the position is still open
-
     if (time_idx < this->close_idx)
         return ((*this->market.bid.price)[time_idx] - this->entry_price) * this->lot_size;
 
@@ -74,10 +76,8 @@ Long::display() const {
         << "Start Time: " << start_date << "\n"
         << "Stop Time: " << close_date << "\n"
         << "Entry Price: " << entry_price << "\n"
-        << "Exit Price: " << (is_closed ? std::to_string(exit_price) : "N/A") << "\n"
-        << "Lot Size: " << lot_size << "\n"
-        << "Pip Price: " << this->market.pip_value << "\n"
-        << "Position Status: " << (is_closed ? "Closed" : "Open") << "\n\n"
+        << "Exit Price: " << exit_price << "\n"
+        << "Lot Size: " << lot_size << "\n\n"
     ;
 }
 
@@ -94,18 +94,23 @@ Short::propagate() {
 
         if (this->market.ask.high[time_idx] >= this->exit_strategy->stop_loss_price) {  // Hit stop-loss
             this->exit_price = this->exit_strategy->stop_loss_price;
-            this->is_closed = true;
             this->close_date = this->market.dates[time_idx + 1];
-            break;
+            this->close_idx = time_idx + 1;
+            this->is_terminated = true;
+
+            return;
         }
 
         if (this->market.ask.low[time_idx] <= this->exit_strategy->take_profit_price) {  // Hit take-profit
             this->exit_price = this->exit_strategy->take_profit_price;
-            this->is_closed = true;
             this->close_date = this->market.dates[time_idx + 1];
-            break;
+            this->close_idx = time_idx + 1;
+            this->is_terminated = true;
+
+            return;
         }
     }
+    std::logic_error("Couldn't propagate positions.");
 }
 
 
@@ -113,9 +118,6 @@ Short::propagate() {
 // Calculate profit or loss
 double
 Short::calculate_profit_and_loss() const {
-    if (!is_closed)
-        return 0.0; // No PnL if the position is still open
-
     double price_difference = this->entry_price - this->exit_price;
 
     return price_difference * this->lot_size * this->market.pip_value;
@@ -141,9 +143,7 @@ Short::display() const {
         << "Start Time: " << start_date << "\n"
         << "Stop Time: " << close_date << "\n"
         << "Entry Price: " << entry_price << "\n"
-        << "Exit Price: " << (is_closed ? std::to_string(exit_price) : "N/A") << "\n"
-        << "Lot Size: " << lot_size << "\n"
-        << "Pip Price: " << this->market.pip_value << "\n"
-        << "Position Status: " << (is_closed ? "Closed" : "Open") << "\n\n"
+        << "Exit Price: " << exit_price<< "\n"
+        << "Lot Size: " << lot_size << "\n\n"
     ;
 }

@@ -76,6 +76,9 @@ class Portfolio(binding):
                 if idx > max_positions:
                     break
 
+                if not position.is_terminated:
+                    continue
+
                 start, end = position.start_date, position.close_date
                 fill_color = long_fill if isinstance(position, Long) else short_fill
 

@@ -21,17 +21,17 @@ market.load_from_database(
     currency_0=Currency.CAD,
     currency_1=Currency.USD,
     year=2023,
-    time_span=timedelta(hours=30),
+    time_span=timedelta(hours=3),
     spread_override=1,
     is_bid_override=True
 )
 
 signal = Signal(market=market)
 
-signal.generate_random(probability=0.03 * 4)
+signal.generate_random(probability=0.12)
 
 
-exit_strategy = exit_strategy.Static(
+exit_strategy = exit_strategy.Trailing(
     stop_loss=3,
     take_profit=3,
     save_price_data=True
@@ -44,9 +44,8 @@ position_collection = PositionCollection(
     exit_strategy=exit_strategy,
 )
 
-position_collection.run()
-
-# position_collection.display()
+position_collection.open_positions()
+position_collection.propagate_positions()
 
 capital_management = capital_management.FixedFractional(
     capital=100000,
@@ -63,7 +62,4 @@ portfolio  = Portfolio(
 
 portfolio.simulate()
 
-portfolio.display()
-
-# portfolio.plot()
 portfolio.plot_positions(max_positions=300, show=True)

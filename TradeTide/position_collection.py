@@ -14,11 +14,6 @@ Long = position.Long
 Short = position.Short
 
 class PositionCollection(PositionCollection):
-    def run(self) -> None:
-        self.open_positions()
-        self.propagate_positions()
-        self.terminate_open_positions()
-
 
     def plot(
         self,
@@ -82,6 +77,8 @@ class PositionCollection(PositionCollection):
                 if idx > max_positions:
                     break
                 position = self[idx]
+
+
 
                 if not position.is_closed:
                     continue

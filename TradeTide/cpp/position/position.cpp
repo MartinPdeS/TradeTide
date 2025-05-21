@@ -36,10 +36,10 @@ Long::propagate() {
 
         if (this->market.bid.high[time_idx] >= this->exit_strategy->take_profit_price) {   // Hit take-profit
             BasePosition::set_close_condition(this->exit_strategy->take_profit_price, time_idx + 1);
-
             break;
         }
     }
+    std::logic_error("Couldn't propagate positions.");
 }
 
 

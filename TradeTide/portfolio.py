@@ -19,7 +19,8 @@ class Portfolio(binding):
         figsize: Tuple[int, int] = (12, 4),
         max_positions: Union[int, float] = np.inf,
         price_type: str = "close",
-        ax: Optional[plt.Axes] = None
+        ax: Optional[plt.Axes] = None,
+        show: bool = False
     ) -> Tuple[plt.Figure, plt.Axes]:
         """
         Plot market bid/ask prices and shade closed positions, using the mps style,
@@ -48,16 +49,18 @@ class Portfolio(binding):
                 fig = ax.get_figure()
 
             # 2) Define colors
-            ask_color   = "#1f77b4"
-            bid_color   = "#ff7f0e"
             long_fill   = "lightblue"#(0.2, 0.8, 0.2, 0.3)
             short_fill  = (0.8, 0.2, 0.2, 0.3)
             sl_color    = "#d62728"
             tp_color    = "#2ca02c"
 
             # 3) Plot ask/bid series
-            ln_ask, = ax.plot(self.dates, self.market.ask.price, label="Ask", color=ask_color, linewidth=1.5)
-            ln_bid, = ax.plot(self.dates, self.market.bid.price, label="Bid", color=bid_color, linewidth=1.5)
+            ln_ask, = ax.plot(self.dates, self.market.ask.price, label="Ask", color='C0', linewidth=1.5)
+            ax.fill_between(self.dates, y1=self.market.ask.low, y2=self.market.ask.high, color='C0', alpha=0.2)
+
+            ln_bid, = ax.plot(self.dates, self.market.bid.price, label="Bid", color='C1', linewidth=1.5)
+            ax.fill_between(self.dates, y1=self.market.bid.low, y2=self.market.bid.high, color='C1', alpha=0.2)
+
 
             ax.set_xlabel("Date")
             ax.set_ylabel(f"{price_type.capitalize()} Price")
@@ -67,12 +70,11 @@ class Portfolio(binding):
             drawn = 0
             # for position in self.get_all_positions(count=int(max_positions)):
 
-            for idx, position in enumerate(self.positions):
+            positions = self.get_positions(max_positions)
+
+            for idx, position in enumerate(positions):
                 if idx > max_positions:
                     break
-
-                if not position.is_closed:
-                    continue
 
                 start, end = position.start_date, position.close_date
                 fill_color = long_fill if isinstance(position, Long) else short_fill
@@ -103,7 +105,8 @@ class Portfolio(binding):
 
             fig.autofmt_xdate()
             fig.tight_layout()
-            plt.show()
+            if show:
+                plt.show()
 
         return fig, ax
 

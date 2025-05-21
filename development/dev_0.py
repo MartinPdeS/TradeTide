@@ -32,8 +32,8 @@ signal.generate_random(probability=0.03 * 4)
 
 
 exit_strategy = exit_strategy.Static(
-    stop_loss=5,
-    take_profit=5,
+    stop_loss=3,
+    take_profit=3,
     save_price_data=True
 )
 
@@ -46,11 +46,11 @@ position_collection = PositionCollection(
 
 position_collection.run()
 
-position_collection.display()
+# position_collection.display()
 
 capital_management = capital_management.FixedFractional(
-    capital=1000,
-    risk_per_trade=1,
+    capital=100000,
+    risk_per_trade=0.01,
     max_lot_size=2,
     max_capital_at_risk=100000,
     max_concurrent_positions=1,
@@ -66,4 +66,4 @@ portfolio.simulate()
 portfolio.display()
 
 # portfolio.plot()
-portfolio.plot_positions(max_positions=10)
+portfolio.plot_positions(max_positions=300, show=True)

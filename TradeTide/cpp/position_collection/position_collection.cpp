@@ -71,7 +71,7 @@ void PositionCollection::propagate_positions() {
 void PositionCollection::terminate_open_positions() {
     for (const auto& position : this->positions)
         if (!position->is_closed)
-            position->close(this->market.dates.size() - 1);  // Set to last element of market
+            position->set_close_condition(this->market.dates.size() - 1);  // Set to last element of market
 
 
         std::sort(

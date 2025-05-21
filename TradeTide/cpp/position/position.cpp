@@ -30,12 +30,12 @@ Long::propagate() {
         this->exit_strategy->update_price(*this, time_idx, current_price);
 
         if (this->market.bid.low[time_idx] <= this->exit_strategy->stop_loss_price) {     // Hit stop-loss
-            BasePosition::close(this->exit_strategy->stop_loss_price, time_idx + 1);
+            BasePosition::set_close_condition(this->exit_strategy->stop_loss_price, time_idx + 1);
             break;
         }
 
         if (this->market.bid.high[time_idx] >= this->exit_strategy->take_profit_price) {   // Hit take-profit
-            BasePosition::close(this->exit_strategy->take_profit_price, time_idx + 1);
+            BasePosition::set_close_condition(this->exit_strategy->take_profit_price, time_idx + 1);
 
             break;
         }

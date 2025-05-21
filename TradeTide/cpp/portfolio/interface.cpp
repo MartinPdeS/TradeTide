@@ -2,7 +2,7 @@
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "portfolio.h"
-#include "../position_collection/position_collection.h"  // if needed
+#include "../position_collection/position_collection.h"
 
 namespace py = pybind11;
 
@@ -93,7 +93,21 @@ PYBIND11_MODULE(interface_portfolio, module) {
                     List[float]: Portfolio equity at each market time step, including realized PnL.
             )pbdoc")
 
+        .def("get_positions", &Portfolio::get_positions,
+            py::arg("count") = std::numeric_limits<size_t>::max(),
+            py::return_value_policy::reference_internal,
+            R"pbdoc(
+                Get a list of pointers to selected positions.
+
+                Parameters:
+                    count (int, optional): Maximum number of positions to return.
+                                            Defaults to all positions.
+
+                Returns:
+                    List[BasePosition]: Up to `count` positions.
+            )pbdoc"
+        )
+
         .def_property_readonly("market", &Portfolio::get_market)
-        .def_property_readonly("positions", &Portfolio::get_positions)
         ;
 }

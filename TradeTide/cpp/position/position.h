@@ -67,16 +67,6 @@ public:
     virtual void propagate() = 0;
 
     /**
-     * @brief Closes the position at the stop-loss price.
-     */
-    void close_at_stop_loss(size_t time_idx);
-
-    /**
-     * @brief Closes the position at the take-profit price.
-     */
-    void close_at_take_profit(size_t time_idx);
-
-    /**
      * @brief Calculates profit or loss of the position.
      * @return PnL as a double (positive = profit, negative = loss)
      */
@@ -106,17 +96,16 @@ public:
     /**
      * @brief Helper method to close position at a specific price and time index.
      */
-    void close(const double& price, const size_t& time_idx) {
+    void set_close_condition(const double& price, const size_t& time_idx) {
         this->exit_price = price;
         this->close_date = this->market.dates[time_idx];
         this->close_idx = time_idx;
-        this->is_closed = true;
     }
 
     /**
      * @brief Closes the position at the market price at the given index.
      */
-    virtual void close(const size_t time_idx) = 0;
+    virtual void set_close_condition(const size_t time_idx) = 0;
 
     bool is_open(const TimePoint& date) {
         if (date > this->start_date && date < this->close_date)
@@ -143,10 +132,9 @@ public:
     [[nodiscard]] double calculate_profit_and_loss_time(const size_t& time_idx) const override;
     void display() const override;
 
-    void close(const size_t time_idx) override {
+    void set_close_condition(const size_t time_idx) override {
         this->exit_price = (*this->market.bid.price)[time_idx];
         this->close_date = this->market.dates[time_idx];
-        this->is_closed = true;
     }
 };
 
@@ -168,10 +156,9 @@ public:
     [[nodiscard]] double calculate_profit_and_loss_time(const size_t&) const override;
     void display() const override;
 
-    void close(const size_t time_idx) override {
+    void set_close_condition(const size_t time_idx) override {
         this->exit_price = (*this->market.ask.price)[time_idx];
         this->close_date = this->market.dates[time_idx];
-        this->is_closed = true;
     }
 };
 

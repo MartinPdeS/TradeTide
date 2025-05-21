@@ -20,6 +20,16 @@ const std::vector<TimePoint>& BasePosition::strategy_dates() const {
 }
 
 
+void BasePosition::terminate(const double exit_price, const size_t time_idx) {
+    this->exit_price = exit_price;
+    this->close_date = this->market.dates[time_idx];
+    this->close_idx = time_idx;
+    this->is_terminated = true;
+}
+
+
+
+
 // Long Position---------------------------------------------
 // Check if stop-loss or take-profit is hit
 void
@@ -30,23 +40,12 @@ Long::propagate() {
 
         this->exit_strategy->update_price(*this, time_idx, current_price);
 
-        if (this->market.bid.low[time_idx] <= this->exit_strategy->stop_loss_price) {     // Hit stop-loss
-            this->exit_price = this->exit_strategy->stop_loss_price;
-            this->close_date = this->market.dates[time_idx + 1];
-            this->close_idx = time_idx + 1;
-            this->is_terminated = true;
+        if (this->market.bid.low[time_idx] <= this->exit_strategy->stop_loss_price) // Hit stop-loss
+            return this->terminate(this->exit_strategy->stop_loss_price, time_idx);
 
-            return;
-        }
+        if (this->market.bid.high[time_idx] >= this->exit_strategy->take_profit_price)   // Hit take-profit
+            return this->terminate(this->exit_strategy->take_profit_price, time_idx);
 
-        if (this->market.bid.high[time_idx] >= this->exit_strategy->take_profit_price) {   // Hit take-profit
-            this->exit_price = this->exit_strategy->take_profit_price;
-            this->close_date = this->market.dates[time_idx + 1];
-            this->close_idx = time_idx + 1;
-            this->is_terminated = true;
-
-            return;
-        }
     }
 }
 
@@ -92,25 +91,13 @@ Short::propagate() {
 
         this->exit_strategy->update_price(*this, time_idx, current_price);
 
-        if (this->market.ask.high[time_idx] >= this->exit_strategy->stop_loss_price) {  // Hit stop-loss
+        if (this->market.ask.high[time_idx] >= this->exit_strategy->stop_loss_price)  // Hit stop-loss
+            return this->terminate(this->exit_strategy->stop_loss_price, time_idx);
             this->exit_price = this->exit_strategy->stop_loss_price;
-            this->close_date = this->market.dates[time_idx + 1];
-            this->close_idx = time_idx + 1;
-            this->is_terminated = true;
 
-            return;
-        }
-
-        if (this->market.ask.low[time_idx] <= this->exit_strategy->take_profit_price) {  // Hit take-profit
-            this->exit_price = this->exit_strategy->take_profit_price;
-            this->close_date = this->market.dates[time_idx + 1];
-            this->close_idx = time_idx + 1;
-            this->is_terminated = true;
-
-            return;
-        }
+        if (this->market.ask.low[time_idx] <= this->exit_strategy->take_profit_price)  // Hit take-profit
+            return this->terminate(this->exit_strategy->take_profit_price, time_idx);
     }
-    std::logic_error("Couldn't propagate positions.");
 }
 
 

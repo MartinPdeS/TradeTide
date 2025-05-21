@@ -94,6 +94,8 @@ public:
      */
     const std::vector<TimePoint>& strategy_dates() const;
 
+    void terminate(const double exit_price, const size_t time_idx);
+
 
     /**
      * @brief Closes the position at the market price at the given index.

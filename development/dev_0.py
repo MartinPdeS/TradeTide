@@ -64,4 +64,4 @@ portfolio.simulate()
 
 portfolio.display()
 
-# portfolio.plot_positions(max_positions=300, show=True)
+portfolio.plot_positions(max_positions=300, show=True)

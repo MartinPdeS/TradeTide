@@ -13,6 +13,7 @@ public:
     size_t max_concurrent_positions;
 
     double current_equity;
+    size_t position_count;
 
     virtual ~BaseCapitalManagement() = default;
     BaseCapitalManagement(const double capital, const size_t max_lot_size, const double max_capital_at_risk, const size_t max_concurrent_positions)

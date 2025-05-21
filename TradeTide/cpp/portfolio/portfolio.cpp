@@ -24,6 +24,7 @@ void Portfolio::simulate() {
     const auto& all_positions = this->position_collection.positions;
 
     size_t position_index = 0;
+    this->capital_management.position_count = 0;
 
     for (const TimePoint& current_time : dates) {
         this->current_time = current_time;
@@ -34,6 +35,7 @@ void Portfolio::simulate() {
 
             if (pos->close_date <= current_time) {
                 this->capital_management.current_equity += pos->calculate_profit_and_loss();
+                this->capital_management.position_count--;
                 it = this->active_positions.erase(it);
             }
             else
@@ -46,7 +48,7 @@ void Portfolio::simulate() {
         const PositionPtr& pos = all_positions[position_index];
 
         // If we can't open more positions now, skip this one (but advance index!)
-        if (this->active_positions.size() >= this->capital_management.max_concurrent_positions) {
+        if (this->capital_management.position_count >= this->capital_management.max_concurrent_positions) {
             ++position_index;
             continue;
         }
@@ -61,6 +63,7 @@ void Portfolio::simulate() {
         }
 
         // Accept position
+        this->capital_management.position_count++;
         this->active_positions.push_back(pos);
         this->selected_positions.push_back(pos);
         this->executed_positions.push_back(pos);

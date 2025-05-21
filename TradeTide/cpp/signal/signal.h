@@ -72,4 +72,5 @@ class Signal {
          * @return vector of trade signals
          */
         std::vector<int> compute_trade_signal();
+
 };

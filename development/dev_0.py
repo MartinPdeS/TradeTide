@@ -21,7 +21,7 @@ market.load_from_database(
     currency_0=Currency.CAD,
     currency_1=Currency.USD,
     year=2023,
-    time_span=timedelta(hours=3),
+    time_span=timedelta(hours=30),
     spread_override=1,
     is_bid_override=True
 )
@@ -32,8 +32,8 @@ signal.generate_random(probability=0.12)
 
 
 exit_strategy = exit_strategy.Trailing(
-    stop_loss=3,
-    take_profit=3,
+    stop_loss=10,
+    take_profit=10,
     save_price_data=True
 )
 
@@ -62,4 +62,6 @@ portfolio  = Portfolio(
 
 portfolio.simulate()
 
-portfolio.plot_positions(max_positions=300, show=True)
+portfolio.display()
+
+# portfolio.plot_positions(max_positions=300, show=True)

@@ -94,6 +94,18 @@ public:
     /// Vector of open position counts at each time step.
     std::vector<size_t> open_position_count;
 
+
+    [[nodiscard]] double calculate_total_return() const;
+    [[nodiscard]] double calculate_annualized_return(double total_return) const;
+    [[nodiscard]] std::chrono::duration<double> calculate_duration() const;
+    [[nodiscard]] double calculate_max_drawdown() const;
+    [[nodiscard]] double calculate_sharpe_ratio(double risk_free_rate = 0.0) const;
+    [[nodiscard]] double calculate_sortino_ratio(double risk_free_rate = 0.0) const;
+    [[nodiscard]] double calculate_win_loss_ratio() const;
+    [[nodiscard]] double calculate_equity() const;
+    [[nodiscard]] double calculate_volatility() const;
+
+
 private:
     /// Positions selected from the pool that passed capital constraints.
     std::vector<PositionPtr> selected_positions;

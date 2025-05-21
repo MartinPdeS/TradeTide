@@ -16,6 +16,12 @@ PYBIND11_MODULE(interface_position, module) {
 
                 This is the market price at which the position was opened.
             )pbdoc")
+        .def_readwrite("exit_price", &BasePosition::exit_price,
+            R"pbdoc(
+                Exit price of the position.
+
+                This is the market price at which the position was closed.
+            )pbdoc")
         .def_readwrite("lot_size", &BasePosition::lot_size,
             R"pbdoc(
                 Lot size of the position.

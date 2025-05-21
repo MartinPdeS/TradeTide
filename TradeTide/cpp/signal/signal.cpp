@@ -37,14 +37,25 @@ void Signal::to_csv(const std::string& filepath) const {
     if (!file.is_open())
         throw std::runtime_error("Unable to open file: " + filepath);
 
+    // Write metadata
+    file << "#METADATA:\n";
+    file << "#is_bid=" << (this->market.is_bid ? "true" : "false") << "\n";
+    file << "#pip_size=" << this->market.pip_value << "\n";
+
+    // Write header
+    file << "#DATA\n";
     file << "timestamp,signal\n";
+
+    // Write data
     for (size_t i = 0; i < this->trade_signal.size(); ++i) {
         std::time_t t = std::chrono::system_clock::to_time_t(this->market.dates[i]);
         file << std::put_time(std::localtime(&t), "%Y-%m-%d %H:%M:%S") << ","
-                << this->trade_signal[i] << "\n";
+             << this->trade_signal[i] << "\n";
     }
+
     file.close();
 }
+
 
 
 std::pair<size_t, size_t> Signal::count_signals() const {
@@ -66,4 +77,3 @@ std::vector<int> Signal::compute_trade_signal() {
     // Could be implemented based on price movement or technical rules.
     return this->trade_signal;
 }
-

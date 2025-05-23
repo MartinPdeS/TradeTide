@@ -15,11 +15,24 @@ PYBIND11_MODULE(interface_portfolio, module) {
     )pbdoc"
     ;
 
+    py::class_<State>(module, "State")
+        .def_readonly("time", &State::time)
+        .def_readonly("equity", &State::equity)
+        .def_readonly("number_of_concurent_positions", &State::number_of_concurrent_positions)
+        .def_readonly("capital_at_risk", &State::capital_at_risk)
+
+        .def_readonly("time_history", &State::time_history)
+        .def_readonly("equity_history", &State::equity_history)
+        .def_readonly("number_of_concurent_positions_history", &State::concurrent_positions_history)
+        .def_readonly("capital_at_risk_history", &State::capital_at_risk_history)
+        ;
+
     py::class_<Portfolio>(module, "Portfolio")
         .def(
-            py::init<PositionCollection&, BaseCapitalManagement&>(),
+            py::init<PositionCollection&, BaseCapitalManagement&, bool>(),
             py::arg("position_collection"),
             py::arg("capital_management"),
+            py::arg("save_history"),
             R"pbdoc(
                 Create a portfolio simulator using a predefined position collection and capital management strategy.
 
@@ -36,6 +49,8 @@ PYBIND11_MODULE(interface_portfolio, module) {
             Run the full simulation, opening/closing trades according to constraints.
         )pbdoc")
 
+        .def_readonly("state", &Portfolio::state, py::return_value_policy::copy)
+
         // Core equity access
         .def("final_equity", &Portfolio::final_equity, R"pbdoc(
             Final equity after simulation.
@@ -45,15 +60,15 @@ PYBIND11_MODULE(interface_portfolio, module) {
             Highest equity achieved during the simulation.
         )pbdoc")
 
-        .def("equity_curve", &Portfolio::equity_curve, R"pbdoc(
-            Time-series of equity over the simulation period.
-        )pbdoc")
-
-        .def_readonly("equity", &Portfolio::equity_history, R"pbdoc(
+        .def_property_readonly("equity_history", &Portfolio::get_history_equity, R"pbdoc(
             Raw list of equity values at each step.
         )pbdoc")
 
-        .def_readonly("open_positions_count", &Portfolio::open_position_count, R"pbdoc(
+        .def_property_readonly("capital_at_risk_history", &Portfolio::get_history_capital_at_risk, R"pbdoc(
+            Raw list of capital_at_risk values at each step.
+        )pbdoc")
+
+        .def_property_readonly("open_position_history", &Portfolio::get_history_position_count, R"pbdoc(
             Number of concurrently open positions over time.
         )pbdoc")
 

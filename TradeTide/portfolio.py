@@ -19,7 +19,6 @@ class Portfolio(binding):
         figsize: Tuple[int, int] = (12, 4),
         max_positions: Union[int, float] = np.inf,
         price_type: str = "close",
-        ax: Optional[plt.Axes] = None,
         show: bool = False
     ) -> Tuple[plt.Figure, plt.Axes]:
         """
@@ -43,10 +42,8 @@ class Portfolio(binding):
         """
         with plt.style.context(mps):
             # 1) Create or get axes
-            if ax is None:
-                fig, ax = plt.subplots(figsize=figsize)
-            else:
-                fig = ax.get_figure()
+
+            fig, axes = plt.subplots(ncols=1, nrows=2, figsize=figsize, sharex=True)
 
             # 2) Define colors
             long_fill   = "lightblue"#(0.2, 0.8, 0.2, 0.3)
@@ -55,16 +52,16 @@ class Portfolio(binding):
             tp_color    = "#2ca02c"
 
             # 3) Plot ask/bid series
-            ln_ask, = ax.plot(self.dates, self.market.ask.price, label="Ask", color='C0', linewidth=1.5)
-            ax.fill_between(self.dates, y1=self.market.ask.low, y2=self.market.ask.high, color='C0', alpha=0.2)
+            ln_ask, = axes[0].plot(self.dates, self.market.ask.price, label="Ask", color='C0', linewidth=1.5)
+            axes[0].fill_between(self.dates, y1=self.market.ask.low, y2=self.market.ask.high, color='C0', alpha=0.2)
 
-            ln_bid, = ax.plot(self.dates, self.market.bid.price, label="Bid", color='C1', linewidth=1.5)
-            ax.fill_between(self.dates, y1=self.market.bid.low, y2=self.market.bid.high, color='C1', alpha=0.2)
+            ln_bid, = axes[1].plot(self.dates, self.market.bid.price, label="Bid", color='C1', linewidth=1.5)
+            axes[1].fill_between(self.dates, y1=self.market.bid.low, y2=self.market.bid.high, color='C1', alpha=0.2)
 
-
-            ax.set_xlabel("Date")
-            ax.set_ylabel(f"{price_type.capitalize()} Price")
-            ax.grid(True, linestyle="--", alpha=0.4)
+            for ax in axes:
+                ax.set_xlabel("Date")
+                ax.set_ylabel(f"{price_type.capitalize()} Price")
+                ax.grid(True, linestyle="--", alpha=0.4)
 
             # 4) Shade and overlay for closed positions
             drawn = 0
@@ -80,31 +77,36 @@ class Portfolio(binding):
                     continue
 
                 start, end = position.start_date, position.close_date
-                fill_color = long_fill if isinstance(position, Long) else short_fill
 
-                # shade the region
-                ax.axvspan(start, end, facecolor=fill_color, edgecolor="black", alpha=0.2)
-
-                # SL and TP lines
-                ax.plot(position.dates(), position.stop_loss_prices(),
-                        linestyle="--", color=sl_color, linewidth=1, label="_nolegend_")
-                ax.plot(position.dates(), position.take_profit_prices(),
-                        linestyle="--", color=tp_color, linewidth=1, label="_nolegend_")
+                if isinstance(position, Long):
+                    axes[0].axvspan(start, end, facecolor=long_fill, edgecolor="black", alpha=0.2)
+                    axes[0].plot(position.dates(), position.stop_loss_prices(), linestyle="--", color=sl_color, linewidth=1, label="_nolegend_")
+                    axes[0].plot(position.dates(), position.take_profit_prices(), linestyle="--", color=tp_color, linewidth=1, label="_nolegend_")
+                else:
+                    axes[1].axvspan(start, end, facecolor=short_fill, edgecolor="black", alpha=0.2)
+                    axes[1].plot(position.dates(), position.stop_loss_prices(), linestyle="--", color=sl_color, linewidth=1, label="_nolegend_")
+                    axes[1].plot(position.dates(), position.take_profit_prices(), linestyle="--", color=tp_color, linewidth=1, label="_nolegend_")
 
                 drawn += 1
                 if drawn >= max_positions:
                     break
 
             # 5) Custom legend
-            legend_handles = [
+            legend_handles_long = [
                 ln_ask,
-                ln_bid,
                 Line2D([0], [0], color=sl_color, linestyle="--", label="Stop Loss"),
                 Line2D([0], [0], color=tp_color, linestyle="--", label="Take Profit"),
                 Patch(facecolor=long_fill,  edgecolor="none", label="Long Position"),
+            ]
+
+            legend_handles_short = [
+                ln_bid,
+                Line2D([0], [0], color=sl_color, linestyle="--", label="Stop Loss"),
+                Line2D([0], [0], color=tp_color, linestyle="--", label="Take Profit"),
                 Patch(facecolor=short_fill, edgecolor="none", label="Short Position")
             ]
-            ax.legend(handles=legend_handles, loc="upper left", framealpha=0.9)
+            axes[0].legend(handles=legend_handles_long, loc="upper left", framealpha=0.9)
+            axes[1].legend(handles=legend_handles_short, loc="upper left", framealpha=0.9)
 
             fig.autofmt_xdate()
             fig.tight_layout()
@@ -127,7 +129,7 @@ class Portfolio(binding):
             matplotlib.figure.Figure: The matplotlib Figure object.
         """
         with plt.style.context(mps):
-            fig, axes = plt.subplots(3, 1, figsize=figsize, sharex=True)
+            fig, axes = plt.subplots(4, 1, figsize=figsize, sharex=True)
 
             # Plot prices
             ax = axes[0]
@@ -141,7 +143,7 @@ class Portfolio(binding):
 
             # Plot Open Position Count
             ax = axes[1]
-            ax.step(self.dates, self.open_positions_count, label="Open Positions", where='post', color='blue')
+            ax.step(self.state.time_history, self.state.number_of_concurent_positions_history, label="Open Positions", where='post', color='blue')
             ax.set_ylabel("Open Positions")
             ax.set_title("Open Position Count Over Time")
             ax.ticklabel_format(style='plain', axis='y')  # Prevent y-axis offset
@@ -150,18 +152,24 @@ class Portfolio(binding):
 
             # Plot Equity
             ax = axes[2]
-            ax.plot(self.dates, self.equity, label="Equity", color='green')
+            ax.plot(self.state.time_history, self.state.equity_history, label="Equity", color='green')
             ax.set_ylabel("Equity")
             ax.set_title("Equity Curve")
             ax.set_xlabel("Date")
-            ax.ticklabel_format(style='plain', axis='y')  # Prevent y-axis offset
+            # ax.ticklabel_format(style='plain', axis='y')  # Prevent y-axis offset
             # Legend (bottom plot only)
             ax.legend(loc='upper left')
             # Format time axis
             ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
             ax.xaxis.set_major_locator(mdates.AutoDateLocator())
 
-
+            # Plot Open Position Count
+            ax = axes[3]
+            ax.step(self.state.time_history, self.capital_at_risk_history, where='post', color='blue')
+            ax.set_ylabel("Capital at risk")
+            # ax.ticklabel_format(style='plain', axis='y')  # Prevent y-axis offset
+            # Legend (bottom plot only)
+            ax.legend(loc='upper left')
 
             fig.tight_layout()
 

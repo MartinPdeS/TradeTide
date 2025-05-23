@@ -10,67 +10,81 @@
 #include "../market/market.h"
 
 /**
- * @brief Represents a trading signal time series linked to a Market.
+ * @class Signal
+ * @brief Encapsulates a time-series trading signal aligned to a market's timeline.
  *
- * A signal is a vector of integers (typically -1, 0, +1) representing short, no trade, or long entries.
- * Provides utilities to generate, inspect, and validate signal sequences.
+ * The signal vector encodes trade intentions: 1 (long), -1 (short), 0 (neutral).
+ * Includes utilities for generation, validation, and export.
  */
 class Signal {
     public:
-        const Market market;              ///< Market data context
-        std::vector<int> trade_signal;    ///< Signal values (-1 = short, 0 = no trade, 1 = long)
+        const Market market;              ///< Market reference with aligned timestamps.
+        std::vector<int> trade_signal;    ///< Trade decisions per timestamp: -1 (short), 0 (neutral), 1 (long)
 
         /**
-         * @brief Default constructor.
+         * @brief Default constructor for uninitialized signal.
          */
         Signal() = default;
 
         /**
-         * @brief Constructs a Signal linked to a Market.
-         * @param market Market data reference
+         * @brief Construct signal aligned with given market.
+         * @param market Market object providing timeline and metadata.
          */
-        Signal(const Market& market) : market(market) {
+        explicit Signal(const Market& market) : market(market) {
             this->trade_signal.resize(market.dates.size(), 0);
         }
 
         /**
-         * @brief Randomly generate entry signals over the time series.
-         * @param probability Probability of signal being non-zero at any given index
+         * @brief Generate random long/short/neutral signals.
+         * @param probability Probability of a non-zero signal at each time.
          */
         void generate_random(double probability);
 
         /**
-         * @brief Access the internal signal vector.
+         * @brief Generate only long (1 or 0) signals randomly.
+         * @param probability Probability of assigning a long position.
+         */
+        void generate_only_long(double probability);
+
+        /**
+         * @brief Generate only short (-1 or 0) signals randomly.
+         * @param probability Probability of assigning a short position.
+         */
+        void generate_only_short(double probability);
+
+        /**
+         * @brief Get the internal signal vector.
+         * @return const reference to signal vector.
          */
         const std::vector<int>& get_signals() const;
 
         /**
-         * @brief Display the first N signals with timestamps.
+         * @brief Print signal values with timestamps for visual inspection.
+         * @param max_count Maximum number of entries to display.
          */
         void display(size_t max_count = 20) const;
 
         /**
-         * @brief Save the signal to a CSV file.
-         * @param filepath Destination path
+         * @brief Export signal to a CSV file.
+         * @param filepath Path to output file.
          */
         void to_csv(const std::string& filepath) const;
 
         /**
          * @brief Count the number of long and short entries.
-         * @return std::pair<long_count, short_count>
+         * @return Pair (long_count, short_count)
          */
         std::pair<size_t, size_t> count_signals() const;
 
         /**
-         * @brief Validate that the signal vector size matches market length.
-         * @return true if valid
+         * @brief Check if signal vector matches length of market.
+         * @return True if size matches market timestamps.
          */
         bool validate_against_market() const;
 
         /**
-         * @brief Placeholder for a signal logic engine or rule-based generator.
-         * @return vector of trade signals
+         * @brief Placeholder hook for rule-based signal logic.
+         * @return Current trade signal vector.
          */
         std::vector<int> compute_trade_signal();
-
 };

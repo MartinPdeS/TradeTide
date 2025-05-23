@@ -81,8 +81,6 @@ Long::display() const {
 }
 
 
-
-
 // Short Position---------------------------------------------
 void
 Short::propagate() {

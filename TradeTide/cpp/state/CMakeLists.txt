@@ -1,11 +1,11 @@
 # cpp/detector/CMakeLists.txt
 
-set(NAME "portfolio")
+set(NAME "state")
 
 # Create a shared library for functionality.
 add_library("cpp_${NAME}" STATIC "${NAME}.cpp")
 
-target_link_libraries("cpp_${NAME}" PUBLIC pybind11::module cpp_position_collection cpp_exit_strategy cpp_state)
+target_link_libraries("cpp_${NAME}" PUBLIC pybind11::module)
 
 # Create a Python module, if needed.
 pybind11_add_module("interface_${NAME}" MODULE interface.cpp)

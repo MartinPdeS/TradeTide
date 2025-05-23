@@ -1,38 +1,59 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <pybind11/chrono.h>
 #include "signal.h"
 
 namespace py = pybind11;
 
 PYBIND11_MODULE(interface_signal, module) {
-    module.doc() = "Python bindings for the Signal class, used to represent trading signals aligned with Market data.";
+    module.doc() = R"pbdoc(
+        Python bindings for the Signal class used to encode time-series trade decisions aligned to Market data.
+    )pbdoc";
 
     py::class_<Signal>(module, "Signal", R"pbdoc(
-        Signal object representing a sequence of trading decisions over time.
+        Signal represents a vector of trade decisions synchronized with Market timestamps.
 
-        Each element of the signal is:
-        - +1 for a long trade
-        - -1 for a short trade
-        - 0  for no trade
+        Each signal is:
+        - 1 for a long position
+        - -1 for a short position
+        - 0 for no action
 
-        The signal is aligned to the time series of a Market object.
+        Useful for backtesting and strategy development.
     )pbdoc")
         .def(py::init<const Market&>(), py::arg("market"), R"pbdoc(
-            Construct a signal object linked to a given Market instance.
+            Create a new Signal instance associated with a given Market.
 
             Parameters
             ----------
             market : Market
-                A Market instance whose dates define the signal length.
+                The market instance whose timestamps the signal will align with.
         )pbdoc")
 
         .def("generate_random", &Signal::generate_random, py::arg("probability"), R"pbdoc(
-            Generate a random signal sequence with a given probability of non-zero trades.
+            Generate random signals (-1, 0, 1) with specified non-zero probability.
 
             Parameters
             ----------
             probability : float
-                Probability that any given timestep will contain a signal (+1 or -1).
+                Probability of assigning a trade (long or short) at each time step.
+        )pbdoc")
+
+        .def("generate_only_long", &Signal::generate_only_long, py::arg("probability"), R"pbdoc(
+            Generate random long-only (1 or 0) signals.
+
+            Parameters
+            ----------
+            probability : float
+                Probability of assigning a long trade (1) at each time step.
+        )pbdoc")
+
+        .def("generate_only_short", &Signal::generate_only_short, py::arg("probability"), R"pbdoc(
+            Generate random short-only (-1 or 0) signals.
+
+            Parameters
+            ----------
+            probability : float
+                Probability of assigning a short trade (-1) at each time step.
         )pbdoc")
 
         .def("get_signals", &Signal::get_signals, py::return_value_policy::reference_internal, R"pbdoc(
@@ -40,60 +61,60 @@ PYBIND11_MODULE(interface_signal, module) {
 
             Returns
             -------
-            list of int
-                Signal values (-1, 0, or 1).
+            list[int]
+                The list of trade decisions.
         )pbdoc")
 
         .def("count_signals", &Signal::count_signals, R"pbdoc(
-            Count how many long and short trades are present.
+            Count the number of long and short trade signals.
 
             Returns
             -------
-            tuple of int
+            tuple[int, int]
                 (long_count, short_count)
         )pbdoc")
 
         .def("display", &Signal::display, py::arg("max_count") = 20, R"pbdoc(
-            Print a preview of the signal (date and trade direction).
+            Print the first few signals with corresponding timestamps.
 
             Parameters
             ----------
             max_count : int, default=20
-                Maximum number of entries to display.
+                Number of signals to print.
         )pbdoc")
 
         .def("to_csv", &Signal::to_csv, py::arg("filepath"), R"pbdoc(
-            Export the signal to a CSV file.
+            Save the signal to a CSV file including metadata.
 
             Parameters
             ----------
             filepath : str
-                Destination path for the exported CSV.
+                Path to the output CSV file.
         )pbdoc")
 
         .def("validate_against_market", &Signal::validate_against_market, R"pbdoc(
-            Check that the signal length matches the Market data length.
+            Validate that the signal vector length matches the market's timestamp vector length.
 
             Returns
             -------
             bool
-                True if the signal is valid for the given Market.
+                True if valid, False otherwise.
         )pbdoc")
 
         .def("compute_trade_signal", &Signal::compute_trade_signal, R"pbdoc(
-            Placeholder function for custom signal computation logic.
+            Return the current signal vector. Placeholder for rule-based logic.
 
             Returns
             -------
-            list of int
-                The computed signal.
+            list[int]
+                Current trade signal vector.
         )pbdoc")
 
         .def_readonly("market", &Signal::market, R"pbdoc(
-            The Market object associated with the signal.
+            Market instance the signal is aligned with.
         )pbdoc")
 
         .def_readwrite("trade_signal", &Signal::trade_signal, R"pbdoc(
-            The raw list of trade decisions (-1, 0, 1).
+            Raw trade signal list: -1 (short), 0 (neutral), 1 (long).
         )pbdoc");
 }

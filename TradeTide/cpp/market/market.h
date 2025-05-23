@@ -45,7 +45,7 @@ class Bid {
 
 
 class Market {
-    private:
+private:
     std::vector<double> open_prices;
     std::vector<double> close_prices;
     std::vector<double> high_prices;
@@ -91,6 +91,10 @@ public:
         {
             this->number_of_elements = input_open.size();
         }
+
+    Duration get_duration() const {
+        return end_date - start_date;
+    }
 
 
     void generate_random_market_data(const TimePoint& start_date, const TimePoint& end_date, const std::chrono::system_clock::duration& interval);

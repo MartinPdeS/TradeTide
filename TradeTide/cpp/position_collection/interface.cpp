@@ -20,10 +20,10 @@ PYBIND11_MODULE(interface_position_collection, module) {
     // Bind the Position class
     py::class_<PositionCollection>(module, "PositionCollection")
         .def(
-            py::init<const Market&, const ExitStrategyPtr&, const Signal&, const bool&>(),
+            py::init<const Market&, const ExitStrategyPtr&, const std::vector<double>&, const bool&>(),
             py::arg("market"),
             py::arg("exit_strategy"),
-            py::arg("signal"),
+            py::arg("trade_signal"),
             py::arg("save_price_data") = false,
             R"pbdoc(
                 Create a new PositionCollection.

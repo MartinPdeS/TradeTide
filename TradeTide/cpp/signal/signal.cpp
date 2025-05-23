@@ -1,5 +1,11 @@
+#include "../market/market.h"
 #include "signal.h"
-
+/**
+ * @brief Represents a trading signal time series linked to a Market.
+ *
+ * A signal is a vector of integers (typically -1, 0, +1) representing short, no trade, or long entries.
+ * Provides utilities to generate, inspect, and validate signal sequences.
+ */
 
 void Signal::generate_random(double probability) {
     std::mt19937 rng(std::random_device{}());
@@ -16,6 +22,26 @@ void Signal::generate_random(double probability) {
     }
 }
 
+void Signal::generate_only_long(double probability) {
+    std::mt19937 rng(std::random_device{}());
+    std::uniform_real_distribution<double> dist(0.0, 1.0);
+
+    this->trade_signal.clear();
+    for (size_t i = 0; i < this->market.dates.size(); ++i) {
+        this->trade_signal.push_back(dist(rng) < probability ? 1 : 0);
+    }
+}
+
+void Signal::generate_only_short(double probability) {
+    std::mt19937 rng(std::random_device{}());
+    std::uniform_real_distribution<double> dist(0.0, 1.0);
+
+    this->trade_signal.clear();
+    for (size_t i = 0; i < this->market.dates.size(); ++i) {
+        this->trade_signal.push_back(dist(rng) < probability ? -1 : 0);
+    }
+}
+
 const std::vector<int>& Signal::get_signals() const {
     return this->trade_signal;
 }
@@ -25,7 +51,7 @@ void Signal::display(size_t max_count) const {
     for (size_t i = 0; i < std::min(max_count, this->trade_signal.size()); ++i) {
         std::time_t t = std::chrono::system_clock::to_time_t(this->market.dates[i]);
         std::cout << std::put_time(std::localtime(&t), "%Y-%m-%d %H:%M:%S")
-                    << " => " << this->trade_signal[i] << "\n";
+                  << " => " << this->trade_signal[i] << "\n";
     }
     if (this->trade_signal.size() > max_count) {
         std::cout << "... (" << this->trade_signal.size() << " total signals)\n";
@@ -46,7 +72,6 @@ void Signal::to_csv(const std::string& filepath) const {
     file << "#DATA\n";
     file << "timestamp,signal\n";
 
-    // Write data
     for (size_t i = 0; i < this->trade_signal.size(); ++i) {
         std::time_t t = std::chrono::system_clock::to_time_t(this->market.dates[i]);
         file << std::put_time(std::localtime(&t), "%Y-%m-%d %H:%M:%S") << ","
@@ -55,8 +80,6 @@ void Signal::to_csv(const std::string& filepath) const {
 
     file.close();
 }
-
-
 
 std::pair<size_t, size_t> Signal::count_signals() const {
     size_t long_count = 0, short_count = 0;
@@ -67,11 +90,9 @@ std::pair<size_t, size_t> Signal::count_signals() const {
     return { long_count, short_count };
 }
 
-
 bool Signal::validate_against_market() const {
     return this->trade_signal.size() == this->market.dates.size();
 }
-
 
 std::vector<int> Signal::compute_trade_signal() {
     // Could be implemented based on price movement or technical rules.

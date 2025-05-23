@@ -6,6 +6,11 @@
 
 #include "../position_collection/position_collection.h"
 #include "../capital_management/capital_management.h"
+#include "../state/state.h"
+
+
+
+
 
 /**
  * @brief Simulates capital-constrained execution of trading signals.
@@ -15,10 +20,9 @@
  * equity tracking, position activation, and various post-simulation analytics.
  */
 class Portfolio {
-private:
-    TimePoint current_time;
-
 public:
+    /// Reference to the current state of the Portfolio plus interface to its history if enabled.
+    State state;
     /// Reference to the source collection of all potential positions.
     PositionCollection& position_collection;
 
@@ -31,9 +35,16 @@ public:
      * @param position_collection A reference to the collection of all tradable signals.
      * @param capital_management  A capital management strategy that controls lot sizing.
      */
-    Portfolio(PositionCollection& position_collection, BaseCapitalManagement& capital_management)
-        : position_collection(position_collection), capital_management(capital_management) {}
+    Portfolio(PositionCollection& position_collection, BaseCapitalManagement& capital_management, bool save_history)
+        : position_collection(position_collection), capital_management(capital_management) {
+            if (save_history)
+                this->state.start_record(this->position_collection.market.dates.size());
+        }
 
+
+    [[nodiscard]] const std::vector<size_t>& get_history_position_count() {return this->state.concurrent_positions_history;}
+    [[nodiscard]] const std::vector<double>& get_history_equity() {return this->state.equity_history;}
+    [[nodiscard]] const std::vector<double>& get_history_capital_at_risk() {return this->state.capital_at_risk_history;}
     /**
      * @brief Run the simulation using current strategy and portfolio constraints.
      */
@@ -55,11 +66,6 @@ public:
     [[nodiscard]] double peak_equity() const;
 
     /**
-     * @return Full equity curve over time.
-     */
-    [[nodiscard]] std::vector<double> equity_curve() const;
-
-    /**
      * @return Market time series from the underlying PositionCollection.
      */
     [[nodiscard]] const std::vector<TimePoint>& get_market_dates() const;
@@ -75,18 +81,6 @@ public:
      * @return Vector of BasePosition* to selected trades.
      */
     [[nodiscard]] std::vector<BasePosition*> get_positions(size_t count = std::numeric_limits<size_t>::max()) const;
-
-    /**
-     * @brief Compute a time-aligned vector of open position counts.
-     *
-     * This corresponds to the number of positions active at each time step.
-     */
-    void compute_open_position_count_over_time();
-
-    /**
-     * @brief Compute the equity curve based on realized profits and losses.
-     */
-    void compute_equity_over_time();
 
     /// Vector of realized equity values at each time step.
     std::vector<double> equity_history;
@@ -167,16 +161,7 @@ public:
      */
     [[nodiscard]] double calculate_volatility() const;
 
-private:
-    /// Positions selected from the pool that passed capital constraints.
-    std::vector<PositionPtr> selected_positions;
+    double calculate_capital_at_risk_at(const TimePoint& t) const;
 
-    /// Positions currently active (open) during simulation.
-    std::vector<PositionPtr> active_positions;
-
-    /// All positions that were executed (closed or open).
-    std::vector<PositionPtr> executed_positions;
-
-    /// Reset simulation state prior to running.
-    void reset_state();
+    std::vector<double> compute_capital_at_risk_history(const std::vector<TimePoint>& dates, const std::vector<PositionPtr>& selected_positions) const;
 };

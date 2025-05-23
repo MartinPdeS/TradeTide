@@ -37,7 +37,7 @@ void PositionCollection::to_csv(const std::string& filepath) const {
 void PositionCollection::open_positions(){
 
     for (size_t idx = 0; idx < this->market.dates.size(); idx++){
-        int signal_value = signal.trade_signal[idx];
+        int signal_value = this->trade_signal[idx];
 
         if (signal_value == 0)
             continue;

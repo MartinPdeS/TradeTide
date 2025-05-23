@@ -42,7 +42,7 @@ private:
 public:
     const Market market;                             ///< Market data reference
     const ExitStrategyPtr exit_strategy_ptr;         ///< Shared exit strategy template
-    const Signal signal;                             ///< Signal stream for entry logic
+    const std::vector<double> trade_signal;               ///< Signal stream for entry logic
     std::vector<PositionPtr> positions;              ///< All tracked positions
     size_t number_of_trade = 0;                      ///< Number of trades detected from signal
     bool save_price_data = false;                    ///< Whether to store SL/TP traces
@@ -63,16 +63,17 @@ public:
     PositionCollection(
         const Market& market,
         const ExitStrategyPtr& exit_strategy_ptr,
-        const Signal& signal,
+        // const Signal& signal,
+        const std::vector<double>& trade_signal,
         const bool save_price_data = false)
         : market(market),
           exit_strategy_ptr(exit_strategy_ptr),
-          signal(signal),
+          trade_signal(trade_signal),
           save_price_data(save_price_data)
     {
         this->number_of_trade = std::count_if(
-            this->signal.trade_signal.begin(),
-            this->signal.trade_signal.end(),
+            this->trade_signal.begin(),
+            this->trade_signal.end(),
             [](int x) { return x != 0; }
         );
 

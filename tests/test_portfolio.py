@@ -39,7 +39,7 @@ def test_portfolio_simulation_workflow():
     # Open and propagate positions
     position_collection = PositionCollection(
         market=market,
-        signal=signal,
+        trade_signal=signal.trade_signal,
         exit_strategy=strategy,
     )
     position_collection.open_positions()
@@ -65,7 +65,7 @@ def test_portfolio_simulation_workflow():
 
     # Assertions
     assert len(portfolio.get_positions()) > 0, "No positions selected"
-    assert len(portfolio.equity_curve()) == len(market.dates), "Equity curve not computed correctly"
+    assert len(portfolio.equity_history) == len(market.dates), "Equity curve not computed correctly"
     assert all(e >= 0 for e in portfolio.equity_curve()), "Negative equity value found"
 
     # Optional: Run plotting for visual check (disable show=True for CI)

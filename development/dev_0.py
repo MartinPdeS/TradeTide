@@ -32,15 +32,15 @@ signal.generate_random(probability=0.12)
 
 
 exit_strategy = exit_strategy.Trailing(
-    stop_loss=10,
-    take_profit=10,
+    stop_loss=5,
+    take_profit=5,
     save_price_data=True
 )
 
 
 position_collection = PositionCollection(
     market=market,
-    signal=signal,
+    trade_signal=signal.trade_signal,
     exit_strategy=exit_strategy,
 )
 
@@ -48,20 +48,22 @@ position_collection.open_positions()
 position_collection.propagate_positions()
 
 capital_management = capital_management.FixedFractional(
-    capital=100000,
-    risk_per_trade=0.01,
-    max_lot_size=2,
+    capital=10000,
+    risk_per_trade=0.1,
     max_capital_at_risk=100000,
-    max_concurrent_positions=1,
+    max_concurrent_positions=3,
 )
 
 portfolio  = Portfolio(
     capital_management=capital_management,
     position_collection=position_collection,
+    save_history=True
 )
 
 portfolio.simulate()
 
-portfolio.display()
+# portfolio.display()
+portfolio.plot(show=True)
 
-portfolio.plot_positions(max_positions=300, show=True)
+
+# portfolio.plot_positions(max_positions=300, show=True)

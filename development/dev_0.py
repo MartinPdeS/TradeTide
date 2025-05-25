@@ -10,13 +10,6 @@ from TradeTide import capital_management, exit_strategy
 market = Market()
 
 
-now = datetime.now()
-tomorrow = now + timedelta(days=1)
-interval = timedelta(minutes=1)
-
-
-filename = get_data_path('cad', 'usd', year=2023)
-
 market.load_from_database(
     currency_0=Currency.CAD,
     currency_1=Currency.USD,
@@ -30,10 +23,9 @@ signal = Signal(market=market)
 
 signal.generate_random(probability=0.12)
 
-
 exit_strategy = exit_strategy.Trailing(
-    stop_loss=5,
-    take_profit=5,
+    stop_loss=50,
+    take_profit=50,
     save_price_data=True
 )
 
@@ -48,10 +40,10 @@ position_collection.open_positions()
 position_collection.propagate_positions()
 
 capital_management = capital_management.FixedFractional(
-    capital=10000,
-    risk_per_trade=0.1,
-    max_capital_at_risk=100000,
-    max_concurrent_positions=3,
+    capital=1000000,
+    risk_per_trade=0.001,
+    max_capital_at_risk=10000000,
+    max_concurrent_positions=6,
 )
 
 portfolio  = Portfolio(
@@ -63,6 +55,7 @@ portfolio  = Portfolio(
 portfolio.simulate()
 
 # portfolio.display()
+# portfolio.plot_equity()
 portfolio.plot(show=True)
 
 

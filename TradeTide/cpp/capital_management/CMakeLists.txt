@@ -5,7 +5,7 @@ set(NAME "capital_management")
 # Create a shared library for functionality.
 add_library("cpp_${NAME}" STATIC "${NAME}.cpp")
 
-target_link_libraries("cpp_${NAME}" PUBLIC pybind11::module)
+target_link_libraries("cpp_${NAME}" PUBLIC pybind11::module cpp_position)
 
 # Create a Python module, if needed.
 pybind11_add_module("interface_${NAME}" MODULE interface.cpp)

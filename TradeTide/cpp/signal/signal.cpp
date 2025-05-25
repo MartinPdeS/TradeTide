@@ -1,5 +1,6 @@
-#include "../market/market.h"
 #include "signal.h"
+
+
 /**
  * @brief Represents a trading signal time series linked to a Market.
  *
@@ -7,7 +8,7 @@
  * Provides utilities to generate, inspect, and validate signal sequences.
  */
 
-void Signal::generate_random(double probability) {
+void Signal::generate_random(const double probability) {
     std::mt19937 rng(std::random_device{}());
     std::uniform_real_distribution<double> dist(0.0, 1.0);
     std::bernoulli_distribution direction(0.5);
@@ -22,7 +23,7 @@ void Signal::generate_random(double probability) {
     }
 }
 
-void Signal::generate_only_long(double probability) {
+void Signal::generate_only_long(const double probability) {
     std::mt19937 rng(std::random_device{}());
     std::uniform_real_distribution<double> dist(0.0, 1.0);
 
@@ -32,7 +33,7 @@ void Signal::generate_only_long(double probability) {
     }
 }
 
-void Signal::generate_only_short(double probability) {
+void Signal::generate_only_short(const double probability) {
     std::mt19937 rng(std::random_device{}());
     std::uniform_real_distribution<double> dist(0.0, 1.0);
 

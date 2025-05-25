@@ -5,7 +5,6 @@ from TradeTide import position
 from TradeTide.binary.interface_portfolio import Portfolio as binding
 import matplotlib.pyplot as plt
 from MPSPlots.styles import mps
-import matplotlib.dates as mdates
 from matplotlib.patches import Patch
 from matplotlib.lines import Line2D
 
@@ -116,7 +115,49 @@ class Portfolio(binding):
         return fig, ax
 
 
-    def plot(self, show: bool = True, save_path: str = None, figsize=(12, 6)) -> plt.Figure:
+    def _pre_plot(function):
+        def wrapper(self, ax: plt.Axes = None, figsize: tuple = (12, 4), show: bool = True, **kwargs):
+
+            if ax is None:
+                with plt.style.context(mps):
+                    _, ax = plt.subplots(1, 1, figsize=figsize)
+                    ax.set_xlabel("Date")
+
+            ax = function(self, ax=ax, **kwargs)
+
+            if show:
+                plt.show()
+
+            return ax
+
+        return wrapper
+
+
+    @_pre_plot
+    def plot_equity(self, ax: Optional[plt.Axes] = None, show: bool = True, figsize=(12, 4)) -> plt.Axes:
+        ax.plot(self.record.time, self.record.equity, color='black')
+        # ax.plot(self.state.time, self.state.capital, color='C0')
+        ax.set_ylabel("Equity")
+
+    def plot_capital_at_risk(self, ax: Optional[plt.Axes] = None, show: Optional[bool] = True, figsize=(12, 4)) -> plt.Axes:
+        ax.step(self.record.time, self.record.capital_at_risk, color='black', where='mid')
+        ax.set_ylabel("Capital at Risk")
+
+
+    def plot_number_of_positions(self, ax: Optional[plt.Axes] = None, show: Optional[bool] = True, figsize=(12, 4)) -> plt.Axes:
+        ax.step(self.record.time, self.record.number_of_concurent_positions, color='black', where='mid')
+        ax.set_ylabel("# Positions")
+
+    def plot_prices(self, ax: Optional[plt.Axes] = None, show: Optional[bool] = True, figsize=(12, 4)) -> plt.Axes:
+        ax.plot(self.dates, self.market.ask.price, label="Ask", color='C0')
+        ax.plot(self.dates, self.market.bid.price, label="Bid", color='C1')
+        ax.ticklabel_format(style='plain', axis='y')  # Prevent y-axis offset
+        # Legend (bottom plot only)
+        ax.legend(loc='upper left')
+        ax.set_ylabel("Prices")
+
+
+    def plot(self, show: Optional[bool] = True, save_path: Optional[str] = None, figsize: Optional[tuple] = (12, 6)) -> plt.Figure:
         """
         Plot the portfolio's equity and open position count over time.
 
@@ -129,55 +170,28 @@ class Portfolio(binding):
             matplotlib.figure.Figure: The matplotlib Figure object.
         """
         with plt.style.context(mps):
-            fig, axes = plt.subplots(4, 1, figsize=figsize, sharex=True)
+            figure, axes = plt.subplots(4, 1, figsize=figsize, sharex=True)
+            axes[-1].set_xlabel("Date")
 
             # Plot prices
-            ax = axes[0]
-            ax.set_ylabel("Prices")
-            ax.set_title("Market Prices Over Time")
-            ax.plot(self.dates, self.market.ask.price, label="Ask", color='C0')
-            ax.plot(self.dates, self.market.bid.price, label="Bid", color='C1')
-            ax.ticklabel_format(style='plain', axis='y')  # Prevent y-axis offset
-            # Legend (bottom plot only)
-            ax.legend(loc='upper left')
+            self.plot_prices(ax=axes[0], show=False)
 
             # Plot Open Position Count
-            ax = axes[1]
-            ax.step(self.state.time_history, self.state.number_of_concurent_positions_history, label="Open Positions", where='post', color='blue')
-            ax.set_ylabel("Open Positions")
-            ax.set_title("Open Position Count Over Time")
-            ax.ticklabel_format(style='plain', axis='y')  # Prevent y-axis offset
-            # Legend (bottom plot only)
-            ax.legend(loc='upper left')
+            self.plot_number_of_positions(ax=axes[1], show=False)
 
             # Plot Equity
-            ax = axes[2]
-            ax.plot(self.state.time_history, self.state.equity_history, label="Equity", color='green')
-            ax.set_ylabel("Equity")
-            ax.set_title("Equity Curve")
-            ax.set_xlabel("Date")
-            # ax.ticklabel_format(style='plain', axis='y')  # Prevent y-axis offset
-            # Legend (bottom plot only)
-            ax.legend(loc='upper left')
-            # Format time axis
-            ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-            ax.xaxis.set_major_locator(mdates.AutoDateLocator())
+            self.plot_equity(ax=axes[2], show=False)
 
             # Plot Open Position Count
-            ax = axes[3]
-            ax.step(self.state.time_history, self.capital_at_risk_history, where='post', color='blue')
-            ax.set_ylabel("Capital at risk")
-            # ax.ticklabel_format(style='plain', axis='y')  # Prevent y-axis offset
-            # Legend (bottom plot only)
-            ax.legend(loc='upper left')
+            self.plot_capital_at_risk(ax=axes[3], show=False)
 
-            fig.tight_layout()
+            figure.tight_layout()
 
             if save_path:
-                fig.savefig(save_path, bbox_inches='tight')
+                figure.savefig(save_path, bbox_inches='tight')
 
             if show:
                 plt.show()
 
-            return fig
+            return figure
 

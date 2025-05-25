@@ -1,5 +1,3 @@
-#include <fstream>
-#include <iomanip>
 #include "position_collection.h"
 
 void PositionCollection::to_csv(const std::string& filepath) const {
@@ -83,33 +81,38 @@ void PositionCollection::terminate_open_positions() {
 }
 
 
-void PositionCollection::display(){
+void PositionCollection::display() const {
     for (const PositionPtr& e : this->positions)
         e->display();
 }
 
+BasePosition* PositionCollection::__getitem__(const size_t idx) const {
+    if (idx >= this->positions.size())
+        throw std::out_of_range("Index out of range");
+    return this->positions[idx].get();
+}
 
 inline std::vector<Long*> PositionCollection::get_long_positions(size_t count) const {
     std::vector<Long*> result;
     result.reserve(std::min(count, positions.size()));
-    for (const auto& up : positions) {
+    for (const auto& up : positions)
         if (auto ptr = dynamic_cast<Long*>(up.get())) {
             result.push_back(ptr);
             if (result.size() >= count) break;
         }
-    }
+
     return result;
 }
 
 inline std::vector<Short*> PositionCollection::get_short_positions(size_t count) const {
     std::vector<Short*> result;
     result.reserve(std::min(count, positions.size()));
-    for (const auto& up : positions) {
+    for (const auto& up : positions)
         if (auto ptr = dynamic_cast<Short*>(up.get())) {
             result.push_back(ptr);
             if (result.size() >= count) break;
         }
-    }
+
     return result;
 }
 

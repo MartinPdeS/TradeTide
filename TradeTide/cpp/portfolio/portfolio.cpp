@@ -7,65 +7,81 @@ double Portfolio::final_equity() const {
 }
 
 double Portfolio::peak_equity() const {
-    if (this->equity_history.empty())
+    if (this->record.equity.empty())
         return this->capital_management.initial_capital;
 
-    return *std::max_element(this->equity_history.begin(), this->equity_history.end());
+    return *std::max_element(this->record.equity.begin(), this->record.equity.end());
+}
+
+void Portfolio::try_close_positions() {
+    for (size_t i = 0; i < this->capital_management.active_positions.size(); i++) {
+        const PositionPtr& position = this->capital_management.active_positions[i];
+
+        // Skip positions that are not closing at this current_time
+        if (position->close_date != this->state.time)
+            continue;
+
+        // Attempt to close position
+        bool close_success = this->capital_management.try_close_position(position);
+        if (close_success) {
+            this->capital_management.active_positions.erase(this->capital_management.active_positions.begin() + i);
+            this->state.number_of_concurrent_positions -= 1;
+            this->state.capital += position->exit_price * position->lot_size;
+        }
+
+    }
+}
+
+void Portfolio::try_open_positions() {
+    while (this->state.position_index < this->position_collection.positions.size() && this->position_collection.positions[this->state.position_index]->start_date == this->state.time) {
+
+        const PositionPtr& position = this->position_collection.positions[this->state.position_index];
+
+        // If we can't open more positions now, skip this one (but advance index!)
+        bool open_success = this->capital_management.try_open_position(position);
+
+        if (open_success) {
+            this->state.number_of_concurrent_positions += 1;
+            this->state.capital -= position->entry_price * position->lot_size;
+        }
+
+        ++this->state.position_index;
+    }
+
 }
 
 void Portfolio::simulate() {
     this->capital_management.reset_state();
-    this->capital_management.state = &this->state;
-    const auto& all_positions = this->position_collection.positions;
 
-    size_t position_index = 0;
-    this->state.number_of_concurrent_positions = 0;
-    this->state.equity = this->capital_management.initial_capital;
+    this->state.initialize(this->capital_management.initial_capital);
 
-    for (const TimePoint& current_time : this->position_collection.market.dates) {
-        this->state.time = current_time;
-        this->state.capital_at_risk = this->calculate_capital_at_risk_at(current_time);
+    for (size_t time_idx = 0; time_idx < this->position_collection.market.dates.size(); time_idx ++) {
+        this->state.time_idx = time_idx;
+        this->state.time = this->position_collection.market.dates[time_idx];
+        this->state.capital_at_risk = this->calculate_capital_at_risk();
+        this->state.equity = this->calculate_equity();
 
-        for (size_t i = 0; i < this->capital_management.active_positions.size(); ) {
-            const PositionPtr& pos = this->capital_management.active_positions[i];
 
-            // Skip positions that are not closing at this current_time
-            if (pos->close_date > this->state.time) {
-                ++i;
-                continue;
-            }
-
-            // Attempt to close position
-            bool close_success = this->capital_management.try_close_position(pos);
-            if (close_success) {
-                this->capital_management.active_positions.erase(this->capital_management.active_positions.begin() + i);
-                this->state.number_of_concurrent_positions -= 1;
-            }
-            else
-                ++i;
-
-        }
+        // ➕ Try to close opened positions
+        this->try_close_positions();
 
         // ➕ Try to activate new positions starting now
-        while (position_index < all_positions.size() && all_positions[position_index]->start_date == current_time) {
+        this->try_open_positions();
 
-            const PositionPtr& pos = all_positions[position_index];
+        if (time_idx == this->position_collection.market.dates.size() - 1)
+            this->terminate_open_positions();
 
-            // If we can't open more positions now, skip this one (but advance index!)
-            bool open_success = this->capital_management.try_open_position(pos);
-
-            if (open_success)
-                this->state.number_of_concurrent_positions += 1;
-
-            ++position_index;
-        }
-
-        this->state.update();
+        // this->state.display();
+        this->record.update();
     }
+}
 
-    // Close all remaining positions at end
-    for (const auto& pos : this->capital_management.active_positions)
-        this->state.equity += pos->calculate_profit_and_loss();
+
+void Portfolio::terminate_open_positions() {
+    for (const auto& position : this->capital_management.active_positions) {
+        this->state.number_of_concurrent_positions -= 1;
+        this->state.equity += position->calculate_profit_and_loss();
+    }
 
     this->capital_management.active_positions.clear();
 }
@@ -138,10 +154,10 @@ std::chrono::duration<double> Portfolio::calculate_duration() const {
 }
 
 double Portfolio::calculate_max_drawdown() const {
-    double peak = this->state.equity_history.front();
+    double peak = this->record.equity.front();
     double max_drawdown = 0.0;
 
-    for (double equity : this->equity_history) {
+    for (double equity : this->record.equity) {
         peak = std::max(peak, equity);
         double drawdown = (peak - equity) / peak;
         max_drawdown = std::max(max_drawdown, drawdown);
@@ -150,11 +166,11 @@ double Portfolio::calculate_max_drawdown() const {
 }
 
 double Portfolio::calculate_sharpe_ratio(double risk_free_rate) const {
-    if (this->equity_history.size() < 2) return 0.0;
+    if (this->record.equity.size() < 2) return 0.0;
 
     std::vector<double> returns;
-    for (size_t i = 1; i < this->equity_history.size(); ++i) {
-        double r = (this->equity_history[i] - this->equity_history[i - 1]) / this->equity_history[i - 1];
+    for (size_t i = 1; i < this->record.equity.size(); ++i) {
+        double r = (this->record.equity[i] - this->record.equity[i - 1]) / this->record.equity[i - 1];
         returns.push_back(r - risk_free_rate);
     }
 
@@ -167,11 +183,11 @@ double Portfolio::calculate_sharpe_ratio(double risk_free_rate) const {
 }
 
 double Portfolio::calculate_sortino_ratio(double risk_free_rate) const {
-    if (this->equity_history.size() < 2) return 0.0;
+    if (this->record.equity.size() < 2) return 0.0;
 
     std::vector<double> downside_returns;
-    for (size_t i = 1; i < this->equity_history.size(); ++i) {
-        double r = (this->equity_history[i] - this->equity_history[i - 1]) / this->equity_history[i - 1];
+    for (size_t i = 1; i < this->record.equity.size(); ++i) {
+        double r = (this->record.equity[i] - this->record.equity[i - 1]) / this->record.equity[i - 1];
         double excess = r - risk_free_rate;
         if (excess < 0) downside_returns.push_back(excess);
     }
@@ -201,16 +217,12 @@ double Portfolio::calculate_win_loss_ratio() const {
     return static_cast<double>(wins) / losses;
 }
 
-double Portfolio::calculate_equity() const {
-    return this->final_equity();
-}
-
 double Portfolio::calculate_volatility() const {
-    if (this->equity_history.size() < 2) return 0.0;
+    if (this->record.equity.size() < 2) return 0.0;
 
     std::vector<double> returns;
-    for (size_t i = 1; i < this->equity_history.size(); ++i) {
-        double r = (this->equity_history[i] - this->equity_history[i - 1]) / this->equity_history[i - 1];
+    for (size_t i = 1; i < this->record.equity.size(); ++i) {
+        double r = (this->record.equity[i] - this->record.equity[i - 1]) / this->record.equity[i - 1];
         returns.push_back(r);
     }
 
@@ -222,16 +234,22 @@ double Portfolio::calculate_volatility() const {
     return std::sqrt(variance);
 }
 
-double Portfolio::calculate_capital_at_risk_at(const TimePoint& current_time) const {
+double Portfolio::calculate_capital_at_risk() const {
     double total_risk = 0.0;
 
-    for (const PositionPtr& position : this->capital_management.active_positions) {
-        if (position->is_open(current_time)) {
-            const double risk = std::abs(position->entry_price - position->exit_strategy->stop_loss_price) * position->lot_size;
-
-            total_risk += risk;
-        }
-    }
+    for (const PositionPtr& position : this->capital_management.active_positions)
+        total_risk += std::abs(position->entry_price - position->exit_strategy->stop_loss_price) * position->lot_size;
 
     return total_risk;
+}
+
+double Portfolio::calculate_equity() const {
+    double equity = this->state.capital;
+
+    for (const PositionPtr& position : this->capital_management.active_positions)
+        if (position->is_open_at(this->state.time))
+            equity += position->get_closing_value_at(this->state.time_idx);
+
+
+    return equity;
 }

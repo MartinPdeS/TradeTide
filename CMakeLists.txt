@@ -31,6 +31,7 @@ add_subdirectory(TradeTide/cpp/market)               # market
 add_subdirectory(TradeTide/cpp/position)             # position
 add_subdirectory(TradeTide/cpp/signal)               # signal
 add_subdirectory(TradeTide/cpp/state)                # state
+add_subdirectory(TradeTide/cpp/record)               # record
 add_subdirectory(TradeTide/cpp/exit_strategy)        # exit_strategy
 add_subdirectory(TradeTide/cpp/capital_management)   # capital_manag
 add_subdirectory(TradeTide/cpp/portfolio)            # portfolio

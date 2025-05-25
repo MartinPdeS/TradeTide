@@ -1,7 +1,6 @@
 #pragma once
 
-#include <string>
-#include <memory>
+#include <iostream>
 #include <chrono>
 #include <vector>
 #include "../market/market.h"
@@ -72,7 +71,6 @@ public:
      * @return PnL as a double (positive = profit, negative = loss)
      */
     [[nodiscard]] virtual double calculate_profit_and_loss() const = 0;
-    [[nodiscard]] virtual double calculate_profit_and_loss_time(const size_t&) const = 0;
 
     /**
      * @brief Prints position summary to console.
@@ -89,6 +87,8 @@ public:
      */
     const std::vector<double>& strategy_take_profit_prices() const;
 
+    double get_capital_at_risk() const;
+
     /**
      * @brief Returns timestamps at which SL/TP values were updated.
      */
@@ -102,11 +102,14 @@ public:
      */
     virtual void set_close_condition(const size_t time_idx) = 0;
 
-    bool is_open(const TimePoint& date) {
+    bool is_open_at(const TimePoint& date) const {
         if (date > this->start_date && date < this->close_date)
             return true;
         return false;
     }
+
+    virtual double get_closing_value_at(const size_t time_idx) const = 0;
+
 };
 
 /**
@@ -123,14 +126,14 @@ public:
     {}
 
     void propagate() override;
-    [[nodiscard]] double calculate_profit_and_loss() const override;
-    [[nodiscard]] double calculate_profit_and_loss_time(const size_t& time_idx) const override;
+
     void display() const override;
 
-    void set_close_condition(const size_t time_idx) override {
-        this->exit_price = (*this->market.bid.price)[time_idx];
-        this->close_date = this->market.dates[time_idx];
-    }
+    void set_close_condition(const size_t time_idx) override;
+
+    double get_closing_value_at(const size_t time_idx) const override;
+
+    [[nodiscard]] double calculate_profit_and_loss() const override;
 };
 
 /**
@@ -147,14 +150,14 @@ public:
     {}
 
     void propagate() override;
-    [[nodiscard]] double calculate_profit_and_loss() const override;
-    [[nodiscard]] double calculate_profit_and_loss_time(const size_t&) const override;
+
     void display() const override;
 
-    void set_close_condition(const size_t time_idx) override {
-        this->exit_price = (*this->market.ask.price)[time_idx];
-        this->close_date = this->market.dates[time_idx];
-    }
+    void set_close_condition(const size_t time_idx) override;
+
+    double get_closing_value_at(const size_t time_idx) const override;
+
+    [[nodiscard]] double calculate_profit_and_loss() const override;
 };
 
 /**

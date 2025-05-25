@@ -98,7 +98,7 @@ public:
     /**
      * @brief Displays summary information for all positions.
      */
-    void display();
+    void display() const;
 
     /**
      * @brief Get position by index (Python-style).
@@ -106,12 +106,7 @@ public:
      * @param idx Index of position.
      * @return Raw pointer to position.
      */
-    BasePosition* __getitem__(const size_t idx) {
-        if (idx >= this->positions.size())
-            throw std::out_of_range("Index out of range");
-        return this->positions[idx].get();
-    }
-
+    BasePosition* __getitem__(const size_t idx) const;
     /**
      * @brief Returns the number of positions.
      */

@@ -84,7 +84,7 @@ class Market(interface_market.Market):
 
         This method constructs the CSV filename from the given currency pair and
         start_date.year, parses the provided time span (allowing either a `timedelta`
-        or a human‐friendly string like "3days" or "4h30m"), then invokes
+        or a human-friendly string like "3days" or "4h30m"), then invokes
         `load_from_csv(...)` with optional overrides for spread and bid/ask flag.
         Finally, it selects which price series to use (open/close/high/low).
 

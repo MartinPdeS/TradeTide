@@ -18,13 +18,17 @@ PYBIND11_MODULE(interface_portfolio, module) {
     py::class_<State>(module, "State")
         .def_readonly("time", &State::time)
         .def_readonly("equity", &State::equity)
+        .def_readonly("capital", &State::capital)
         .def_readonly("number_of_concurent_positions", &State::number_of_concurrent_positions)
         .def_readonly("capital_at_risk", &State::capital_at_risk)
+        ;
 
-        .def_readonly("time_history", &State::time_history)
-        .def_readonly("equity_history", &State::equity_history)
-        .def_readonly("number_of_concurent_positions_history", &State::concurrent_positions_history)
-        .def_readonly("capital_at_risk_history", &State::capital_at_risk_history)
+    py::class_<Record>(module, "Record")
+        .def_readonly("time", &Record::time)
+        .def_readonly("equity", &Record::equity)
+        .def_readonly("capital", &Record::capital)
+        .def_readonly("number_of_concurent_positions", &Record::concurrent_positions)
+        .def_readonly("capital_at_risk", &Record::capital_at_risk)
         ;
 
     py::class_<Portfolio>(module, "Portfolio")
@@ -49,7 +53,9 @@ PYBIND11_MODULE(interface_portfolio, module) {
             Run the full simulation, opening/closing trades according to constraints.
         )pbdoc")
 
-        .def_readonly("state", &Portfolio::state, py::return_value_policy::copy)
+        .def_readonly("state", &Portfolio::state, py::return_value_policy::reference_internal)
+
+        .def_readonly("record", &Portfolio::record, py::return_value_policy::reference_internal)
 
         // Core equity access
         .def("final_equity", &Portfolio::final_equity, R"pbdoc(

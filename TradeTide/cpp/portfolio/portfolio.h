@@ -7,9 +7,7 @@
 #include "../position_collection/position_collection.h"
 #include "../capital_management/capital_management.h"
 #include "../state/state.h"
-
-
-
+#include "../record/record.h"
 
 
 /**
@@ -23,6 +21,7 @@ class Portfolio {
 public:
     /// Reference to the current state of the Portfolio plus interface to its history if enabled.
     State state;
+    Record record;
     /// Reference to the source collection of all potential positions.
     PositionCollection& position_collection;
 
@@ -35,16 +34,19 @@ public:
      * @param position_collection A reference to the collection of all tradable signals.
      * @param capital_management  A capital management strategy that controls lot sizing.
      */
-    Portfolio(PositionCollection& position_collection, BaseCapitalManagement& capital_management, bool save_history)
+    Portfolio(PositionCollection& position_collection, BaseCapitalManagement& capital_management, bool record_enabled)
         : position_collection(position_collection), capital_management(capital_management) {
-            if (save_history)
-                this->state.start_record(this->position_collection.market.dates.size());
+            this->record.state = &this->state;
+            if (record_enabled)
+                this->record.start_record(this->position_collection.market.dates.size());
+
+            this->capital_management.state = &this->state;
         }
 
 
-    [[nodiscard]] const std::vector<size_t>& get_history_position_count() {return this->state.concurrent_positions_history;}
-    [[nodiscard]] const std::vector<double>& get_history_equity() {return this->state.equity_history;}
-    [[nodiscard]] const std::vector<double>& get_history_capital_at_risk() {return this->state.capital_at_risk_history;}
+    [[nodiscard]] const std::vector<size_t>& get_history_position_count() {return this->record.concurrent_positions;}
+    [[nodiscard]] const std::vector<double>& get_history_equity() {return this->record.equity;}
+    [[nodiscard]] const std::vector<double>& get_history_capital_at_risk() {return this->record.capital_at_risk;}
     /**
      * @brief Run the simulation using current strategy and portfolio constraints.
      */
@@ -81,13 +83,6 @@ public:
      * @return Vector of BasePosition* to selected trades.
      */
     [[nodiscard]] std::vector<BasePosition*> get_positions(size_t count = std::numeric_limits<size_t>::max()) const;
-
-    /// Vector of realized equity values at each time step.
-    std::vector<double> equity_history;
-
-    /// Vector of open position counts at each time step.
-    std::vector<size_t> open_position_count;
-
 
     /**
      * @brief Compute total return over the entire simulation period.
@@ -161,7 +156,11 @@ public:
      */
     [[nodiscard]] double calculate_volatility() const;
 
-    double calculate_capital_at_risk_at(const TimePoint& t) const;
+    double calculate_capital_at_risk() const;
 
-    std::vector<double> compute_capital_at_risk_history(const std::vector<TimePoint>& dates, const std::vector<PositionPtr>& selected_positions) const;
+    void try_close_positions();
+
+    void try_open_positions();
+
+    void terminate_open_positions();
 };

@@ -5,7 +5,6 @@
 #include <random>
 #include <iostream>
 #include <fstream>
-#include <iomanip>
 #include <string>
 #include "../market/market.h"
 
@@ -38,19 +37,19 @@ class Signal {
          * @brief Generate random long/short/neutral signals.
          * @param probability Probability of a non-zero signal at each time.
          */
-        void generate_random(double probability);
+        void generate_random(const double probability);
 
         /**
          * @brief Generate only long (1 or 0) signals randomly.
          * @param probability Probability of assigning a long position.
          */
-        void generate_only_long(double probability);
+        void generate_only_long(const double probability);
 
         /**
          * @brief Generate only short (-1 or 0) signals randomly.
          * @param probability Probability of assigning a short position.
          */
-        void generate_only_short(double probability);
+        void generate_only_short(const double probability);
 
         /**
          * @brief Get the internal signal vector.

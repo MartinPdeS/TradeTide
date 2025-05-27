@@ -50,8 +50,8 @@ class PositionCollection(PositionCollection):
 
             market = self.get_market()
             dates = market.dates
-            ask = getattr(market.ask, price_type)
-            bid = getattr(market.bid, price_type)
+            ask = market.ask_open
+            bid = market.bid_open
 
             # 2) Define colors
             ask_color   = "#1f77b4"
@@ -79,8 +79,7 @@ class PositionCollection(PositionCollection):
                 position = self[idx]
 
 
-
-                if not position.is_closed:
+                if not position.is_terminated:
                     continue
 
                 start, end = position.start_date, position.close_date

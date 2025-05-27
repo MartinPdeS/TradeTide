@@ -66,7 +66,6 @@ void Signal::to_csv(const std::string& filepath) const {
 
     // Write metadata
     file << "#METADATA:\n";
-    file << "#is_bid=" << (this->market.is_bid ? "true" : "false") << "\n";
     file << "#pip_size=" << this->market.pip_value << "\n";
 
     // Write header

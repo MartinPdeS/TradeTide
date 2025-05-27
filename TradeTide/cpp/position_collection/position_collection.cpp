@@ -44,12 +44,12 @@ void PositionCollection::open_positions(){
         std::unique_ptr<ExitStrategy> risk_manager_copy = exit_strategy_ptr->clone();
 
         if (signal_value == 1){
-            double entry_price = (*this->market.ask.price)[idx];
+            double entry_price = this->market.ask_open[idx];
             TimePoint start_date = this->market.dates[idx];
             position = std::make_unique<Long>(market, std::move(risk_manager_copy), entry_price, start_date, idx);
         }
         else {
-            double entry_price = (*this->market.bid.price)[idx];
+            double entry_price = this->market.bid_open[idx];
             TimePoint start_date = this->market.dates[idx];
             position = std::make_unique<Short>(market, std::move(risk_manager_copy), entry_price, start_date, idx);
         }
@@ -60,10 +60,8 @@ void PositionCollection::open_positions(){
 
 void PositionCollection::propagate_positions() {
     #pragma omp parallel for
-    for (const auto& position : this->positions) {
+    for (const auto& position : this->positions)
         position->propagate();
-
-    }
 }
 
 

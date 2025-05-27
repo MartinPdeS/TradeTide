@@ -32,25 +32,25 @@ double BasePosition::get_capital_at_risk() const {
 void Long::propagate() {
     for (size_t time_idx = this->open_idx; time_idx < this->market.dates.size(); time_idx++) {
 
-        double current_price = (*this->market.bid.price)[time_idx];
+        double current_price = this->market.bid_open[time_idx];
 
         this->exit_strategy->update_price(*this, time_idx, current_price);
 
-        if (this->market.bid.low[time_idx] <= this->exit_strategy->stop_loss_price) // Hit stop-loss
+        if (this->market.bid_low[time_idx] <= this->exit_strategy->stop_loss_price) // Hit stop-loss
             return this->terminate(this->exit_strategy->stop_loss_price, time_idx);
 
-        if (this->market.bid.high[time_idx] >= this->exit_strategy->take_profit_price)   // Hit take-profit
+        if (this->market.bid_high[time_idx] >= this->exit_strategy->take_profit_price)   // Hit take-profit
             return this->terminate(this->exit_strategy->take_profit_price, time_idx);
 
     }
 }
 
 double Long::get_closing_value_at(const size_t time_idx) const {
-    return  (*this->market.bid.price)[time_idx] * this->lot_size;
+    return  this->market.bid_open[time_idx] * this->lot_size;
 }
 
 void Long::set_close_condition(const size_t time_idx) {
-    this->exit_price = (*this->market.bid.price)[time_idx];
+    this->exit_price = this->market.bid_open[time_idx];
     this->close_date = this->market.dates[time_idx];
 }
 
@@ -77,26 +77,26 @@ void Long::display() const {
 // Short Position---------------------------------------------
 void Short::propagate() {
     for (size_t time_idx = this->open_idx; time_idx < this->market.dates.size(); time_idx++) {
-        double current_price = (*this->market.ask.price)[time_idx];
+        double current_price = this->market.ask_open[time_idx];
 
         this->exit_strategy->update_price(*this, time_idx, current_price);
 
-        if (this->market.ask.high[time_idx] >= this->exit_strategy->stop_loss_price)  // Hit stop-loss
+        if (this->market.ask_high[time_idx] >= this->exit_strategy->stop_loss_price)  // Hit stop-loss
             return this->terminate(this->exit_strategy->stop_loss_price, time_idx);
             this->exit_price = this->exit_strategy->stop_loss_price;
 
-        if (this->market.ask.low[time_idx] <= this->exit_strategy->take_profit_price)  // Hit take-profit
+        if (this->market.ask_low[time_idx] <= this->exit_strategy->take_profit_price)  // Hit take-profit
             return this->terminate(this->exit_strategy->take_profit_price, time_idx);
     }
 }
 
 void Short::set_close_condition(const size_t time_idx) {
-    this->exit_price = (*this->market.bid.price)[time_idx];
+    this->exit_price = this->market.bid_open[time_idx];
     this->close_date = this->market.dates[time_idx];
 }
 
 double Short::get_closing_value_at(const size_t time_idx) const {
-    return  (*this->market.ask.price)[time_idx] * this->lot_size;
+    return  this->market.ask_open[time_idx] * this->lot_size;
 }
 
 // Calculate profit or loss

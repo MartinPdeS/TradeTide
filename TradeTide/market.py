@@ -62,7 +62,7 @@ class Market(interface_market.Market):
         """
         data_folder = directories.data
 
-        data_file = data_folder / f"{currency_0}_{currency_1}" / str(year) / "data"
+        data_file = data_folder / f"{currency_0}_{currency_1}.csv"
 
         if not data_file.with_suffix('.csv').exists():
             data_file = data_folder / f"{currency_1}_{currency_0}" / str(year) / "data"
@@ -70,16 +70,7 @@ class Market(interface_market.Market):
         return data_file
 
 
-    def load_from_database(
-        self,
-        currency_0: Currency,
-        currency_1: Currency,
-        year: str,
-        time_span: Union[str, timedelta],
-        spread_override: Optional[float] = None,
-        is_bid_override: Optional[bool] = None,
-        price_type: str = "open"
-    ) -> None:
+    def load_from_database(self, currency_0: Currency, currency_1: Currency, year: str, time_span: Union[str, timedelta]) -> None:
         """Load market data for a currency pair from CSV, with optional overrides.
 
         This method constructs the CSV filename from the given currency pair and
@@ -94,12 +85,6 @@ class Market(interface_market.Market):
             start_date (datetime): Any datetime within the year whose data file to load.
             time_span (Union[str, timedelta]): Amount of history to load starting at the
                 first timestamp; may be a `timedelta` or a string like "2d 6h".
-            spread_override (Optional[float]): If given, every row’s spread is set to this
-                value instead of the file’s spread column or default.
-            is_bid_override (Optional[bool]): If given, sets the market’s bid/ask flag
-                regardless of any `#is_bid=` metadata in the CSV.
-            price_type (str): Which price series to expose for trading logic; must be one
-                of "open", "close", "high", or "low".
 
         Raises:
             FileNotFoundError: If the constructed CSV path does not exist or cannot be opened.
@@ -120,14 +105,8 @@ class Market(interface_market.Market):
 
         self.load_from_csv(
             filename=str(csv_path),
-            time_span=ts,
-            spread_override=spread_override,
-            is_bid_override=is_bid_override,
+            time_span=ts
         )
-
-        # 5) Select the desired price series
-        self.set_price_type(price_type)
-
 
     def plot(self) -> None:
         plt.style.use(mps)

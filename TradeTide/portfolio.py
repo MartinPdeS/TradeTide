@@ -51,11 +51,11 @@ class Portfolio(binding):
             tp_color    = "#2ca02c"
 
             # 3) Plot ask/bid series
-            ln_ask, = axes[0].plot(self.dates, self.market.ask.price, label="Ask", color='C0', linewidth=1.5)
-            axes[0].fill_between(self.dates, y1=self.market.ask.low, y2=self.market.ask.high, color='C0', alpha=0.2)
+            ln_ask, = axes[0].plot(self.dates, self.market.ask_price, label="Ask", color='C0', linewidth=1.5)
+            axes[0].fill_between(self.dates, y1=self.market.ask_low, y2=self.market.ask_high, color='C0', alpha=0.2)
 
-            ln_bid, = axes[1].plot(self.dates, self.market.bid.price, label="Bid", color='C1', linewidth=1.5)
-            axes[1].fill_between(self.dates, y1=self.market.bid.low, y2=self.market.bid.high, color='C1', alpha=0.2)
+            ln_bid, = axes[1].plot(self.dates, self.market.bid_price, label="Bid", color='C1', linewidth=1.5)
+            axes[1].fill_between(self.dates, y1=self.market.bid_low, y2=self.market.bid_high, color='C1', alpha=0.2)
 
             for ax in axes:
                 ax.set_xlabel("Date")
@@ -149,8 +149,8 @@ class Portfolio(binding):
         ax.set_ylabel("# Positions")
 
     def plot_prices(self, ax: Optional[plt.Axes] = None, show: Optional[bool] = True, figsize=(12, 4)) -> plt.Axes:
-        ax.plot(self.dates, self.market.ask.price, label="Ask", color='C0')
-        ax.plot(self.dates, self.market.bid.price, label="Bid", color='C1')
+        ax.plot(self.dates, self.market.ask_open, label="Ask-Open", color='C0')
+        ax.plot(self.dates, self.market.bid_open, label="Bid-Open", color='C1')
         ax.ticklabel_format(style='plain', axis='y')  # Prevent y-axis offset
         # Legend (bottom plot only)
         ax.legend(loc='upper left')

@@ -15,31 +15,6 @@ using TimePoint = std::chrono::system_clock::time_point;
 
 
 
-class Singleton {
-public:
-    TimePoint start_date, stop_date;
-    Duration duration;
-
-    // Delete copy constructor and assignment
-    Singleton(const Singleton&) = delete;
-    Singleton& operator=(const Singleton&) = delete;
-
-    // Access point to the single instance
-    static Singleton& instance() {
-        static Singleton instance;  // Guaranteed to be thread-safe in C++11+
-        return instance;
-    }
-
-private:
-    // Private constructor to prevent direct instantiation
-    Singleton() {}
-
-    // Optional: private destructor
-    ~Singleton() = default;
-};
-
-
-
 
 
 
@@ -49,13 +24,8 @@ public:
     std::vector<TimePoint> dates;
     std::vector<double> open, high, low, close;
 
-    void reserve(const size_t n_elements) {
-        this->dates.reserve(n_elements);
-        this->open.reserve(n_elements);
-        this->low.reserve(n_elements);
-        this->high.reserve(n_elements);
-        this->close.reserve(n_elements);
-    }
+    size_t time_idx;
+
 
     void push_back(const TimePoint &date, const double &open, const double &low, const double &high, const double &close) {
         this->dates.push_back(date);

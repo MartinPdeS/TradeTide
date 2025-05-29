@@ -62,7 +62,6 @@ class Portfolio(binding):
 
             # 4) Shade and overlay for closed positions
             drawn = 0
-            # for position in self.get_all_positions(count=int(max_positions)):
 
             positions = self.get_positions(max_positions)
 

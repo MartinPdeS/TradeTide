@@ -55,7 +55,12 @@ void Portfolio::simulate() {
 
     this->state.initialize(this->capital_management.initial_capital);
 
+
+
     for (size_t time_idx = 0; time_idx < this->position_collection.market.dates.size(); time_idx ++) {
+        this->position_collection.market.ask.time_idx = time_idx;
+        this->position_collection.market.bid.time_idx = time_idx;
+
         this->state.time_idx = time_idx;
         this->state.time = this->position_collection.market.dates[time_idx];
         this->state.capital_at_risk = this->calculate_capital_at_risk();

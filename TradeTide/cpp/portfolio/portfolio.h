@@ -35,7 +35,8 @@ public:
      * @param capital_management  A capital management strategy that controls lot sizing.
      */
     Portfolio(PositionCollection& position_collection, BaseCapitalManagement& capital_management, bool record_enabled)
-        : position_collection(position_collection), capital_management(capital_management) {
+        : position_collection(position_collection), capital_management(capital_management)
+        {
             this->record.state = &this->state;
             if (record_enabled)
                 this->record.start_record(this->position_collection.market.dates.size());

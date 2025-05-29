@@ -13,14 +13,68 @@ using Duration = std::chrono::system_clock::duration;
 using TimePoint = std::chrono::system_clock::time_point;
 
 
+
+
+class Singleton {
+public:
+    TimePoint start_date, stop_date;
+    Duration duration;
+
+    // Delete copy constructor and assignment
+    Singleton(const Singleton&) = delete;
+    Singleton& operator=(const Singleton&) = delete;
+
+    // Access point to the single instance
+    static Singleton& instance() {
+        static Singleton instance;  // Guaranteed to be thread-safe in C++11+
+        return instance;
+    }
+
+private:
+    // Private constructor to prevent direct instantiation
+    Singleton() {}
+
+    // Optional: private destructor
+    ~Singleton() = default;
+};
+
+
+
+
+
+
+class BasePrices {
+public:
+    // Storage vectors for parsed data:
+    std::vector<TimePoint> dates;
+    std::vector<double> open, high, low, close;
+
+    void reserve(const size_t n_elements) {
+        this->dates.reserve(n_elements);
+        this->open.reserve(n_elements);
+        this->low.reserve(n_elements);
+        this->high.reserve(n_elements);
+        this->close.reserve(n_elements);
+    }
+
+    void push_back(const TimePoint &date, const double &open, const double &low, const double &high, const double &close) {
+        this->dates.push_back(date);
+        this->open.push_back(open);
+        this->low.push_back(low);
+        this->high.push_back(high);
+        this->close.push_back(close);
+    }
+
+};
+
+
 class Market {
 
 
 public:
-    // Storage vectors for parsed data:
+    BasePrices ask, bid;
     std::vector<TimePoint> dates;
-    std::vector<double> ask_open, ask_high, ask_low, ask_close;
-    std::vector<double> bid_open, bid_high, bid_low, bid_close;
+
 
     std::string currencies;
     TimePoint start_date;
@@ -32,12 +86,8 @@ public:
 
     Market() {}
 
-    Duration get_duration() const {
-        return end_date - start_date;
-    }
+    Duration get_duration() const {return end_date - start_date;}
 
-
-    void generate_random_market_data(const TimePoint& start_date, const TimePoint& end_date, const std::chrono::system_clock::duration& interval);
 
     // Display market data
     void display_market_data() const;

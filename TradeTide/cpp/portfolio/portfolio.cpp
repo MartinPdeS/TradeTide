@@ -80,7 +80,7 @@ void Portfolio::simulate() {
 void Portfolio::terminate_open_positions() {
     for (const auto& position : this->capital_management.active_positions) {
         this->state.number_of_concurrent_positions -= 1;
-        this->state.equity += position->calculate_profit_and_loss();
+        this->state.equity += (position->get_price_difference() * position->lot_size);
     }
 
     this->capital_management.active_positions.clear();
@@ -208,7 +208,7 @@ double Portfolio::calculate_win_loss_ratio() const {
 
     for (const auto& position : this->capital_management.selected_positions) {
         if (!position->is_closed) continue;
-        double pnl = position->calculate_profit_and_loss();
+        double pnl = position->get_price_difference();
         if (pnl > 0) ++wins;
         else if (pnl < 0) ++losses;
     }

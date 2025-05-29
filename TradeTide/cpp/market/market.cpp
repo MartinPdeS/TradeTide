@@ -1,77 +1,22 @@
 #include "market.h"
 
-// Generates random ask and bid data over a time interval
-void Market::generate_random_market_data(const TimePoint& start_date, const TimePoint& end_date, const Duration& interval) {
-    if (start_date >= end_date) {
-        std::cerr << "Invalid date range provided.\n";
-        return;
-    }
-
-    // Initialize random number generator
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<> dist_price(1.0, 100.0);      // Prices between $1 and $100
-    std::uniform_real_distribution<> dist_volatility(0.01, 0.05); // Volatility between 1% and 5%
-    std::uniform_real_distribution<> dist_spread(0.001, 0.005);   // Spread between 0.1% and 0.5% of mid-price
-
-    // Clear previous data
-    dates.clear();
-    ask_open.clear(); ask_high.clear(); ask_low.clear(); ask_close.clear();
-    bid_open.clear(); bid_high.clear(); bid_low.clear(); bid_close.clear();
-
-    double prev_close = dist_price(gen); // Start with a random price
-    TimePoint current_tp = start_date;
-
-    while (current_tp <= end_date) {
-        double open       = prev_close;
-        double volatility = dist_volatility(gen);
-        double high       = open * (1 + volatility);
-        double low        = open * (1 - volatility);
-        double close      = low + (high - low) * dist_volatility(gen);
-
-        // Compute a small random spread around the mid-price
-        double mid_price = (high + low) / 2.0;
-        double spread    = mid_price * dist_spread(gen);
-
-        // Store generated ask prices
-        ask_open .push_back(open + spread);
-        ask_high .push_back(high + spread);
-        ask_low  .push_back(low + spread);
-        ask_close.push_back(close + spread);
-
-        // Store generated bid prices
-        bid_open .push_back(open);
-        bid_high .push_back(high);
-        bid_low  .push_back(low);
-        bid_close.push_back(close);
-
-        // Store timestamp
-        dates.push_back(TimePoint{current_tp});
-
-        prev_close = close;
-        current_tp += interval;
-    }
-}
-
-
-
 
 // Display market data with tabs between fields
 void
 Market::display_market_data() const {
     std::cout << "Market Data:\n";
-    for (size_t i = 0; i < ask_open.size(); ++i) {
+    for (size_t i = 0; i < ask.open.size(); ++i) {
         std::cout
             << "Iteration "  << i                        << "\t\t"
             << "Date: "      << dates[i]                 << "\t\t"
-            << "Ask-Open: "  << ask_open[i]              << "\t\t"
-            << "Ask-High: "  << ask_high[i]              << "\t\t"
-            << "Ask-Low: "   << ask_low[i]               << "\t\t"
-            << "Ask-Close: " << ask_close[i]             << "\t\t"
-            << "Bid-Open: "  << bid_open[i]              << "\t\t"
-            << "Bid-High: "  << bid_high[i]              << "\t\t"
-            << "Bid-Low: "   << bid_low[i]               << "\t\t"
-            << "Bid-Close: " << bid_close[i]             << "\n"
+            << "Ask-Open: "  << ask.open[i]              << "\t\t"
+            << "Ask-High: "  << ask.high[i]              << "\t\t"
+            << "Ask-Low: "   << ask.low[i]               << "\t\t"
+            << "Ask-Close: " << ask.close[i]             << "\t\t"
+            << "Bid-Open: "  << bid.open[i]              << "\t\t"
+            << "Bid-High: "  << bid.high[i]              << "\t\t"
+            << "Bid-Low: "   << bid.low[i]               << "\t\t"
+            << "Bid-Close: " << bid.close[i]             << "\n"
             ;
     }
 }
@@ -202,18 +147,24 @@ void Market::load_from_csv(const std::string& filename, const std::chrono::syste
         }
 
         // Store timestamp
-        dates.push_back(time_point);
+        this->dates.push_back(time_point);
 
-        // Parse ask prices
-        ask_open .push_back(std::stod(fields[cols.ask_open]));
-        ask_high .push_back(std::stod(fields[cols.ask_high]));
-        ask_low  .push_back(std::stod(fields[cols.ask_low]));
-        ask_close.push_back(std::stod(fields[cols.ask_close]));
+        this->ask.push_back(
+            time_point,
+            std::stod(fields[cols.ask_open]),
+            std::stod(fields[cols.ask_low]),
+            std::stod(fields[cols.ask_high]),
+            std::stod(fields[cols.ask_close])
+        );
 
-        // Parse bid prices
-        bid_open .push_back(std::stod(fields[cols.bid_open]));
-        bid_high .push_back(std::stod(fields[cols.bid_high]));
-        bid_low  .push_back(std::stod(fields[cols.bid_low]));
-        bid_close.push_back(std::stod(fields[cols.bid_close]));
+
+        // Store timestamp
+        this->bid.push_back(
+            time_point,
+            std::stod(fields[cols.bid_open]),
+            std::stod(fields[cols.bid_low]),
+            std::stod(fields[cols.bid_high]),
+            std::stod(fields[cols.bid_close])
+        );
     }
 };

@@ -25,7 +25,7 @@ void PositionCollection::to_csv(const std::string& filepath) const {
             << position->lot_size << ","
             << (position->is_long ? "True" : "False") << ","
             << (position->is_closed ? "True" : "False") << ","
-            << position->calculate_profit_and_loss()
+            << position->get_price_difference()
             << "\n";
     }
 
@@ -41,18 +41,13 @@ void PositionCollection::open_positions(){
             continue;
 
         PositionPtr position;
+        exit_strategy_ptr->pip_value = this->market.pip_value;
         std::unique_ptr<ExitStrategy> risk_manager_copy = exit_strategy_ptr->clone();
 
-        if (signal_value == 1){
-            double entry_price = this->market.ask_open[idx];
-            TimePoint start_date = this->market.dates[idx];
-            position = std::make_unique<Long>(market, std::move(risk_manager_copy), entry_price, start_date, idx);
-        }
-        else {
-            double entry_price = this->market.bid_open[idx];
-            TimePoint start_date = this->market.dates[idx];
-            position = std::make_unique<Short>(market, std::move(risk_manager_copy), entry_price, start_date, idx);
-        }
+        if (signal_value == 1)
+            position = std::make_unique<Long>(std::move(risk_manager_copy), idx, this->market);
+        else
+            position = std::make_unique<Short>(std::move(risk_manager_copy), idx, this->market);
 
         positions.push_back(std::move(position));
     }

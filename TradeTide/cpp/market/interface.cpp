@@ -9,20 +9,18 @@ PYBIND11_MODULE(interface_market, module) {
     module.doc() = "Python bindings for Market, Bid, and Ask classes used in simulation.";
 
 
+    py::class_<BasePrices>(module, "BasePrices")
+        .def_readonly("open", &BasePrices::open)
+        .def_readonly("low", &BasePrices::low)
+        .def_readonly("high", &BasePrices::high)
+        .def_readonly("close", &BasePrices::close)
+    ;
+
     // ---------------------
     // Market Class
     // ---------------------
     py::class_<Market>(module, "Market", "Forex market data container for bid/ask prices and simulation time series.")
         .def(py::init<>(), "Create an empty Market object.")
-
-        .def(
-            "generate_random_market_data",
-            &Market::generate_random_market_data,
-            py::arg("start"),
-            py::arg("end"),
-            py::arg("interval"),
-            "Generate synthetic random market data between start and end with given interval."
-        )
 
         .def(
             "load_from_csv",
@@ -44,14 +42,8 @@ PYBIND11_MODULE(interface_market, module) {
 
         // Read/write market metadata
         .def_readwrite("dates", &Market::dates, "Vector of datetime timestamps.")
-        .def_readwrite("ask_open", &Market::ask_open, "Get open ask prices.")
-        .def_readwrite("ask_high", &Market::ask_high, "Get high ask prices.")
-        .def_readwrite("ask_low", &Market::ask_low, "Get low ask prices.")
-        .def_readwrite("ask_close", &Market::ask_close, "Get close ask prices.")
-        .def_readwrite("bid_open", &Market::bid_open, "Get open bid prices.")
-        .def_readwrite("bid_high", &Market::bid_high, "Get high bid prices.")
-        .def_readwrite("bid_low", &Market::bid_low, "Get low bid prices.")
-        .def_readwrite("bid_close", &Market::bid_close, "Get close bid prices.")
+        .def_readwrite("ask", &Market::ask, "Get open ask prices.")
+        .def_readwrite("bid", &Market::bid, "Get open bid prices.")
         .def_readwrite("start_date", &Market::start_date, "Start date of the market data.")
         .def_readwrite("end_date", &Market::end_date, "End date of the market data.")
         .def_readwrite("pip_value", &Market::pip_value, "Pip value in quote currency.")

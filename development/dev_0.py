@@ -39,7 +39,6 @@ position_collection.propagate_positions()
 
 position_collection.plot()
 
-dsa
 
 capital_management = capital_management.FixedFractional(
     capital=1000000,

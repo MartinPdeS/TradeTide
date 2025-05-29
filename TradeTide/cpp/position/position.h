@@ -18,7 +18,6 @@ class ExitStrategy;  // Forward declaration
  */
 class BasePosition {
 public:
-    const Market& market;  ///< Reference to market data
     std::unique_ptr<ExitStrategy> exit_strategy; ///< Exit strategy used for this position
 
     double entry_price = 0.0;     ///< Entry price of the position
@@ -34,26 +33,26 @@ public:
     bool is_closed = false;       ///< True if this position has been closed
     bool is_terminated = false;
 
+    const BasePrices *prices;
+
     virtual ~BasePosition() = default;
 
     /**
      * @brief Constructs a new BasePosition.
      *
-     * @param market Reference to market data
      * @param exit_strategy Exit strategy to apply
      * @param entry_price Price at which the position is opened
      * @param start_date Date/time of opening
      * @param start_idx Index in the market series where position starts
      * @param is_long True if long, false if short
      */
-    BasePosition(const Market& market,
-                 std::unique_ptr<ExitStrategy> exit_strategy,
-                 double entry_price,
-                 TimePoint start_date,
-                 size_t open_idx,
-                 bool is_long)
-        : market(market),
-          exit_strategy(std::move(exit_strategy)),
+    BasePosition(
+        std::unique_ptr<ExitStrategy> exit_strategy,
+        double entry_price,
+        TimePoint start_date,
+        size_t open_idx,
+        bool is_long)
+        : exit_strategy(std::move(exit_strategy)),
           entry_price(entry_price),
           start_date(start_date),
           open_idx(open_idx),
@@ -70,7 +69,7 @@ public:
      * @brief Calculates profit or loss of the position.
      * @return PnL as a double (positive = profit, negative = loss)
      */
-    [[nodiscard]] virtual double calculate_profit_and_loss() const = 0;
+    [[nodiscard]] virtual double get_price_difference() const = 0;
 
     /**
      * @brief Prints position summary to console.
@@ -117,13 +116,13 @@ public:
  */
 class Long : public BasePosition {
 public:
-    Long(const Market& market,
-         std::unique_ptr<ExitStrategy> exit_strategy,
-         double entry_price,
-         TimePoint start_date,
-         size_t start_idx)
-        : BasePosition(market, std::move(exit_strategy), entry_price, start_date, start_idx, true)
-    {}
+    Long(std::unique_ptr<ExitStrategy> exit_strategy, size_t start_idx, const Market &market)
+        : BasePosition(std::move(exit_strategy), entry_price, start_date, start_idx, true)
+    {
+        this->entry_price = market.ask.open[start_idx];
+        this->start_date = market.dates[start_idx];
+        this->prices = &market.bid;
+    }
 
     void propagate() override;
 
@@ -133,7 +132,7 @@ public:
 
     double get_closing_value_at(const size_t time_idx) const override;
 
-    [[nodiscard]] double calculate_profit_and_loss() const override;
+    [[nodiscard]] double get_price_difference() const override;
 };
 
 /**
@@ -141,13 +140,13 @@ public:
  */
 class Short : public BasePosition {
 public:
-    Short(const Market& market,
-          std::unique_ptr<ExitStrategy> exit_strategy,
-          double entry_price,
-          TimePoint start_date,
-          size_t start_idx)
-        : BasePosition(market, std::move(exit_strategy), entry_price, start_date, start_idx, false)
-    {}
+    Short(std::unique_ptr<ExitStrategy> exit_strategy, size_t start_idx, const Market &market)
+        : BasePosition(std::move(exit_strategy), entry_price, start_date, start_idx, false)
+    {
+        this->entry_price = market.bid.open[start_idx];
+        this->start_date = market.dates[start_idx];
+        this->prices = &market.ask;
+    }
 
     void propagate() override;
 
@@ -157,7 +156,7 @@ public:
 
     double get_closing_value_at(const size_t time_idx) const override;
 
-    [[nodiscard]] double calculate_profit_and_loss() const override;
+    [[nodiscard]] double get_price_difference() const override;
 };
 
 /**

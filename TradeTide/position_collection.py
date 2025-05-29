@@ -50,8 +50,8 @@ class PositionCollection(PositionCollection):
 
             market = self.get_market()
             dates = market.dates
-            ask = market.ask_open
-            bid = market.bid_open
+            ask = market.ask.open
+            bid = market.bid.open
 
             # 2) Define colors
             ask_color   = "#1f77b4"

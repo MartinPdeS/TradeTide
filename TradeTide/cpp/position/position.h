@@ -4,6 +4,7 @@
 #include <chrono>
 #include <vector>
 #include "../market/market.h"
+#include "../state/state.h"
 
 using TimePoint = std::chrono::system_clock::time_point;
 
@@ -34,6 +35,7 @@ public:
     bool is_terminated = false;
 
     const BasePrices *prices;
+    State state;
 
     virtual ~BasePosition() = default;
 
@@ -46,19 +48,7 @@ public:
      * @param start_idx Index in the market series where position starts
      * @param is_long True if long, false if short
      */
-    BasePosition(
-        std::unique_ptr<ExitStrategy> exit_strategy,
-        double entry_price,
-        TimePoint start_date,
-        size_t open_idx,
-        bool is_long)
-        : exit_strategy(std::move(exit_strategy)),
-          entry_price(entry_price),
-          start_date(start_date),
-          open_idx(open_idx),
-          is_long(is_long),
-          is_closed(false)
-    {}
+    BasePosition(std::unique_ptr<ExitStrategy> exit_strategy, double entry_price, TimePoint start_date, size_t open_idx, bool is_long);
 
     /**
      * @brief Runs SL/TP logic and attempts to close the position accordingly.
@@ -109,6 +99,8 @@ public:
 
     virtual double get_closing_value_at(const size_t time_idx) const = 0;
 
+    virtual double get_closing_price() = 0;
+
 };
 
 /**
@@ -119,6 +111,7 @@ public:
     Long(std::unique_ptr<ExitStrategy> exit_strategy, size_t start_idx, const Market &market)
         : BasePosition(std::move(exit_strategy), entry_price, start_date, start_idx, true)
     {
+        this->state = State(market);
         this->entry_price = market.ask.open[start_idx];
         this->start_date = market.dates[start_idx];
         this->prices = &market.bid;
@@ -133,6 +126,8 @@ public:
     double get_closing_value_at(const size_t time_idx) const override;
 
     [[nodiscard]] double get_price_difference() const override;
+
+    double get_closing_price() override  {return this->state.bid.close;};;
 };
 
 /**
@@ -157,6 +152,8 @@ public:
     double get_closing_value_at(const size_t time_idx) const override;
 
     [[nodiscard]] double get_price_difference() const override;
+
+    double get_closing_price() override {return this->state.ask.close;};
 };
 
 /**

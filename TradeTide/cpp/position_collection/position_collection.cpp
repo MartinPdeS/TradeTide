@@ -41,13 +41,16 @@ void PositionCollection::open_positions(){
             continue;
 
         PositionPtr position;
-        exit_strategy_ptr->pip_value = this->market.pip_value;
-        std::unique_ptr<ExitStrategy> risk_manager_copy = exit_strategy_ptr->clone();
+        std::unique_ptr<ExitStrategy> exit_stategy_copy = exit_strategy_ptr->clone();
 
-        if (signal_value == 1)
-            position = std::make_unique<Long>(std::move(risk_manager_copy), idx, this->market);
-        else
-            position = std::make_unique<Short>(std::move(risk_manager_copy), idx, this->market);
+        if (signal_value == 1) {
+            position = std::make_unique<Long>(std::move(exit_stategy_copy), idx, this->market);
+            exit_stategy_copy->position = position;
+        }
+        else {
+            position = std::make_unique<Short>(std::move(exit_stategy_copy), idx, this->market);
+            exit_stategy_copy->position = position;
+        }
 
         positions.push_back(std::move(position));
     }
@@ -55,8 +58,9 @@ void PositionCollection::open_positions(){
 
 void PositionCollection::propagate_positions() {
     #pragma omp parallel for
-    for (const auto& position : this->positions)
+    for (const auto& position : this->positions) {
         position->propagate();
+    }
 }
 
 

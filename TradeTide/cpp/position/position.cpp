@@ -1,9 +1,17 @@
 #include "position.h"
 
 #include "../exit_strategy/exit_strategy.h"
+#include "../state/state.h"
 
 
 // Base Position---------------------------------------------
+
+BasePosition::BasePosition(std::unique_ptr<ExitStrategy> exit_strategy, double entry_price, TimePoint start_date, size_t open_idx, bool is_long)
+: exit_strategy(std::move(exit_strategy)), entry_price(entry_price), start_date(start_date), open_idx(open_idx), is_long(is_long), is_closed(false)
+{
+    this->exit_strategy->initialize_prices();
+}
+
 const std::vector<double>& BasePosition::strategy_stop_loss_prices() const {
     return this->exit_strategy->stop_loss_prices;
 }
@@ -31,10 +39,7 @@ double BasePosition::get_capital_at_risk() const {
 // Check if stop-loss or take-profit is hit
 void Long::propagate() {
     for (size_t time_idx = this->open_idx; time_idx < this->prices->dates.size(); time_idx++) {
-
-        double current_price = this->prices->open[time_idx];
-
-        this->exit_strategy->update_price(*this, time_idx, current_price);
+        this->exit_strategy->update_price();
 
         if (this->prices->low[time_idx] <= this->exit_strategy->stop_loss_price) // Hit stop-loss
             return this->terminate(this->exit_strategy->stop_loss_price, time_idx);
@@ -75,9 +80,10 @@ void Long::display() const {
 // Short Position---------------------------------------------
 void Short::propagate() {
     for (size_t time_idx = this->open_idx; time_idx < this->prices->dates.size(); time_idx++) {
-        double current_price = this->prices->open[time_idx];
 
-        this->exit_strategy->update_price(*this, time_idx, current_price);
+        this->state.time_idx = time_idx;
+
+        this->exit_strategy->update_price();
 
         if (this->prices->high[time_idx] >= this->exit_strategy->stop_loss_price)  // Hit stop-loss
             return this->terminate(this->exit_strategy->stop_loss_price, time_idx);

@@ -13,11 +13,6 @@ using Duration = std::chrono::system_clock::duration;
 using TimePoint = std::chrono::system_clock::time_point;
 
 
-
-
-
-
-
 class BasePrices {
 public:
     // Storage vectors for parsed data:
@@ -26,7 +21,6 @@ public:
 
     size_t time_idx;
 
-
     void push_back(const TimePoint &date, const double &open, const double &low, const double &high, const double &close) {
         this->dates.push_back(date);
         this->open.push_back(open);
@@ -34,12 +28,10 @@ public:
         this->high.push_back(high);
         this->close.push_back(close);
     }
-
 };
 
 
 class Market {
-
 
 public:
     BasePrices ask, bid;

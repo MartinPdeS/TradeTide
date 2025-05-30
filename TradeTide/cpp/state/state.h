@@ -4,6 +4,7 @@
 #include <chrono>
 #include <iostream>
 #include <iomanip>
+#include "../market/market.h"
 
 using TimePoint = std::chrono::system_clock::time_point;
 
@@ -30,33 +31,39 @@ public:
     size_t time_idx;
     size_t position_index;
 
-    std::vector<TimePoint>* date_list = nullptr;
-    std::vector<double>* ask_open_list = nullptr, *bid_open_list = nullptr;
-    std::vector<double>* ask_low_list = nullptr, *bid_low_list = nullptr;
-    std::vector<double>* ask_high_list = nullptr, *bid_high_list = nullptr;
-    std::vector<double>* ask_close_list = nullptr, *bid_close_list = nullptr;
+    BasePrice ask;
+    BasePrice bid;
 
-    BasePrice _ask;
-    BasePrice _bid;
+    const Market *market;
+
+    State() = default;
+
+
+    State(const Market &market, const double capital = 0)
+    : market(&market)
+    {
+        this->initialize(capital);
+    }
+
 
     void update_time_idx(const size_t time_idx) {
-        _ask.date = (*date_list)[time_idx];
-        _ask.open = (*open_list)[time_idx];
-        _ask.low  = (*low_list)[time_idx];
-        _ask.high = (*high_list)[time_idx];
-        _ask.close = (*close_list)[time_idx];
+        time = this->market->dates[time_idx];
 
-        _bid.date = (*date_list)[time_idx];
-        _bid.open = (*open_list)[time_idx];
-        _bid.low  = (*low_list)[time_idx];
-        _bid.high = (*high_list)[time_idx];
-        _bid.close = (*close_list)[time_idx];
+        ask.open = this->market->ask.open[time_idx];
+        ask.low  = this->market->ask.low[time_idx];
+        ask.high = this->market->ask.high[time_idx];
+        ask.close = this->market->ask.close[time_idx];
+
+        bid.open = this->market->bid.open[time_idx];
+        bid.low  = this->market->bid.low[time_idx];
+        bid.high = this->market->bid.high[time_idx];
+        bid.close = this->market->bid.close[time_idx];
     }
 
     /**
      * @brief Initialize the state with a certain capital.
      */
-    void initialize(const double capital);
+    void initialize(const double capital = 0);
 
     /**
      * @brief Print a summary of the current state to std::cout.

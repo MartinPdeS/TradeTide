@@ -5,16 +5,17 @@
 #include <vector>
 
 #include "../market/market.h"
-#include "../position/position.h"
 #include "../state/state.h"
 
 using TimePoint = std::chrono::system_clock::time_point;
 using Duration = std::chrono::system_clock::duration;
 
+class BasePosition;
+
 
 class ExitStrategy {
     public:
-        virtual ~ExitStrategy() = default;
+        virtual ~ExitStrategy() {};
 
         double stop_loss_pip;    // Distance (in pips) for stop-loss from the entry price
         double take_profit_pip;  // Distance (in pips) for take-profit from the entry price
@@ -26,7 +27,7 @@ class ExitStrategy {
         std::vector<double> take_profit_prices;
         std::vector<TimePoint> dates;
 
-        PositionPtr position;
+        BasePosition *position;
 
         bool save_price_data = false; // Save the limit price for the position
 

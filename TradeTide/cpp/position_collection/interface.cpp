@@ -20,9 +20,8 @@ PYBIND11_MODULE(interface_position_collection, module) {
     // Bind the Position class
     py::class_<PositionCollection>(module, "PositionCollection")
         .def(
-            py::init<const Market&, const ExitStrategyPtr&, const std::vector<double>&, const bool&>(),
+            py::init<const Market&, const std::vector<double>&, const bool&>(),
             py::arg("market"),
-            py::arg("exit_strategy"),
             py::arg("trade_signal"),
             py::arg("save_price_data") = false,
             R"pbdoc(
@@ -37,6 +36,7 @@ PYBIND11_MODULE(interface_position_collection, module) {
         )
 
         .def("open_positions", &PositionCollection::open_positions,
+            py::arg("exit_strategy"),
             R"pbdoc(
                 Initialize all trading positions according to the signal.
 

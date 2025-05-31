@@ -5,6 +5,7 @@
 
 
 // --------------------------- ExitStrategy --------------------------------------
+
 void ExitStrategy::initialize_prices() {
     if (this->position->is_long)
         this->stop_loss_price = this->position->state.bid.open - this->stop_loss_pip * this->position->state.market->pip_value;

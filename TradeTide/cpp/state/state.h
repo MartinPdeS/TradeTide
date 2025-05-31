@@ -30,23 +30,35 @@ public:
     TimePoint time;                               ///< Current timestamp
     size_t time_idx;
     size_t position_index;
+    size_t n_elements;
 
-    BasePrice ask;
-    BasePrice bid;
+    BasePrice ask, bid, *close_price, *open_price; ///< Current ask and bid prices
 
     const Market *market;
 
     State() = default;
 
 
-    State(const Market &market, const double capital = 0)
-    : market(&market)
+    State(const Market &market, const double capital = 0): market(&market)
     {
+        this->n_elements = market.dates.size();
         this->initialize(capital);
+    }
+
+    void display() {
+        std::cout << std::fixed << std::setprecision(2);
+        std::cout << "Time: " << std::chrono::system_clock::to_time_t(time) << "\n";
+        std::cout << "Time idx: " << time_idx << "\n";
+        std::cout << "Equity: " << equity << "\n";
+        std::cout << "Capital at Risk: " << capital_at_risk << "\n";
+        std::cout << "Number of Concurrent Positions: " << number_of_concurrent_positions << "\n";
+        std::cout << "Ask Price - Open: " << ask.open << ", Low: " << ask.low << ", High: " << ask.high << ", Close: " << ask.close << "\n";
+        std::cout << "Bid Price - Open: " << bid.open << ", Low: " << bid.low << ", High: " << bid.high << ", Close: " << bid.close << "\n";
     }
 
 
     void update_time_idx(const size_t time_idx) {
+        this->time_idx = time_idx;
         time = this->market->dates[time_idx];
 
         ask.open = this->market->ask.open[time_idx];

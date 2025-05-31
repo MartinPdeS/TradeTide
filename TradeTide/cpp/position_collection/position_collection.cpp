@@ -32,25 +32,21 @@ void PositionCollection::to_csv(const std::string& filepath) const {
     file.close();
 }
 
-void PositionCollection::open_positions(){
+void PositionCollection::open_positions(const ExitStrategy &exit_strategy) {
 
-    for (size_t idx = 0; idx < this->market.dates.size(); idx++){
-        int signal_value = this->trade_signal[idx];
+    for (size_t time_idx = 0; time_idx < this->market.dates.size(); time_idx++){
+        int signal_value = this->trade_signal[time_idx];
 
         if (signal_value == 0)
             continue;
 
         PositionPtr position;
-        std::unique_ptr<ExitStrategy> exit_stategy_copy = exit_strategy_ptr->clone();
 
-        if (signal_value == 1) {
-            position = std::make_unique<Long>(std::move(exit_stategy_copy), idx, this->market);
-            exit_stategy_copy->position = position;
-        }
-        else {
-            position = std::make_unique<Short>(std::move(exit_stategy_copy), idx, this->market);
-            exit_stategy_copy->position = position;
-        }
+        if (signal_value == 1)
+            position = std::make_unique<Long>(exit_strategy, time_idx, this->market);
+
+        else
+            position = std::make_unique<Short>(exit_strategy, time_idx, this->market);
 
         positions.push_back(std::move(position));
     }

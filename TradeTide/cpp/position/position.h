@@ -5,10 +5,9 @@
 #include <vector>
 #include "../market/market.h"
 #include "../state/state.h"
+#include "../exit_strategy/exit_strategy.h"
 
 using TimePoint = std::chrono::system_clock::time_point;
-
-class ExitStrategy;  // Forward declaration
 
 /**
  * @brief Abstract base class representing a trading position.
@@ -27,14 +26,13 @@ public:
 
     TimePoint start_date;         ///< Timestamp when position is opened
     TimePoint close_date;         ///< Timestamp when position is closed
-    size_t open_idx = 0;          ///< Index in market data when position opens
+    size_t start_idx = 0;          ///< Index in market data when position opens
     size_t close_idx = 0;
 
     bool is_long = true;          ///< True if this is a long position
     bool is_closed = false;       ///< True if this position has been closed
     bool is_terminated = false;
 
-    const BasePrices *prices;
     State state;
 
     virtual ~BasePosition() = default;
@@ -48,7 +46,7 @@ public:
      * @param start_idx Index in the market series where position starts
      * @param is_long True if long, false if short
      */
-    BasePosition(std::unique_ptr<ExitStrategy> exit_strategy, double entry_price, TimePoint start_date, size_t open_idx, bool is_long);
+    BasePosition(const ExitStrategy &exit_strategy, size_t start_idx, bool is_long);
 
     /**
      * @brief Runs SL/TP logic and attempts to close the position accordingly.
@@ -101,6 +99,8 @@ public:
 
     virtual double get_closing_price() = 0;
 
+    void initialize_state(const Market& market, const size_t time_idx);
+
 };
 
 /**
@@ -108,14 +108,7 @@ public:
  */
 class Long : public BasePosition {
 public:
-    Long(std::unique_ptr<ExitStrategy> exit_strategy, size_t start_idx, const Market &market)
-        : BasePosition(std::move(exit_strategy), entry_price, start_date, start_idx, true)
-    {
-        this->state = State(market);
-        this->entry_price = market.ask.open[start_idx];
-        this->start_date = market.dates[start_idx];
-        this->prices = &market.bid;
-    }
+    Long(const ExitStrategy &exit_strategy, const size_t time_idx, const Market &market);
 
     void propagate() override;
 
@@ -135,13 +128,7 @@ public:
  */
 class Short : public BasePosition {
 public:
-    Short(std::unique_ptr<ExitStrategy> exit_strategy, size_t start_idx, const Market &market)
-        : BasePosition(std::move(exit_strategy), entry_price, start_date, start_idx, false)
-    {
-        this->entry_price = market.bid.open[start_idx];
-        this->start_date = market.dates[start_idx];
-        this->prices = &market.ask;
-    }
+    Short(const ExitStrategy &exit_strategy, const size_t time_idx, const Market &market);
 
     void propagate() override;
 

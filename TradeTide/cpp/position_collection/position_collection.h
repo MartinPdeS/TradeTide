@@ -41,8 +41,7 @@ private:
 
 public:
     const Market market;                             ///< Market data reference
-    const ExitStrategyPtr exit_strategy_ptr;         ///< Shared exit strategy template
-    const std::vector<double> trade_signal;               ///< Signal stream for entry logic
+    const std::vector<double> trade_signal;          ///< Signal stream for entry logic
     std::vector<PositionPtr> positions;              ///< All tracked positions
     size_t number_of_trade = 0;                      ///< Number of trades detected from signal
     bool save_price_data = false;                    ///< Whether to store SL/TP traces
@@ -56,18 +55,15 @@ public:
      * @brief Constructs a new PositionCollection.
      *
      * @param market Reference to market series.
-     * @param exit_strategy_ptr Shared pointer to exit strategy template.
+     * @param exit_strategy Shared pointer to exit strategy template.
      * @param signal Trade signal series.
      * @param save_price_data Enables SL/TP tracing per position.
      */
     PositionCollection(
         const Market& market,
-        const ExitStrategyPtr& exit_strategy_ptr,
-        // const Signal& signal,
         const std::vector<double>& trade_signal,
         const bool save_price_data = false)
         : market(market),
-          exit_strategy_ptr(exit_strategy_ptr),
           trade_signal(trade_signal),
           save_price_data(save_price_data)
     {
@@ -83,7 +79,7 @@ public:
     /**
      * @brief Initializes positions according to the provided signal.
      */
-    void open_positions();
+    void open_positions(const ExitStrategy &exit_strategy);
 
     /**
      * @brief Propagates each position to closure using market data and exit strategy.

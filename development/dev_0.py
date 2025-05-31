@@ -1,6 +1,5 @@
 from TradeTide.market import Market
 from TradeTide.portfolio import Portfolio
-from TradeTide.loader import get_data_path
 from TradeTide.position_collection import PositionCollection
 from TradeTide.currencies import Currency
 from datetime import datetime, timedelta
@@ -31,14 +30,13 @@ exit_strategy = exit_strategy.Static(
 position_collection = PositionCollection(
     market=market,
     trade_signal=signal.trade_signal,
-    exit_strategy=exit_strategy,
 )
 
-position_collection.open_positions()
-position_collection.propagate_positions()
+position_collection.open_positions(exit_strategy=exit_strategy)
+# position_collection.propagate_positions()
 
 position_collection.plot()
-
+dsa
 
 capital_management = capital_management.FixedFractional(
     capital=1000000,

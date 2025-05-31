@@ -17,8 +17,8 @@ void Portfolio::try_close_positions() {
     for (size_t i = 0; i < this->capital_management.active_positions.size(); i++) {
         const PositionPtr& position = this->capital_management.active_positions[i];
 
-        // Skip positions that are not closing at this current_time
-        if (position->close_date != this->state.time)
+        // Skip positions that are not closing at this current_date
+        if (position->close_date != this->state.current_date)
             continue;
 
         // Attempt to close position
@@ -33,7 +33,7 @@ void Portfolio::try_close_positions() {
 }
 
 void Portfolio::try_open_positions() {
-    while (this->state.position_index < this->position_collection.positions.size() && this->position_collection.positions[this->state.position_index]->start_date == this->state.time) {
+    while (this->state.position_index < this->position_collection.positions.size() && this->position_collection.positions[this->state.position_index]->start_date == this->state.current_date) {
 
         const PositionPtr& position = this->position_collection.positions[this->state.position_index];
 
@@ -58,7 +58,7 @@ void Portfolio::simulate() {
     for (size_t time_idx = 0; time_idx < this->position_collection.market.dates.size(); time_idx ++) {
 
         state.time_idx = time_idx;
-        state.time = this->position_collection.market.dates[time_idx];
+        state.current_date = this->position_collection.market.dates[time_idx];
         state.capital_at_risk = this->calculate_capital_at_risk();
         state.equity = this->calculate_equity();
 
@@ -248,7 +248,7 @@ double Portfolio::calculate_equity() const {
     double equity = this->state.capital;
 
     for (const PositionPtr& position : this->capital_management.active_positions)
-        if (position->is_open_at(this->state.time))
+        if (position->is_open_at(this->state.current_date))
             equity += position->get_closing_value_at(this->state.time_idx);
 
 

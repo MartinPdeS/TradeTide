@@ -31,12 +31,15 @@ public:
     double capital;                               ///< Initial capital
     double capital_at_risk = 0.0;                 ///< Current capital at risk
     size_t number_of_concurrent_positions = 0;    ///< Active positions at current time
-    TimePoint time;                               ///< Current timestamp
+    TimePoint current_date;                       ///< Current timestamp
     size_t time_idx;                              ///< Index in the market data for current time
     size_t position_index;                        ///< Index of the current position
     size_t n_elements;                            ///< Total number of elements in the market data
 
     BasePrice ask, bid, *close_price, *open_price; ///< Current ask and bid prices
+
+    const std::vector<double> *closing_prices; ///< Closing prices for the current state
+    const std::vector<TimePoint> *dates; ///< Opening prices for the current state
 
     const Market *market; ///< Reference to the market data
 
@@ -52,6 +55,7 @@ public:
     {
         this->n_elements = market.dates.size();
         this->initialize(capital);
+        this->dates = &market.dates;
     }
 
     /**
@@ -59,7 +63,7 @@ public:
      */
     void display() {
         std::cout << std::fixed << std::setprecision(2);
-        std::cout << "Time: " << std::chrono::system_clock::to_time_t(time) << "\n";
+        std::cout << "Time: " << std::chrono::system_clock::to_time_t(current_date) << "\n";
         std::cout << "Time idx: " << time_idx << "\n";
         std::cout << "Equity: " << equity << "\n";
         std::cout << "Capital at Risk: " << capital_at_risk << "\n";
@@ -75,7 +79,7 @@ public:
      */
     void update_time_idx(const size_t time_idx) {
         this->time_idx = time_idx;
-        time = this->market->dates[time_idx];
+        this->current_date = this->market->dates[time_idx];
 
         ask.open = this->market->ask.open[time_idx];
         ask.low  = this->market->ask.low[time_idx];

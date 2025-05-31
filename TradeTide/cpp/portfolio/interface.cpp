@@ -16,7 +16,7 @@ PYBIND11_MODULE(interface_portfolio, module) {
     ;
 
     py::class_<State>(module, "State")
-        .def_readonly("time", &State::time)
+        .def_readonly("current_date", &State::current_date)
         .def_readonly("equity", &State::equity)
         .def_readonly("capital", &State::capital)
         .def_readonly("number_of_concurent_positions", &State::number_of_concurrent_positions)

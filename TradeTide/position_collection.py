@@ -71,16 +71,11 @@ class PositionCollection(PositionCollection):
 
             # 4) Shade and overlay for closed positions
             drawn = 0
-            # for position in self.get_all_positions(count=int(max_positions)):
 
             for idx in range(len(self)):
                 if idx > max_positions:
                     break
                 position = self[idx]
-
-
-                if not position.is_terminated:
-                    continue
 
                 start, end = position.start_date, position.close_date
                 fill_color = long_fill if isinstance(position, Long) else short_fill
@@ -88,11 +83,11 @@ class PositionCollection(PositionCollection):
                 # shade the region
                 ax.axvspan(start, end, facecolor=fill_color, edgecolor="black", alpha=0.2)
 
-                # SL and TP lines
-                ax.plot(position.dates(), position.stop_loss_prices(),
-                        linestyle="--", color=sl_color, linewidth=1, label="_nolegend_")
-                ax.plot(position.dates(), position.take_profit_prices(),
-                        linestyle="--", color=tp_color, linewidth=1, label="_nolegend_")
+                # # SL and TP lines
+                # ax.plot(position.dates(), position.stop_loss_prices(),
+                #         linestyle="--", color=sl_color, linewidth=1, label="_nolegend_")
+                # ax.plot(position.dates(), position.take_profit_prices(),
+                #         linestyle="--", color=tp_color, linewidth=1, label="_nolegend_")
 
                 drawn += 1
                 if drawn >= max_positions:

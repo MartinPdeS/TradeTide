@@ -33,7 +33,8 @@ position_collection = PositionCollection(
 )
 
 position_collection.open_positions(exit_strategy=exit_strategy)
-# position_collection.propagate_positions()
+position_collection.propagate_positions()
+position_collection.terminate_open_positions()
 
 position_collection.plot()
 dsa

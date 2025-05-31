@@ -16,5 +16,5 @@ void Record::update() {
     this->capital.push_back(this->state->capital);
     this->capital_at_risk.push_back(this->state->capital_at_risk);
     this->concurrent_positions.push_back(this->state->number_of_concurrent_positions);
-    this->time.push_back(this->state->time);
+    this->time.push_back(this->state->current_date);
 }

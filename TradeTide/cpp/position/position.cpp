@@ -11,10 +11,10 @@ BasePosition::BasePosition(const ExitStrategy &exit_strategy, size_t start_idx, 
     this->exit_strategy = exit_strategy.clone();
 }
 
-void BasePosition::initialize_state(const Market& market, const size_t time_idx) {
+void BasePosition::initialize_state(const size_t time_idx) {
 
     this->state.update_time_idx(time_idx);
-    this->start_date = this->state.time;
+    this->start_date = this->state.current_date;
     this->entry_price = this->state.open_price->open;
     this->exit_strategy->position = this;
     this->exit_strategy->initialize_prices();
@@ -32,16 +32,68 @@ const std::vector<TimePoint>& BasePosition::strategy_dates() const {
     return this->exit_strategy->dates;
 }
 
-void BasePosition::terminate(const double exit_price, const size_t time_idx) {
-    this->exit_price = exit_price;
-    this->close_date = this->state.time;
+void BasePosition::terminate_with_stop_lose(const size_t time_idx) {
+    this->exit_price = this->exit_strategy->stop_loss_price;
+    this->close_date = this->state.current_date;
     this->close_idx = time_idx;
-    this->is_terminated = true;
+    this->is_closed = true;
+}
+
+void BasePosition::terminate_with_take_profit(const size_t time_idx) {
+    this->exit_price = this->exit_strategy->take_profit_price;
+    this->close_date = this->state.current_date;
+    this->close_idx = time_idx;
+    this->is_closed = true;
 }
 
 double BasePosition::get_capital_at_risk() const {
     return std::abs(this->entry_price - this->exit_strategy->stop_loss_price) * this->lot_size;
 }
+
+void BasePosition::close_at(const size_t time_idx) {
+    this->exit_price = (*this->state.closing_prices)[time_idx];
+    this->close_date = (*this->state.dates)[time_idx];
+    this->close_idx = time_idx;
+    this->is_closed = true;
+}
+
+
+// Display Position Info
+void BasePosition::display() const {
+    if (this->is_long)
+        std::cout << "Long Position:\n";
+    else
+        std::cout << "Short Position:\n";
+
+    std::cout << std::fixed << std::setprecision(5)
+        << "Start Time: " << start_date << "\n"
+        << "Stop Time: " << close_date << "\n"
+        << "Entry Price: " << entry_price << "\n"
+        << "Exit Price: " << exit_price << "\n"
+        << "Lot Size: " << lot_size << "\n\n"
+    ;
+}
+
+double BasePosition::get_closing_value_at(const size_t time_idx) const {
+    return (*this->state.closing_prices)[time_idx] * this->lot_size;
+}
+
+
+// Check if stop-loss or take-profit is hit
+void BasePosition::propagate() {
+    for (size_t time_idx = this->start_idx; time_idx < this->state.n_elements; time_idx++) {
+        this->state.update_time_idx(time_idx);
+
+        this->exit_strategy->update_price();
+
+        if (this->is_stop_loss_triggered())  // Hit stop-loss
+            return this->terminate_with_stop_lose(time_idx);
+
+        if (this->is_take_profit_triggered())  // Hit take-profit
+            return this->terminate_with_take_profit(time_idx);
+    }
+}
+
 
 // Long Position---------------------------------------------
 Long::Long(const ExitStrategy &exit_strategy, const size_t time_idx, const Market &market)
@@ -50,49 +102,23 @@ Long::Long(const ExitStrategy &exit_strategy, const size_t time_idx, const Marke
     this->state = State(market);
     this->state.open_price = &this->state.ask;
     this->state.close_price = &this->state.bid;
-    this->initialize_state(market, time_idx);
+    this->state.closing_prices = &this->state.market->bid.open;
+    this->initialize_state(time_idx);
 }
 
-// Check if stop-loss or take-profit is hit
-void Long::propagate() {
-    for (size_t time_idx = this->start_idx; time_idx < this->state.n_elements; time_idx++) {
-        this->state.update_time_idx(time_idx);
-
-        this->exit_strategy->update_price();
-
-        if (this->state.close_price->low <= this->exit_strategy->stop_loss_price) // Hit stop-loss
-            return this->terminate(this->exit_strategy->stop_loss_price, time_idx);
-
-        if (this->state.close_price->high >= this->exit_strategy->take_profit_price)   // Hit take-profit
-            return this->terminate(this->exit_strategy->take_profit_price, time_idx);
-
-    }
-}
-
-double Long::get_closing_value_at(const size_t time_idx) const {
-    return this->state.market->bid.open[time_idx] * this->lot_size;
-}
-
-void Long::set_close_condition(const size_t time_idx) {
-    this->exit_price = this->state.close_price->open;
-    this->close_date = this->state.close_price->date;
-}
 
 // Calculate profit or loss
 [[nodiscard]] double Long::get_price_difference() const {
     return this->exit_price - this->entry_price;
 }
 
-// Display Position Info
-void Long::display() const {
-    std::cout
-        << "Position Type: Long \n"
-        << "Start Time: " << start_date << "\n"
-        << "Stop Time: " << close_date << "\n"
-        << "Entry Price: " << entry_price << "\n"
-        << "Exit Price: " << exit_price << "\n"
-        << "Lot Size: " << lot_size << "\n\n"
-    ;
+
+bool Long::is_stop_loss_triggered() const {
+    return this->state.close_price->low <= this->exit_strategy->stop_loss_price;
+}
+
+bool Long::is_take_profit_triggered() const {
+    return this->state.close_price->high >= this->exit_strategy->take_profit_price;
 }
 
 
@@ -103,48 +129,20 @@ Short::Short(const ExitStrategy &exit_strategy, const size_t time_idx, const Mar
     this->state = State(market);
     this->state.open_price = &this->state.bid;
     this->state.close_price = &this->state.ask;
-    this->initialize_state(market, time_idx);
+    this->state.closing_prices = &this->state.market->ask.open;
+    this->initialize_state(time_idx);
 }
 
-// Check if stop-loss or take-profit is hit
-void Short::propagate() {
-    for (size_t time_idx = this->start_idx; time_idx < this->state.n_elements; time_idx++) {
-        this->state.update_time_idx(time_idx);
 
-        this->exit_strategy->update_price();
-
-        if (this->state.close_price->high >= this->exit_strategy->stop_loss_price)  // Hit stop-loss
-            return this->terminate(this->exit_strategy->stop_loss_price, time_idx);
-            this->exit_price = this->exit_strategy->stop_loss_price;
-
-        if (this->state.close_price->low <= this->exit_strategy->take_profit_price)  // Hit take-profit
-            return this->terminate(this->exit_strategy->take_profit_price, time_idx);
-    }
+bool Short::is_stop_loss_triggered() const {
+    return this->state.close_price->high >= this->exit_strategy->stop_loss_price;
 }
 
-void Short::set_close_condition(const size_t time_idx) {
-    this->exit_price = this->state.close_price->open;
-    this->close_date = this->state.time;
-}
-
-double Short::get_closing_value_at(const size_t time_idx) const {
-    return this->state.market->ask.open[time_idx] * this->lot_size;
+bool Short::is_take_profit_triggered() const {
+    return this->state.close_price->low <= this->exit_strategy->take_profit_price;
 }
 
 // Calculate profit or loss
 [[nodiscard]] double Short::get_price_difference() const {
     return this->entry_price - this->exit_price;
-}
-
-
-// Display Position Info
-void Short::display() const {
-    std::cout
-        << "Position Type: Short\n"
-        << "Start Time: " << start_date << "\n"
-        << "Stop Time: " << close_date << "\n"
-        << "Entry Price: " << entry_price << "\n"
-        << "Exit Price: " << exit_price<< "\n"
-        << "Lot Size: " << lot_size << "\n\n"
-    ;
 }

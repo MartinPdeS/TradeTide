@@ -51,7 +51,7 @@ public:
     /**
      * @brief Runs SL/TP logic and attempts to close the position accordingly.
      */
-    virtual void propagate() = 0;
+    void propagate();
 
     /**
      * @brief Calculates profit or loss of the position.
@@ -62,7 +62,7 @@ public:
     /**
      * @brief Prints position summary to console.
      */
-    virtual void display() const = 0;
+    void display() const;
 
     /**
      * @brief Returns stop-loss price history from the ExitStrategy.
@@ -82,19 +82,25 @@ public:
     const std::vector<TimePoint>& strategy_dates() const;
 
     /**
-     * @brief Terminates the position at the given exit price and time index.
+     * @brief Terminates the position with a stop-loss at the given time index.
      *
-     * This is called when the position is closed either by hitting SL/TP or manually.
-     * @param exit_price Price at which the position is closed.
-     * @param time_idx Index in the market data when the position is closed.
+     * This is used to close the position when the stop-loss condition is met.
+     * @param time_idx Index in the market data where the stop-loss was triggered.
      */
-    void terminate(const double exit_price, const size_t time_idx);
+    void terminate_with_stop_lose(const size_t time_idx);
 
+    /**
+     * @brief Terminates the position with a take-profit at the given time index.
+     *
+     * This is used to close the position when the take-profit condition is met.
+     * @param time_idx Index in the market data where the take-profit was triggered.
+     */
+    void terminate_with_take_profit(const size_t time_idx);
 
     /**
      * @brief Closes the position at the market price at the given index.
      */
-    virtual void set_close_condition(const size_t time_idx) = 0;
+    void close_at(const size_t time_idx);
 
     /**
      * @brief Checks if the position is open at a specific date.
@@ -116,15 +122,7 @@ public:
      * @param time_idx Index in the market data to get the closing value for.
      * @return Closing value as a double.
      */
-    virtual double get_closing_value_at(const size_t time_idx) const = 0;
-
-    /**
-     * @brief Returns the closing price of the position.
-     *
-     * This is used to get the final price at which the position was closed.
-     * @return Closing price as a double.
-     */
-    virtual double get_closing_price() = 0;
+    double get_closing_value_at(const size_t time_idx) const;
 
     /**
      * @brief Initializes the state of the position.
@@ -132,7 +130,13 @@ public:
      * @param market Reference to the Market object containing market data.
      * @param time_idx Index in the market data to initialize the state with.
      */
-    void initialize_state(const Market& market, const size_t time_idx);
+    void initialize_state(const size_t time_idx);
+
+    /** @brief Checks if the stop-loss condition is met. */
+    virtual bool is_stop_loss_triggered() const = 0;
+
+    /** @brief Checks if the take-profit condition is met. */
+    virtual bool is_take_profit_triggered() const = 0;
 
 };
 
@@ -143,17 +147,11 @@ class Long : public BasePosition {
 public:
     Long(const ExitStrategy &exit_strategy, const size_t time_idx, const Market &market);
 
-    void propagate() override;
-
-    void display() const override;
-
-    void set_close_condition(const size_t time_idx) override;
-
-    double get_closing_value_at(const size_t time_idx) const override;
-
     [[nodiscard]] double get_price_difference() const override;
 
-    double get_closing_price() override  {return this->state.bid.close;};;
+    bool is_stop_loss_triggered() const override;
+
+    bool is_take_profit_triggered() const override;
 };
 
 /**
@@ -163,17 +161,11 @@ class Short : public BasePosition {
 public:
     Short(const ExitStrategy &exit_strategy, const size_t time_idx, const Market &market);
 
-    void propagate() override;
-
-    void display() const override;
-
-    void set_close_condition(const size_t time_idx) override;
-
-    double get_closing_value_at(const size_t time_idx) const override;
-
     [[nodiscard]] double get_price_difference() const override;
 
-    double get_closing_price() override {return this->state.ask.close;};
+    bool is_stop_loss_triggered() const override;
+
+    bool is_take_profit_triggered() const override;
 };
 
 /**

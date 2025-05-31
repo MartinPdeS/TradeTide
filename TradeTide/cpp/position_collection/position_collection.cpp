@@ -63,14 +63,17 @@ void PositionCollection::propagate_positions() {
 void PositionCollection::terminate_open_positions() {
     for (const auto& position : this->positions)
         if (!position->is_closed)
-            position->set_close_condition(this->market.dates.size() - 1);  // Set to last element of market
+            position->close_at(this->market.dates.size() - 1);  // Set to last element of market
 
 
-        std::sort(
-            this->positions.begin(),
-            this->positions.end(),
-            [](const PositionPtr& a, const PositionPtr& b) {return a->start_date < b->start_date;}
-        );
+    std::sort(
+        this->positions.begin(),
+        this->positions.end(),
+        [](const PositionPtr& a, const PositionPtr& b) {return a->start_date < b->start_date;}
+    );
+
+    for (const auto& position : this->positions)
+        std::cout<<position->is_closed << "   :  " << position->start_date << "\n";
 }
 
 

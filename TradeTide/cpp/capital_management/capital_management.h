@@ -51,6 +51,9 @@ public:
         return true;
     }
 
+    /**
+     * @brief Resets the state of the capital management system.
+     */
     void reset_state() {
         this->selected_positions.clear();
         this->executed_positions.clear();
@@ -72,8 +75,20 @@ class FixedLot : public BaseCapitalManagement {
             : BaseCapitalManagement(capital, max_capital_at_risk, max_concurrent_positions),
               fixed_lot_size(fixed_lot_size) {}
 
+        /**
+         * @brief Computes the lot size for a position based on the fixed lot strategy.
+         *
+         * This method assigns the fixed lot size to the position.
+         */
         void compute_lot_size(BasePosition& position) const override;
 
+        /**
+         * @brief Attempts to open a position based on the fixed lot strategy.
+         *
+         * This method checks if the position can be opened under the current capital constraints.
+         * @param position The position to open.
+         * @return true if the position is accepted, false otherwise.
+         */
         bool try_open_position(const PositionPtr& position) override;
     };
 
@@ -93,8 +108,21 @@ class FixedFractional : public BaseCapitalManagement {
               risk_fraction(risk_fraction) {}
 
 
+        /**
+         * @brief Computes the lot size for a position based on the fixed fractional strategy.
+         *
+         * This method calculates the lot size to risk a fixed fraction of equity
+         * based on the stop-loss distance.
+         */
         void compute_lot_size(BasePosition& position) const override;
 
+        /**
+         * @brief Attempts to open a position based on the fixed fractional strategy.
+         *
+         * This method checks if the position can be opened under the current capital constraints.
+         * @param position The position to open.
+         * @return true if the position is accepted, false otherwise.
+         */
         bool try_open_position(const PositionPtr& position) override;
     };
 

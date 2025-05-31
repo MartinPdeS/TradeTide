@@ -44,8 +44,8 @@ public:
             this->capital_management.state = &this->state;
         }
 
-
     [[nodiscard]] const std::vector<size_t>& get_history_position_count() {return this->record.concurrent_positions;}
+
     [[nodiscard]] const std::vector<double>& get_history_equity() {return this->record.equity;}
     [[nodiscard]] const std::vector<double>& get_history_capital_at_risk() {return this->record.capital_at_risk;}
     /**
@@ -157,11 +157,21 @@ public:
      */
     [[nodiscard]] double calculate_volatility() const;
 
-    double calculate_capital_at_risk() const;
+    /**
+     * @brief Calculate the capital at risk based on all open positions.
+     *
+     * This is the sum of all positions' capital at risk.
+     *
+     * @return Total capital at risk.
+     */
+    [[nodiscard]] double calculate_capital_at_risk() const;
 
+    /** @brief Attempt to close positions based on current market conditions. */
     void try_close_positions();
 
+    /** @brief Attempt to open new positions based on current market conditions. */
     void try_open_positions();
 
+    /** @brief Terminate all open positions. */
     void terminate_open_positions();
 };

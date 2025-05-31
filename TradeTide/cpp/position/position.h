@@ -20,20 +20,20 @@ class BasePosition {
 public:
     std::unique_ptr<ExitStrategy> exit_strategy; ///< Exit strategy used for this position
 
-    double entry_price = 0.0;     ///< Entry price of the position
-    double exit_price = 0.0;      ///< Exit price when position is closed
-    double lot_size = 1.0;        ///< Trade size in lots
+    double entry_price = 0.0;      ///< Entry price of the position
+    double exit_price = 0.0;       ///< Exit price when position is closed
+    double lot_size = 1.0;         ///< Trade size in lots
 
-    TimePoint start_date;         ///< Timestamp when position is opened
-    TimePoint close_date;         ///< Timestamp when position is closed
+    TimePoint start_date;          ///< Timestamp when position is opened
+    TimePoint close_date;          ///< Timestamp when position is closed
     size_t start_idx = 0;          ///< Index in market data when position opens
-    size_t close_idx = 0;
+    size_t close_idx = 0;          ///< Index in market data when position closes
 
-    bool is_long = true;          ///< True if this is a long position
-    bool is_closed = false;       ///< True if this position has been closed
+    bool is_long = true;           ///< True if this is a long position
+    bool is_closed = false;        ///< True if this position has been closed
     bool is_terminated = false;
 
-    State state;
+    State state;                   ///< Current state of the position, including market data
 
     virtual ~BasePosition() = default;
 
@@ -81,6 +81,13 @@ public:
      */
     const std::vector<TimePoint>& strategy_dates() const;
 
+    /**
+     * @brief Terminates the position at the given exit price and time index.
+     *
+     * This is called when the position is closed either by hitting SL/TP or manually.
+     * @param exit_price Price at which the position is closed.
+     * @param time_idx Index in the market data when the position is closed.
+     */
     void terminate(const double exit_price, const size_t time_idx);
 
 
@@ -89,16 +96,42 @@ public:
      */
     virtual void set_close_condition(const size_t time_idx) = 0;
 
-    bool is_open_at(const TimePoint& date) const {
+    /**
+     * @brief Checks if the position is open at a specific date.
+     *
+     * This is used to determine if the position is active during a given time point.
+     * @param date TimePoint to check.
+     * @return True if the position is open at that date, false otherwise.
+     */
+    [[nodiscard]] bool is_open_at(const TimePoint& date) const {
         if (date > this->start_date && date < this->close_date)
             return true;
         return false;
     }
 
+    /**
+     * @brief Returns the closing value of the position at a specific time index.
+     *
+     * This is used to calculate the value of the position at a given time point.
+     * @param time_idx Index in the market data to get the closing value for.
+     * @return Closing value as a double.
+     */
     virtual double get_closing_value_at(const size_t time_idx) const = 0;
 
+    /**
+     * @brief Returns the closing price of the position.
+     *
+     * This is used to get the final price at which the position was closed.
+     * @return Closing price as a double.
+     */
     virtual double get_closing_price() = 0;
 
+    /**
+     * @brief Initializes the state of the position.
+     *
+     * @param market Reference to the Market object containing market data.
+     * @param time_idx Index in the market data to initialize the state with.
+     */
     void initialize_state(const Market& market, const size_t time_idx);
 
 };

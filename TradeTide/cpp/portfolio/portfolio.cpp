@@ -10,42 +10,50 @@ double Portfolio::peak_equity() const {
     return *std::max_element(this->record.equity.begin(), this->record.equity.end());
 }
 
+
+void Portfolio::close_position(PositionPtr& position, const size_t &position_idx) {
+    this->active_positions.erase(this->active_positions.begin() + position_idx);
+    this->state.number_of_concurrent_positions -= 1;
+    this->state.capital += position->exit_price * position->lot_size;
+    position->is_closed = true;
+}
+
+void Portfolio::open_position(PositionPtr& position, const BaseCapitalManagement &capital_management) {
+    this->active_positions.push_back(position);
+    this->selected_positions.push_back(position);
+    this->executed_positions.push_back(position);
+
+    position->lot_size = capital_management.compute_lot_size(*position);
+
+    this->state.number_of_concurrent_positions += 1;
+    this->state.capital -= position->entry_price * position->lot_size;
+    position->is_closed = false;
+}
+
 void Portfolio::try_close_positions(BaseCapitalManagement& capital_management) {
     for (size_t i = 0; i < this->active_positions.size(); i++) {
-        const PositionPtr& position = this->active_positions[i];
-
-        // Skip positions that are not closing at this current_date
-        if (position->close_date != this->state.current_date)
-            continue;
+        PositionPtr& position = this->active_positions[i];
 
         // Attempt to close position
-        if (capital_management.can_close_position(position)) {
-            this->active_positions.erase(this->active_positions.begin() + i);
-            this->state.number_of_concurrent_positions -= 1;
-            this->state.capital += position->exit_price * position->lot_size;
-            position->is_closed = true;
-        }
+        if (position->close_date == this->state.current_date && capital_management.can_close_position(position))
+            this->close_position(position, i);
 
     }
 }
 
 void Portfolio::try_open_positions(BaseCapitalManagement& capital_management) {
-    while (this->state.position_index < this->position_collection.positions.size() && this->position_collection.positions[this->state.position_index]->start_date == this->state.current_date) {
+    while (this->state.position_index < this->position_collection.positions.size()) {
 
-        const PositionPtr& position = this->position_collection.positions[this->state.position_index];
+        // If we reached the end of positions, stop trying to open new ones
+        if (this->position_collection.positions[this->state.position_index]->start_date != this->state.current_date)
+            break;
+
+
+        PositionPtr& position = this->position_collection.positions[this->state.position_index];
 
         // If we can't open more positions now, skip this one (but advance index!)
-        if (capital_management.can_open_position(position)) {
-            this->active_positions.push_back(position);
-            this->selected_positions.push_back(position);
-            this->executed_positions.push_back(position);
-
-
-            capital_management.compute_lot_size(*position);
-
-            this->state.number_of_concurrent_positions += 1;
-            this->state.capital -= position->entry_price * position->lot_size;
-        }
+        if (capital_management.can_open_position(position))
+            this->open_position(position, capital_management);
 
         ++this->state.position_index;
     }
@@ -65,19 +73,18 @@ void Portfolio::simulate(BaseCapitalManagement& capital_management) {
 
     for (size_t time_idx = 0; time_idx < this->position_collection.market.dates.size(); time_idx ++) {
         this->state.update_time_idx(time_idx);
-        state.capital_at_risk = this->calculate_capital_at_risk();
-        state.equity = this->calculate_equity();
 
-        // ➕ Try to close opened positions
+        // Try to close opened positions
         this->try_close_positions(capital_management);
 
-        // ➕ Try to activate new positions starting now
+        // Try to activate new positions starting now
         this->try_open_positions(capital_management);
 
-        // if (time_idx == this->position_collection.market.dates.size() - 1)
-        //     this->terminate_open_positions();
+        if (time_idx == this->position_collection.market.dates.size() - 1)
+            this->terminate_open_positions();
 
-        // this->state.display();
+        state.capital_at_risk = this->calculate_capital_at_risk();
+        state.equity = this->calculate_equity();
         this->record.update();
     }
 }

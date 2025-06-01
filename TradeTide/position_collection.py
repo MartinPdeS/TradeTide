@@ -15,6 +15,20 @@ Short = position.Short
 
 class PositionCollection(PositionCollection):
 
+    def __init__(self, market, trade_signal):
+        """
+        Initialize the PositionCollection with a market and trade signal.
+
+        Parameters
+        ----------
+        market : Market
+            The market data to use for positions.
+        trade_signal : TradeSignal
+            The trade signal to use for opening positions.
+        """
+        self.market = market
+        super().__init__(market=market, trade_signal=trade_signal)
+
     def plot(
         self,
         figsize: Tuple[int, int] = (12, 4),
@@ -44,25 +58,13 @@ class PositionCollection(PositionCollection):
             # 1) Create or get axes
 
             fig, (ax_long, ax_short) = plt.subplots(nrows=2, ncols=1, figsize=figsize, sharex=True, sharey=True)
+            self.market.plot_ask(ax=ax_short, show=False)
+
+            self.market.plot_bid(ax=ax_long, show=False)
+
             ax_short.set_xlabel("Date")
             ax_long.set_ylabel(f"Bid Price")
             ax_short.set_ylabel(f"Ask Price")
-
-            market = self.get_market()
-
-            # 2) Define colors
-            ask_color   = "#1f77b4"
-            bid_color   = "#ff7f0e"
-
-            # 3) Plot ask/bid series
-            ln_bid, = ax_long.plot(market.dates, market.bid.open, label="Bid", color=bid_color, linewidth=1.5)
-            ax_long.fill_between(market.dates, market.bid.low, market.bid.high, linestyle='--', color='black', linewidth=1, alpha=0.2)
-
-            ln_ask, = ax_short.plot(market.dates, market.ask.open, label="Ask", color=ask_color, linewidth=1.5)
-            ax_short.fill_between(market.dates, market.ask.low, market.ask.high, linestyle='--', color='black', linewidth=1,  alpha=0.2)
-
-            # 4) Shade and overlay for closed positions
-            drawn = 0
 
             for idx in range(min(len(self), max_positions)):
 
@@ -92,27 +94,6 @@ class PositionCollection(PositionCollection):
                     color="green",
                     linewidth=1,
                 )
-
-                drawn += 1
-                if drawn >= max_positions:
-                    break
-
-            # 5) Custom legend
-            legend_handles_long = [
-                ln_bid,
-                Line2D([0], [0], color="red", linestyle="--", label="Stop Loss"),
-                Line2D([0], [0], color="green", linestyle="--", label="Take Profit"),
-                Patch(facecolor="C0",  edgecolor="none", label="Long Position"),
-            ]
-            ax_long.legend(handles=legend_handles_long, loc="upper left", framealpha=0.9)
-
-            legend_handles_short = [
-                ln_ask,
-                Line2D([0], [0], color="red", linestyle="--", label="Stop Loss"),
-                Line2D([0], [0], color="green", linestyle="--", label="Take Profit"),
-                Patch(facecolor="C1", edgecolor="none", label="Short Position"),
-            ]
-            ax_short.legend(handles=legend_handles_short, loc="upper left", framealpha=0.9)
 
             fig.autofmt_xdate()
             fig.tight_layout()

@@ -130,8 +130,7 @@ class Portfolio(binding):
 
     @_pre_plot
     def plot_equity(self, ax: Optional[plt.Axes] = None, show: bool = True, figsize=(12, 4)) -> plt.Axes:
-        ax.plot(self.record.time, self.record.capital, color='black')
-        # ax.plot(self.state.time, self.state.capital, color='C0')
+        ax.plot(self.record.time, self.record.equity, color='black')
         ax.set_ylabel("Equity")
 
     def plot_capital_at_risk(self, ax: Optional[plt.Axes] = None, show: Optional[bool] = True, figsize=(12, 4)) -> plt.Axes:
@@ -169,7 +168,7 @@ class Portfolio(binding):
             axes[-1].set_xlabel("Date")
 
             # Plot prices
-            self.plot_prices(ax=axes[0], show=False)
+            self.market.plot(ax=axes[0], show=False)
 
             # Plot Open Position Count
             self.plot_number_of_positions(ax=axes[1], show=False)

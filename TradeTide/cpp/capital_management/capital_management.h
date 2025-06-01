@@ -32,7 +32,7 @@ public:
      * between entry price and stop-loss price. No safety assertions are enforced here—if invalid inputs
      * are given (e.g., zero stop distance), resulting lot size may be infinite or zero.
      */
-    virtual void compute_lot_size(BasePosition& position) const = 0;
+    virtual double compute_lot_size(BasePosition& position) const = 0;
 
     /**
      * @brief Attempts to open a position based on the fixed lot strategy.
@@ -69,7 +69,7 @@ class FixedLot : public BaseCapitalManagement {
          *
          * This method assigns the fixed lot size to the position.
          */
-        void compute_lot_size(BasePosition& position) const override;
+        double compute_lot_size(BasePosition& position) const override;
 
 
     };
@@ -94,6 +94,6 @@ class FixedFractional : public BaseCapitalManagement {
          * This method calculates the lot size to risk a fixed fraction of equity
          * based on the stop-loss distance.
          */
-        void compute_lot_size(BasePosition& position) const override;
+        double compute_lot_size(BasePosition& position) const override;
     };
 

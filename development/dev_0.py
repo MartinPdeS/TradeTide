@@ -16,6 +16,10 @@ market.load_from_database(
     time_span=timedelta(hours=30),
 )
 
+
+# market.plot()
+# dsa
+
 signal = Signal(market=market)
 
 signal.generate_random(probability=0.12)
@@ -36,11 +40,14 @@ position_collection.open_positions(exit_strategy=exit_strategy)
 position_collection.propagate_positions()
 position_collection.terminate_open_positions()
 
-# position_collection.plot(max_positions=4)
+position_collection.plot(max_positions=1)
+
+
+dsa
 
 capital_management = capital_management.FixedLot(
     capital=1000000,
-    fixed_lot_size=0.0001,
+    fixed_lot_size=1,
     max_capital_at_risk=10000000,
     max_concurrent_positions=1,
 )

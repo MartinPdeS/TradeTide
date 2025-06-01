@@ -19,13 +19,13 @@ bool BaseCapitalManagement::can_open_position(const PositionPtr& position) {
 }
 
 // ---------- FixedLot Implementation -----------------------------
-void FixedLot::compute_lot_size(BasePosition& position) const {
-    position.lot_size = this->fixed_lot_size;
+double FixedLot::compute_lot_size(BasePosition&) const {
+    return this->fixed_lot_size;
 }
 
 
 // ---------- FixedFractional Implementation -----------------------------
-void FixedFractional::compute_lot_size(BasePosition& position) const {
+double FixedFractional::compute_lot_size(BasePosition& position) const {
     const double entry_price = position.entry_price;
     const double stop_price  = position.exit_strategy->stop_loss_price;
 
@@ -39,5 +39,5 @@ void FixedFractional::compute_lot_size(BasePosition& position) const {
     double lot_size = capital_to_risk / price_risk;
 
     // Final validation: must be positive and finite
-    position.lot_size = (std::isfinite(lot_size) && lot_size > 0.0) ? lot_size : 0.0;
+    return (std::isfinite(lot_size) && lot_size > 0.0) ? lot_size : 0.0;
 }

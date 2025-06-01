@@ -173,4 +173,8 @@ public:
 
     /** @brief Terminate all open positions. */
     void terminate_open_positions();
+
+    void close_position(PositionPtr& position, const size_t &position_idx);
+
+    void open_position(PositionPtr& position, const BaseCapitalManagement &capital_management);
 };

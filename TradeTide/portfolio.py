@@ -130,7 +130,7 @@ class Portfolio(binding):
 
     @_pre_plot
     def plot_equity(self, ax: Optional[plt.Axes] = None, show: bool = True, figsize=(12, 4)) -> plt.Axes:
-        ax.plot(self.record.time, self.record.equity, color='black')
+        ax.plot(self.record.time, self.record.capital, color='black')
         # ax.plot(self.state.time, self.state.capital, color='C0')
         ax.set_ylabel("Equity")
 

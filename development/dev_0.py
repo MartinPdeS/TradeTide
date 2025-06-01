@@ -38,11 +38,11 @@ position_collection.terminate_open_positions()
 
 # position_collection.plot(max_positions=4)
 
-capital_management = capital_management.FixedFractional(
+capital_management = capital_management.FixedLot(
     capital=1000000,
-    risk_per_trade=0.001,
+    fixed_lot_size=0.0001,
     max_capital_at_risk=10000000,
-    max_concurrent_positions=6,
+    max_concurrent_positions=1,
 )
 
 portfolio  = Portfolio(

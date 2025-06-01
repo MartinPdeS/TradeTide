@@ -74,8 +74,8 @@ void Portfolio::simulate(BaseCapitalManagement& capital_management) {
         // ➕ Try to activate new positions starting now
         this->try_open_positions(capital_management);
 
-        if (time_idx == this->position_collection.market.dates.size() - 1)
-            this->terminate_open_positions();
+        // if (time_idx == this->position_collection.market.dates.size() - 1)
+        //     this->terminate_open_positions();
 
         // this->state.display();
         this->record.update();

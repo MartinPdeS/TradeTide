@@ -25,8 +25,9 @@ public:
     /// Reference to the source collection of all potential positions.
     PositionCollection& position_collection;
 
-    /// Reference to the capital management strategy used for lot sizing.
-    BaseCapitalManagement& capital_management;
+    std::vector<PositionPtr> selected_positions;  ///< Positions accepted for simulation
+    std::vector<PositionPtr> active_positions;    ///< Currently open positions
+    std::vector<PositionPtr> executed_positions;  ///< All positions ever opened
 
     /**
      * @brief Construct a Portfolio with a position source and capital strategy.
@@ -34,14 +35,12 @@ public:
      * @param position_collection A reference to the collection of all tradable signals.
      * @param capital_management  A capital management strategy that controls lot sizing.
      */
-    Portfolio(PositionCollection& position_collection, BaseCapitalManagement& capital_management, bool record_enabled)
-        : position_collection(position_collection), capital_management(capital_management)
+    Portfolio(PositionCollection& position_collection, bool record_enabled)
+        : position_collection(position_collection)
         {
             this->record.state = &this->state;
             if (record_enabled)
                 this->record.start_record(this->position_collection.market.dates.size());
-
-            this->capital_management.state = &this->state;
         }
 
     [[nodiscard]] const std::vector<size_t>& get_history_position_count() {return this->record.concurrent_positions;}
@@ -51,7 +50,7 @@ public:
     /**
      * @brief Run the simulation using current strategy and portfolio constraints.
      */
-    void simulate();
+    void simulate(BaseCapitalManagement& capital_management);
 
     /**
      * @brief Display final performance metrics in human-readable form.
@@ -167,10 +166,10 @@ public:
     [[nodiscard]] double calculate_capital_at_risk() const;
 
     /** @brief Attempt to close positions based on current market conditions. */
-    void try_close_positions();
+    void try_close_positions(BaseCapitalManagement& capital_management);
 
     /** @brief Attempt to open new positions based on current market conditions. */
-    void try_open_positions();
+    void try_open_positions(BaseCapitalManagement& capital_management);
 
     /** @brief Terminate all open positions. */
     void terminate_open_positions();

@@ -10,6 +10,20 @@ PYBIND11_MODULE(interface_position, module) {
     module.doc() = "Python bindings for trading positions (BasePosition, Long, Short) and their properties.";
 
     py::class_<BasePosition>(module, "BasePosition")
+        .def_readonly("is_long", &BasePosition::is_long,
+            R"pbdoc(
+                Whether this is a long position (True) or short position (False).
+            )pbdoc")
+        .def_property_readonly(
+            "exit_strategy",
+            [](const BasePosition &self) -> ExitStrategy* {return self.exit_strategy.get();},
+            py::return_value_policy::reference,
+            R"pbdoc(
+                Exit strategy applied to this position.
+
+                This defines how the position will be closed, including stop-loss and take-profit logic.
+            )pbdoc"
+        )
         .def_readwrite("entry_price", &BasePosition::entry_price,
             R"pbdoc(
                 Entry price of the position.

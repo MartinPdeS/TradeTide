@@ -1,5 +1,6 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <pybind11/chrono.h>
 #include "exit_strategy.h"
 
 namespace py = pybind11;
@@ -8,12 +9,19 @@ PYBIND11_MODULE(interface_exit_strategy, module) {
     module.doc() = "Python bindings for various exit strategies used in trading positions.";
 
     py::class_<ExitStrategy, ExitStrategyPtr>(module, "ExitStrategy")
-        .doc() = R"pbdoc(
-            Abstract base class for SL/TP (stop-loss/take-profit) exit strategies.
-
-            This class is not intended to be used directly. Subclasses implement specific
-            behaviors for how stop-loss and take-profit prices are managed over time.
-        )pbdoc";
+        .def_readonly("dates", &ExitStrategy::dates,
+            R"pbdoc(
+                List of timestamps when stop-loss and take-profit prices were updated.
+            )pbdoc")
+        .def_readonly("stop_loss_prices", &ExitStrategy::stop_loss_prices,
+            R"pbdoc(
+                List of stop-loss prices at each update timestamp.
+            )pbdoc")
+        .def_readonly("take_profit_prices", &ExitStrategy::take_profit_prices,
+            R"pbdoc(
+                List of take-profit prices at each update timestamp.
+            )pbdoc")
+        ;
 
     py::class_<StaticExitStrategy, ExitStrategy, std::shared_ptr<StaticExitStrategy>>(module, "Static")
         .def(

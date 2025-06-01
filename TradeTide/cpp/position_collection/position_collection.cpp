@@ -34,7 +34,7 @@ void PositionCollection::to_csv(const std::string& filepath) const {
 
 void PositionCollection::open_positions(const ExitStrategy &exit_strategy) {
 
-    for (size_t time_idx = 0; time_idx < this->market.dates.size(); time_idx++){
+    for (size_t time_idx = 0; time_idx < this->market.dates.size(); time_idx++) {
         int signal_value = this->trade_signal[time_idx];
 
         if (signal_value == 0)
@@ -71,9 +71,6 @@ void PositionCollection::terminate_open_positions() {
         this->positions.end(),
         [](const PositionPtr& a, const PositionPtr& b) {return a->start_date < b->start_date;}
     );
-
-    for (const auto& position : this->positions)
-        std::cout<<position->is_closed << "   :  " << position->start_date << "\n";
 }
 
 

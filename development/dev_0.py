@@ -2,7 +2,7 @@ from TradeTide.market import Market
 from TradeTide.portfolio import Portfolio
 from TradeTide.position_collection import PositionCollection
 from TradeTide.currencies import Currency
-from datetime import datetime, timedelta
+from datetime import timedelta
 from TradeTide.signal import Signal
 from TradeTide import capital_management, exit_strategy
 
@@ -36,8 +36,7 @@ position_collection.open_positions(exit_strategy=exit_strategy)
 position_collection.propagate_positions()
 position_collection.terminate_open_positions()
 
-position_collection.plot()
-dsa
+# position_collection.plot(max_positions=4)
 
 capital_management = capital_management.FixedFractional(
     capital=1000000,
@@ -47,16 +46,15 @@ capital_management = capital_management.FixedFractional(
 )
 
 portfolio  = Portfolio(
-    capital_management=capital_management,
     position_collection=position_collection,
     save_history=True
 )
 
-portfolio.simulate()
+portfolio.simulate(capital_management=capital_management)
 
-portfolio.display()
-portfolio.plot_equity()
+# portfolio.display()
+# portfolio.plot_equity()
 portfolio.plot(show=True)
 
 
-portfolio.plot_positions(max_positions=300, show=True)
+# portfolio.plot_positions(max_positions=300, show=True)

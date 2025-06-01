@@ -18,10 +18,6 @@ public:
     size_t max_concurrent_positions;
     State* state = nullptr;
 
-    std::vector<PositionPtr> selected_positions;  ///< Positions accepted for simulation
-    std::vector<PositionPtr> active_positions;    ///< Currently open positions
-    std::vector<PositionPtr> executed_positions;  ///< All positions ever opened
-
     virtual ~BaseCapitalManagement() = default;
 
     BaseCapitalManagement(double capital, double max_risk, size_t max_positions)
@@ -39,25 +35,19 @@ public:
     virtual void compute_lot_size(BasePosition& position) const = 0;
 
     /**
-     * @brief Attempt to open a position based on risk constraints.
-     * @return true if accepted, false if rejected.
+     * @brief Attempts to open a position based on the fixed lot strategy.
+     *
+     * This method checks if the position can be opened under the current capital constraints.
+     * @param position The position to open.
+     * @return true if the position is accepted, false otherwise.
      */
-    virtual bool try_open_position(const PositionPtr& position) = 0;
+    bool can_open_position(const PositionPtr& position);
 
     /**
      * @brief Remove position from active pool and update equity.
      */
-    bool try_close_position(const PositionPtr&) {
+    bool can_close_position(const PositionPtr&) {
         return true;
-    }
-
-    /**
-     * @brief Resets the state of the capital management system.
-     */
-    void reset_state() {
-        this->selected_positions.clear();
-        this->executed_positions.clear();
-        this->active_positions.clear();
     }
 };
 
@@ -72,8 +62,7 @@ class FixedLot : public BaseCapitalManagement {
 
     public:
         FixedLot(double capital, double fixed_lot_size, double max_capital_at_risk, size_t max_concurrent_positions)
-            : BaseCapitalManagement(capital, max_capital_at_risk, max_concurrent_positions),
-              fixed_lot_size(fixed_lot_size) {}
+            : BaseCapitalManagement(capital, max_capital_at_risk, max_concurrent_positions), fixed_lot_size(fixed_lot_size) {}
 
         /**
          * @brief Computes the lot size for a position based on the fixed lot strategy.
@@ -82,14 +71,7 @@ class FixedLot : public BaseCapitalManagement {
          */
         void compute_lot_size(BasePosition& position) const override;
 
-        /**
-         * @brief Attempts to open a position based on the fixed lot strategy.
-         *
-         * This method checks if the position can be opened under the current capital constraints.
-         * @param position The position to open.
-         * @return true if the position is accepted, false otherwise.
-         */
-        bool try_open_position(const PositionPtr& position) override;
+
     };
 
 /**
@@ -104,9 +86,7 @@ class FixedFractional : public BaseCapitalManagement {
 
     public:
         FixedFractional(double capital, double risk_fraction, double max_capital_at_risk, size_t max_concurrent_positions)
-            : BaseCapitalManagement(capital, max_capital_at_risk, max_concurrent_positions),
-              risk_fraction(risk_fraction) {}
-
+            : BaseCapitalManagement(capital, max_capital_at_risk, max_concurrent_positions), risk_fraction(risk_fraction) {}
 
         /**
          * @brief Computes the lot size for a position based on the fixed fractional strategy.
@@ -115,14 +95,5 @@ class FixedFractional : public BaseCapitalManagement {
          * based on the stop-loss distance.
          */
         void compute_lot_size(BasePosition& position) const override;
-
-        /**
-         * @brief Attempts to open a position based on the fixed fractional strategy.
-         *
-         * This method checks if the position can be opened under the current capital constraints.
-         * @param position The position to open.
-         * @return true if the position is accepted, false otherwise.
-         */
-        bool try_open_position(const PositionPtr& position) override;
     };
 

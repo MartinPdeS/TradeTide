@@ -6,10 +6,16 @@
 
 // --------------------------- ExitStrategy --------------------------------------
 void ExitStrategy::initialize_prices() {
-    if (this->position->is_long)
-        this->stop_loss_price = this->position->state.bid.open - this->stop_loss_pip * this->position->state.market->pip_value;
-    else
-        this->stop_loss_price = this->position->state.ask.open + this->stop_loss_pip * this->position->state.market->pip_value;
+    // Initialize stop-loss and take-profit prices based on the entry price
+
+    if (this->position->is_long) {
+        this->stop_loss_price = this->position->entry_price - this->stop_loss_pip * this->position->state.market->pip_value;
+        this->take_profit_price = this->position->entry_price + this->take_profit_pip * this->position->state.market->pip_value;
+    }
+    else {
+        this->stop_loss_price = this->position->entry_price + this->stop_loss_pip * this->position->state.market->pip_value;
+        this->take_profit_price = this->position->entry_price - this->take_profit_pip * this->position->state.market->pip_value;
+    }
 }
 
 
@@ -18,7 +24,7 @@ void ExitStrategy::update_price() {
     this->update_take_profit_price();
 
     if (this->save_price_data) {
-        this->dates.push_back(this->position->state.ask.date);
+        this->dates.push_back(this->position->state.current_date);
         this->stop_loss_prices.push_back(this->stop_loss_price);
         this->take_profit_prices.push_back(this->take_profit_price);
     }

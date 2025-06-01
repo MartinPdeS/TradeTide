@@ -16,8 +16,6 @@ using TimePoint = std::chrono::system_clock::time_point;
 class BasePrice {
 public:
     double open = 0.0, low = 0.0, high = 0.0, close = 0.0;
-    TimePoint date;
-
 };
 
 
@@ -36,7 +34,7 @@ public:
     size_t position_index;                        ///< Index of the current position
     size_t n_elements;                            ///< Total number of elements in the market data
 
-    BasePrice ask, bid, *close_price, *open_price; ///< Current ask and bid prices
+    BasePrice ask, bid, *closing_price, *opening_price; ///< Current ask and bid prices
 
     const std::vector<double> *closing_prices; ///< Closing prices for the current state
     const std::vector<TimePoint> *dates; ///< Opening prices for the current state
@@ -81,15 +79,15 @@ public:
         this->time_idx = time_idx;
         this->current_date = this->market->dates[time_idx];
 
-        ask.open = this->market->ask.open[time_idx];
-        ask.low  = this->market->ask.low[time_idx];
-        ask.high = this->market->ask.high[time_idx];
-        ask.close = this->market->ask.close[time_idx];
+        this->ask.open = this->market->ask.open[time_idx];
+        this->ask.low  = this->market->ask.low[time_idx];
+        this->ask.high = this->market->ask.high[time_idx];
+        this->ask.close = this->market->ask.close[time_idx];
 
-        bid.open = this->market->bid.open[time_idx];
-        bid.low  = this->market->bid.low[time_idx];
-        bid.high = this->market->bid.high[time_idx];
-        bid.close = this->market->bid.close[time_idx];
+        this->bid.open = this->market->bid.open[time_idx];
+        this->bid.low  = this->market->bid.low[time_idx];
+        this->bid.high = this->market->bid.high[time_idx];
+        this->bid.close = this->market->bid.close[time_idx];
     }
 
     /**

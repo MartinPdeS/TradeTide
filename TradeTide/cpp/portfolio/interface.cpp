@@ -33,9 +33,8 @@ PYBIND11_MODULE(interface_portfolio, module) {
 
     py::class_<Portfolio>(module, "Portfolio")
         .def(
-            py::init<PositionCollection&, BaseCapitalManagement&, bool>(),
+            py::init<PositionCollection&, bool>(),
             py::arg("position_collection"),
-            py::arg("capital_management"),
             py::arg("save_history"),
             R"pbdoc(
                 Create a portfolio simulator using a predefined position collection and capital management strategy.
@@ -49,9 +48,12 @@ PYBIND11_MODULE(interface_portfolio, module) {
             )pbdoc"
         )
 
-        .def("simulate", &Portfolio::simulate, R"pbdoc(
-            Run the full simulation, opening/closing trades according to constraints.
-        )pbdoc")
+        .def("simulate",
+            &Portfolio::simulate,
+            py::arg("capital_management"),
+            R"pbdoc(
+                Run the full simulation, opening/closing trades according to constraints.
+            )pbdoc")
 
         .def_readonly("state", &Portfolio::state, py::return_value_policy::reference_internal)
 

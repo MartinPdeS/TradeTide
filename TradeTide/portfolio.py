@@ -7,19 +7,33 @@ import matplotlib.pyplot as plt
 from MPSPlots.styles import mps
 from matplotlib.patches import Patch
 from matplotlib.lines import Line2D
+from functools import wraps
 
 Long = position.Long
 Short = position.Short
 
 
 class Portfolio(binding):
+    def __init__(self, position_collection, save_history: bool = True):
+        """
+        Initialize the Portfolio with a position collection and optional history saving.
+
+        Parameters
+        ----------
+        position_collection : PositionCollection
+            The collection of positions to manage.
+        save_history : bool, default=True
+            Whether to save the portfolio's history for plotting.
+        """
+        super().__init__(position_collection=position_collection, save_history=save_history)
+        self.position_collection = position_collection
+
     def plot_positions(
         self,
-        figsize: Tuple[int, int] = (12, 4),
+        figure_size: Tuple[int, int] = (12, 4),
         max_positions: Union[int, float] = np.inf,
-        price_type: str = "close",
-        show: bool = False
-    ) -> Tuple[plt.Figure, plt.Axes]:
+        show: bool = True
+    ) -> plt.Figure:
         """
         Plot market bid/ask prices and shade closed positions, using the mps style,
         consistent naming of 'position', and a clear legend with distinct colors.
@@ -30,119 +44,266 @@ class Portfolio(binding):
             Size of the figure in inches.
         max_positions : int or float, default=np.inf
             Maximum number of positions to draw (in chronological order).
-        price_type : {'open','high','low','close'}, default='close'
-            Which price series to plot.
+        show : bool, default=True
+            Whether to display the plot after creation.
+        save_as : str, optional
+            If provided, save the figure to this path.
+
+        Returns
+        -------
+        plt.Figure : Figure and Axes objects for further customization or saving.
+
+        """
+        long_list = []
+        short_list = []
+
+        position_list = self.get_positions(max_positions)
+
+        for idx, p in enumerate(position_list):
+            if p.is_long:
+                long_list.append(p)
+            else:
+                short_list.append(p)
+
+            if idx > 10:
+                break
+
+        with plt.style.context(mps):
+            # 1) Create or get axes
+            figure, (ax_long, ax_short) = plt.subplots(ncols=1, nrows=2, figsize=figure_size, sharex=True)
+
+            self._plot_long_positions(ax=ax_long, position_list=long_list, show=False)
+
+            self._plot_short_positions(ax=ax_short, position_list=short_list, show=False)
+
+            if show:
+                plt.show()
+
+            return figure
+
+    def _pre_plot(function):
+        """
+        Decorator to set the matplotlib style and handle common plotting parameters.
+        This decorator applies the MPS style and manages the axes, figure size, and saving options.
+        """
+        @wraps(function)
+        def wrapper(self, ax: plt.Axes = None, figure_size: tuple = (12, 4), show: bool = True, save_as: str = None, **kwargs):
+
+            with plt.style.context(mps):
+                if ax is None:
+                    _, ax = plt.subplots(1, 1, figsize=figure_size)
+
+
+                function(self, ax=ax, **kwargs)
+                ax.set_xlabel("Date")
+
+                plt.tight_layout()
+
+                if save_as is not None:
+                    ax.figure.savefig(save_as, bbox_inches='tight')
+
+                if show:
+                    plt.show()
+
+                return ax
+
+        return wrapper
+
+    @_pre_plot
+    def _plot_long_positions(self, position_list: list[position.Long], ax: plt.Axes) -> plt.Axes:
+        """
+        Plot the long positions in the portfolio.
+
+        Parameters
+        ----------
         ax : matplotlib.axes.Axes, optional
             Axes to draw on. If None, a new figure+axes are created.
 
         Returns
         -------
-        fig, ax : Figure and Axes objects for further customization or saving.
+        ax : matplotlib.axes.Axes
+            The axes with the long positions plot.
         """
-        with plt.style.context(mps):
-            # 1) Create or get axes
+        color_fill   = "lightblue"
+        sl_color    = "#d62728"
+        tp_color    = "#2ca02c"
 
-            fig, axes = plt.subplots(ncols=1, nrows=2, figsize=figsize, sharex=True)
+        ax.set_ylabel(f"Bid Price")
 
-            # 2) Define colors
-            long_fill   = "lightblue"#(0.2, 0.8, 0.2, 0.3)
-            short_fill  = (0.8, 0.2, 0.2, 0.3)
-            sl_color    = "#d62728"
-            tp_color    = "#2ca02c"
+        self.position_collection.market.plot_bid(ax=ax, show=False)
 
-            # 3) Plot ask/bid series
-            axes[0].fill_between(self.dates, y1=self.market.ask.low, y2=self.market.ask.high, color='C0', alpha=0.2)
+        for position in position_list:
+            start, end = position.start_date, position.close_date
+            ax.axvspan(start, end, facecolor=color_fill, edgecolor="black", alpha=0.2)
+            ax.plot(position.dates(), position.stop_loss_prices(), linestyle="--", color=sl_color, linewidth=1)
+            ax.plot(position.dates(), position.take_profit_prices(), linestyle="--", color=tp_color, linewidth=1)
 
-            axes[1].fill_between(self.dates, y1=self.market.bid.low, y2=self.market.bid.high, color='C1', alpha=0.2)
+        # Custom legend
+        legend_handles = [
+            Line2D([0], [0], color=sl_color, linestyle="--", label="Stop Loss"),
+            Line2D([0], [0], color=tp_color, linestyle="--", label="Take Profit"),
+            Patch(facecolor=color_fill, edgecolor="none", label="Long Position"),
+        ]
 
-            for ax in axes:
-                ax.set_xlabel("Date")
-                ax.set_ylabel(f"{price_type.capitalize()} Price")
-                ax.grid(True, linestyle="--", alpha=0.4)
+        ax.legend(handles=legend_handles, loc="upper left", framealpha=0.9)
 
-            # 4) Shade and overlay for closed positions
-            drawn = 0
+    @_pre_plot
+    def _plot_short_positions(self, position_list: list[position.Long], ax: plt.Axes) -> plt.Axes:
+        """
+        Plot the short positions in the portfolio.
 
-            positions = self.get_positions(max_positions)
+        Parameters
+        ----------
+        ax : matplotlib.axes.Axes, optional
+            Axes to draw on. If None, a new figure+axes are created.
 
-            for idx, position in enumerate(positions):
-                if idx > max_positions:
-                    break
+        Returns
+        -------
+        ax : matplotlib.axes.Axes
+            The axes with the long positions plot.
+        """
+        color_fill  = (0.8, 0.2, 0.2, 0.3)
+        sl_color    = "#d62728"
+        tp_color    = "#2ca02c"
 
-                if not position.is_terminated:
-                    continue
+        ax.set_ylabel(f"Bid Price")
 
-                start, end = position.start_date, position.close_date
+        self.position_collection.market.plot_bid(ax=ax, show=False)
 
-                if isinstance(position, Long):
-                    axes[0].axvspan(start, end, facecolor=long_fill, edgecolor="black", alpha=0.2)
-                    axes[0].plot(position.dates(), position.stop_loss_prices(), linestyle="--", color=sl_color, linewidth=1, label="_nolegend_")
-                    axes[0].plot(position.dates(), position.take_profit_prices(), linestyle="--", color=tp_color, linewidth=1, label="_nolegend_")
-                else:
-                    axes[1].axvspan(start, end, facecolor=short_fill, edgecolor="black", alpha=0.2)
-                    axes[1].plot(position.dates(), position.stop_loss_prices(), linestyle="--", color=sl_color, linewidth=1, label="_nolegend_")
-                    axes[1].plot(position.dates(), position.take_profit_prices(), linestyle="--", color=tp_color, linewidth=1, label="_nolegend_")
+        for position in position_list:
+            start, end = position.start_date, position.close_date
+            ax.axvspan(start, end, facecolor=color_fill, edgecolor="black", alpha=0.2)
+            ax.plot(position.dates(), position.stop_loss_prices(), linestyle="--", color=sl_color, linewidth=1)
+            ax.plot(position.dates(), position.take_profit_prices(), linestyle="--", color=tp_color, linewidth=1)
 
-                drawn += 1
-                if drawn >= max_positions:
-                    break
+        # Custom legend
+        legend_handles = [
+            Line2D([0], [0], color=sl_color, linestyle="--", label="Stop Loss"),
+            Line2D([0], [0], color=tp_color, linestyle="--", label="Take Profit"),
+            Patch(facecolor=color_fill, edgecolor="none", label="Short Position")
+        ]
 
-            # 5) Custom legend
-            legend_handles_long = [
-                Line2D([0], [0], color=sl_color, linestyle="--", label="Stop Loss"),
-                Line2D([0], [0], color=tp_color, linestyle="--", label="Take Profit"),
-                Patch(facecolor=long_fill,  edgecolor="none", label="Long Position"),
-            ]
-
-            legend_handles_short = [
-                Line2D([0], [0], color=sl_color, linestyle="--", label="Stop Loss"),
-                Line2D([0], [0], color=tp_color, linestyle="--", label="Take Profit"),
-                Patch(facecolor=short_fill, edgecolor="none", label="Short Position")
-            ]
-            axes[0].legend(handles=legend_handles_long, loc="upper left", framealpha=0.9)
-            axes[1].legend(handles=legend_handles_short, loc="upper left", framealpha=0.9)
-
-            fig.autofmt_xdate()
-            fig.tight_layout()
-            if show:
-                plt.show()
-
-        return fig, ax
-
-
-    def _pre_plot(function):
-        def wrapper(self, ax: plt.Axes = None, figsize: tuple = (12, 4), show: bool = True, **kwargs):
-
-            if ax is None:
-                with plt.style.context(mps):
-                    _, ax = plt.subplots(1, 1, figsize=figsize)
-                    ax.set_xlabel("Date")
-
-            ax = function(self, ax=ax, **kwargs)
-
-            if show:
-                plt.show()
-
-            return ax
-
-        return wrapper
+        ax.legend(handles=legend_handles, loc="upper left", framealpha=0.9)
 
 
     @_pre_plot
-    def plot_equity(self, ax: Optional[plt.Axes] = None, show: bool = True, figsize=(12, 4)) -> plt.Axes:
+    def plot_equity(self, ax: plt.Axes) -> plt.Axes:
+        """
+        Plot the portfolio's equity over time.
+
+        Parameters
+        ----------
+        show : bool, default=True
+            Show the plot after creation.
+        figure_size : tuple, default=(12, 4)
+            Size of the figure in inches.
+        ax : matplotlib.axes.Axes, optional
+            Axes to draw on. If None, a new figure+axes are created.
+        save_as : str, optional
+            If provided, save the figure to this path.
+
+        Returns
+        -------
+        ax : matplotlib.axes.Axes
+            The axes with the equity plot.
+
+        """
         ax.plot(self.record.time, self.record.equity, color='black')
         ax.set_ylabel("Equity")
 
-    def plot_capital_at_risk(self, ax: Optional[plt.Axes] = None, show: Optional[bool] = True, figsize=(12, 4)) -> plt.Axes:
+    @_pre_plot
+    def plot_capital_at_risk(self, ax: plt.Axes) -> plt.Axes:
+        """
+        Plot the capital at risk over time.
+
+        Parameters
+        ----------
+        show : bool, default=True
+            Show the plot after creation.
+        figure_size : tuple, default=(12, 4)
+            Size of the figure in inches.
+        ax : matplotlib.axes.Axes, optional
+            Axes to draw on. If None, a new figure+axes are created.
+        save_as : str, optional
+            If provided, save the figure to this path.
+
+        Returns
+        -------
+        ax : matplotlib.axes.Axes
+            The axes with the capital at risk plot.
+        """
         ax.step(self.record.time, self.record.capital_at_risk, color='black', where='mid')
         ax.set_ylabel("Capital at Risk")
 
+    @_pre_plot
+    def plot_capital(self, ax: plt.Axes) -> plt.Axes:
+        """
+        Plot the capital over time.
 
-    def plot_number_of_positions(self, ax: Optional[plt.Axes] = None, show: Optional[bool] = True, figsize=(12, 4)) -> plt.Axes:
+        Parameters
+        ----------
+        show : bool, default=True
+            Show the plot after creation.
+        figure_size : tuple, default=(12, 4)
+            Size of the figure in inches.
+        ax : matplotlib.axes.Axes, optional
+            Axes to draw on. If None, a new figure+axes are created.
+        save_as : str, optional
+            If provided, save the figure to this path.
+
+        Returns
+        -------
+        ax : matplotlib.axes.Axes
+            The axes with the capital plot.
+        """
+        ax.step(self.record.time, self.record.capital, color='black', where='mid')
+        ax.set_ylabel("Capital")
+
+    @_pre_plot
+    def plot_number_of_positions(self, ax: Optional[plt.Axes] = None) -> plt.Axes:
+        """
+        Plot the number of open positions over time.
+
+        Parameters
+        ----------
+        show : bool, default=True
+            Show the plot after creation.
+        figure_size : tuple, default=(12, 4)
+            Size of the figure in inches.
+        ax : matplotlib.axes.Axes, optional
+            Axes to draw on. If None, a new figure+axes are created.
+        save_as : str, optional
+            If provided, save the figure to this path.
+
+        Returns
+        -------
+        ax : matplotlib.axes.Axes
+            The axes with the number of open positions plot.
+        """
         ax.step(self.record.time, self.record.number_of_concurent_positions, color='black', where='mid')
-        ax.set_ylabel("# Positions")
+        ax.set_ylabel("Number of open positions")
 
-    def plot_prices(self, ax: Optional[plt.Axes] = None, show: Optional[bool] = True, figsize=(12, 4)) -> plt.Axes:
+    @_pre_plot
+    def plot_prices(self, ax: Optional[plt.Axes] = None) -> plt.Axes:
+        """
+        Plot the market bid and ask prices over time.
+
+        Parameters
+        ----------
+        show : bool, default=True
+            Show the plot after creation.
+        figure_size : tuple, default=(12, 4)
+            Size of the figure in inches.
+        ax : matplotlib.axes.Axes, optional
+            Axes to draw on. If None, a new figure+axes are created.
+        save_as : str, optional
+            If provided, save the figure to this path.
+
+        Returns
+        -------
+        ax : matplotlib.axes.Axes
+            The axes with the market prices plot.
+        """
         ax.plot(self.dates, self.market.ask.open, label="Ask-Open", color='C0')
         ax.plot(self.dates, self.market.bid.open, label="Bid-Open", color='C1')
         ax.ticklabel_format(style='plain', axis='y')  # Prevent y-axis offset
@@ -151,41 +312,44 @@ class Portfolio(binding):
         ax.set_ylabel("Prices")
 
 
-    def plot(self, show: Optional[bool] = True, save_path: Optional[str] = None, figsize: Optional[tuple] = (12, 6)) -> plt.Figure:
+    def plot(self, *plot_type) -> plt.Figure:
         """
-        Plot the portfolio's equity and open position count over time.
+        Plot the portfolio's performance, including equity, capital at risk, capital,
+        number of open positions, and market prices.
 
-        Args:
-            show (bool): Whether to display the plot (default: True).
-            save_path (str): Optional file path to save the figure.
-            figsize (tuple): Figure size in inches (default: (12, 6)).
-
-        Returns:
-            matplotlib.figure.Figure: The matplotlib Figure object.
+        Returns
+        -------
+        None
         """
+        if len(plot_type) == 0:
+            plot_type = ("equity", "capital_at_risk", "capital", "number_of_positions", "prices")
+        else:
+            plot_type = plot_type[0] if isinstance(plot_type[0], tuple) else plot_type
+
+        if not isinstance(plot_type, tuple):
+            plot_type = (plot_type,)
+
+
+        n_plots = len(plot_type)
+
         with plt.style.context(mps):
-            figure, axes = plt.subplots(4, 1, figsize=figsize, sharex=True)
-            axes[-1].set_xlabel("Date")
+            fig, axs = plt.subplots(nrows=n_plots, ncols=1, figsize=(12, 2 * n_plots), sharex=True)
 
-            # Plot prices
-            self.market.plot(ax=axes[0], show=False)
+            axs = axs.flatten()
+            plot_methods = {
+                "equity": self.plot_equity,
+                "capital_at_risk": self.plot_capital_at_risk,
+                "capital": self.plot_capital,
+                "number_of_positions": self.plot_number_of_positions,
+                "prices": self.plot_prices
+            }
+            for i, plot in enumerate(plot_type):
+                if plot in plot_methods:
+                    plot_methods[plot](ax=axs[i], show=False)
+                else:
+                    raise ValueError(f"Plot type '{plot}' is not recognized. Available types: {list(plot_methods.keys())}")
 
-            # Plot Open Position Count
-            self.plot_number_of_positions(ax=axes[1], show=False)
 
-            # Plot Equity
-            self.plot_equity(ax=axes[2], show=False)
-
-            # Plot Open Position Count
-            self.plot_capital_at_risk(ax=axes[3], show=False)
-
-            figure.tight_layout()
-
-            if save_path:
-                figure.savefig(save_path, bbox_inches='tight')
-
-            if show:
-                plt.show()
-
-            return figure
+            plt.tight_layout()
+            plt.show()
 

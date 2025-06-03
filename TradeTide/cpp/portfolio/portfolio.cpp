@@ -1,6 +1,10 @@
 #include "portfolio.h"
-#include <iostream>
-#include <iomanip>
+
+
+
+
+using Duration = std::chrono::system_clock::duration;
+using TimePoint = std::chrono::system_clock::time_point;
 
 double Portfolio::final_equity() const {
     return this->state.equity;
@@ -9,7 +13,6 @@ double Portfolio::final_equity() const {
 double Portfolio::peak_equity() const {
     return *std::max_element(this->record.equity.begin(), this->record.equity.end());
 }
-
 
 void Portfolio::close_position(PositionPtr& position, const size_t &position_idx) {
     this->active_positions.erase(this->active_positions.begin() + position_idx);
@@ -93,7 +96,8 @@ void Portfolio::simulate(BaseCapitalManagement& capital_management) {
 void Portfolio::terminate_open_positions() {
     for (const auto& position : this->active_positions) {
         this->state.number_of_concurrent_positions -= 1;
-        this->state.equity += (position->get_price_difference() * position->lot_size);
+        this->state.capital += position->exit_price * position->lot_size;
+        position->is_closed = true;
     }
 
     this->active_positions.clear();
@@ -104,14 +108,22 @@ void Portfolio::display() const {
     for (const PositionPtr& position : this->selected_positions)
         position->display();
 
-    const double total_return = this->calculate_total_return();
-    const double annualized_return = this->calculate_annualized_return(total_return);
-    const double max_drawdown = this->calculate_max_drawdown();
-    const double sharpe = this->calculate_sharpe_ratio();
-    const double sortino = this->calculate_sortino_ratio();
-    const double win_loss = this->calculate_win_loss_ratio();
-    const double volatility = this->calculate_volatility();
-    const auto duration = this->calculate_duration();
+    const double total_return       = this->calculate_total_return();
+    const double annualized_return  = this->calculate_annualized_return(total_return);
+    const double max_drawdown       = this->calculate_max_drawdown();
+    const double sharpe             = this->calculate_sharpe_ratio();
+    const double sortino            = this->calculate_sortino_ratio();
+    const double win_loss           = this->calculate_win_loss_ratio();
+    const double volatility         = this->calculate_volatility();
+    const std::chrono::duration<double> duration = this->calculate_duration();
+
+    // Extract days, hours, minutes
+    using namespace std::chrono;
+
+    typedef std::chrono::duration<int, std::ratio<86400>> Days;
+    const Days days = std::chrono::duration_cast<Days>(duration);
+    const std::chrono::hours hours = std::chrono::duration_cast<std::chrono::hours>(duration - days);
+    const std::chrono::minutes minutes = std::chrono::duration_cast<std::chrono::minutes>(duration - days - hours);
 
     std::cout << std::fixed << std::setprecision(4);
     std::cout << "\nPortfolio Summary:\n";
@@ -126,8 +138,13 @@ void Portfolio::display() const {
     std::cout << "Win/Loss Ratio:        " << win_loss << "\n";
     std::cout << "Volatility:            " << volatility * 100 << " %\n";
     std::cout << "Positions Executed:    " << this->executed_positions.size() << "\n";
-    std::cout << "Duration:              " << duration << "\n";
+    std::cout << "Duration:              "
+              << days.count() << "d "
+              << hours.count() << "h "
+              << minutes.count() << "m\n";
 }
+
+
 
 
 const std::vector<TimePoint>& Portfolio::get_market_dates() const {
@@ -151,12 +168,16 @@ std::vector<BasePosition*> Portfolio::get_positions(size_t count) const {
 }
 
 double Portfolio::calculate_total_return() const {
-    // return (this->final_equity() - this->state.initial_capital) / this->state.initial_capital;
+    return (this->record.equity.back() - this->record.equity.front()) / this->record.equity.front();
 }
 
 double Portfolio::calculate_annualized_return(double total_return) const {
-    auto duration = this->calculate_duration().count() / (365.25 * 24 * 60 * 60); // in years
-    return std::pow(1.0 + total_return, 1.0 / duration) - 1.0;
+
+    std::chrono::duration<double> duration = this->calculate_duration();
+
+    double fractional_years = std::chrono::duration_cast<std::chrono::seconds>(duration).count() / 31557600.0;
+
+    return std::pow(1.0 + total_return, 1.0 / fractional_years) - 1.0;
 }
 
 std::chrono::duration<double> Portfolio::calculate_duration() const {

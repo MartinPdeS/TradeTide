@@ -174,7 +174,25 @@ public:
     /** @brief Terminate all open positions. */
     void terminate_open_positions();
 
+    /**
+     * @brief Close a position at the current market price.
+     *
+     * This method will close the position at the current market price and update
+     * the portfolio's equity and capital at risk accordingly.
+     *
+     * @param position Reference to the PositionPtr that will be closed.
+     * @param position_idx Index of the position in the active positions vector.
+     */
     void close_position(PositionPtr& position, const size_t &position_idx);
 
+    /**
+     * @brief Open a new position based on the provided capital management strategy.
+     *
+     * This method will attempt to open a position using the specified capital management
+     * strategy, which determines lot sizing and risk management.
+     *
+     * @param position Reference to the PositionPtr that will be opened.
+     * @param capital_management The capital management strategy to use for opening the position.
+     */
     void open_position(PositionPtr& position, const BaseCapitalManagement &capital_management);
 };

@@ -6,6 +6,9 @@ from datetime import timedelta
 from TradeTide.signal import Signal
 from TradeTide import capital_management, exit_strategy
 
+
+
+
 market = Market()
 
 
@@ -13,12 +16,8 @@ market.load_from_database(
     currency_0=Currency.CAD,
     currency_1=Currency.USD,
     year=2023,
-    time_span=timedelta(hours=30),
+    time_span=timedelta(days=300),
 )
-
-
-# market.plot()
-# dsa
 
 signal = Signal(market=market)
 
@@ -31,6 +30,14 @@ exit_strategy = exit_strategy.Static(
 )
 
 
+
+
+
+import time
+
+start_time = time.time()
+
+
 position_collection = PositionCollection(
     market=market,
     trade_signal=signal.trade_signal,
@@ -38,12 +45,7 @@ position_collection = PositionCollection(
 
 position_collection.open_positions(exit_strategy=exit_strategy)
 position_collection.propagate_positions()
-position_collection.terminate_open_positions()
-
-position_collection.plot(max_positions=1)
-
-
-dsa
+# position_collection.terminate_open_positions()
 
 capital_management = capital_management.FixedLot(
     capital=1000000,
@@ -59,9 +61,19 @@ portfolio  = Portfolio(
 
 portfolio.simulate(capital_management=capital_management)
 
+
+
+
+end_time = time.time()
+print(f"\nElapsed time: {end_time - start_time:.4f} seconds")
+
+
+
+
 # portfolio.display()
 # portfolio.plot_equity()
-portfolio.plot(show=True)
-
+portfolio.plot("equity", "capital", "number_of_positions")
+# portfolio.plot(show=True)
+# portfolio.plot_positions(max_positions=10)
 
 # portfolio.plot_positions(max_positions=300, show=True)

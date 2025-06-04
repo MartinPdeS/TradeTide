@@ -57,20 +57,31 @@ void PositionCollection::propagate_positions() {
     for (const auto& position : this->positions) {
         position->propagate();
     }
-}
 
-
-void PositionCollection::terminate_open_positions() {
-    for (const auto& position : this->positions)
-        if (!position->is_closed)
-            position->close_at(this->market.dates.size() - 1);  // Set to last element of market
-
+    this->terminate_open_positions();
 
     std::sort(
         this->positions.begin(),
         this->positions.end(),
         [](const PositionPtr& a, const PositionPtr& b) {return a->start_date < b->start_date;}
     );
+
+    #pragma omp parallel for
+    for (PositionPtr& position : this->positions)
+        if (position->close_date == position->start_date) {
+            position->display();
+            throw std::runtime_error("Position cannot be closed at the same time it is opened!");
+        }
+}
+
+
+void PositionCollection::terminate_open_positions() {
+    for (const auto& position : this->positions)
+        if (!position->is_closed) {
+            position->close_at(this->market.dates.size() - 1);  // Set to last element of market
+            position->is_closed = true;
+        }
+
 }
 
 

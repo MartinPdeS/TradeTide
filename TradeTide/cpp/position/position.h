@@ -31,7 +31,6 @@ public:
 
     bool is_long = true;           ///< True if this is a long position
     bool is_closed = false;        ///< True if this position has been closed
-    bool is_terminated = false;
 
     State state;                   ///< Current state of the position, including market data
 
@@ -87,7 +86,7 @@ public:
      * This is used to close the position when the stop-loss condition is met.
      * @param time_idx Index in the market data where the stop-loss was triggered.
      */
-    void terminate_with_stop_lose(const size_t time_idx);
+    void terminate_with_stop_lose();
 
     /**
      * @brief Terminates the position with a take-profit at the given time index.
@@ -95,7 +94,7 @@ public:
      * This is used to close the position when the take-profit condition is met.
      * @param time_idx Index in the market data where the take-profit was triggered.
      */
-    void terminate_with_take_profit(const size_t time_idx);
+    void terminate_with_take_profit();
 
     /**
      * @brief Closes the position at the market price at the given index.

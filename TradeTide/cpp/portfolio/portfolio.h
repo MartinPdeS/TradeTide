@@ -39,8 +39,9 @@ public:
         : position_collection(position_collection)
         {
             this->record.state = &this->state;
-            if (record_enabled)
-                this->record.start_record(this->position_collection.market.dates.size());
+
+            this->record.start_record(this->position_collection.market.dates.size());
+
         }
 
     [[nodiscard]] const std::vector<size_t>& get_history_position_count() {return this->record.concurrent_positions;}

@@ -209,7 +209,9 @@ class Portfolio(binding):
 
         """
         ax.plot(self.record.time, self.record.equity, color='black')
+        ax.axhline(self.record.initial_capital, color='red', linestyle='--', linewidth=1, label='Initial Capital')
         ax.set_ylabel("Equity")
+        ax.legend()
 
     @_pre_plot
     def plot_capital_at_risk(self, ax: plt.Axes) -> plt.Axes:
@@ -329,13 +331,11 @@ class Portfolio(binding):
         if not isinstance(plot_type, tuple):
             plot_type = (plot_type,)
 
-
         n_plots = len(plot_type)
 
         with plt.style.context(mps):
-            fig, axs = plt.subplots(nrows=n_plots, ncols=1, figsize=(12, 2 * n_plots), sharex=True)
+            _, axs = plt.subplots(nrows=n_plots, ncols=1, figsize=(12, 2 * n_plots), sharex=True)
 
-            axs = axs.flatten()
             plot_methods = {
                 "equity": self.plot_equity,
                 "capital_at_risk": self.plot_capital_at_risk,
@@ -343,12 +343,9 @@ class Portfolio(binding):
                 "number_of_positions": self.plot_number_of_positions,
                 "prices": self.plot_prices
             }
-            for i, plot in enumerate(plot_type):
-                if plot in plot_methods:
-                    plot_methods[plot](ax=axs[i], show=False)
-                else:
-                    raise ValueError(f"Plot type '{plot}' is not recognized. Available types: {list(plot_methods.keys())}")
 
+            for ax, plot in zip(axs, plot_type):
+                plot_methods[plot](ax=ax, show=False)
 
             plt.tight_layout()
             plt.show()

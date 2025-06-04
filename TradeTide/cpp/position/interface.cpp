@@ -65,10 +65,6 @@ PYBIND11_MODULE(interface_position, module) {
             R"pbdoc(
                 Whether the position has been closed.
             )pbdoc")
-        .def_readonly("is_terminated", &BasePosition::is_terminated,
-            R"pbdoc(
-                Whether the position is closed by the end of the period.
-            )pbdoc")
         .def("stop_loss_prices", &BasePosition::strategy_stop_loss_prices,
             R"pbdoc(
                 List of stop-loss price values over time.

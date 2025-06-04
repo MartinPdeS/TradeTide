@@ -22,6 +22,7 @@ class Record {
         std::vector<double> capital_at_risk;
         std::vector<size_t> concurrent_positions;
         std::vector<TimePoint> time;
+        double initial_capital = 0.0;                ///< Initial capital at the start of the simulation
 
         /**
          * @brief Prepares internal buffers to record state history.

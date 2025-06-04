@@ -22,11 +22,18 @@ void Portfolio::close_position(PositionPtr& position, const size_t &position_idx
 }
 
 void Portfolio::open_position(PositionPtr& position, const BaseCapitalManagement &capital_management) {
+    double lot_size = capital_management.compute_lot_size(*position);
+
+    if (lot_size == 0.0)
+        return; // Cannot open position with zero lot size
+
+    position->lot_size = lot_size;
+
     this->active_positions.push_back(position);
     this->selected_positions.push_back(position);
     this->executed_positions.push_back(position);
 
-    position->lot_size = capital_management.compute_lot_size(*position);
+
 
     this->state.number_of_concurrent_positions += 1;
     this->state.capital -= position->entry_price * position->lot_size;
@@ -51,7 +58,6 @@ void Portfolio::try_open_positions(BaseCapitalManagement& capital_management) {
         if (this->position_collection.positions[this->state.position_index]->start_date != this->state.current_date)
             break;
 
-
         PositionPtr& position = this->position_collection.positions[this->state.position_index];
 
         // If we can't open more positions now, skip this one (but advance index!)
@@ -69,6 +75,7 @@ void Portfolio::simulate(BaseCapitalManagement& capital_management) {
     this->active_positions.clear();
 
     this->state = State(this->position_collection.market, capital_management.initial_capital);
+    this->record.initial_capital = capital_management.initial_capital;
     capital_management.state  = &this->state;
 
     for (PositionPtr& position : this->position_collection.positions)
@@ -152,16 +159,16 @@ const std::vector<TimePoint>& Portfolio::get_market_dates() const {
 }
 
 std::vector<BasePosition*> Portfolio::get_positions(size_t count) const {
-    if (count == std::numeric_limits<size_t>::max()) {
+    if (count == std::numeric_limits<size_t>::max())
         count = this->selected_positions.size();
-    }
 
     std::vector<BasePosition*> result;
     result.reserve(std::min(count, this->selected_positions.size()));
 
     for (const auto& up : this->selected_positions) {
         result.push_back(up.get());
-        if (result.size() >= count) break;
+        if (result.size() >= count)
+            break;
     }
 
     return result;
@@ -241,7 +248,8 @@ double Portfolio::calculate_win_loss_ratio() const {
     size_t wins = 0, losses = 0;
 
     for (const auto& position : this->selected_positions) {
-        if (!position->is_closed) continue;
+        if (!position->is_closed)
+            continue;
         double pnl = position->get_price_difference();
         if (pnl > 0) ++wins;
         else if (pnl < 0) ++losses;
@@ -252,7 +260,8 @@ double Portfolio::calculate_win_loss_ratio() const {
 }
 
 double Portfolio::calculate_volatility() const {
-    if (this->record.equity.size() < 2) return 0.0;
+    if (this->record.equity.size() < 2)
+        return 0.0;
 
     std::vector<double> returns;
     for (size_t i = 1; i < this->record.equity.size(); ++i) {
@@ -281,8 +290,7 @@ double Portfolio::calculate_equity() const {
     double equity = this->state.capital;
 
     for (const PositionPtr& position : this->active_positions)
-        if (!position->is_closed)
-            equity += position->get_closing_value_at(this->state.time_idx);
+        equity += position->exit_price * position->lot_size;
 
 
     return equity;

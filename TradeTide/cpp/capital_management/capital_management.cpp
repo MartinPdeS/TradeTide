@@ -6,6 +6,9 @@
 
 // ---------- BaseCapitalManagement Implementation -----------------------------
 bool BaseCapitalManagement::can_open_position(const PositionPtr& position) {
+    if (this->state->capital <= 0.0) // Cannot open position if capital is zero or negative
+        return false;
+
     // Limit maximum concurrent positions
     if (this->state->number_of_concurrent_positions >= this->max_concurrent_positions)
         return false;
@@ -19,7 +22,12 @@ bool BaseCapitalManagement::can_open_position(const PositionPtr& position) {
 }
 
 // ---------- FixedLot Implementation -----------------------------
-double FixedLot::compute_lot_size(BasePosition&) const {
+double FixedLot::compute_lot_size(BasePosition& position) const {
+    double value  = position.entry_price * this->fixed_lot_size;
+
+    if (value > this->state->capital)  // If the value exceeds available capital, return 0.0 to indicate no position can be opened
+        return 0.0;
+
     return this->fixed_lot_size;
 }
 

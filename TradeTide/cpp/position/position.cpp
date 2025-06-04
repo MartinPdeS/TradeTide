@@ -34,19 +34,19 @@ const std::vector<TimePoint>& BasePosition::strategy_dates() const {
     return this->exit_strategy->dates;
 }
 
-void BasePosition::terminate_with_stop_lose(const size_t time_idx) {
+void BasePosition::terminate_with_stop_lose() {
 
     // If stop-loss is hit, close the position at the stop-loss price
     this->exit_price = this->exit_strategy->stop_loss_price;
     this->close_date = this->state.current_date;
-    this->close_idx = time_idx;
+    this->close_idx = this->state.time_idx;
     this->is_closed = true;
 }
 
-void BasePosition::terminate_with_take_profit(const size_t time_idx) {
+void BasePosition::terminate_with_take_profit() {
     this->exit_price = this->exit_strategy->take_profit_price;
     this->close_date = this->state.current_date;
-    this->close_idx = time_idx;
+    this->close_idx = this->state.time_idx;
     this->is_closed = true;
 }
 
@@ -82,20 +82,22 @@ double BasePosition::get_closing_value_at(const size_t time_idx) const {
     return (*this->state.closing_prices)[time_idx] * this->lot_size;
 }
 
-
 // Check if stop-loss or take-profit is hit
 void BasePosition::propagate() {
-    for (size_t time_idx = this->start_idx; time_idx < this->state.n_elements; time_idx++) {
+    for (size_t time_idx = this->start_idx + 1; time_idx < this->state.n_elements - 1; time_idx++) {
         this->state.update_time_idx(time_idx);
 
         this->exit_strategy->update_price();
 
         if (this->is_stop_loss_triggered())  // Hit stop-loss
-            return this->terminate_with_stop_lose(time_idx);
+            return this->terminate_with_stop_lose();
 
         if (this->is_take_profit_triggered())  // Hit take-profit
-            return this->terminate_with_take_profit(time_idx);
+            return this->terminate_with_take_profit();
     }
+
+    if (this->start_idx == this->close_idx)
+        throw std::runtime_error("FROM POSITION CLASS: Position cannot be closed at the same time it is opened!");
 }
 
 // --------------------- Long Position ------------------------

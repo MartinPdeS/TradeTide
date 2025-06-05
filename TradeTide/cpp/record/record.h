@@ -20,9 +20,14 @@ class Record {
         std::vector<double> equity;
         std::vector<double> capital;
         std::vector<double> capital_at_risk;
-        std::vector<size_t> concurrent_positions;
-        std::vector<TimePoint> time;
+        std::vector<size_t> concurrent_positions;    ///< Number of concurrent positions at each time step
+        std::vector<TimePoint> time;                 ///< Timestamps for each recorded state
         double initial_capital = 0.0;                ///< Initial capital at the start of the simulation
+
+        size_t success_count = 0;                     ///< Number of successful trades
+        size_t fail_count = 0;                        ///< Number of failed trades
+
+        std::chrono::high_resolution_clock::time_point start_computation_time, end_computation_time;
 
         /**
          * @brief Prepares internal buffers to record state history.
@@ -34,4 +39,12 @@ class Record {
          * @brief Record all current state metrics to history (if recording is enabled).
          */
         void update();
+
+        void start_timer() {
+            this->start_computation_time = std::chrono::high_resolution_clock::now();
+        };
+
+        void stop_timer() {
+            this->end_computation_time = std::chrono::high_resolution_clock::now();
+        };
 };

@@ -2,7 +2,7 @@ from typing import Tuple, Optional, Union
 import numpy as np
 
 from TradeTide import position
-from TradeTide.binary.interface_portfolio import Portfolio as binding
+from TradeTide.binary.interface_portfolio import PORTFOLIO
 import matplotlib.pyplot as plt
 from MPSPlots.styles import mps
 from matplotlib.patches import Patch
@@ -13,7 +13,7 @@ Long = position.Long
 Short = position.Short
 
 
-class Portfolio(binding):
+class Portfolio(PORTFOLIO):
     def __init__(self, position_collection, save_history: bool = True):
         """
         Initialize the Portfolio with a position collection and optional history saving.
@@ -22,10 +22,8 @@ class Portfolio(binding):
         ----------
         position_collection : PositionCollection
             The collection of positions to manage.
-        save_history : bool, default=True
-            Whether to save the portfolio's history for plotting.
         """
-        super().__init__(position_collection=position_collection, save_history=save_history)
+        super().__init__(position_collection=position_collection)
         self.position_collection = position_collection
 
     def plot_positions(
@@ -92,7 +90,6 @@ class Portfolio(binding):
             with plt.style.context(mps):
                 if ax is None:
                     _, ax = plt.subplots(1, 1, figsize=figure_size)
-
 
                 function(self, ax=ax, **kwargs)
                 ax.set_xlabel("Date")

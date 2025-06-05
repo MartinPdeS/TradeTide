@@ -31,14 +31,6 @@ exit_strategy = exit_strategy.Static(
 )
 
 
-# Short Position:
-# Start Time: 2024-02-22 00:59:00.000000
-# Stop Time: 2024-02-22 00:59:00.000000
-# Entry Price: 1.34873
-# Exit Price: 1.34874
-# Lot Size: 1.00000
-
-
 import time
 
 start_time = time.time()
@@ -52,11 +44,6 @@ position_collection = PositionCollection(
 position_collection.open_positions(exit_strategy=exit_strategy)
 position_collection.propagate_positions()
 
-# position_collection.display()
-
-# position_collection.plot()
-
-
 capital_management = capital_management.FixedLot(
     capital=1000000,
     fixed_lot_size=10000,
@@ -66,13 +53,12 @@ capital_management = capital_management.FixedLot(
 
 portfolio  = Portfolio(
     position_collection=position_collection,
-    save_history=True
 )
 
 portfolio.simulate(capital_management=capital_management)
 
-
-# dsa
+metrics = portfolio.get_metrics()
+metrics.display()
 
 end_time = time.time()
 print(f"\nElapsed time: {end_time - start_time:.4f} seconds")
@@ -82,7 +68,7 @@ print(f"\nElapsed time: {end_time - start_time:.4f} seconds")
 
 # portfolio.display()
 # portfolio.plot_equity()
-portfolio.plot("equity", "capital", "number_of_positions")
+# portfolio.plot("equity", "capital", "number_of_positions")
 # portfolio.plot(show=True)
 # portfolio.plot_positions()
 

@@ -8,6 +8,7 @@
 #include "../capital_management/capital_management.h"
 #include "../state/state.h"
 #include "../record/record.h"
+#include "../metrics/metrics.h"
 
 
 /**
@@ -22,6 +23,7 @@ public:
     /// Reference to the current state of the Portfolio plus interface to its history if enabled.
     State state;
     Record record;
+
     /// Reference to the source collection of all potential positions.
     PositionCollection& position_collection;
 
@@ -35,7 +37,7 @@ public:
      * @param position_collection A reference to the collection of all tradable signals.
      * @param capital_management  A capital management strategy that controls lot sizing.
      */
-    Portfolio(PositionCollection& position_collection, bool record_enabled)
+    Portfolio(PositionCollection& position_collection)
         : position_collection(position_collection)
         {
             this->record.state = &this->state;
@@ -56,7 +58,25 @@ public:
     /**
      * @brief Display final performance metrics in human-readable form.
      */
-    void display() const;
+    void display() const {
+        for (const auto& position : this->executed_positions) {
+            position->display();
+        }
+    };
+
+    /**
+     * @brief Get the Metrics object containing performance statistics.
+     *
+     * This method calculates and returns various performance metrics based on the
+     * recorded history of the portfolio.
+     *
+     * @return Metrics object with calculated performance statistics.
+     */
+    Metrics get_metrics() {
+        Metrics metrics(this->record);
+        metrics.calculate();
+        return metrics;
+    }
 
     /**
      * @return Final account equity after simulation.
@@ -85,77 +105,6 @@ public:
      */
     [[nodiscard]] std::vector<BasePosition*> get_positions(size_t count = std::numeric_limits<size_t>::max()) const;
 
-    /**
-     * @brief Compute total return over the entire simulation period.
-     *
-     * @return Total return as a fraction (e.g., 0.12 for +12% gain).
-     */
-    [[nodiscard]] double calculate_total_return() const;
-
-    /**
-     * @brief Calculate the annualized (compounded) return from total return.
-     *
-     * @param total_return The total return (from calculate_total_return).
-     * @return Annualized return as a fraction (e.g., 0.08 for +8% per year).
-     */
-    [[nodiscard]] double calculate_annualized_return(double total_return) const;
-
-    /**
-     * @brief Compute the total duration of the simulation.
-     *
-     * @return Duration as a std::chrono::duration in seconds.
-     */
-    [[nodiscard]] std::chrono::duration<double> calculate_duration() const;
-
-    /**
-     * @brief Compute the maximum drawdown during the simulation.
-     *
-     * Max drawdown is the largest peak-to-trough equity drop as a fraction of the peak.
-     *
-     * @return Maximum drawdown (e.g., 0.25 for -25%).
-     */
-    [[nodiscard]] double calculate_max_drawdown() const;
-
-    /**
-     * @brief Compute the Sharpe ratio (risk-adjusted return).
-     *
-     * @param risk_free_rate Optional risk-free rate (default = 0).
-     * @return Sharpe ratio (mean excess return divided by standard deviation of returns).
-     */
-    [[nodiscard]] double calculate_sharpe_ratio(double risk_free_rate = 0.0) const;
-
-    /**
-     * @brief Compute the Sortino ratio (risk-adjusted return using downside risk).
-     *
-     * @param risk_free_rate Optional risk-free rate (default = 0).
-     * @return Sortino ratio (mean excess return divided by downside deviation).
-     */
-    [[nodiscard]] double calculate_sortino_ratio(double risk_free_rate = 0.0) const;
-
-    /**
-     * @brief Calculate the win/loss ratio of executed trades.
-     *
-     * @return Ratio of winning trades to losing trades (e.g., 1.5 for 60% win, 40% loss).
-     */
-    [[nodiscard]] double calculate_win_loss_ratio() const;
-
-    /**
-     * @brief Return the final portfolio equity.
-     *
-     * Equivalent to capital at the end of the simulation.
-     *
-     * @return Final equity.
-     */
-    [[nodiscard]] double calculate_equity() const;
-
-    /**
-     * @brief Compute the portfolio's volatility.
-     *
-     * Volatility is defined as the standard deviation of periodic returns.
-     *
-     * @return Volatility (e.g., 0.05 for 5%).
-     */
-    [[nodiscard]] double calculate_volatility() const;
 
     /**
      * @brief Calculate the capital at risk based on all open positions.
@@ -166,13 +115,32 @@ public:
      */
     [[nodiscard]] double calculate_capital_at_risk() const;
 
-    /** @brief Attempt to close positions based on current market conditions. */
+    /**
+     * @brief Calculate the current equity of the portfolio.
+     *
+     * Equity is defined as the sum of initial capital and all open positions' values.
+     *
+     * @return Current equity value.
+     */
+    [[nodiscard]] double calculate_equity() const;
     void try_close_positions(BaseCapitalManagement& capital_management);
 
-    /** @brief Attempt to open new positions based on current market conditions. */
+    /**
+     * @brief Attempt to open new positions based on the current market state and capital management.
+     *
+     * This method will iterate through all selected positions and try to open them
+     * if they meet the criteria defined by the capital management strategy.
+     *
+     * @param capital_management The capital management strategy to use for opening positions.
+     */
     void try_open_positions(BaseCapitalManagement& capital_management);
 
-    /** @brief Terminate all open positions. */
+    /**
+     * @brief Close all currently open positions at the current market price.
+     *
+     * This method will iterate through all active positions and close them,
+     * updating the portfolio's equity and capital at risk accordingly.
+     */
     void terminate_open_positions();
 
     /**

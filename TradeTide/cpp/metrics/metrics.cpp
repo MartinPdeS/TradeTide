@@ -1,10 +1,6 @@
 #include "metrics.h"
 
 
-using Duration = std::chrono::system_clock::duration;
-using TimePoint = std::chrono::system_clock::time_point;
-
-
 void Metrics::calculate_annualized_return() {
     double fractional_years = std::chrono::duration_cast<std::chrono::seconds>(this->duration).count() / 31557600.0;
 
@@ -144,7 +140,7 @@ void Metrics::display() const {
     std::cout << "Win/Loss Ratio:        " << this->win_loss_ratio << "\n";
     std::cout << "Volatility:            " << this->volatility * 100 << " %\n";
     std::cout << "Positions Executed:    " << this->total_exected_positions << "\n";
-    std::cout << "Duration:              "
+    std::cout << "Market Duration:       "
               << days.count() << "d "
               << hours.count() << "h "
               << minutes.count() << "m\n"

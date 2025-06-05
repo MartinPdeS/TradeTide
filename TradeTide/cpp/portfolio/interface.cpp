@@ -61,7 +61,7 @@ PYBIND11_MODULE(interface_portfolio, module) {
         .def_readonly("time", &Record::time)
         .def_readonly("equity", &Record::equity)
         .def_readonly("capital", &Record::capital)
-        .def_readonly("number_of_concurent_positions", &Record::concurrent_positions)
+        .def_readonly("concurrent_positions", &Record::concurrent_positions)
         .def_readonly("capital_at_risk", &Record::capital_at_risk)
         .def_readonly("initial_capital", &Record::initial_capital)
         ;

@@ -78,7 +78,7 @@ void PositionCollection::propagate_positions() {
 void PositionCollection::terminate_open_positions() {
     for (const auto& position : this->positions)
         if (!position->is_closed) {
-            position->close_at(this->market.dates.size() - 1);  // Set to last element of market
+            position->close_at(this->market.dates.size());  // Set to last element of market
             position->is_closed = true;
         }
 

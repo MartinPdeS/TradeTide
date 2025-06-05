@@ -1,5 +1,13 @@
+"""
+Unit tests for capital and position constraints in the TradeTide portfolio simulation.
+
+These tests validate that risk management rules such as capital limits,
+concurrent position caps, and trade signal filtering are enforced correctly.
+"""
+
 import pytest
 from datetime import timedelta
+
 from TradeTide.market import Market
 from TradeTide.signal import Signal
 from TradeTide.position_collection import PositionCollection
@@ -8,126 +16,144 @@ from TradeTide.portfolio import Portfolio
 from TradeTide.currencies import Currency
 
 
+# ------------------------------------------------------------------------------
+# Fixtures
+# ------------------------------------------------------------------------------
+
 @pytest.fixture
 def setup_market():
+    """Fixture to load a small slice of market data."""
     market = Market()
     market.load_from_database(
         currency_0=Currency.CAD,
         currency_1=Currency.USD,
         year=2023,
         time_span=timedelta(hours=2),
-        spread_override=1,
-        is_bid_override=True
     )
     return market
 
 
 @pytest.fixture
 def setup_signal(setup_market):
+    """Fixture to generate random signals on the loaded market."""
     signal = Signal(market=setup_market)
     signal.generate_random(probability=0.2)
     return signal
 
 
 @pytest.fixture
-def setup_exit_strategy():
+def strategy():
+    """Fixture for a basic trailing stop-loss/take-profit strategy."""
     return exit_strategy.Trailing(stop_loss=10, take_profit=10, save_price_data=True)
 
 
-def test_no_capital_means_no_trades(setup_market, setup_signal, setup_exit_strategy):
+# ------------------------------------------------------------------------------
+# Tests
+# ------------------------------------------------------------------------------
+
+def test_no_capital_means_no_trades(setup_market, setup_signal, strategy):
+    """
+    If max_concurrent_positions is 0, no positions should be opened
+    regardless of trade signals or capital amount.
+    """
     position_collection = PositionCollection(
         market=setup_market,
         trade_signal=setup_signal.trade_signal,
-        exit_strategy=setup_exit_strategy
     )
-    position_collection.open_positions()
+    position_collection.open_positions(exit_strategy=strategy)
     position_collection.propagate_positions()
 
-    risk = capital_management.FixedFractional(
-        capital=0.0,  # no capital
-        risk_per_trade=0.1,
-        max_lot_size=1,
-        max_capital_at_risk=100000,
-        max_concurrent_positions=10,
+    capital_manager = capital_management.FixedLot(
+        capital=1_000_000,
+        fixed_lot_size=10_000,
+        max_capital_at_risk=100_000,
+        max_concurrent_positions=0,  # no positions allowed
     )
 
-    portfolio = Portfolio(capital_management=risk, position_collection=position_collection)
-    portfolio.simulate()
+    portfolio = Portfolio(position_collection=position_collection)
+    portfolio.simulate(capital_management=capital_manager)
 
     assert len(portfolio.get_positions()) == 0
-    assert portfolio.final_equity() == 0.0
+    assert portfolio.state.equity == 1_000_000
 
 
-def test_zero_signal_means_no_trades(setup_market, setup_exit_strategy):
-    signal = Signal(setup_market)
-    # All zeros by default
+def test_zero_signal_means_no_trades(setup_market, strategy):
+    """
+    If the trade signal contains only zeros (i.e., no signals),
+    the system must not open any positions.
+    """
+    signal = Signal(setup_market)  # All zeros by default
     position_collection = PositionCollection(
         market=setup_market,
         trade_signal=signal.trade_signal,
-        exit_strategy=setup_exit_strategy
     )
-    position_collection.open_positions()
+    position_collection.open_positions(exit_strategy=strategy)
     position_collection.propagate_positions()
 
-    risk = capital_management.FixedFractional(
-        capital=100000,
+    capital_manager = capital_management.FixedFractional(
+        capital=100_000,
         risk_per_trade=0.05,
-        max_lot_size=1,
-        max_capital_at_risk=100000,
+        max_capital_at_risk=100_000,
         max_concurrent_positions=10,
     )
 
-    portfolio = Portfolio(capital_management=risk, position_collection=position_collection)
-    portfolio.simulate()
+    portfolio = Portfolio(position_collection=position_collection)
+    portfolio.simulate(capital_management=capital_manager)
 
     assert len(portfolio.get_positions()) == 0
 
 
-def test_max_concurrent_positions_enforced(setup_market, setup_signal, setup_exit_strategy):
+def test_max_concurrent_positions_enforced(setup_market, setup_signal, strategy):
+    """
+    The portfolio must not exceed the defined max_concurrent_positions limit.
+    """
     position_collection = PositionCollection(
         market=setup_market,
         trade_signal=setup_signal.trade_signal,
-        exit_strategy=setup_exit_strategy
     )
-    position_collection.open_positions()
+    position_collection.open_positions(exit_strategy=strategy)
     position_collection.propagate_positions()
 
-    risk = capital_management.FixedFractional(
-        capital=100000,
+    capital_manager = capital_management.FixedFractional(
+        capital=100_000,
         risk_per_trade=0.01,
-        max_lot_size=2,
-        max_capital_at_risk=100000,
-        max_concurrent_positions=1,  # allow only 1 concurrent
+        max_capital_at_risk=100_000,
+        max_concurrent_positions=1,  # enforce strict limit
     )
 
-    portfolio = Portfolio(capital_management=risk, position_collection=position_collection)
-    portfolio.simulate()
+    portfolio = Portfolio(position_collection=position_collection)
+    portfolio.simulate(capital_management=capital_manager)
 
-    open_counts = portfolio.open_position_history
-    assert max(open_counts) <= 1
+    assert max(portfolio.record.concurrent_positions) <= 1
 
 
-def test_risk_per_trade_zero_blocks_all_trades(setup_market, setup_signal, setup_exit_strategy):
+def test_risk_per_trade_zero_blocks_all_trades(setup_market, setup_signal, strategy):
+    """
+    If risk_per_trade is zero, no trades should be executed.
+    """
     position_collection = PositionCollection(
         market=setup_market,
         trade_signal=setup_signal.trade_signal,
-        exit_strategy=setup_exit_strategy
     )
-    position_collection.open_positions()
+    position_collection.open_positions(exit_strategy=strategy)
     position_collection.propagate_positions()
 
-    risk = capital_management.FixedFractional(
-        capital=100000,
-        risk_per_trade=0.0,  # no risk allowed
-        max_lot_size=1,
-        max_capital_at_risk=100000,
+    capital_manager = capital_management.FixedFractional(
+        capital=100_000,
+        risk_per_trade=0.0,  # zero risk => no trades
+        max_capital_at_risk=100_000,
         max_concurrent_positions=10,
     )
 
-    portfolio = Portfolio(capital_management=risk, position_collection=position_collection)
-    portfolio.simulate()
+    portfolio = Portfolio(position_collection=position_collection)
+    portfolio.simulate(capital_management=capital_manager)
 
     assert len(portfolio.get_positions()) == 0
+
+
+# ------------------------------------------------------------------------------
+# Run directly (optional)
+# ------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    pytest.main(["-W error", __file__])
+    pytest.main(["-W", "error", __file__])

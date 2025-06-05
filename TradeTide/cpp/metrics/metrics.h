@@ -4,6 +4,9 @@
 #include <chrono>
 #include "../record/record.h"
 
+using Duration = std::chrono::system_clock::duration;
+using TimePoint = std::chrono::system_clock::time_point;
+
 
 class Metrics {
     public:

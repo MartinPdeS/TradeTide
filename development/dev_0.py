@@ -22,7 +22,7 @@ market.load_from_database(
 
 signal = Signal(market=market)
 
-signal.generate_random(probability=0.001)
+signal.generate_random(probability=0.01)
 
 exit_strategy = exit_strategy.Static(
     stop_loss=4,

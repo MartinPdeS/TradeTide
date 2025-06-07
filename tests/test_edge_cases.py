@@ -27,7 +27,6 @@ def setup_market():
     market.load_from_database(
         currency_0=Currency.CAD,
         currency_1=Currency.USD,
-        year=2023,
         time_span=timedelta(hours=2),
     )
     return market

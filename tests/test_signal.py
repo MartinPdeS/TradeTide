@@ -5,6 +5,7 @@ from datetime import timedelta
 from TradeTide.market import Market
 from TradeTide.signal import Signal
 from TradeTide.currencies import Currency
+from TradeTide.times import days
 
 @pytest.fixture
 def market():
@@ -12,10 +13,7 @@ def market():
     market.load_from_database(
         currency_0=Currency.EUR,
         currency_1=Currency.USD,
-        year=2023,
-        time_span=timedelta(hours=1),
-        spread_override=1,
-        is_bid_override=True
+        time_span=1 * days,
     )
     return market
 

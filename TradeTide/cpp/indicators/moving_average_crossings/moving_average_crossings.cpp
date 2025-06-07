@@ -16,24 +16,12 @@ void MovingAverageCrossing::process() {
     }
 }
 
-void MovingAverageCrossing::run_with_vector(const std::vector<double>& prices) {
-    this->prices = &prices;
-
-    this->process();
-}
-
-void MovingAverageCrossing::run_with_market(const Market& market) {
-    this->prices = &market.ask.close;
-
-    this->process();
-}
-
 void MovingAverageCrossing::initialize(size_t n) {
-    short_moving_average.assign(n, NAN);
-    long_moving_average.assign(n,  NAN);
-    signals.assign(n,  0);
-    sum_short = 0.0;
-    sum_long  = 0.0;
+    this->short_moving_average.assign(n, NAN);
+    this->long_moving_average.assign(n,  NAN);
+    this->signals.assign(n,  0);
+    this->sum_short = 0.0;
+    this->sum_long  = 0.0;
 }
 
 
@@ -68,13 +56,12 @@ void MovingAverageCrossing::detect_signal(size_t idx) {
         return;
 
     // Golden cross
-    if (prev_short <= prev_long && curr_short > curr_long) {
-        std::cout<< "Golden cross detected at index " << idx << std::endl;
+    if (prev_short <= prev_long && curr_short > curr_long)
         this->signals[idx] = +1;
-    }
+
     // Death cross
     else if (prev_short >= prev_long && curr_short < curr_long)
         this->signals[idx] = -1;
-    // Otherwise, no signal (0 by default)
+
 }
 

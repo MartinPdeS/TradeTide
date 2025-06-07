@@ -1,10 +1,15 @@
-#pragma once
+#include "base_indicator.h"
 
-#include "../../market/market.h"
 
-class BaseIndicator {
-public:
-    virtual ~BaseIndicator() = default;
-    virtual void run_with_market(const Market& market) = 0;
-    virtual void run_with_vector(const std::vector<double>& prices) = 0;
-};
+void BaseIndicator::run_with_vector(const std::vector<double>& prices) {
+    this->prices = &prices;
+
+    this->process();
+}
+
+
+void BaseIndicator::run_with_market(const Market& market) {
+    this->prices = &market.ask.close;
+
+    this->process();
+}

@@ -5,8 +5,7 @@ set(NAME "moving_average_crossings")
 # Create a shared library for functionality.
 add_library("cpp_${NAME}" STATIC "${NAME}.cpp")
 
-target_link_libraries("cpp_${NAME}" PUBLIC pybind11::module cpp_position)
-
+target_link_libraries("cpp_${NAME}" PUBLIC cpp_base_indicator)
 
 install(
     TARGETS cpp_${NAME}

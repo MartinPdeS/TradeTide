@@ -1,7 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.patches import Patch
-from matplotlib.lines import Line2D
 from typing import Tuple, Union, Optional
 
 from TradeTide.binary.interface_position_collection import PositionCollection

@@ -1,9 +1,9 @@
 
-from typing import Optional, Union
+from typing import Union
 
 import matplotlib.pyplot as plt
 from MPSPlots.styles import mps
-from datetime import datetime, timedelta
+from datetime import timedelta
 import pathlib
 from TradeTide import directories
 from TradeTide.binary import interface_market
@@ -45,7 +45,7 @@ class Market(interface_market.Market):
                 delta += timedelta(seconds=v)
         return delta
 
-    def get_data_path(self, currency_0: Currency, currency_1: Currency, year: int) -> pathlib.Path:
+    def get_data_path(self, currency_0: Currency, currency_1: Currency) -> pathlib.Path:
         """
         Constructs a pathlib.Path object pointing to the data file for a given currency pair and year.
 
@@ -65,12 +65,12 @@ class Market(interface_market.Market):
         data_file = data_folder / f"{currency_0}_{currency_1}.csv"
 
         if not data_file.with_suffix('.csv').exists():
-            data_file = data_folder / f"{currency_1}_{currency_0}" / str(year) / "data"
+            data_file = data_folder / f"{currency_1}_{currency_0}"
 
         return data_file
 
 
-    def load_from_database(self, currency_0: Currency, currency_1: Currency, year: str, time_span: Union[str, timedelta]) -> None:
+    def load_from_database(self, currency_0: Currency, currency_1: Currency, time_span: Union[str, timedelta]) -> None:
         """Load market data for a currency pair from CSV, with optional overrides.
 
         This method constructs the CSV filename from the given currency pair and
@@ -101,7 +101,6 @@ class Market(interface_market.Market):
         csv_path = self.get_data_path(
             currency_0=currency_0.value,
             currency_1=currency_1.value,
-            year=year
         ).with_suffix(".csv")
 
         self.load_from_csv(

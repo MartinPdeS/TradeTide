@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../base_indicator/base_indicator.cpp"
+#include "../base_indicator/base_indicator.h"
 
 class MovingAverageCrossing : public BaseIndicator {
 public:
@@ -8,8 +8,6 @@ public:
     size_t long_window;
     std::vector<double> short_moving_average;
     std::vector<double> long_moving_average;
-    const std::vector<double> *prices;
-    std::vector<int> signals;
 
     /**
      * Constructor for the MovingAverageCrossing strategy.
@@ -19,20 +17,6 @@ public:
      */
     MovingAverageCrossing(size_t short_window, size_t long_window);
     MovingAverageCrossing() = default;
-
-    /**
-     * Run the moving average crossing strategy with market data.
-     * This method processes the market's ask prices to compute moving averages and generate trading signals.
-     * @param market The market data containing prices.
-     */
-    void run_with_market(const Market& market);
-
-    /**
-     * Run the moving average crossing strategy with a vector of prices.
-     * This method processes the provided price vector to compute moving averages and generate trading signals.
-     * @param prices The vector of prices to process.
-     */
-    void run_with_vector(const std::vector<double>& prices);
 
 
 private:

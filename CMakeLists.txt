@@ -28,6 +28,7 @@ message(STATUS "Python version to be compiled against: ${PYBIND11_PYTHON_VERSION
 message(STATUS "Binary will be installed in location: ${TRADETIDE_BIN_DIR}")
 
 add_subdirectory(TradeTide/cpp/market)               # market
+add_subdirectory(TradeTide/cpp/indicators)           # indicators
 add_subdirectory(TradeTide/cpp/position)             # position
 add_subdirectory(TradeTide/cpp/signal)               # signal
 add_subdirectory(TradeTide/cpp/state)                # state

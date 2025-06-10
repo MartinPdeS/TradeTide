@@ -4,6 +4,7 @@
 #include "base_indicator/base_indicator.h"
 #include "moving_average_crossings/moving_average_crossings.h"
 #include "bollinger_bands/bollinger_bands.h"
+#include "relative_momentum_index/relative_momentum_index.h"
 
 namespace py = pybind11;
 
@@ -68,14 +69,7 @@ PYBIND11_MODULE(interface_indicators, module) {
 
     // MovingAverageCrossing binding
     py::class_<MovingAverageCrossing, BaseIndicator>(module, "MOVINGAVERAGECROSSING")
-        .def(
-            py::init<>(),
-            R"pbdoc(
-                Default constructor for MovingAverageCrossing.
-                Initializes with default short and long window sizes.
-                This constructor is primarily for internal use and should not be used directly.
-            )pbdoc"
-        )
+        .def(py::init<>())
         .def(
             py::init<size_t, size_t>(),
             py::arg("short_window"),
@@ -143,14 +137,7 @@ PYBIND11_MODULE(interface_indicators, module) {
 
     // BollingerBands binding
     py::class_<BollingerBands, BaseIndicator>(module, "BOLLINGERBANDS")
-        .def(
-            py::init<>(),
-            R"pbdoc(
-                Default constructor for BollingerBands.
-                Initializes with default window size and multiplier.
-                This constructor is primarily for internal use and should not be used directly.
-            )pbdoc"
-        )
+        .def(py::init<>())
         .def(
             py::init<size_t, double>(),
             py::arg("window"),
@@ -227,4 +214,103 @@ PYBIND11_MODULE(interface_indicators, module) {
             )pbdoc"
         )
         ;
+
+    // RelativeMomentumIndex binding
+    py::class_<RelativeMomentumIndex, BaseIndicator>(module, "RELATIVEMOMENTUMINDEX")
+        .def(py::init<>())
+        .def(
+            py::init<size_t, size_t, double, double>(),
+            py::arg("momentum_period"),
+            py::arg("smooth_period"),
+            py::arg("over_bought"),
+            py::arg("over_sold"),
+            R"pbdoc(
+                Construct a RelativeMomentumIndex indicator.
+
+                Parameters
+                ----------
+                momentum_period : int
+                    Number of periods for momentum calculation.
+                smooth_period : int
+                    Number of periods for smoothing averages.
+                over_bought : float, optional
+                    Threshold above which to signal sell (default 70.0).
+                over_sold : float, optional
+                    Threshold below which to signal buy (default 30.0).
+            )pbdoc"
+        )
+        .def_readwrite(
+            "_cpp_momentum_period",
+            &RelativeMomentumIndex::momentum_period,
+            R"pbdoc(
+                Number of periods for momentum calculation.
+
+                Attributes
+                ----------
+                momentum_period : size_t
+                    Momentum calculation period.
+            )pbdoc"
+        )
+        .def_readwrite(
+            "_cpp_smooth_period",
+            &RelativeMomentumIndex::smooth_period,
+            R"pbdoc(
+                Number of periods for smoothing averages.
+
+                Attributes
+                ----------
+                smooth_period : size_t
+                    Smoothing period for RMI.
+            )pbdoc"
+        )
+        .def_readwrite(
+            "_cpp_over_bought",
+            &RelativeMomentumIndex::over_bought,
+            R"pbdoc(
+                Threshold above which to signal sell.
+
+                Attributes
+                ----------
+                over_bought : float
+                    Overbought threshold for RMI.
+            )pbdoc"
+        )
+        .def_readwrite(
+            "_cpp_over_sold",
+            &RelativeMomentumIndex::over_sold,
+            R"pbdoc(
+                Threshold below which to signal buy.
+
+                Attributes
+                ----------
+                over_sold : float
+                    Oversold threshold for RMI.
+            )pbdoc"
+        )
+        .def_readonly(
+            "_cpp_rmi",
+            &RelativeMomentumIndex::rmi,
+            R"pbdoc(
+                Relative Momentum Index values per time step.
+
+                Attributes
+                ----------
+                rmi : List[float]
+                    Series of RMI values (0–100).
+            )pbdoc"
+        )
+        .def_readonly(
+            "_cpp_signals",
+            &RelativeMomentumIndex::signals,
+            R"pbdoc(
+                Trade signal array based on RMI thresholds.
+
+                Attributes
+                ----------
+                signals : List[int]
+                    +1 when crossing above over_sold (buy),
+                    -1 when crossing below over_bought (sell),
+                    0 otherwise.
+            )pbdoc"
+        );
 }

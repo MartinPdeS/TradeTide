@@ -5,6 +5,7 @@ set(NAME "indicators")
 add_subdirectory(base_indicator)
 add_subdirectory(moving_average_crossings)
 add_subdirectory(bollinger_bands)
+add_subdirectory(relative_momentum_index)
 
 
 # Create a Python module, if needed.
@@ -17,6 +18,7 @@ target_link_libraries(
     cpp_base_indicator
     cpp_moving_average_crossings
     cpp_bollinger_bands
+    cpp_relative_momentum_index
     pybind11::module
 )
 

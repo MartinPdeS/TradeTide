@@ -12,7 +12,7 @@ void MovingAverageCrossing::process() {
     for (size_t i = 0; i < n_elements; ++i) {
         this->update_sums(i);
         this->compute_mas(i);
-        this->detect_signal(i);
+        this->detect_signal_from_region(i);
     }
 }
 
@@ -42,26 +42,26 @@ void MovingAverageCrossing::compute_mas(size_t idx) {
         this->long_moving_average[idx]  = this->sum_long  / static_cast<double>(long_window);
 }
 
-void MovingAverageCrossing::detect_signal(size_t idx) {
-    // Need at least one prior point and valid MA values
+void MovingAverageCrossing::detect_regions(size_t idx) {
     if (idx == 0)
         return;
 
-    double prev_short = short_moving_average[idx - 1];
-    double prev_long  = long_moving_average[idx - 1];
-    double curr_short = short_moving_average[idx];
-    double curr_long  = long_moving_average[idx];
+    double short_ma = short_moving_average[idx];
+    double long_ma  = long_moving_average[idx];
 
-    if (std::isnan(prev_short) || std::isnan(prev_long) || std::isnan(curr_short) || std::isnan(curr_long))
+    if (std::isnan(short_ma) || std::isnan(long_ma)) {
+        this->regions[idx] = 0;
         return;
+    }
 
-    // Golden cross
-    if (prev_short <= prev_long && curr_short > curr_long)
-        this->signals[idx] = +1;
-
-    // Death cross
-    else if (prev_short >= prev_long && curr_short < curr_long)
-        this->signals[idx] = -1;
-
+    // Bullish region (short > long)
+    if (short_ma > long_ma)
+        this->regions[idx] = +1;
+    // Bearish region (short < long)
+    else if (short_ma < long_ma)
+        this->regions[idx] = -1;
+    else
+        this->regions[idx] = 0;
 }
+
 

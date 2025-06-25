@@ -8,7 +8,7 @@ void BollingerBands::process() {
     for (size_t i = 0; i < n; ++i) {
         this->update_window(i);
         this->compute_bands(i);
-        this->detect_signal(i);
+        this->detect_signal_from_region(i);
     }
 }
 
@@ -43,16 +43,18 @@ void BollingerBands::compute_bands(size_t idx) {
     }
 }
 
-void BollingerBands::detect_signal(size_t idx) {
-    // only generate when valid bands exist
-    if (std::isnan(this->upper_band[idx]) || std::isnan(this->lower_band[idx]))
-        return;
+
+void BollingerBands::detect_regions(size_t idx) {
     double price = (*this->prices)[idx];
+
     // buy when price crosses below lower band
-    if (idx > 0 && price < this->lower_band[idx] && (*this->prices)[idx-1] >= this->lower_band[idx-1])
-        this->signals[idx] = +1;
+    if (price < this->lower_band[idx])
+        this->regions[idx] = +1;
     // sell when price crosses above upper band
-    else if (idx > 0 && price > this->upper_band[idx] && (*this->prices)[idx-1] <= this->upper_band[idx-1])
-        this->signals[idx] = -1;
+    else if (price > this->upper_band[idx])
+        this->regions[idx] = -1;
+    else
+        this->regions[idx] = 0;  // neutral region
 }
+
 

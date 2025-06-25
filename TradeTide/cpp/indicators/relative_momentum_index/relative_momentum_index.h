@@ -49,5 +49,5 @@ private:
 
     void compute_rmi(size_t idx);
 
-    void detect_signal(size_t idx);
+    void detect_regions(size_t idx);
 };

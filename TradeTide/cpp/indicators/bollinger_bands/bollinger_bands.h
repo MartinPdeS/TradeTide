@@ -59,5 +59,5 @@ private:
      * Generates +1 for buy, -1 for sell, or 0 for no signal.
      * @param idx Current index in the price vector.
      */
-    void detect_signal(size_t idx);
+    void detect_regions(size_t idx);
 };

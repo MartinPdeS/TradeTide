@@ -7,7 +7,7 @@ void RelativeMomentumIndex::process() {
         this->update_momentum(i);
         this->update_smoothing(i);
         this->compute_rmi(i);
-        this->detect_signal(i);
+        this->detect_signal_from_region(i);
     }
 }
 
@@ -52,16 +52,20 @@ void RelativeMomentumIndex::compute_rmi(size_t idx) {
     }
 }
 
-void RelativeMomentumIndex::detect_signal(size_t idx) {
-    if (idx == 0 || std::isnan(this->rmi[idx - 1]) || std::isnan(this->rmi[idx]))
+void RelativeMomentumIndex::detect_regions(size_t idx) {
+    if (std::isnan(this->rmi[idx])) {
+        this->regions[idx] = 0;
         return;
-    double prev = this->rmi[idx - 1];
-    double curr = rmi[idx];
-    // buy when over_sold crossed up
-    if (prev <= this->over_sold && curr > over_sold)
-        signals[idx] = +1;
-    // sell when over_bought crossed down
-    else if (prev >= this->over_bought && curr < over_bought)
-        signals[idx] = -1;
+    }
+
+    double value = this->rmi[idx];
+
+    if (value < this->over_sold)
+        this->regions[idx] = +1;  // buy region (oversold)
+    else if (value > this->over_bought)
+        this->regions[idx] = -1; // sell region (overbought)
+    else
+        this->regions[idx] = 0;  // neutral region
 }
+
 

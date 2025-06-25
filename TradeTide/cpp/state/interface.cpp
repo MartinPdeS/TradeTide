@@ -4,10 +4,15 @@
 
 #include "state.h"
 
-namespace py = pybind11;
 
-PYBIND11_MODULE(interface_position, module) {
-    module.doc() = "Python bindings for trading positions State and its properties.";
 
-    py::class_<State>(module, "State");
+void register_state(pybind11::module_ &module) {
+    pybind11::class_<State>(module, "State")
+        .def_readonly("current_date", &State::current_date)
+        .def_readonly("equity", &State::equity)
+        .def_readonly("capital", &State::capital)
+        .def_readonly("number_of_concurent_positions", &State::number_of_concurrent_positions)
+        .def_readonly("capital_at_risk", &State::capital_at_risk)
+        ;
 }
+

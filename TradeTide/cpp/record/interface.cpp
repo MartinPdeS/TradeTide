@@ -4,10 +4,14 @@
 
 #include "record.h"
 
-namespace py = pybind11;
-
-PYBIND11_MODULE(interface_record, module) {
-    module.doc() = "Python bindings for trading positions State and its properties.";
-
-    py::class_<Record>(module, "Record");
+void register_record(pybind11::module_ &module) {
+    pybind11::class_<Record>(module, "Record")
+        .def_readonly("time", &Record::time)
+        .def_readonly("equity", &Record::equity)
+        .def_readonly("capital", &Record::capital)
+        .def_readonly("concurrent_positions", &Record::concurrent_positions)
+        .def_readonly("capital_at_risk", &Record::capital_at_risk)
+        .def_readonly("initial_capital", &Record::initial_capital)
+        ;
 }
+

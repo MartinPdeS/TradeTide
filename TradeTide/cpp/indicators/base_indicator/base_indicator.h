@@ -10,6 +10,8 @@ public:
     const std::vector<double> *prices;
     std::vector<int> signals;
 
+    BaseIndicator() = default;
+
     virtual ~BaseIndicator() = default;
 
     /**

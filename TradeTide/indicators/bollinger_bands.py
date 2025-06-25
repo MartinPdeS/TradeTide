@@ -52,7 +52,7 @@ class BollingerBands(BOLLINGERBANDS, BaseIndicator):
 
 
     @BaseIndicator._pre_plot
-    def plot(self, ax: plt.Axes) -> None:
+    def plot(self, ax: plt.Axes, show_metric: bool = False) -> None:
         """
         Plot price, Bollinger Bands, and trading signals on the given axis.
 
@@ -67,28 +67,29 @@ class BollingerBands(BOLLINGERBANDS, BaseIndicator):
         lower   = np.asarray(self._cpp_lower_band)
         signals = np.asarray(self._cpp_signals)
 
-        # price and bands
-        ax.plot(
-            self.market.dates,
-            sma,
-            label=f'SMA ({self.window})',
-            linestyle='-',
-            linewidth=1
-        )
-        ax.plot(
-            self.market.dates,
-            upper,
-            label=f'Upper Band (+{self.multiplier} $\sigma$)',
-            linestyle='--',
-            linewidth=1
-        )
-        ax.plot(
-            self.market.dates,
-            lower,
-            label=f'Lower Band (-{self.multiplier} $\sigma$)',
-            linestyle='--',
-            linewidth=1
-        )
+        if show_metric:
+            # price and bands
+            ax.plot(
+                self.market.dates,
+                sma,
+                label=f'SMA ({self.window})',
+                linestyle='-',
+                linewidth=1
+            )
+            ax.plot(
+                self.market.dates,
+                upper,
+                label=f'Upper Band (+{self.multiplier} $\sigma$)',
+                linestyle='--',
+                linewidth=1
+            )
+            ax.plot(
+                self.market.dates,
+                lower,
+                label=f'Lower Band (-{self.multiplier} $\sigma$)',
+                linestyle='--',
+                linewidth=1
+            )
 
         # fill the band region
         ax.fill_between(

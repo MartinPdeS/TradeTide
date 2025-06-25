@@ -3,12 +3,12 @@ import matplotlib.pyplot as plt
 
 class BaseIndicator:
     def _pre_plot(function):
-        def wrapper(self, show: bool = True, **kwargs):
+        def wrapper(self, show_ask: bool = True, show_bid: bool = True, show: bool = True, **kwargs):
 
             with plt.style.context(plot_style):
                 figure, ax = plt.subplots(ncols=1, nrows=1)
 
-                self.market.plot(ax=ax, show=False)
+                self.market.plot(ax=ax, show_ask=show_ask, show_bid=show_bid, show=False)
 
                 function(self, ax=ax, **kwargs)
                 ax.legend()

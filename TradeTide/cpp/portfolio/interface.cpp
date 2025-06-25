@@ -2,7 +2,9 @@
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "portfolio.h"
-#include "../position_collection/position_collection.h"
+#include "../metrics/interface.cpp"
+#include "../state/interface.cpp"
+#include "../record/interface.cpp"
 
 namespace py = pybind11;
 
@@ -15,56 +17,11 @@ PYBIND11_MODULE(interface_portfolio, module) {
     )pbdoc"
     ;
 
-    py::class_<Metrics>(module, "Metrics")
-        .def(
-            py::init<>(),
-            R"pbdoc(
-                Initialize metrics with a reference to the Record object.
-            )pbdoc"
-        )
-        .def(
-            "calculate",
-            &Metrics::calculate,
-            R"pbdoc(
-                Calculate and update all performance metrics based on the recorded history.
-            )pbdoc"
-        )
-        .def(
-            "display",
-            &Metrics::display,
-            R"pbdoc(
-                Display the final performance metrics in human-readable form.
-            )pbdoc"
-        )
-        .def_readonly("volatility", &Metrics::volatility)
-        .def_readonly("total_return", &Metrics::total_return)
-        .def_readonly("annualized_return", &Metrics::annualized_return)
-        .def_readonly("max_drawdown", &Metrics::max_drawdown)
-        .def_readonly("sharpe_ratio", &Metrics::sharpe_ratio)
-        .def_readonly("sortino_ratio", &Metrics::sortino_ratio)
-        .def_readonly("win_loss_ratio", &Metrics::win_loss_ratio)
-        .def_readonly("final_equity", &Metrics::final_equity)
-        .def_readonly("peak_equity", &Metrics::peak_equity)
-        .def_readonly("total_exected_positions", &Metrics::total_exected_positions)
-        .def_readonly("duration", &Metrics::duration)
-        ;
+    register_metrics(module);
 
-    py::class_<State>(module, "State")
-        .def_readonly("current_date", &State::current_date)
-        .def_readonly("equity", &State::equity)
-        .def_readonly("capital", &State::capital)
-        .def_readonly("number_of_concurent_positions", &State::number_of_concurrent_positions)
-        .def_readonly("capital_at_risk", &State::capital_at_risk)
-        ;
+    register_state(module);
 
-    py::class_<Record>(module, "Record")
-        .def_readonly("time", &Record::time)
-        .def_readonly("equity", &Record::equity)
-        .def_readonly("capital", &Record::capital)
-        .def_readonly("concurrent_positions", &Record::concurrent_positions)
-        .def_readonly("capital_at_risk", &Record::capital_at_risk)
-        .def_readonly("initial_capital", &Record::initial_capital)
-        ;
+    register_record(module);
 
     py::class_<Portfolio>(module, "PORTFOLIO")
         .def(

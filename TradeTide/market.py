@@ -217,7 +217,7 @@ class Market(interface_market.Market):
             plt.tight_layout()
             plt.show()
 
-    def plot(self, ax: plt.Axes = None, show: bool = True) -> None:
+    def plot(self, ax: plt.Axes = None, show_ask: bool = True, show_bid: bool = True, show: bool = True) -> None:
         """
         Plot low-high ranges as filled bands with step="pre",
         and open-close as solid/dashed step lines for Ask and Bid.
@@ -229,12 +229,14 @@ class Market(interface_market.Market):
         # -----------------------------------------------------------------------------
         # 1. Ask: fill between low and high with a lightly shaded band
         # -----------------------------------------------------------------------------
-        self.plot_ask(ax=ax, show=False)
+        if show_ask:
+            self.plot_ask(ax=ax, show=False)
 
         # -----------------------------------------------------------------------------
         # 3. Bid: fill between low and high with a lightly shaded band (shift color)
         # -----------------------------------------------------------------------------
-        self.plot_bid(ax=ax, show=False)
+        if show_bid:
+            self.plot_bid(ax=ax, show=False)
 
         # -----------------------------------------------------------------------------
         # 5. Final formatting

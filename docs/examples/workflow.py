@@ -13,7 +13,7 @@ market = Market()
 market.load_from_database(
     currency_0=Currency.CAD,
     currency_1=Currency.USD,
-    time_span=300 * days,
+    time_span=3 * days,
 )
 
 indicator = BollingerBands(
@@ -23,7 +23,7 @@ indicator = BollingerBands(
 
 indicator.run(market)
 
-indicator.plot()
+indicator.plot(show_bid=False)
 
 exit_strategy = exit_strategy.Static(
     stop_loss=4,

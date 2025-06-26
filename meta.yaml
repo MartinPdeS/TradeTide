@@ -24,6 +24,7 @@ requirements:
     - python-build ~=1.2
     - setuptools_scm[toml] ~=8.0
   run:
+    - pandas
     - martinpdes::mpsplots
     - matplotlib ~=3.8
     - numpy ~=1.26

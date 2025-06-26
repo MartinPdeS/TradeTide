@@ -19,7 +19,7 @@ add_compile_options(-fPIC -Wall -Wextra -Wno-uninitialized)
 # Include directories
 find_package(OpenMP REQUIRED)
 # find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
-find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
+# find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 find_package(pybind11 CONFIG REQUIRED)
 
 # Platform-specific settings for static linking

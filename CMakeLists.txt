@@ -10,18 +10,21 @@ set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Type of build" FORCE)
 
 
 # Set the output directory for libraries
-set(TRADETIDE_CXX_DIR "${CMAKE_SOURCE_DIR}/TradeTide/cpp")
-set(TRADETIDE_BIN_DIR "${CMAKE_SOURCE_DIR}/TradeTide/binary")
+set(LOCAL_CXX_DIR "${PROJECT_NAME}/cpp")
+set(LOCAL_BIN_DIR "${CMAKE_SOURCE_DIR}/${PROJECT_NAME}/binary")
 
 
 # Compiler and linker options
 add_compile_options(-fPIC -Wall -Wextra -Wno-uninitialized)
 
+# Include directories
+include_directories("${LOCAL_CXX_DIR}")
+find_package(OpenMP REQUIRED)
 find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
 find_package(pybind11 CONFIG REQUIRED)
-find_package(OpenMP REQUIRED)
 
 # Print some messages
+message(STATUS "OPENMP flags: ${OpenMP_CXX_FLAGS}")
 message(STATUS "TradeTide version is: ${TRADETIDE_VERSION}")
 message(STATUS "TradeTide includes directory is: ${TRADETIDE_CXX_DIR}")
 message(STATUS "Python version to be compiled against: ${PYBIND11_PYTHON_VERSION}")

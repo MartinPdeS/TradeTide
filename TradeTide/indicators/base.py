@@ -1,3 +1,4 @@
+import numpy as np
 from MPSPlots.styles import mps as plot_style
 import matplotlib.pyplot as plt
 
@@ -14,6 +15,32 @@ class BaseIndicator:
                 ax.legend()
 
                 ax.set_xlabel("Time")
+
+                regions = np.asarray(self._cpp_regions)
+
+                ax.fill_between(
+                    self.market.dates,
+                    0,
+                    1,
+                    where=regions == 1,
+                    step='mid',
+                    color='green',
+                    alpha=0.2,
+                    label='Market Range',
+                    transform=ax.get_xaxis_transform(),
+                )
+
+                ax.fill_between(
+                    self.market.dates,
+                    0,
+                    1,
+                    where=regions == -1,
+                    step='mid',
+                    color='red',
+                    alpha=0.2,
+                    label='Market Range',
+                    transform=ax.get_xaxis_transform(),
+                )
 
                 plt.tight_layout()
                 if show:

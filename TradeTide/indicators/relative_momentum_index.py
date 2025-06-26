@@ -70,7 +70,7 @@ class RelativeMomentumIndex(RELATIVEMOMENTUMINDEX, BaseIndicator):
         dates = np.asarray(self.market.dates)
         price = np.asarray(self.market.ask.close)
         rmi   = np.asarray(self._cpp_rmi)
-        sig   = np.asarray(self._cpp_signals)
+        regions   = np.asarray(self._cpp_regions)
 
         # plot price on secondary axis for context
         ax2 = ax.twinx()
@@ -100,25 +100,7 @@ class RelativeMomentumIndex(RELATIVEMOMENTUMINDEX, BaseIndicator):
             linewidth=1,
             label='Thresholds'
         )
-        # buy/sell markers
-        buys  = dates[sig ==  1]
-        sells = dates[sig == -1]
-        ax.vlines(
-            buys,
-            self._cpp_over_sold, self._cpp_over_bought,
-            colors='green',
-            linestyles='-',
-            linewidth=1,
-            label='Buy Signal'
-        )
-        ax.vlines(
-            sells,
-            self._cpp_over_sold, self._cpp_over_bought,
-            colors='red',
-            linestyles='-',
-            linewidth=1,
-            label='Sell Signal'
-        )
+
 
         # labels and legend
         ax.set_xlabel('Date')

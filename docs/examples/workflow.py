@@ -1,3 +1,12 @@
+"""
+Trading Workflow Example
+------------------------
+
+This example demonstrates a complete trading workflow using the TradeTide library.
+
+"""
+
+
 from TradeTide import Strategy, Portfolio, PositionCollection, Market, Currency, days, hours, minutes
 from TradeTide.indicators import BollingerBands
 from TradeTide import capital_management, exit_strategy

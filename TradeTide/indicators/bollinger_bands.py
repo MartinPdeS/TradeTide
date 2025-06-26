@@ -100,28 +100,4 @@ class BollingerBands(BOLLINGERBANDS, BaseIndicator):
             label='Band Range'
         )
 
-        ax.fill_between(
-            self.market.dates,
-            0,
-            1,
-            where=np.asarray(self._cpp_regions) == 1,
-            step='mid',
-            color='green',
-            alpha=0.2,
-            label='Market Range',
-            transform=ax.get_xaxis_transform(),
-        )
-
-        ax.fill_between(
-            self.market.dates,
-            0,
-            1,
-            where=np.asarray(self._cpp_regions) == -1,
-            step='mid',
-            color='red',
-            alpha=0.2,
-            label='Market Range',
-            transform=ax.get_xaxis_transform(),
-        )
-
         ax.legend(loc='upper left')

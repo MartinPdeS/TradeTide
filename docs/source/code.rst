@@ -9,7 +9,7 @@ Source code
 BackTester
 ~~~~~~~~~~
 
- .. autoclass:: TradeTide.backtester.BackTester
+ .. autoclass:: TradeTide.portfolio.Portfolio
      :members:
      :inherited-members:
      :member-order: bysource

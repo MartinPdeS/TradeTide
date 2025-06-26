@@ -55,13 +55,10 @@ def reset_mpl(gallery_conf, fname):
     use_mpsplots_style()
 
 
-examples_files = [
-    'strategies',
-]
 
 sphinx_gallery_conf = {
-    "examples_dirs": ['../examples/' + f for f in examples_files],
-    "gallery_dirs": ['gallery/' + f for f in examples_files],
+    "examples_dirs": '../examples/',
+    "gallery_dirs": 'gallery/',
     'image_scrapers': ('matplotlib'),
     'ignore_pattern': '/__',
     'filename_pattern': r'.*\.py',

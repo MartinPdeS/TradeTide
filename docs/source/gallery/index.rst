@@ -1,79 +1,59 @@
 :orphan:
 
-.. _examples_gallery:
-
-Examples
-========
-
-A gallery of examples and that showcase how TradeTide can be used. Some examples demonstrate the use of the API in general and some demonstrate specific applications in tutorial form.
+Examples: Tutorials
+===================
 
 
 .. raw:: html
 
     <div class="sphx-glr-thumbnails">
 
+.. thumbnail-parent-div-open
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Moving Average Crossing indicator">
+    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to use the Bollinger Bands indicator with the TradeTide library.">
 
 .. only:: html
 
-  .. image:: /gallery/images/thumb/sphx_glr_plot_MACD_thumb.png
+  .. image:: /gallery/images/thumb/sphx_glr_bollinger_bands_thumb.png
     :alt:
 
-  :ref:`sphx_glr_gallery_plot_MACD.py`
+  :ref:`sphx_glr_gallery_bollinger_bands.py`
 
 .. raw:: html
 
-      <div class="sphx-glr-thumbnail-title">Moving Average Crossing indicator</div>
+      <div class="sphx-glr-thumbnail-title">Bollinger Bands</div>
     </div>
 
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Boilinger Band">
+    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to use the Moving Average Crossings indicator with the TradeTide library.">
 
 .. only:: html
 
-  .. image:: /gallery/images/thumb/sphx_glr_plot_BB_thumb.png
+  .. image:: /gallery/images/thumb/sphx_glr_moving_average_crossings_thumb.png
     :alt:
 
-  :ref:`sphx_glr_gallery_plot_BB.py`
+  :ref:`sphx_glr_gallery_moving_average_crossings.py`
 
 .. raw:: html
 
-      <div class="sphx-glr-thumbnail-title">Boilinger Band</div>
+      <div class="sphx-glr-thumbnail-title">Moving Average Crossings</div>
     </div>
 
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Relative Strength Index">
+    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to use the Relative Momentum Index (RMI) indicator">
 
 .. only:: html
 
-  .. image:: /gallery/images/thumb/sphx_glr_plot_RSI_thumb.png
+  .. image:: /gallery/images/thumb/sphx_glr_relative_momentum_index_thumb.png
     :alt:
 
-  :ref:`sphx_glr_gallery_plot_RSI.py`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Relative Strength Index</div>
-    </div>
-
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="Relative Momentum Index">
-
-.. only:: html
-
-  .. image:: /gallery/images/thumb/sphx_glr_plot_RMI_thumb.png
-    :alt:
-
-  :ref:`sphx_glr_gallery_plot_RMI.py`
+  :ref:`sphx_glr_gallery_relative_momentum_index.py`
 
 .. raw:: html
 
@@ -83,37 +63,22 @@ A gallery of examples and that showcase how TradeTide can be used. Some examples
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Moving Average Crossing">
+    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates a complete trading workflow using the TradeTide library.">
 
 .. only:: html
 
-  .. image:: /gallery/images/thumb/sphx_glr_plot_SMA_thumb.png
+  .. image:: /gallery/images/thumb/sphx_glr_workflow_thumb.png
     :alt:
 
-  :ref:`sphx_glr_gallery_plot_SMA.py`
+  :ref:`sphx_glr_gallery_workflow.py`
 
 .. raw:: html
 
-      <div class="sphx-glr-thumbnail-title">Moving Average Crossing</div>
+      <div class="sphx-glr-thumbnail-title">Trading Workflow Example</div>
     </div>
 
 
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="Strategy">
-
-.. only:: html
-
-  .. image:: /gallery/images/thumb/sphx_glr_plot_strategy_thumb.png
-    :alt:
-
-  :ref:`sphx_glr_gallery_plot_strategy.py`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Strategy</div>
-    </div>
-
+.. thumbnail-parent-div-close
 
 .. raw:: html
 
@@ -123,12 +88,10 @@ A gallery of examples and that showcase how TradeTide can be used. Some examples
 .. toctree::
    :hidden:
 
-   /gallery/plot_MACD
-   /gallery/plot_BB
-   /gallery/plot_RSI
-   /gallery/plot_RMI
-   /gallery/plot_SMA
-   /gallery/plot_strategy
+   /gallery/bollinger_bands
+   /gallery/moving_average_crossings
+   /gallery/relative_momentum_index
+   /gallery/workflow
 
 
 

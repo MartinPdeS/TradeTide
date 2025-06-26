@@ -23,12 +23,14 @@ requirements:
     - pybind11 ~=2.13
     - python-build ~=1.2
     - setuptools_scm[toml] ~=8.0
+    - llvm-openmp
   run:
     - pandas
     - martinpdes::mpsplots
     - matplotlib ~=3.8
     - numpy ~=1.26
     - pydantic ~=2.9
+    - llvm-openmp
 
 about:
   home: https://github.com/MartinPdeS/TradeTide

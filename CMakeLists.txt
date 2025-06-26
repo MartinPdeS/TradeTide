@@ -12,7 +12,7 @@ set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Type of build" FORCE)
 # Set the output directory for libraries
 set(LOCAL_CXX_DIR "${PROJECT_NAME}/cpp")
 set(LOCAL_BIN_DIR "${CMAKE_SOURCE_DIR}/${PROJECT_NAME}/binary")
-
+include_directories("${LOCAL_CXX_DIR}")
 
 # Compiler and linker options
 add_compile_options(-fPIC -Wall -Wextra -Wno-uninitialized)
@@ -23,7 +23,6 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
 endif()
 
 # Include directories
-include_directories("${LOCAL_CXX_DIR}")
 find_package(OpenMP REQUIRED)
 find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
 find_package(pybind11 CONFIG REQUIRED)

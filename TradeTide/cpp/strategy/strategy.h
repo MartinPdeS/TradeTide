@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <chrono>
+#include <memory>
 #include "../indicators/base_indicator/base_indicator.h"
 #include "../market/market.h"
 

@@ -26,7 +26,7 @@ find_package(pybind11 CONFIG REQUIRED)
 if (WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     add_compile_options(-fopenmp)
     add_link_options(-static -fopenmp -Wl,--whole-archive -lgomp -Wl,--no-whole-archive)
-    link_libraries(PRIVATE Python3::Python)
+    link_libraries(Python3::Python)
 endif()
 
 

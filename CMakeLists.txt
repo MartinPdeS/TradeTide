@@ -39,4 +39,3 @@ add_subdirectory(TradeTide/cpp/exit_strategy)        # exit_strategy
 add_subdirectory(TradeTide/cpp/capital_management)   # capital_manag
 add_subdirectory(TradeTide/cpp/portfolio)            # portfolio
 add_subdirectory(TradeTide/cpp/position_collection)  # position collection
-# add_subdirectory(TradeTide/cpp/backtester)         # backtester

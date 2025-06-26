@@ -25,10 +25,10 @@ requirements:
     - setuptools_scm[toml] ~=8.0
     - llvm-openmp
   run:
-    - pandas
+    - pandas ~=2.3.0
     - martinpdes::mpsplots
     - matplotlib ~=3.8
-    - numpy ~=1.26
+    - numpy ==2.2.6
     - pydantic ~=2.9
     - llvm-openmp
 

@@ -23,16 +23,16 @@ requirements:
     - pybind11 ~=2.13
     - python-build ~=1.2
     - setuptools_scm[toml] ~=8.0
-    - libgomp    # Linux: GCC's OpenMP runtime
-    - libomp     # macOS: LLVM's OpenMP runtime
+    - libgomp  # [linux]
+    - libomp   # [osx]
   run:
     - pandas
     - martinpdes::mpsplots
     - matplotlib ~=3.8
     - numpy ~=1.26
     - pydantic ~=2.9
-    - {{ pin_compatible('libgomp', max_pin='x') }}
-    - {{ pin_compatible('libomp', max_pin='x') }}
+    - libgomp  # [linux]
+    - libomp   # [osx]
 
 about:
   home: https://github.com/MartinPdeS/TradeTide

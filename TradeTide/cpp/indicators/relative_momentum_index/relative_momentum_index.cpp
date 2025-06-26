@@ -1,27 +1,27 @@
 #include "relative_momentum_index.h"
 
 void RelativeMomentumIndex::process() {
-    size_t n = prices->size();
-    this->initialize(n);
-    for (size_t i = 0; i < n; ++i) {
+    size_t n_elements = prices->size();
+    this->initialize(n_elements);
+
+    for (size_t i = 0; i < n_elements; ++i) {
         this->update_momentum(i);
         this->update_smoothing(i);
         this->compute_rmi(i);
-        this->detect_signal_from_region(i);
+        this->detect_regions(i);
     }
 }
 
-void RelativeMomentumIndex::initialize(size_t n) {
-    this->momentum.assign(n, NAN);
-    this->rmi.assign(n, NAN);
-    this->signals.assign(n, 0);
+void RelativeMomentumIndex::initialize(size_t n_elements) {
+    this->momentum.assign(n_elements, NAN);
+    this->rmi.assign(n_elements, NAN);
+    this->regions.assign(n_elements, 0);
     this->sum_gain = sum_loss = 0.0;
 }
 
 void RelativeMomentumIndex::update_momentum(size_t idx) {
-    if (idx >= momentum_period) {
+    if (idx >= momentum_period)
         this->momentum[idx] = (*prices)[idx] - (*prices)[idx - momentum_period];
-    }
 }
 
 void RelativeMomentumIndex::update_smoothing(size_t idx) {

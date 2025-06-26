@@ -8,7 +8,7 @@
 class BaseIndicator {
 public:
     const std::vector<double> *prices;
-    std::vector<int> signals, regions;
+    std::vector<int> regions;
 
     BaseIndicator() = default;
 
@@ -48,30 +48,4 @@ public:
      * @note This method is typically called after the market data has been loaded and is ready for analysis.
      */
     void run_with_market(const Market& market);
-
-    /**
-     * Detect the region based on the current price.
-     * This method should be implemented by derived classes to determine the trading region
-     * (e.g., buy, sell, or neutral) based on the current price and indicator logic.
-     * @param idx The index of the current price in the prices vector.
-     */
-    void detect_signal_from_region(size_t idx) {
-        if (idx == 0) {
-            this->signals[idx] = 0;  // no signal on the first index
-            return;
-        }
-
-        // Step 1: Determine the region at this index
-        this->detect_regions(idx);
-
-        // Step 2: Compare with previous region to detect actual signal
-        int region_now  = this->regions[idx];
-        int region_prev = this->regions[idx - 1];
-
-        // Only set a signal if we're entering a new region
-        if (region_now != 0 && region_prev == 0)
-            this->signals[idx] = region_now;  // crossing into buy or sell region
-        else
-            this->signals[idx] = 0;  // no signal on continuation
-    }
 };

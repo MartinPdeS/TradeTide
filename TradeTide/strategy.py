@@ -1,5 +1,5 @@
 
-from TradeTide.binary.interface_strategies import STRATEGY
+from TradeTide.binary.interface_strategy import STRATEGY
 
 class Strategy(STRATEGY):
     pass

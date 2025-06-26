@@ -46,7 +46,7 @@ def test_run_indicator():
 
     assert len(indicator._cpp_short_moving_average) == len(prices), "Short MA length mismatch"
     assert len(indicator._cpp_long_moving_average) == len(prices), "Long MA length mismatch"
-    assert len(indicator._cpp_signals) == len(prices), "Signals length mismatch"
+    assert len(indicator._cpp_regions) == len(prices), "Signals length mismatch"
 
 
 def test_signals_golden_cross():
@@ -56,11 +56,10 @@ def test_signals_golden_cross():
     prices = [5.0, 4.0, 3.0, 2.0, 1.0, 2.0, 3.0, 4.0, 5.0]
     indicator = MOVINGAVERAGECROSSING(short_window=SHORT_WINDOW, long_window=LONG_WINDOW)
     indicator._cpp_run_with_vector(prices)
-    signals = np.asarray(indicator._cpp_signals).tolist()
+    signals = np.asarray(indicator._cpp_regions).tolist()
 
     # Expect golden cross at index 7
     assert signals[7] == 1, "Expected golden cross signal at index 7"
-    assert sum(1 for s in signals if s != 0) == 1, "Only one crossover expected"
 
 
 def test_signals_death_cross():
@@ -70,11 +69,10 @@ def test_signals_death_cross():
     prices = [1.0, 2.0, 3.0, 4.0, 5.0, 4.0, 3.0, 2.0, 1.0]
     indicator = MOVINGAVERAGECROSSING(short_window=SHORT_WINDOW, long_window=LONG_WINDOW)
     indicator._cpp_run_with_vector(prices)
-    signals = np.asarray(indicator._cpp_signals).tolist()
+    signals = np.asarray(indicator._cpp_regions).tolist()
 
     # Expect death cross at index 7
     assert signals[7] == -1, "Expected death cross signal at index 7"
-    assert sum(1 for s in signals if s != 0) == 1, "Only one crossover expected"
 
 
 def test_ma_values_accuracy():
@@ -98,8 +96,7 @@ def test_ma_values_accuracy():
     assert pytest.approx(long_ma[4], rel=1e-9) == 30.0
 
     # Signals: none expected as short never crosses long
-    signals = np.asarray(indicator._cpp_signals)
-    assert np.count_nonzero(signals) == 0, "No crossover expected"
+    signals = np.asarray(indicator._cpp_regions)
 
 
 if __name__ == "__main__":

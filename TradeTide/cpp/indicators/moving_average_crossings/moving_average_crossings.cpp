@@ -12,14 +12,14 @@ void MovingAverageCrossing::process() {
     for (size_t i = 0; i < n_elements; ++i) {
         this->update_sums(i);
         this->compute_mas(i);
-        this->detect_signal_from_region(i);
+        this->detect_regions(i);
     }
 }
 
-void MovingAverageCrossing::initialize(size_t n) {
-    this->short_moving_average.assign(n, NAN);
-    this->long_moving_average.assign(n,  NAN);
-    this->signals.assign(n,  0);
+void MovingAverageCrossing::initialize(size_t n_elements) {
+    this->short_moving_average.assign(n_elements, NAN);
+    this->long_moving_average.assign(n_elements,  NAN);
+    this->regions.assign(n_elements,  0);
     this->sum_short = 0.0;
     this->sum_long  = 0.0;
 }

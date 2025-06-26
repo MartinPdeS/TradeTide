@@ -1,7 +1,7 @@
 from typing import Tuple, Optional, Union
 import numpy as np
 
-from TradeTide import position
+from TradeTide.binary import position
 from TradeTide.binary.interface_portfolio import PORTFOLIO
 import matplotlib.pyplot as plt
 from MPSPlots.styles import mps

@@ -61,11 +61,9 @@ class BollingerBands(BOLLINGERBANDS, BaseIndicator):
         ax : matplotlib.axes.Axes
             Axis on which to draw the Bollinger Bands chart.
         """
-        dates   = np.asarray(self.market.dates)
         sma     = np.asarray(self._cpp_sma)
         upper   = np.asarray(self._cpp_upper_band)
         lower   = np.asarray(self._cpp_lower_band)
-        signals = np.asarray(self._cpp_signals)
 
         if show_metric:
             # price and bands
@@ -102,24 +100,28 @@ class BollingerBands(BOLLINGERBANDS, BaseIndicator):
             label='Band Range'
         )
 
-        # mark buy/sell signals
-        ax.vlines(
-            dates[signals ==  1],
-            0, 1,
-            colors='green',
-            linestyles='--',
-            alpha=0.5,
-            linewidth=1,
-            label='Buy Signal',
-            transform=ax.get_xaxis_transform()
+        ax.fill_between(
+            self.market.dates,
+            0,
+            1,
+            where=np.asarray(self._cpp_regions) == 1,
+            step='mid',
+            color='green',
+            alpha=0.2,
+            label='Market Range',
+            transform=ax.get_xaxis_transform(),
         )
-        ax.vlines(
-            dates[signals == -1], 0, 1,
-            colors='red',
-            linestyles='--',
-            alpha=0.5,
-            linewidth=1,
-            label='Sell Signal',
-            transform=ax.get_xaxis_transform()
+
+        ax.fill_between(
+            self.market.dates,
+            0,
+            1,
+            where=np.asarray(self._cpp_regions) == -1,
+            step='mid',
+            color='red',
+            alpha=0.2,
+            label='Market Range',
+            transform=ax.get_xaxis_transform(),
         )
+
         ax.legend(loc='upper left')

@@ -1,27 +1,26 @@
+from TradeTide import Strategy, Portfolio, PositionCollection, Market, Currency, days, hours, minutes
 from TradeTide.indicators import BollingerBands
-from TradeTide.market import Market
-from TradeTide.currencies import Currency
-from TradeTide.times import days, minutes
-from TradeTide.market import Market
-from TradeTide.currencies import Currency
 from TradeTide import capital_management, exit_strategy
-from TradeTide.position_collection import PositionCollection
-from TradeTide.portfolio import Portfolio
 
 market = Market()
 
 market.load_from_database(
     currency_0=Currency.CAD,
     currency_1=Currency.USD,
-    time_span=3 * days,
+    time_span=2 * hours,
+    # time_span=1 * days,
 )
 
 indicator = BollingerBands(
     window=3 * minutes,
-    multiplier=2.0
+    multiplier=.10
 )
 
 indicator.run(market)
+
+strategy = Strategy()
+
+strategy.add_indicator(indicator)
 
 indicator.plot(show_bid=False)
 
@@ -33,7 +32,7 @@ exit_strategy = exit_strategy.Static(
 
 position_collection = PositionCollection(
     market=market,
-    trade_signal=indicator._cpp_signals,
+    trade_signal=strategy.get_trade_signal(market),
 )
 
 position_collection.open_positions(exit_strategy=exit_strategy)

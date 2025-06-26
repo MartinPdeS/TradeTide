@@ -3,11 +3,13 @@
 #include <vector>
 #include <random>
 #include <chrono>
+#include <optional>
 #include <iostream>
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <iomanip>
+#include <format>
 
 using Duration = std::chrono::system_clock::duration;
 using TimePoint = std::chrono::system_clock::time_point;

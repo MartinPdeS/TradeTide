@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:01.384** total execution time for 4 files **from gallery**:
+**00:01.396** total execution time for 4 files **from gallery**:
 
 .. container::
 
@@ -36,11 +36,11 @@ Computation times
      - 00:00.418
      - 0.0
    * - :ref:`sphx_glr_gallery_moving_average_crossings.py` (``moving_average_crossings.py``)
-     - 00:00.381
-     - 0.0
-   * - :ref:`sphx_glr_gallery_workflow.py` (``workflow.py``)
-     - 00:00.294
+     - 00:00.383
      - 0.0
    * - :ref:`sphx_glr_gallery_bollinger_bands.py` (``bollinger_bands.py``)
-     - 00:00.292
+     - 00:00.299
+     - 0.0
+   * - :ref:`sphx_glr_gallery_workflow.py` (``workflow.py``)
+     - 00:00.296
      - 0.0

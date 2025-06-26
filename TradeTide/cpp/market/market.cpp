@@ -5,7 +5,6 @@ void
 Market::display_market_data() const {
     std::cout << "Market Data:\n";
 
-
     for (size_t i = 0; i < ask.open.size(); ++i) {
         std::time_t t = std::chrono::system_clock::to_time_t(dates[i]);
 

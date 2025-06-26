@@ -13,7 +13,6 @@ market.load_from_database(
 
 market.display()
 
-dsa
 
 indicator = BollingerBands(
     window=3 * minutes,

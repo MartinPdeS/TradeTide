@@ -23,6 +23,15 @@ find_package(OpenMP REQUIRED)
 find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
 find_package(pybind11 CONFIG REQUIRED)
 
+# Platform-specific settings for static linking
+if (WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    message("MinGW detected on Windows")
+    set(STATIC_LINK_OPTIONS "-static")
+    add_compile_options(-fopenmp)
+    add_link_options(-static -fopenmp -Wl,--whole-archive -lgomp -Wl,--no-whole-archive)
+endif()
+
+
 # Print some messages
 message(STATUS "OPENMP flags: ${OpenMP_CXX_FLAGS}")
 message(STATUS "TradeTide version is: ${TRADETIDE_VERSION}")

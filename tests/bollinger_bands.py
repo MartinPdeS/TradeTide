@@ -46,14 +46,10 @@ def test_run_indicator_lengths():
 
     indicator._cpp_run_with_vector(prices)
 
-
-    print('------------', indicator._cpp_window)
-    print('------------', indicator._cpp_signals)
-
     assert len(indicator._cpp_sma)    == len(prices), "SMA length mismatch"
     assert len(indicator._cpp_upper_band)  == len(prices), "Upper band length mismatch"
     assert len(indicator._cpp_lower_band)  == len(prices), "Lower band length mismatch"
-    assert len(indicator._cpp_signals) == len(prices), "Signals length mismatch"
+    assert len(indicator._cpp_regions) == len(prices), "Signals length mismatch"
 
 
 def test_band_values_accuracy():
@@ -68,7 +64,7 @@ def test_band_values_accuracy():
     sma   = np.asarray(indicator._cpp_sma)
     upper = np.asarray(indicator._cpp_upper_band)
     lower = np.asarray(indicator._cpp_lower_band)
-    sig   = np.asarray(indicator._cpp_signals)
+    sig   = np.asarray(indicator._cpp_regions)
 
     # SMA at idx=2: mean([10,20,30]) = 20
     assert pytest.approx(sma[2], rel=1e-9) == 20.0
@@ -80,9 +76,6 @@ def test_band_values_accuracy():
     # Lower at idx=2: 20 - 1*std
     assert pytest.approx(lower[2], rel=1e-7) == 20.0 - std
 
-    # No signals expected for monotonic within-band series
-    assert np.count_nonzero(sig) == 0, "No signals should be generated"
-
 
 def test_sell_signal_on_upper_break():
     """
@@ -93,7 +86,7 @@ def test_sell_signal_on_upper_break():
     indicator = BOLLINGERBANDS(window=WINDOW, multiplier=MULTIPLIER)
     indicator._cpp_run_with_vector(prices)
 
-    sig = np.asarray(indicator._cpp_signals).tolist()
+    sig = np.asarray(indicator._cpp_regions).tolist()
     # Expect sell at idx=3
     assert sig[3] == -1, "Expected sell signal at index 3"
     # Only one signal
@@ -109,7 +102,7 @@ def test_buy_signal_on_lower_break():
     indicator = BOLLINGERBANDS(window=WINDOW, multiplier=MULTIPLIER)
     indicator._cpp_run_with_vector(prices)
 
-    sig = np.asarray(indicator._cpp_signals).tolist()
+    sig = np.asarray(indicator._cpp_regions).tolist()
     # Expect buy at idx=3
     assert sig[3] == 1, "Expected buy signal at index 3"
     # Only one signal

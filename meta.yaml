@@ -17,21 +17,17 @@ channels:
 
 requirements:
   host:
+    - {{ compiler('cxx') }}
     - python {{ PY_VER }}*
-    - setuptools >=40.8.0
-    - wheel
-    - setuptools-scm >=8.0
-    - pip
+    - scikit-build-core ~=0.3
+    - pybind11 ~=2.13
+    - python-build ~=1.2
+    - setuptools_scm[toml] ~=8.0
   run:
-    - pandas
     - martinpdes::mpsplots
-    - pyyaml ~=6.0
-    - requests ~=2.31
     - matplotlib ~=3.8
-    - mpl-interactions
     - numpy ~=1.26
     - pydantic ~=2.9
-    - tabulate ~=0.9
 
 about:
   home: https://github.com/MartinPdeS/TradeTide

@@ -18,18 +18,17 @@ add_compile_options(-fPIC -Wall -Wextra -Wno-uninitialized)
 
 # Include directories
 find_package(OpenMP REQUIRED)
-find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
+# find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
+find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 find_package(pybind11 CONFIG REQUIRED)
 
 # Platform-specific settings for static linking
 if (WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    message("MinGW detected on Windows")
-    set(STATIC_LINK_OPTIONS "-static")
-    add_compile_options(-fopenmp)
-    add_link_options(-static -fopenmp -Wl,--whole-archive -lgomp -Wl,--no-whole-archive)
-    link_libraries(${Python_LIBRARIES})
-
+    target_compile_options(your_target PRIVATE -fopenmp)
+    target_link_options(your_target PRIVATE -static -fopenmp -Wl,--whole-archive -lgomp -Wl,--no-whole-archive)
+    target_link_libraries(your_target PRIVATE Python3::Python)
 endif()
+
 
 # Print some messages
 message(STATUS "OPENMP flags: ${OpenMP_CXX_FLAGS}")

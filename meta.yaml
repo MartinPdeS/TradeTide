@@ -24,7 +24,6 @@ requirements:
     - python-build ~=1.2
     - setuptools_scm[toml] ~=8.0
     - libgomp  # [linux]
-    - libomp   # [osx]
   run:
     - pandas
     - martinpdes::mpsplots
@@ -32,7 +31,6 @@ requirements:
     - numpy ~=1.26
     - pydantic ~=2.9
     - libgomp  # [linux]
-    - libomp   # [osx]
 
 about:
   home: https://github.com/MartinPdeS/TradeTide

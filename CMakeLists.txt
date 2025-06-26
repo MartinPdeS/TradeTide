@@ -19,14 +19,14 @@ add_compile_options(-fPIC -Wall -Wextra -Wno-uninitialized)
 # Include directories
 find_package(OpenMP REQUIRED)
 # find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
-find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
+find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 find_package(pybind11 CONFIG REQUIRED)
 
 # Platform-specific settings for static linking
 if (WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     add_compile_options(-fopenmp)
     add_link_options(-static -fopenmp -Wl,--whole-archive -lgomp -Wl,--no-whole-archive)
-    link_libraries(PRIVATE Python::Python)
+    link_libraries(PRIVATE Python3::Python)
 endif()
 
 

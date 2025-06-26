@@ -24,9 +24,9 @@ find_package(pybind11 CONFIG REQUIRED)
 
 # Platform-specific settings for static linking
 if (WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    target_compile_options(your_target PRIVATE -fopenmp)
-    target_link_options(your_target PRIVATE -static -fopenmp -Wl,--whole-archive -lgomp -Wl,--no-whole-archive)
-    target_link_libraries(your_target PRIVATE Python3::Python)
+    add_compile_options(-fopenmp)
+    add_link_options(-static -fopenmp -Wl,--whole-archive -lgomp -Wl,--no-whole-archive)
+    link_libraries(PRIVATE Python::Python)
 endif()
 
 

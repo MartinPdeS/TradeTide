@@ -17,10 +17,10 @@ include_directories("${LOCAL_CXX_DIR}")
 # Compiler and linker options
 add_compile_options(-fPIC -Wall -Wextra -Wno-uninitialized)
 
-# Find dependencies
-if (CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
-    include_directories("/opt/homebrew/opt/libomp/include")   # for if compiler was installed through brew
-endif()
+# # Find dependencies
+# if (CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+#     include_directories("/opt/homebrew/opt/libomp/include")   # for if compiler was installed through brew
+# endif()
 
 # Include directories
 find_package(OpenMP REQUIRED)

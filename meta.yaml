@@ -23,14 +23,12 @@ requirements:
     - pybind11 ~=2.13
     - python-build ~=1.2
     - setuptools_scm[toml] ~=8.0
-    - libomp     # macOS: LLVM's OpenMP runtime
   run:
     - pandas
     - martinpdes::mpsplots
     - matplotlib ~=3.8
     - numpy ~=1.26
     - pydantic ~=2.9
-    - libomp     # macOS: LLVM's OpenMP runtime
 
 about:
   home: https://github.com/MartinPdeS/TradeTide

@@ -31,7 +31,6 @@ if (WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     add_link_options(-static -fopenmp -Wl,--whole-archive -lgomp -Wl,--no-whole-archive)
 endif()
 
-
 # Print some messages
 message(STATUS "OPENMP flags: ${OpenMP_CXX_FLAGS}")
 message(STATUS "TradeTide version is: ${TRADETIDE_VERSION}")

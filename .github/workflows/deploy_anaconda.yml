@@ -16,7 +16,7 @@ jobs:
     with:
       python-versions: '["3.11", "3.12"] '
       apt-package: ""
-      brew-package: "libomp"
+      brew-package: ""
     secrets:
       ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_API_TOKEN }}
 

@@ -12,15 +12,9 @@ set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Type of build" FORCE)
 # Set the output directory for libraries
 set(LOCAL_CXX_DIR "${PROJECT_NAME}/cpp")
 set(LOCAL_BIN_DIR "${CMAKE_SOURCE_DIR}/${PROJECT_NAME}/binary")
-include_directories("${LOCAL_CXX_DIR}")
 
 # Compiler and linker options
 add_compile_options(-fPIC -Wall -Wextra -Wno-uninitialized)
-
-# # Find dependencies
-# if (CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
-#     include_directories("/opt/homebrew/opt/libomp/include")   # for if compiler was installed through brew
-# endif()
 
 # Include directories
 find_package(OpenMP REQUIRED)
@@ -33,6 +27,8 @@ if (WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set(STATIC_LINK_OPTIONS "-static")
     add_compile_options(-fopenmp)
     add_link_options(-static -fopenmp -Wl,--whole-archive -lgomp -Wl,--no-whole-archive)
+    link_libraries(${Python_LIBRARIES})
+
 endif()
 
 # Print some messages

@@ -2,6 +2,8 @@
 
 #include <vector>
 #include <chrono>
+#include <algorithm>
+
 #include "../record/record.h"
 
 using Duration = std::chrono::system_clock::duration;

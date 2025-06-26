@@ -1,8 +1,8 @@
 import pytest
-from datetime import datetime, timedelta
+import numpy
+from datetime import timedelta
 from TradeTide.market import Market
 from TradeTide.portfolio import Portfolio
-from TradeTide.loader import get_data_path
 from TradeTide.position_collection import PositionCollection
 from TradeTide.currencies import Currency
 from TradeTide.signal import Signal
@@ -56,10 +56,12 @@ def test_portfolio_simulation_workflow():
 
     portfolio.simulate(capital_management=capital_manager)
 
+    equity = numpy.asarray(portfolio.record.equity)
+
     # Assertions
     assert len(portfolio.get_positions()) > 0, "No positions selected"
     assert len(portfolio.record.equity) == len(market.dates), "Equity curve not computed correctly"
-    assert all(e >= 0 for e in portfolio.record.equity), "Negative equity value found"
+    assert numpy.all(equity > 0), f"Negative equity value found: {equity}"
 
     # Optional: Run plotting for visual check (disable show=True for CI)
     portfolio.plot_positions(max_positions=100, show=False)

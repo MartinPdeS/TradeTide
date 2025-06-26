@@ -6,10 +6,10 @@
 |--------------------------------------------------- | -------: | -------: | -------: | -------: | ------: | --------: |
 | TradeTide/currencies.py                            |       25 |        1 |        0 |        0 |     96% |        30 |
 | TradeTide/data/utils.py                            |       27 |       27 |        8 |        0 |      0% |      1-69 |
-| TradeTide/indicators/base.py                       |       16 |       16 |        2 |        0 |      0% |      1-23 |
-| TradeTide/indicators/bollinger\_bands.py           |       30 |       30 |        2 |        0 |      0% |     2-127 |
+| TradeTide/indicators/base.py                       |       20 |       20 |        2 |        0 |      0% |      1-50 |
+| TradeTide/indicators/bollinger\_bands.py           |       28 |       28 |        2 |        0 |      0% |     2-103 |
 | TradeTide/indicators/moving\_average\_crossings.py |       35 |       35 |        0 |        0 |      0% |     2-103 |
-| TradeTide/indicators/relative\_momentum\_index.py  |       43 |       43 |        0 |        0 |      0% |     2-130 |
+| TradeTide/indicators/relative\_momentum\_index.py  |       39 |       39 |        0 |        0 |      0% |     2-112 |
 | TradeTide/loader.py                                |       39 |       32 |       10 |        0 |     14% |26-33, 52-96, 114-128 |
 | TradeTide/market.py                                |       91 |       50 |       34 |        3 |     37% |25-46, 116-163, 172-173, 217-218, 225-252 |
 | TradeTide/plottings.py                             |       65 |       65 |        8 |        0 |      0% |     4-322 |
@@ -19,7 +19,7 @@
 | TradeTide/strategy.py                              |        3 |        0 |        0 |        0 |    100% |           |
 | TradeTide/times.py                                 |        5 |        0 |        0 |        0 |    100% |           |
 | TradeTide/tools.py                                 |       80 |       65 |       36 |        0 |     13% |23-34, 39-65, 72-73, 79-80, 83-90, 93-94, 97-102, 105-117, 120-123 |
-|                                          **TOTAL** |  **609** |  **415** |  **126** |    **8** | **29%** |           |
+|                                          **TOTAL** |  **607** |  **413** |  **126** |    **8** | **29%** |           |
 
 
 ## Setup coverage badge

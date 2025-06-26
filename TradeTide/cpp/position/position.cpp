@@ -69,9 +69,13 @@ void BasePosition::display() const {
     else
         std::cout << "Short Position:\n";
 
+
+    std::time_t _start_date = std::chrono::system_clock::to_time_t(start_date);
+    std::time_t _close_date = std::chrono::system_clock::to_time_t(close_date);
+
     std::cout << std::fixed << std::setprecision(5)
-        << "Start Time: " << start_date << "\n"
-        << "Stop Time: " << close_date << "\n"
+        << "Start Time: " <<  std::put_time(std::localtime(&_start_date), "%Y-%m-%d %H:%M") << "\n"
+        << "Stop Time: " <<  std::put_time(std::localtime(&_close_date), "%Y-%m-%d %H:%M") << "\n"
         << "Entry Price: " << entry_price << "\n"
         << "Exit Price: " << exit_price << "\n"
         << "Lot Size: " << lot_size << "\n\n"

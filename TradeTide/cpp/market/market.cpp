@@ -10,7 +10,6 @@ Market::display_market_data() const {
 
         std::cout
             << "Iteration "  << i                        << "\t\t"
-            // << "Date: "      << dates[i]                 << "\t\t"
             << "Date: "      << std::put_time(std::localtime(&t), "%Y-%m-%d %H:%M") << "\t\t"
             << "Ask-Open: "  << ask.open[i]              << "\t\t"
             << "Ask-High: "  << ask.high[i]              << "\t\t"

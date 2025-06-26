@@ -1,14 +1,18 @@
 #include "market.h"
 
-
 // Display market data with tabs between fields
 void
 Market::display_market_data() const {
     std::cout << "Market Data:\n";
+
+
     for (size_t i = 0; i < ask.open.size(); ++i) {
+        std::time_t t = std::chrono::system_clock::to_time_t(dates[i]);
+
         std::cout
             << "Iteration "  << i                        << "\t\t"
-            << "Date: "      << dates[i]                 << "\t\t"
+            // << "Date: "      << dates[i]                 << "\t\t"
+            << "Date: "      << std::put_time(std::localtime(&t), "%Y-%m-%d %H:%M") << "\t\t"
             << "Ask-Open: "  << ask.open[i]              << "\t\t"
             << "Ask-High: "  << ask.high[i]              << "\t\t"
             << "Ask-Low: "   << ask.low[i]               << "\t\t"

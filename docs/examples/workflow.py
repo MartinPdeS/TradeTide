@@ -11,6 +11,10 @@ market.load_from_database(
     # time_span=1 * days,
 )
 
+market.display()
+
+dsa
+
 indicator = BollingerBands(
     window=3 * minutes,
     multiplier=.10

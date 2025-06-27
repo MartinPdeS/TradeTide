@@ -38,7 +38,6 @@ public:
 
     const std::vector<double> *closing_prices; ///< Closing prices for the current state
     const std::vector<TimePoint> *dates; ///< Opening prices for the current state
-
     const Market *market; ///< Reference to the market data
 
     State() = default; // Default constructor for State
@@ -49,46 +48,19 @@ public:
      * @param market Reference to the Market object containing market data.
      * @param capital Initial capital for the portfolio.
      */
-    State(const Market &market, const double capital = 0): market(&market)
-    {
-        this->n_elements = market.dates.size();
-        this->initialize(capital);
-        this->dates = &market.dates;
-    }
+    State(const Market &market, double capital = 0);
 
     /**
      * @brief Display the current state information.
      */
-    void display() {
-        std::cout << std::fixed << std::setprecision(2);
-        std::cout << "Time: " << std::chrono::system_clock::to_time_t(current_date) << "\n";
-        std::cout << "Time idx: " << time_idx << "\n";
-        std::cout << "Equity: " << equity << "\n";
-        std::cout << "Capital at Risk: " << capital_at_risk << "\n";
-        std::cout << "Number of Concurrent Positions: " << number_of_concurrent_positions << "\n";
-        std::cout << "Ask Price - Open: " << ask.open << ", Low: " << ask.low << ", High: " << ask.high << ", Close: " << ask.close << "\n";
-        std::cout << "Bid Price - Open: " << bid.open << ", Low: " << bid.low << ", High: " << bid.high << ", Close: " << bid.close << "\n";
-    }
+    void display();
 
     /**
      * @brief Update the state with a new time index.
      *
      * @param time_idx Index of the market data to update the state with.
      */
-    void update_time_idx(const size_t time_idx) {
-        this->time_idx = time_idx;
-        this->current_date = this->market->dates[time_idx];
-
-        this->ask.open = this->market->ask.open[time_idx];
-        this->ask.low  = this->market->ask.low[time_idx];
-        this->ask.high = this->market->ask.high[time_idx];
-        this->ask.close = this->market->ask.close[time_idx];
-
-        this->bid.open = this->market->bid.open[time_idx];
-        this->bid.low  = this->market->bid.low[time_idx];
-        this->bid.high = this->market->bid.high[time_idx];
-        this->bid.close = this->market->bid.close[time_idx];
-    }
+    void update_time_idx(const size_t time_idx);
 
     /**
      * @brief Initialize the state with a certain capital.

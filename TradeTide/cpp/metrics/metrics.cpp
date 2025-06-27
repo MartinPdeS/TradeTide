@@ -144,8 +144,8 @@ void Metrics::display() const {
               << days.count() << "d "
               << hours.count() << "h "
               << minutes.count() << "m\n"
-              << "Computation Duration:  "
-              << std::chrono::duration_cast<std::chrono::milliseconds>(this->computation_duration).count() << " ms\n";
+              << "Position Computation:  " << std::chrono::duration_cast<std::chrono::milliseconds>(this->record.computation_duration).count() << " ms\n"
+              << "Portfolio Computation: " << std::chrono::duration_cast<std::chrono::milliseconds>(this->record.computation_duration).count() << " ms\n";
     std::cout << "------------------\n"
     ;
 }

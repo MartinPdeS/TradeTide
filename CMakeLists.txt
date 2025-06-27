@@ -16,17 +16,14 @@ set(LOCAL_BIN_DIR "${CMAKE_SOURCE_DIR}/${PROJECT_NAME}/binary")
 # Compiler and linker options
 add_compile_options(-fPIC -Wall -Wextra -Wno-uninitialized)
 
-# Include directories
+# Find packages
 find_package(OpenMP REQUIRED)
-# find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
-# find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 find_package(pybind11 CONFIG REQUIRED)
 
 # Platform-specific settings for static linking
 if (WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     add_compile_options(-fopenmp)
     add_link_options(-static -fopenmp -Wl,--whole-archive -lgomp -Wl,--no-whole-archive)
-    # link_libraries(Python3::Python)
 endif()
 
 
@@ -49,3 +46,4 @@ add_subdirectory(TradeTide/cpp/exit_strategy)        # exit_strategy
 add_subdirectory(TradeTide/cpp/capital_management)   # capital_manag
 add_subdirectory(TradeTide/cpp/portfolio)            # portfolio
 add_subdirectory(TradeTide/cpp/position_collection)  # position collection
+add_subdirectory(TradeTide/cpp/backtester)           # backtester

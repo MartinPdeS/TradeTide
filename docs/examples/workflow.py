@@ -16,8 +16,7 @@ market = Market()
 market.load_from_database(
     currency_0=Currency.CAD,
     currency_1=Currency.USD,
-    time_span=2 * hours,
-    # time_span=1 * days,
+    time_span=4 * hours,
 )
 
 market.display()
@@ -25,7 +24,7 @@ market.display()
 
 indicator = BollingerBands(
     window=3 * minutes,
-    multiplier=.10
+    multiplier=2.0
 )
 
 indicator.run(market)

@@ -11,6 +11,7 @@
 
 using TimePoint = std::chrono::system_clock::time_point;
 
+
 /**
  * @brief Manages a collection of trading positions over a given market and signal.
  *
@@ -23,25 +24,24 @@ private:
     /**
      * @brief Generic helper to extract a vector of any value from each position.
      *
-     * @tparam dtype      Type of value to extract.
-     * @tparam function   Function that extracts dtype from a PositionPtr.
-     * @param accessor    Lambda or function pointer.
-     * @return std::vector<dtype> Resulting vector of extracted values.
+     * @tparam T  Type of the value to extract.
+     * @param accessor    Lambda or function pointer that extracts T from PositionPtr.
+     * @return std::vector<T> Resulting vector of extracted values.
      */
-    template <typename dtype, typename function>
-    std::vector<dtype> extract_vector(function accessor) {
-        std::vector<dtype> array;
-        array.reserve(this->positions.size());
+    std::vector<double> extract_vector(std::function<double(PositionPtr)> accessor);
 
-        for (const PositionPtr& position : this->positions)
-            array.push_back(accessor(position));
-
-        return array;
-    }
+    /**
+     * @brief Generic helper to extract a vector of any value from each position.
+     *
+     * @tparam TimePoint  Type of the time point to extract.
+     * @param accessor    Lambda or function pointer that extracts TimePoint from PositionPtr.
+     * @return std::vector<TimePoint> Resulting vector of extracted time points.
+     */
+    std::vector<TimePoint> extract_vector(std::function<TimePoint(PositionPtr)> accessor);
 
 public:
     const Market market;                             ///< Market data reference
-    const std::vector<double> trade_signal;          ///< Signal stream for entry logic
+    const std::vector<int> trade_signal;          ///< Signal stream for entry logic
     std::vector<PositionPtr> positions;              ///< All tracked positions
     size_t number_of_trade = 0;                      ///< Number of trades detected from signal
     bool save_price_data = false;                    ///< Whether to store SL/TP traces
@@ -59,22 +59,7 @@ public:
      * @param signal Trade signal series.
      * @param save_price_data Enables SL/TP tracing per position.
      */
-    PositionCollection(
-        const Market& market,
-        const std::vector<double>& trade_signal,
-        const bool save_price_data = false)
-        : market(market),
-          trade_signal(trade_signal),
-          save_price_data(save_price_data)
-    {
-        this->number_of_trade = std::count_if(
-            this->trade_signal.begin(),
-            this->trade_signal.end(),
-            [](int x) { return x != 0; }
-        );
-
-        this->positions.reserve(this->number_of_trade);
-    }
+    PositionCollection(const Market& market, const std::vector<int>& trade_signal, const bool save_price_data = false);
 
     /**
      * @brief Initializes positions according to the provided signal.
@@ -103,6 +88,7 @@ public:
      * @return Raw pointer to position.
      */
     BasePosition* __getitem__(const size_t idx) const;
+
     /**
      * @brief Returns the number of positions.
      */
@@ -129,34 +115,21 @@ public:
     /**
      * @brief Returns vector of open dates.
      */
-    [[nodiscard]] std::vector<TimePoint> get_start_dates() {
-        return this->extract_vector<TimePoint>(
-            [](const PositionPtr& p) { return p->start_date; });
-    }
+    [[nodiscard]] std::vector<TimePoint> get_start_dates();
 
     /**
      * @brief Returns vector of close dates.
      */
-    [[nodiscard]] std::vector<TimePoint> get_close_dates() {
-        return this->extract_vector<TimePoint>(
-            [](const PositionPtr& p) { return p->close_date; });
-    }
+    [[nodiscard]] std::vector<TimePoint> get_close_dates();
 
     /**
      * @brief Returns vector of entry prices.
      */
-    [[nodiscard]] std::vector<double> get_entry_prices() {
-        return this->extract_vector<double>(
-            [](const PositionPtr& p) { return p->entry_price; });
-    }
-
+    [[nodiscard]] std::vector<double> get_entry_prices();
     /**
      * @brief Returns vector of exit prices.
      */
-    [[nodiscard]] std::vector<double> get_exit_prices() {
-        return this->extract_vector<double>(
-            [](const PositionPtr& p) { return p->exit_price; });
-    }
+    [[nodiscard]] std::vector<double> get_exit_prices();
 
     /**
      * @brief Access the underlying market reference.
@@ -182,4 +155,5 @@ public:
      * @param count Max number to return. Default: all.
      */
     [[nodiscard]] std::vector<BasePosition*> get_all_positions(size_t count) const;
+
 };

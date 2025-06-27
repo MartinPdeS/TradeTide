@@ -28,6 +28,7 @@ class Record {
         size_t fail_count = 0;                        ///< Number of failed trades
 
         std::chrono::high_resolution_clock::time_point start_computation_time, end_computation_time;
+        std::chrono::duration<double, std::milli> computation_duration;
 
         /**
          * @brief Prepares internal buffers to record state history.
@@ -39,12 +40,4 @@ class Record {
          * @brief Record all current state metrics to history (if recording is enabled).
          */
         void update();
-
-        void start_timer() {
-            this->start_computation_time = std::chrono::high_resolution_clock::now();
-        };
-
-        void stop_timer() {
-            this->end_computation_time = std::chrono::high_resolution_clock::now();
-        };
 };

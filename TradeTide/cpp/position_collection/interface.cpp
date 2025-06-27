@@ -18,9 +18,9 @@ PYBIND11_MODULE(interface_position_collection, module) {
 
 
     // Bind the Position class
-    py::class_<PositionCollection>(module, "PositionCollection")
+    py::class_<PositionCollection, std::shared_ptr<PositionCollection>>(module, "PositionCollection")
         .def(
-            py::init<const Market&, const std::vector<double>&, const bool&>(),
+            py::init<const Market&, const std::vector<int>&, const bool&>(),
             py::arg("market"),
             py::arg("trade_signal"),
             py::arg("save_price_data") = false,

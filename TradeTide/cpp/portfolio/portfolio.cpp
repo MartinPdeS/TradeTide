@@ -77,8 +77,6 @@ void Portfolio::try_open_positions(BaseCapitalManagement& capital_management) {
 }
 
 void Portfolio::simulate(BaseCapitalManagement& capital_management) {
-    this->record.start_timer();
-
     this->selected_positions.clear();
     this->executed_positions.clear();
     this->active_positions.clear();
@@ -106,8 +104,6 @@ void Portfolio::simulate(BaseCapitalManagement& capital_management) {
         state.equity = this->calculate_equity();
         this->record.update();
     }
-
-    this->record.stop_timer();
 }
 
 void Portfolio::terminate_open_positions() {

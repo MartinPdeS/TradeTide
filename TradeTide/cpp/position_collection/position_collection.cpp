@@ -1,5 +1,37 @@
 #include "position_collection.h"
 
+PositionCollection::PositionCollection(const Market& market, const std::vector<int>& trade_signal, const bool save_price_data)
+    : market(market), trade_signal(trade_signal), save_price_data(save_price_data)
+{
+    this->number_of_trade = std::count_if(
+        this->trade_signal.begin(),
+        this->trade_signal.end(),
+        [](int x) { return x != 0; }
+    );
+
+    this->positions.reserve(this->number_of_trade);
+}
+
+std::vector<double> PositionCollection::extract_vector(std::function<double(PositionPtr)> accessor) {
+    std::vector<double> array;
+    array.reserve(this->positions.size());
+
+    for (const PositionPtr& position : this->positions)
+        array.push_back(accessor(position));
+
+    return array;
+}
+
+std::vector<TimePoint> PositionCollection::extract_vector(std::function<TimePoint(PositionPtr)> accessor) {
+    std::vector<TimePoint> array;
+    array.reserve(this->positions.size());
+
+    for (const PositionPtr& position : this->positions)
+        array.push_back(accessor(position));
+
+    return array;
+}
+
 void PositionCollection::to_csv(const std::string& filepath) const {
     std::ofstream file(filepath);
     if (!file.is_open())
@@ -128,4 +160,24 @@ inline std::vector<BasePosition*> PositionCollection::get_all_positions(size_t c
         if (result.size() >= count) break;
     }
     return result;
+}
+
+[[nodiscard]] std::vector<TimePoint> PositionCollection::get_start_dates() {
+    return this->extract_vector(
+        [](const PositionPtr& p) { return p->start_date; });
+}
+
+[[nodiscard]] std::vector<TimePoint> PositionCollection::get_close_dates() {
+    return this->extract_vector(
+        [](const PositionPtr& p) { return p->close_date; });
+}
+
+[[nodiscard]] std::vector<double> PositionCollection::get_entry_prices() {
+    return this->extract_vector(
+        [](const PositionPtr& p) { return p->entry_price; });
+}
+
+[[nodiscard]] std::vector<double> PositionCollection::get_exit_prices() {
+    return this->extract_vector(
+        [](const PositionPtr& p) { return p->exit_price; });
 }

@@ -5,12 +5,15 @@
 #include <algorithm>
 
 #include "../record/record.h"
+// #include "../portfolio/portfolio.h"
 
 using Duration = std::chrono::system_clock::duration;
 using TimePoint = std::chrono::system_clock::time_point;
 
 
 class Metrics {
+    private:
+
     public:
         Record record;  ///< Reference to the Record object containing simulation history
 
@@ -24,7 +27,6 @@ class Metrics {
         double final_equity = 0.0;  ///< Final portfolio equity
         double peak_equity = 0.0;  ///< Peak equity observed during the simulation
         size_t total_exected_positions = 0;  ///< Total number of positions executed
-        std::chrono::duration<double, std::milli> computation_duration;  ///< Duration of the computation in milliseconds
 
         std::chrono::duration<double> duration;  ///< Duration of the simulation
 
@@ -46,8 +48,6 @@ class Metrics {
         this->calculate_sortino_ratio();
 
         this->total_exected_positions = this->record.success_count + this->record.fail_count;
-
-        this->computation_duration = std::chrono::duration_cast<std::chrono::milliseconds>(this->record.end_computation_time - this->record.start_computation_time);
 
     }
 

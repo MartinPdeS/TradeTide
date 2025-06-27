@@ -6,8 +6,6 @@
 #include "../state/interface.cpp"
 #include "../record/interface.cpp"
 
-namespace py = pybind11;
-
 PYBIND11_MODULE(interface_portfolio, module) {
     module.doc() = R"pbdoc(
         Python bindings for the Portfolio class.
@@ -23,10 +21,10 @@ PYBIND11_MODULE(interface_portfolio, module) {
 
     register_record(module);
 
-    py::class_<Portfolio>(module, "PORTFOLIO")
+    pybind11::class_<Portfolio, std::shared_ptr<Portfolio>>(module, "PORTFOLIO")
         .def(
-            py::init<PositionCollection&>(),
-            py::arg("position_collection"),
+            pybind11::init<PositionCollection&>(),
+            pybind11::arg("position_collection"),
             R"pbdoc(
                 Create a portfolio simulator using a predefined position collection and capital management strategy.
 
@@ -40,7 +38,7 @@ PYBIND11_MODULE(interface_portfolio, module) {
         )
         .def("simulate",
             &Portfolio::simulate,
-            py::arg("capital_management"),
+            pybind11::arg("capital_management"),
             R"pbdoc(
                 Run the full simulation, opening/closing trades according to constraints.
             )pbdoc"
@@ -48,7 +46,7 @@ PYBIND11_MODULE(interface_portfolio, module) {
         .def_readonly(
             "state",
             &Portfolio::state,
-            py::return_value_policy::reference_internal,
+            pybind11::return_value_policy::reference_internal,
             R"pbdoc(
                 Access the current state of the portfolio, including equity and position count.
             )pbdoc"
@@ -56,7 +54,7 @@ PYBIND11_MODULE(interface_portfolio, module) {
         .def_readonly(
             "record",
             &Portfolio::record,
-            py::return_value_policy::reference_internal,
+            pybind11::return_value_policy::reference_internal,
             R"pbdoc(
                 Access the Record object containing historical state data.
             )pbdoc"
@@ -64,7 +62,7 @@ PYBIND11_MODULE(interface_portfolio, module) {
         .def_property_readonly(
             "market",
             &Portfolio::get_market,
-            py::return_value_policy::reference_internal,
+            pybind11::return_value_policy::reference_internal,
             R"pbdoc(
                 Access the Market object backing the portfolio.
             )pbdoc"
@@ -72,7 +70,7 @@ PYBIND11_MODULE(interface_portfolio, module) {
         .def(
             "get_metrics",
             &Portfolio::get_metrics,
-            py::return_value_policy::move,
+            pybind11::return_value_policy::move,
             R"pbdoc(
                 Access the Metrics object containing performance metrics.
             )pbdoc"
@@ -80,8 +78,8 @@ PYBIND11_MODULE(interface_portfolio, module) {
         .def(
             "get_positions",
             &Portfolio::get_positions,
-            py::arg("count") = std::numeric_limits<size_t>::max(),
-            py::return_value_policy::reference_internal,
+            pybind11::arg("count") = std::numeric_limits<size_t>::max(),
+            pybind11::return_value_policy::reference_internal,
             R"pbdoc(
                 Get the list of activated positions up to an optional maximum.
 

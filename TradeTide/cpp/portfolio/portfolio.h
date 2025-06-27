@@ -3,12 +3,14 @@
 #include <memory>
 #include <vector>
 #include <limits>
+#include <map>
 
 #include "../position_collection/position_collection.h"
 #include "../capital_management/capital_management.h"
 #include "../state/state.h"
 #include "../record/record.h"
 #include "../metrics/metrics.h"
+
 
 
 /**
@@ -46,10 +48,6 @@ public:
 
         }
 
-    [[nodiscard]] const std::vector<size_t>& get_history_position_count() {return this->record.concurrent_positions;}
-
-    [[nodiscard]] const std::vector<double>& get_history_equity() {return this->record.equity;}
-    [[nodiscard]] const std::vector<double>& get_history_capital_at_risk() {return this->record.capital_at_risk;}
     /**
      * @brief Run the simulation using current strategy and portfolio constraints.
      */

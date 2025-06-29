@@ -138,6 +138,7 @@ void Portfolio::terminate_open_positions() {
         this->state.number_of_concurrent_positions -= 1;
         this->state.capital += position->exit_price * position->lot_size;
         position->is_closed = true;
+        this->executed_positions.push_back(position);
     }
 
     this->active_positions.clear();

@@ -14,7 +14,6 @@ BasePosition::BasePosition(const ExitStrategy &exit_strategy, size_t start_idx, 
 // The logic here is as follows:
 // Position open price is set to ask/bid close price depending on whether the position is long or short.
 void BasePosition::initialize_state(const size_t time_idx) {
-
     this->state.update_time_idx(time_idx);
     this->start_date = this->state.current_date;
     this->entry_price = this->state.opening_price->close;

@@ -106,7 +106,6 @@ void PositionCollection::propagate_positions() {
         }
 }
 
-
 void PositionCollection::terminate_open_positions() {
     for (const auto& position : this->positions)
         if (!position->is_closed) {
@@ -115,7 +114,6 @@ void PositionCollection::terminate_open_positions() {
         }
 
 }
-
 
 void PositionCollection::display() const {
     for (const PositionPtr& e : this->positions)
@@ -180,4 +178,16 @@ inline std::vector<BasePosition*> PositionCollection::get_all_positions(size_t c
 [[nodiscard]] std::vector<double> PositionCollection::get_exit_prices() {
     return this->extract_vector(
         [](const PositionPtr& p) { return p->exit_price; });
+}
+
+void PositionCollection::set_position_to_close() {
+    for (auto& position : this->positions) {
+        position->is_closed = true;
+    }
+}
+
+void PositionCollection::set_all_position_to_open() {
+    for (auto& position : this->positions) {
+        position->is_closed = false;
+    }
 }

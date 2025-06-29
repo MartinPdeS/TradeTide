@@ -1,6 +1,11 @@
 #pragma once
 
 #include <vector>
+#include <chrono>
+#include <string>
+#include <iostream>
+#include <iomanip>  // for std::setw
+
 
 #include "../position_collection/position_collection.h"
 #include "../strategy/strategy.h"
@@ -12,10 +17,6 @@
 
 
 
-#include <chrono>
-#include <string>
-#include <iostream>
-#include <iomanip>  // for std::setw
 
 class ScopedTimer {
 public:
@@ -34,8 +35,6 @@ private:
     std::chrono::microseconds& output;
     Clock::time_point start;
 };
-
-
 
 
 
@@ -97,20 +96,23 @@ public:
 
     void print_performance() const {
         std::cout << "\n--- Backtest Performance Summary ---\n";
-        std::cout << std::setw(30) << std::left << "Step"
-                  << std::setw(10) << "Time (microseconds)\n";
-        std::cout << std::string(40, '-') << "\n";
 
-        std::cout << std::setw(30) << "Trade Signal Computation"
-                  << trade_signal_computation_time.count() << "\n";
+        std::cout << std::string(60, '-') << "\n";
 
-        std::cout << std::setw(30) << "Opening Positions"
-                  << open_time.count() << "\n";
+        std::cout << std::setw(30) << std::left << "Total Trade Signals: " << this->position_collection.positions.size() << "\n";
 
-        std::cout << std::setw(30) << "Propagating Positions"
-                  << propagate_time.count() << "\n";
+        std::cout << std::setw(30) << std::left << "Number of executed positions: " << this->portfolio.executed_positions.size() << "\n\n";
 
-        std::cout << std::setw(30) << "Portfolio Simulation"
-                  << simulate_time.count() << "\n";
+        std::cout << std::setw(30) << std::left << "Step" << std::setw(10) << "Time (microseconds)\n";
+
+        std::cout << std::string(60, '-') << "\n";
+
+        std::cout << std::setw(30) << "Trade Signal Computation" << trade_signal_computation_time.count() << "\n";
+
+        std::cout << std::setw(30) << "Opening Positions" << open_time.count() << "\n";
+
+        std::cout << std::setw(30) << "Propagating Positions" << propagate_time.count() << "\n";
+
+        std::cout << std::setw(30) << "Portfolio Simulation" << simulate_time.count() << "\n";
     }
 };

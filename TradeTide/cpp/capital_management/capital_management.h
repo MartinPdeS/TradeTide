@@ -21,9 +21,7 @@ public:
     virtual ~BaseCapitalManagement() = default;
 
     BaseCapitalManagement(double capital, double max_risk, size_t max_positions)
-        : initial_capital(capital),
-          max_capital_at_risk(max_risk),
-          max_concurrent_positions(max_positions) {}
+        : initial_capital(capital), max_capital_at_risk(max_risk), max_concurrent_positions(max_positions) {}
 
     /**
      * @brief Compute and assign the lot size for a position using fixed fractional logic.

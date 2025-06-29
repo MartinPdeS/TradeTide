@@ -5,20 +5,20 @@
 
 
 // ---------- BaseCapitalManagement Implementation -----------------------------
-bool BaseCapitalManagement::can_open_position(const PositionPtr& position) {
+double BaseCapitalManagement::can_open_position(const PositionPtr& position) {
     if (this->state->capital <= 0.0) // Cannot open position if capital is zero or negative
-        return false;
+        return 0.0;
 
     // Limit maximum concurrent positions
     if (this->state->number_of_concurrent_positions >= this->max_concurrent_positions)
-        return false;
+        return 0.0;
 
     // Enforce max capital-at-risk threshold
     const double projected_risk = this->state->capital_at_risk + position->get_capital_at_risk();
     if (projected_risk > this->max_capital_at_risk)
-        return false;
+        return 0.0;
 
-    return true;
+    return this->compute_lot_size(*position);
 }
 
 // ---------- FixedLot Implementation -----------------------------

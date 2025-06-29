@@ -39,7 +39,7 @@ public:
      * @param position The position to open.
      * @return true if the position is accepted, false otherwise.
      */
-    bool can_open_position(const PositionPtr& position);
+    double can_open_position(const PositionPtr& position);
 
     /**
      * @brief Remove position from active pool and update equity.

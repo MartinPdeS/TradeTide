@@ -16,9 +16,6 @@ PositionCollection::PositionCollection(const Market& market, const std::vector<i
     }
 }
 
-
-
-
 std::vector<double> PositionCollection::extract_vector(std::function<double(PositionPtr)> accessor) {
     std::vector<double> array;
     array.reserve(this->positions.size());
@@ -106,9 +103,9 @@ void PositionCollection::propagate_positions() {
     #pragma omp parallel for
     for (const auto& position : this->positions) {
         position->propagate();
-        if (this->debug_mode) {
+        if (this->debug_mode)
             printf("[DEBUG - POSITION_COLLECTION - PROPAGATE] Propagated position starting at index %zu\n", position->start_idx);
-        }
+
     }
 
     this->terminate_open_positions();
@@ -134,10 +131,9 @@ void PositionCollection::terminate_open_positions() {
             position->close_at(this->market.dates.size());
             position->is_closed = true;
 
-            if (this->debug_mode) {
-                printf("[DEBUG - POSITION_COLLECTION - TERMINATE] Terminated unclosed position. Exit price: %.2f, Lot size: %.2f\n",
-                       position->exit_price, position->lot_size);
-            }
+            if (this->debug_mode)
+                printf("[DEBUG - POSITION_COLLECTION - TERMINATE] Terminated unclosed position. Exit price: %.2f, Lot size: %.2f\n", position->exit_price, position->lot_size);
+
         }
     }
 }

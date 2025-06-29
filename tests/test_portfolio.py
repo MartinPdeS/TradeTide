@@ -45,10 +45,10 @@ def test_portfolio_simulation_workflow():
     assert len(position_collection) > 0, "No positions opened"
 
     # Define capital management
-    capital_manager = capital_management.FixedFractional(
-        capital=100000,
-        risk_per_trade=0.01,
-        max_capital_at_risk=100000,
+    capital_manager = capital_management.FixedLot(
+        capital=100_000,
+        fixed_lot_size=100,
+        max_capital_at_risk=10_000,
         max_concurrent_positions=1,
     )
 

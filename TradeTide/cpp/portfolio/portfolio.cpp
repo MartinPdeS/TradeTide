@@ -57,15 +57,14 @@ void Portfolio::close_position(PositionPtr& position, const size_t &position_idx
     else if (profit_loss < 0)
         ++this->record.fail_count;
 
-    if (this->debug_mode) {
-        printf("[DEBUG: PORTFOLIO - CLOSE] Closed position at price %.2f, PnL: %.2f\n",
-               position->exit_price, profit_loss);
-    }
+    if (this->debug_mode)
+        printf("[DEBUG: PORTFOLIO - CLOSE] Closed position at price %.2f, PnL: %.2f\n", position->exit_price, profit_loss);
+
 }
 
 
 void Portfolio::open_position(PositionPtr& position) {
-    double lot_size = this->capital_management->compute_lot_size(*position);
+    double lot_size = this->capital_management->can_open_position(position);
 
     if (lot_size == 0.0) {
         if (this->debug_mode)
@@ -82,10 +81,9 @@ void Portfolio::open_position(PositionPtr& position) {
     this->state.capital -= position->entry_price * position->lot_size;
     position->is_closed = false;
 
-    if (this->debug_mode) {
-        printf("[DEBUG: PORTFOLIO - OPEN] Opened position at price %.2f, lot size %.2f\n",
-               position->entry_price, position->lot_size);
-    }
+    if (this->debug_mode)
+        printf("[DEBUG: PORTFOLIO - OPEN] Opened position at price %.2f, lot size %.2f\n", position->entry_price, position->lot_size);
+
 }
 
 void Portfolio::try_close_positions() {
@@ -109,8 +107,8 @@ void Portfolio::try_open_positions() {
         PositionPtr& position = this->position_collection.positions[this->state.position_index];
 
         // If we can't open more positions now, skip this one (but advance index!)
-        if (this->capital_management->can_open_position(position))
-            this->open_position(position);
+        // if (this->capital_management->can_open_position(position))
+        this->open_position(position);
 
         ++this->state.position_index;
     }

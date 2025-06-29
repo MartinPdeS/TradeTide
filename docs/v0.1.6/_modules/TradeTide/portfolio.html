@@ -453,16 +453,16 @@
 <div class="viewcode-block" id="Portfolio">
 <a class="viewcode-back" href="../../code.html#TradeTide.portfolio.Portfolio">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Portfolio</span><span class="p">(</span><span class="n">PORTFOLIO</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position_collection</span><span class="p">,</span> <span class="n">save_history</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position_collection</span><span class="p">,</span> <span class="n">debug_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initialize the Portfolio with a position collection and optional history saving.</span>
+<span class="sd">        Initialize the Portfolio with a position collection and optional debug mode.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        position_collection : PositionCollection</span>
 <span class="sd">            The collection of positions to manage.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">position_collection</span><span class="o">=</span><span class="n">position_collection</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">position_collection</span><span class="o">=</span><span class="n">position_collection</span><span class="p">,</span> <span class="n">debug_mode</span><span class="o">=</span><span class="n">debug_mode</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">position_collection</span> <span class="o">=</span> <span class="n">position_collection</span>
 
 <div class="viewcode-block" id="Portfolio.plot_positions">

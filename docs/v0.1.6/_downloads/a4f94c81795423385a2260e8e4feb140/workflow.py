@@ -19,7 +19,7 @@ market.load_from_database(
     time_span=4 * hours,
 )
 
-market.display()
+# market.display()
 
 
 indicator = BollingerBands(
@@ -57,7 +57,7 @@ capital_management = capital_management.FixedLot(
     max_concurrent_positions=100,
 )
 
-portfolio  = Portfolio(position_collection=position_collection)
+portfolio  = Portfolio(position_collection=position_collection, debug_mode=True)
 
 portfolio.simulate(capital_management=capital_management)
 

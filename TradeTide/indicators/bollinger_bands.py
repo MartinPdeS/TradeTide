@@ -77,14 +77,14 @@ class BollingerBands(BOLLINGERBANDS, BaseIndicator):
             ax.plot(
                 self.market.dates,
                 upper,
-                label=f'Upper Band (+{self.multiplier} $\sigma$)',
+                label=rf'Upper Band (+{self.multiplier} $\sigma$)',
                 linestyle='--',
                 linewidth=1
             )
             ax.plot(
                 self.market.dates,
                 lower,
-                label=f'Lower Band (-{self.multiplier} $\sigma$)',
+                label=rf'Lower Band (-{self.multiplier} $\sigma$)',
                 linestyle='--',
                 linewidth=1
             )

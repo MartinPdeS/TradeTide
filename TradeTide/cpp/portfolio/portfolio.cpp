@@ -100,8 +100,8 @@ void Portfolio::simulate(BaseCapitalManagement& capital_management) {
         if (time_idx == this->position_collection.market.dates.size() - 1)
             this->terminate_open_positions();
 
-        state.capital_at_risk = this->calculate_capital_at_risk();
-        state.equity = this->calculate_equity();
+        this->state.capital_at_risk = this->calculate_capital_at_risk();
+        this->state.equity = this->calculate_equity();
         this->record.update();
     }
 }

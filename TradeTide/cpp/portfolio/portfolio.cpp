@@ -152,7 +152,7 @@ void Portfolio::simulate(BaseCapitalManagement& capital_management) {
                 this->state.capital_at_risk);
         }
     }
-
+}
 
 void Portfolio::terminate_open_positions() {
     for (const auto& position : this->active_positions) {
@@ -161,16 +161,13 @@ void Portfolio::terminate_open_positions() {
         position->is_closed = true;
         this->executed_positions.push_back(position);
 
-        if (this->debug_mode) {
-            printf("[DEBUG: PORTFOLIO - TERMINATE] Terminating position at exit price %.2f with lot size %.2f\n",
-                   position->exit_price, position->lot_size);
-        }
+        if (this->debug_mode)
+            printf("[DEBUG: PORTFOLIO - TERMINATE] Terminating position at exit price %.2f with lot size %.2f\n", position->exit_price, position->lot_size);
+
     }
 
-    if (this->debug_mode) {
-        printf("[DEBUG: PORTFOLIO - TERMINATE] All remaining open positions have been terminated. Total: %zu\n",
-               this->active_positions.size());
-    }
+    if (this->debug_mode)
+        printf("[DEBUG: PORTFOLIO - TERMINATE] All remaining open positions have been terminated. Total: %zu\n", this->active_positions.size());
 
     this->active_positions.clear();
 }

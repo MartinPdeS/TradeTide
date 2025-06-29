@@ -27,9 +27,6 @@ class Record {
         size_t success_count = 0;                     ///< Number of successful trades
         size_t fail_count = 0;                        ///< Number of failed trades
 
-        std::chrono::high_resolution_clock::time_point start_computation_time, end_computation_time;
-        std::chrono::duration<double, std::milli> computation_duration;
-
         /**
          * @brief Prepares internal buffers to record state history.
          * @param n_element Expected number of time steps

@@ -12,6 +12,23 @@ Examples: Tutorials
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates a complete backtesting workflow using the TradeTide library.">
+
+.. only:: html
+
+  .. image:: /gallery/images/thumb/sphx_glr_backtester_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_gallery_backtester.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Backtester Workflow Example</div>
+    </div>
+
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to use the Bollinger Bands indicator with the TradeTide library.">
 
 .. only:: html
@@ -88,6 +105,7 @@ Examples: Tutorials
 .. toctree::
    :hidden:
 
+   /gallery/backtester
    /gallery/bollinger_bands
    /gallery/moving_average_crossings
    /gallery/relative_momentum_index

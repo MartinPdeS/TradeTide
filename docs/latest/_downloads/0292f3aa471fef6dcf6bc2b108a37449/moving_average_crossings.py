@@ -19,7 +19,7 @@ market = Market()
 market.load_from_database(
     currency_0=Currency.CAD,
     currency_1=Currency.USD,
-    time_span=30 * minutes,
+    time_span=60 * minutes,
 )
 
 indicator = MovingAverageCrossing(

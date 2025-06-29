@@ -23,12 +23,12 @@ Trading Workflow Example
 
 This example demonstrates a complete trading workflow using the TradeTide library.
 
-.. GENERATED FROM PYTHON SOURCE LINES 8-67
+.. GENERATED FROM PYTHON SOURCE LINES 8-66
 
 
 
 .. image-sg:: /gallery/images/sphx_glr_workflow_001.png
-   :alt: CAD/USD - 2:00:00
+   :alt: CAD/USD - 4:00:00
    :srcset: /gallery/images/sphx_glr_workflow_001.png
    :class: sphx-glr-single-img
 
@@ -49,8 +49,7 @@ This example demonstrates a complete trading workflow using the TradeTide librar
     market.load_from_database(
         currency_0=Currency.CAD,
         currency_1=Currency.USD,
-        time_span=2 * hours,
-        # time_span=1 * days,
+        time_span=4 * hours,
     )
 
     market.display()
@@ -58,7 +57,7 @@ This example demonstrates a complete trading workflow using the TradeTide librar
 
     indicator = BollingerBands(
         window=3 * minutes,
-        multiplier=.10
+        multiplier=2.0
     )
 
     indicator.run(market)
@@ -101,7 +100,7 @@ This example demonstrates a complete trading workflow using the TradeTide librar
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.296 seconds)
+   **Total running time of the script:** (0 minutes 0.288 seconds)
 
 
 .. _sphx_glr_download_gallery_workflow.py:

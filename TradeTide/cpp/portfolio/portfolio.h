@@ -25,6 +25,7 @@ public:
     /// Reference to the current state of the Portfolio plus interface to its history if enabled.
     State state;
     Record record;
+    BaseCapitalManagement* capital_management;
 
     /// Reference to the source collection of all potential positions.
     PositionCollection& position_collection;
@@ -39,14 +40,7 @@ public:
      * @param position_collection A reference to the collection of all tradable signals.
      * @param capital_management  A capital management strategy that controls lot sizing.
      */
-    Portfolio(PositionCollection& position_collection)
-        : position_collection(position_collection)
-        {
-            this->record.state = &this->state;
-
-            this->record.start_record(this->position_collection.market.dates.size());
-
-        }
+    Portfolio(PositionCollection& position_collection);
 
     /**
      * @brief Run the simulation using current strategy and portfolio constraints.
@@ -56,11 +50,7 @@ public:
     /**
      * @brief Display final performance metrics in human-readable form.
      */
-    void display() const {
-        for (const auto& position : this->executed_positions) {
-            position->display();
-        }
-    };
+    void display() const;
 
     /**
      * @brief Get the Metrics object containing performance statistics.
@@ -70,11 +60,7 @@ public:
      *
      * @return Metrics object with calculated performance statistics.
      */
-    Metrics get_metrics() {
-        Metrics metrics(this->record);
-        metrics.calculate();
-        return metrics;
-    }
+    Metrics get_metrics();
 
     /**
      * @return Final account equity after simulation.
@@ -121,17 +107,23 @@ public:
      * @return Current equity value.
      */
     [[nodiscard]] double calculate_equity() const;
-    void try_close_positions(BaseCapitalManagement& capital_management);
+
 
     /**
-     * @brief Attempt to open new positions based on the current market state and capital management.
+     * @brief Attempt to close all currently open positions based on their exit strategy.
      *
-     * This method will iterate through all selected positions and try to open them
-     * if they meet the criteria defined by the capital management strategy.
-     *
-     * @param capital_management The capital management strategy to use for opening positions.
+     * This method will iterate through all active positions and close them
+     * if they meet the criteria defined by the exit strategy.
      */
-    void try_open_positions(BaseCapitalManagement& capital_management);
+    void try_close_positions();
+
+    /**
+     * @brief Attempt to open new positions based on the current capital management strategy.
+     *
+     * This method will iterate through the position collection and try to open
+     * positions that meet the criteria defined by the capital management strategy.
+     */
+    void try_open_positions();
 
     /**
      * @brief Close all currently open positions at the current market price.
@@ -159,7 +151,6 @@ public:
      * strategy, which determines lot sizing and risk management.
      *
      * @param position Reference to the PositionPtr that will be opened.
-     * @param capital_management The capital management strategy to use for opening the position.
      */
-    void open_position(PositionPtr& position, const BaseCapitalManagement &capital_management);
+    void open_position(PositionPtr& position);
 };

@@ -7,6 +7,30 @@ using TimePoint = std::chrono::system_clock::time_point;
 
 
 
+
+// ---------------- Constructor ----------------
+Portfolio::Portfolio(PositionCollection& position_collection) : position_collection(position_collection){
+    this->record.state = &this->state;
+
+    this->record.start_record(this->position_collection.market.dates.size());
+}
+
+
+// ---------------- Public Methods ----------------
+Metrics Portfolio::get_metrics() {
+    Metrics metrics(this->record);
+    metrics.calculate();
+    return metrics;
+}
+
+void Portfolio::display() const {
+    for (const auto& position : this->executed_positions) {
+        position->display();
+    }
+}
+
+
+// ---------------- Equity and Performance ----------------
 double Portfolio::final_equity() const {
     return this->state.equity;
 }
@@ -15,6 +39,8 @@ double Portfolio::peak_equity() const {
     return *std::max_element(this->record.equity.begin(), this->record.equity.end());
 }
 
+
+// ---------------- Position Management ----------------
 void Portfolio::close_position(PositionPtr& position, const size_t &position_idx) {
     this->active_positions.erase(this->active_positions.begin() + position_idx);
     this->state.number_of_concurrent_positions -= 1;
@@ -28,8 +54,8 @@ void Portfolio::close_position(PositionPtr& position, const size_t &position_idx
         ++this->record.fail_count;
 }
 
-void Portfolio::open_position(PositionPtr& position, const BaseCapitalManagement &capital_management) {
-    double lot_size = capital_management.compute_lot_size(*position);
+void Portfolio::open_position(PositionPtr& position) {
+    double lot_size = this->capital_management->compute_lot_size(*position);
 
     if (lot_size == 0.0)
         return; // Cannot open position with zero lot size
@@ -47,18 +73,18 @@ void Portfolio::open_position(PositionPtr& position, const BaseCapitalManagement
     position->is_closed = false;
 }
 
-void Portfolio::try_close_positions(BaseCapitalManagement& capital_management) {
+void Portfolio::try_close_positions() {
     for (size_t i = 0; i < this->active_positions.size(); i++) {
         PositionPtr& position = this->active_positions[i];
 
         // Attempt to close position
-        if (position->close_date == this->state.current_date && capital_management.can_close_position(position))
+        if (position->close_date == this->state.current_date && this->capital_management->can_close_position(position))
             this->close_position(position, i);
 
     }
 }
 
-void Portfolio::try_open_positions(BaseCapitalManagement& capital_management) {
+void Portfolio::try_open_positions() {
     while (this->state.position_index < this->position_collection.positions.size()) {
 
         // If we reached the end of positions, stop trying to open new ones
@@ -68,8 +94,8 @@ void Portfolio::try_open_positions(BaseCapitalManagement& capital_management) {
         PositionPtr& position = this->position_collection.positions[this->state.position_index];
 
         // If we can't open more positions now, skip this one (but advance index!)
-        if (capital_management.can_open_position(position))
-            this->open_position(position, capital_management);
+        if (this->capital_management->can_open_position(position))
+            this->open_position(position);
 
         ++this->state.position_index;
     }
@@ -81,9 +107,11 @@ void Portfolio::simulate(BaseCapitalManagement& capital_management) {
     this->executed_positions.clear();
     this->active_positions.clear();
 
-    this->state = State(this->position_collection.market, capital_management.initial_capital);
-    this->record.initial_capital = capital_management.initial_capital;
-    capital_management.state  = &this->state;
+    this->capital_management = &capital_management;
+
+    this->state = State(this->position_collection.market, this->capital_management->initial_capital);
+    this->record.initial_capital = this->capital_management->initial_capital;
+    this->capital_management->state  = &this->state;
 
     for (PositionPtr& position : this->position_collection.positions)
         position->is_closed = false;
@@ -92,10 +120,10 @@ void Portfolio::simulate(BaseCapitalManagement& capital_management) {
         this->state.update_time_idx(time_idx);
 
         // Try to close opened positions
-        this->try_close_positions(capital_management);
+        this->try_close_positions();
 
         // Try to activate new positions starting now
-        this->try_open_positions(capital_management);
+        this->try_open_positions();
 
         if (time_idx == this->position_collection.market.dates.size() - 1)
             this->terminate_open_positions();

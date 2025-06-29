@@ -8,6 +8,7 @@
 #include "../signal/signal.h"
 #include "../position/position.h"
 #include "../exit_strategy/exit_strategy.h"
+#include <functional>
 
 using TimePoint = std::chrono::system_clock::time_point;
 

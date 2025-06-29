@@ -133,10 +133,6 @@ void Portfolio::simulate(BaseCapitalManagement& capital_management) {
     for (size_t time_idx = 0; time_idx < this->position_collection.market.dates.size(); time_idx++) {
         this->state.update_time_idx(time_idx);
 
-        if (this->debug_mode) {
-            printf("[DEBUG: PORTFOLIO - SIMULATE] Time step %zu / %zu\n", time_idx, this->position_collection.market.dates.size());
-        }
-
         this->try_close_positions();
         this->try_open_positions();
 
@@ -148,11 +144,15 @@ void Portfolio::simulate(BaseCapitalManagement& capital_management) {
         this->record.update();
 
         if (this->debug_mode) {
-            printf("[DEBUG: PORTFOLIO - SIMULATE] Capital: %.2f, Equity: %.2f, At Risk: %.2f\n",
-                this->state.capital, this->state.equity, this->state.capital_at_risk);
+            printf("[DEBUG: PORTFOLIO - SIMULATE] Step %zu / %zu | Capital: %.2f | Equity: %.2f | At Risk: %.2f\n",
+                time_idx,
+                this->position_collection.market.dates.size(),
+                this->state.capital,
+                this->state.equity,
+                this->state.capital_at_risk);
         }
     }
-}
+
 
 void Portfolio::terminate_open_positions() {
     for (const auto& position : this->active_positions) {

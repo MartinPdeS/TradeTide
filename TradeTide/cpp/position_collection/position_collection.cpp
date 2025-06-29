@@ -1,7 +1,7 @@
 #include "position_collection.h"
 
-PositionCollection::PositionCollection(const Market& market, const std::vector<int>& trade_signal, const bool save_price_data)
-    : market(market), trade_signal(trade_signal), save_price_data(save_price_data)
+PositionCollection::PositionCollection(const Market& market, const std::vector<int>& trade_signal, const bool save_price_data, const bool debug_mode)
+    : market(market), trade_signal(trade_signal), save_price_data(save_price_data), debug_mode(debug_mode)
 {
     this->number_of_trade = std::count_if(
         this->trade_signal.begin(),
@@ -10,7 +10,14 @@ PositionCollection::PositionCollection(const Market& market, const std::vector<i
     );
 
     this->positions.reserve(this->number_of_trade);
+
+    if (this->debug_mode) {
+        printf("[DEBUG - POSITION_COLLECTION - CONSTRUCT] PositionCollection initialized with %zu trades to process\n", this->number_of_trade);
+    }
 }
+
+
+
 
 std::vector<double> PositionCollection::extract_vector(std::function<double(PositionPtr)> accessor) {
     std::vector<double> array;
@@ -65,7 +72,6 @@ void PositionCollection::to_csv(const std::string& filepath) const {
 }
 
 void PositionCollection::open_positions(const ExitStrategy &exit_strategy) {
-
     for (size_t time_idx = 0; time_idx < this->market.dates.size(); time_idx++) {
         int signal_value = this->trade_signal[time_idx];
 
@@ -76,18 +82,33 @@ void PositionCollection::open_positions(const ExitStrategy &exit_strategy) {
 
         if (signal_value == 1)
             position = std::make_unique<Long>(exit_strategy, time_idx, this->market);
-
         else
             position = std::make_unique<Short>(exit_strategy, time_idx, this->market);
 
+        if (this->debug_mode) {
+            printf("[DEBUG - POSITION_COLLECTION - OPEN] Opened a %s position at time index %zu (date idx: %zu)\n",
+                   signal_value == 1 ? "Long" : "Short",
+                   time_idx,
+                   position->start_idx);
+        }
+
         positions.push_back(std::move(position));
     }
+
+    if (this->debug_mode) {
+        printf("[DEBUG - POSITION_COLLECTION - OPEN] Total positions opened: %zu\n", positions.size());
+    }
 }
+
+
 
 void PositionCollection::propagate_positions() {
     #pragma omp parallel for
     for (const auto& position : this->positions) {
         position->propagate();
+        if (this->debug_mode) {
+            printf("[DEBUG - POSITION_COLLECTION - PROPAGATE] Propagated position starting at index %zu\n", position->start_idx);
+        }
     }
 
     this->terminate_open_positions();
@@ -95,7 +116,7 @@ void PositionCollection::propagate_positions() {
     std::sort(
         this->positions.begin(),
         this->positions.end(),
-        [](const PositionPtr& a, const PositionPtr& b) {return a->start_date < b->start_date;}
+        [](const PositionPtr& a, const PositionPtr& b) { return a->start_date < b->start_date; }
     );
 
     #pragma omp parallel for
@@ -106,14 +127,21 @@ void PositionCollection::propagate_positions() {
         }
 }
 
-void PositionCollection::terminate_open_positions() {
-    for (const auto& position : this->positions)
-        if (!position->is_closed) {
-            position->close_at(this->market.dates.size());  // Set to last element of market
-            position->is_closed = true;
-        }
 
+void PositionCollection::terminate_open_positions() {
+    for (const auto& position : this->positions) {
+        if (!position->is_closed) {
+            position->close_at(this->market.dates.size());
+            position->is_closed = true;
+
+            if (this->debug_mode) {
+                printf("[DEBUG - POSITION_COLLECTION - TERMINATE] Terminated unclosed position. Exit price: %.2f, Lot size: %.2f\n",
+                       position->exit_price, position->lot_size);
+            }
+        }
+    }
 }
+
 
 void PositionCollection::display() const {
     for (const PositionPtr& e : this->positions)

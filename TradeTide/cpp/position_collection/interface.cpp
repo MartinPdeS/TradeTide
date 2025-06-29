@@ -20,10 +20,11 @@ PYBIND11_MODULE(interface_position_collection, module) {
     // Bind the Position class
     py::class_<PositionCollection, std::shared_ptr<PositionCollection>>(module, "PositionCollection")
         .def(
-            py::init<const Market&, const std::vector<int>&, const bool&>(),
+            py::init<const Market&, const std::vector<int>&, const bool&, const bool&>(),
             py::arg("market"),
             py::arg("trade_signal"),
             py::arg("save_price_data") = false,
+            py::arg("debug_mode") = false,
             R"pbdoc(
                 Create a new PositionCollection.
 
@@ -34,7 +35,11 @@ PYBIND11_MODULE(interface_position_collection, module) {
                     save_price_data (bool): Whether to record SL/TP price history over time.
             )pbdoc"
         )
-
+        .def_readwrite("debug_mode", &PositionCollection::debug_mode,
+            R"pbdoc(
+                Enable or disable debug output for development purposes.
+            )pbdoc"
+        )
         .def("open_positions", &PositionCollection::open_positions,
             py::arg("exit_strategy"),
             R"pbdoc(

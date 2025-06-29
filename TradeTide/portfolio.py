@@ -8,6 +8,7 @@ from MPSPlots.styles import mps
 from matplotlib.patches import Patch
 from matplotlib.lines import Line2D
 from functools import wraps
+import TradeTide
 
 Long = position.Long
 Short = position.Short
@@ -23,7 +24,10 @@ class Portfolio(PORTFOLIO):
         position_collection : PositionCollection
             The collection of positions to manage.
         """
-        super().__init__(position_collection=position_collection, debug_mode=debug_mode)
+        super().__init__(
+            position_collection=position_collection,
+            debug_mode=TradeTide.debug_mode if TradeTide.debug_mode else debug_mode
+        )
         self.position_collection = position_collection
 
     def plot_positions(

@@ -1,3 +1,5 @@
+debug_mode = False  # noqa: F401
+
 from .binary import position, capital_management, exit_strategy  # noqa: F401
 from .strategy import Strategy  # noqa: F401
 from .market import Market  # noqa: F401

@@ -4,6 +4,7 @@ from typing import Tuple, Union, Optional
 
 from TradeTide.binary.interface_position_collection import PositionCollection
 from TradeTide import position
+import TradeTide
 
 from MPSPlots.styles import mps
 import matplotlib.pyplot as plt
@@ -13,7 +14,7 @@ Short = position.Short
 
 class PositionCollection(PositionCollection):
 
-    def __init__(self, market, trade_signal):
+    def __init__(self, market, trade_signal: np.ndarray, debug_mode: bool = False):
         """
         Initialize the PositionCollection with a market and trade signal.
 
@@ -21,11 +22,15 @@ class PositionCollection(PositionCollection):
         ----------
         market : Market
             The market data to use for positions.
-        trade_signal : TradeSignal
+        trade_signal : np.ndarray
             The trade signal to use for opening positions.
         """
         self.market = market
-        super().__init__(market=market, trade_signal=trade_signal)
+        super().__init__(
+            market=market,
+            trade_signal=trade_signal,
+            debug_mode=TradeTide.debug_mode if TradeTide.debug_mode else debug_mode
+            )
 
     def plot(
         self,

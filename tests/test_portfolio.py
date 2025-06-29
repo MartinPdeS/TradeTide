@@ -7,7 +7,8 @@ from TradeTide.position_collection import PositionCollection
 from TradeTide.currencies import Currency
 from TradeTide.signal import Signal
 from TradeTide import capital_management, exit_strategy
-
+import TradeTide
+TradeTide.debug_mode = True  # Enable debug mode for development purpose
 
 def test_portfolio_simulation_workflow():
     """Full end-to-end test of portfolio simulation with random signal."""

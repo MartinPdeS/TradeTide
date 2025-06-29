@@ -11,6 +11,8 @@ This module tests edge cases and expected crossover behavior:
 import pytest
 import numpy as np
 from TradeTide.binary.interface_indicators import MOVINGAVERAGECROSSING
+import TradeTide
+TradeTide.debug_mode = True  # Enable debug mode for development purpose
 
 # Define constants for window sizes
 SHORT_WINDOW = 3

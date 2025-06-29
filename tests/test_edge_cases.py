@@ -14,6 +14,8 @@ from TradeTide.position_collection import PositionCollection
 from TradeTide import capital_management, exit_strategy
 from TradeTide.portfolio import Portfolio
 from TradeTide.currencies import Currency
+import TradeTide
+TradeTide.debug_mode = True  # Enable debug mode for development purpose
 
 
 # ------------------------------------------------------------------------------

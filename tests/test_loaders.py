@@ -6,6 +6,8 @@ from TradeTide.currencies import Currency
 import pytest
 from TradeTide.market import Market
 from TradeTide.times import days
+import TradeTide
+TradeTide.debug_mode = True  # Enable debug mode for development purpose
 
 currency_pairs = [
     (Currency.EUR, Currency.USD),

@@ -21,6 +21,7 @@ using TimePoint = std::chrono::system_clock::time_point;
  * filtering, and access operations for high-level analysis.
  */
 class PositionCollection {
+
 private:
     /**
      * @brief Generic helper to extract a vector of any value from each position.
@@ -46,6 +47,7 @@ public:
     std::vector<PositionPtr> positions;              ///< All tracked positions
     size_t number_of_trade = 0;                      ///< Number of trades detected from signal
     bool save_price_data = false;                    ///< Whether to store SL/TP traces
+     bool debug_mode = false;  ///< Enable debug output for development purposes
 
     /**
      * @brief Default constructor.
@@ -60,7 +62,7 @@ public:
      * @param signal Trade signal series.
      * @param save_price_data Enables SL/TP tracing per position.
      */
-    PositionCollection(const Market& market, const std::vector<int>& trade_signal, const bool save_price_data = false);
+    PositionCollection(const Market& market, const std::vector<int>& trade_signal, const bool save_price_data = false, const bool debug_mode = false);
 
     /**
      * @brief Initializes positions according to the provided signal.

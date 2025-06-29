@@ -57,7 +57,7 @@ capital_management = capital_management.FixedLot(
     max_concurrent_positions=100,
 )
 
-portfolio  = Portfolio(position_collection=position_collection, debug_mode=True)
+portfolio  = Portfolio(position_collection=position_collection, debug_mode=False)
 
 portfolio.simulate(capital_management=capital_management)
 

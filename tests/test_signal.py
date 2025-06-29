@@ -6,6 +6,8 @@ from TradeTide.market import Market
 from TradeTide.signal import Signal
 from TradeTide.currencies import Currency
 from TradeTide.times import days
+import TradeTide
+TradeTide.debug_mode = True  # Enable debug mode for development purpose
 
 @pytest.fixture
 def market():

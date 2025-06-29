@@ -9,11 +9,15 @@ using TimePoint = std::chrono::system_clock::time_point;
 
 
 // ---------------- Constructor ----------------
-Portfolio::Portfolio(PositionCollection& position_collection) : position_collection(position_collection){
+Portfolio::Portfolio(PositionCollection& position_collection, bool debug_mode): position_collection(position_collection), debug_mode(debug_mode) {
     this->record.state = &this->state;
-
     this->record.start_record(this->position_collection.market.dates.size());
+
+    if (this->debug_mode) {
+        printf("[DEBUG: PORTFOLIO - CONSTRUCT] Portfolio constructed with %zu market dates\n", this->position_collection.market.dates.size());
+    }
 }
+
 
 
 // ---------------- Public Methods ----------------
@@ -52,25 +56,36 @@ void Portfolio::close_position(PositionPtr& position, const size_t &position_idx
         ++this->record.success_count;
     else if (profit_loss < 0)
         ++this->record.fail_count;
+
+    if (this->debug_mode) {
+        printf("[DEBUG: PORTFOLIO - CLOSE] Closed position at price %.2f, PnL: %.2f\n",
+               position->exit_price, profit_loss);
+    }
 }
+
 
 void Portfolio::open_position(PositionPtr& position) {
     double lot_size = this->capital_management->compute_lot_size(*position);
 
-    if (lot_size == 0.0)
-        return; // Cannot open position with zero lot size
+    if (lot_size == 0.0) {
+        if (this->debug_mode)
+            printf("[DEBUG: PORTFOLIO - OPEN] Skipping position: computed lot size is 0.0\n");
+        return;
+    }
 
     position->lot_size = lot_size;
-
     this->active_positions.push_back(position);
     this->selected_positions.push_back(position);
     this->executed_positions.push_back(position);
 
-
-
     this->state.number_of_concurrent_positions += 1;
     this->state.capital -= position->entry_price * position->lot_size;
     position->is_closed = false;
+
+    if (this->debug_mode) {
+        printf("[DEBUG: PORTFOLIO - OPEN] Opened position at price %.2f, lot size %.2f\n",
+               position->entry_price, position->lot_size);
+    }
 }
 
 void Portfolio::try_close_positions() {
@@ -115,13 +130,14 @@ void Portfolio::simulate(BaseCapitalManagement& capital_management) {
 
     this->position_collection.set_all_position_to_open();
 
-    for (size_t time_idx = 0; time_idx < this->position_collection.market.dates.size(); time_idx ++) {
+    for (size_t time_idx = 0; time_idx < this->position_collection.market.dates.size(); time_idx++) {
         this->state.update_time_idx(time_idx);
 
-        // Try to close opened positions
-        this->try_close_positions();
+        if (this->debug_mode) {
+            printf("[DEBUG: PORTFOLIO - SIMULATE] Time step %zu / %zu\n", time_idx, this->position_collection.market.dates.size());
+        }
 
-        // Try to activate new positions starting now
+        this->try_close_positions();
         this->try_open_positions();
 
         if (time_idx == this->position_collection.market.dates.size() - 1)
@@ -130,6 +146,11 @@ void Portfolio::simulate(BaseCapitalManagement& capital_management) {
         this->state.capital_at_risk = this->calculate_capital_at_risk();
         this->state.equity = this->calculate_equity();
         this->record.update();
+
+        if (this->debug_mode) {
+            printf("[DEBUG: PORTFOLIO - SIMULATE] Capital: %.2f, Equity: %.2f, At Risk: %.2f\n",
+                this->state.capital, this->state.equity, this->state.capital_at_risk);
+        }
     }
 }
 
@@ -139,6 +160,16 @@ void Portfolio::terminate_open_positions() {
         this->state.capital += position->exit_price * position->lot_size;
         position->is_closed = true;
         this->executed_positions.push_back(position);
+
+        if (this->debug_mode) {
+            printf("[DEBUG: PORTFOLIO - TERMINATE] Terminating position at exit price %.2f with lot size %.2f\n",
+                   position->exit_price, position->lot_size);
+        }
+    }
+
+    if (this->debug_mode) {
+        printf("[DEBUG: PORTFOLIO - TERMINATE] All remaining open positions have been terminated. Total: %zu\n",
+               this->active_positions.size());
     }
 
     this->active_positions.clear();

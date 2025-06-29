@@ -34,13 +34,15 @@ public:
     std::vector<PositionPtr> active_positions;    ///< Currently open positions
     std::vector<PositionPtr> executed_positions;  ///< All positions ever opened
 
+    bool debug_mode = false;  ///< Enable debug output for development purposes
+
     /**
      * @brief Construct a Portfolio with a position source and capital strategy.
      *
      * @param position_collection A reference to the collection of all tradable signals.
      * @param capital_management  A capital management strategy that controls lot sizing.
      */
-    Portfolio(PositionCollection& position_collection);
+    Portfolio(PositionCollection& position_collection, bool debug_mode = false);
 
     /**
      * @brief Run the simulation using current strategy and portfolio constraints.

@@ -14,16 +14,16 @@ Short = position.Short
 
 
 class Portfolio(PORTFOLIO):
-    def __init__(self, position_collection, save_history: bool = True):
+    def __init__(self, position_collection, debug_mode: bool = False):
         """
-        Initialize the Portfolio with a position collection and optional history saving.
+        Initialize the Portfolio with a position collection and optional debug mode.
 
         Parameters
         ----------
         position_collection : PositionCollection
             The collection of positions to manage.
         """
-        super().__init__(position_collection=position_collection)
+        super().__init__(position_collection=position_collection, debug_mode=debug_mode)
         self.position_collection = position_collection
 
     def plot_positions(

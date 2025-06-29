@@ -23,8 +23,9 @@ PYBIND11_MODULE(interface_portfolio, module) {
 
     pybind11::class_<Portfolio, std::shared_ptr<Portfolio>>(module, "PORTFOLIO")
         .def(
-            pybind11::init<PositionCollection&>(),
+            pybind11::init<PositionCollection&, bool>(),
             pybind11::arg("position_collection"),
+            pybind11::arg("debug_mode") = false,
             R"pbdoc(
                 Create a portfolio simulator using a predefined position collection and capital management strategy.
 
@@ -34,6 +35,13 @@ PYBIND11_MODULE(interface_portfolio, module) {
                     The set of all candidate trades.
                 capital_management : BaseCapitalManagement
                     Object that defines risk, lot sizing, and exposure limits.
+            )pbdoc"
+        )
+        .def_readwrite(
+            "debug_mode",
+            &Portfolio::debug_mode,
+            R"pbdoc(
+                Enable or disable debug output for development purposes.
             )pbdoc"
         )
         .def("simulate",

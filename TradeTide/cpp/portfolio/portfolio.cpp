@@ -113,8 +113,7 @@ void Portfolio::simulate(BaseCapitalManagement& capital_management) {
     this->record.initial_capital = this->capital_management->initial_capital;
     this->capital_management->state  = &this->state;
 
-    for (PositionPtr& position : this->position_collection.positions)
-        position->is_closed = false;
+    this->position_collection.set_all_position_to_open();
 
     for (size_t time_idx = 0; time_idx < this->position_collection.market.dates.size(); time_idx ++) {
         this->state.update_time_idx(time_idx);

@@ -109,9 +109,7 @@ public:
     /**
      * @brief Index access operator.
      */
-    const PositionPtr& operator[](size_t i) const {
-        return this->positions[i];
-    }
+    const PositionPtr& operator[](size_t i) const {return this->positions[i];}
 
     /**
      * @brief Returns vector of open dates.
@@ -135,9 +133,7 @@ public:
     /**
      * @brief Access the underlying market reference.
      */
-    const Market& get_market() const {
-        return this->market;
-    }
+    const Market& get_market() const {return this->market;}
 
     /**
      * @brief Get up to `count` long positions.
@@ -157,4 +153,28 @@ public:
      */
     [[nodiscard]] std::vector<BasePosition*> get_all_positions(size_t count) const;
 
+
+    /**
+     * @brief Set all positions to closed.
+     *
+     * This method marks all positions as closed, effectively ending their lifecycle
+     * and preventing further updates or evaluations.
+     */
+    void set_position_to_close() {
+        for (auto& position : this->positions) {
+            position->is_closed = true;
+        }
+    }
+
+    /**
+     * @brief Set all positions to open.
+     *
+     * This method resets the `is_closed` flag for all positions,
+     * allowing them to be considered active again.
+     */
+    void set_all_position_to_open() {
+        for (auto& position : this->positions) {
+            position->is_closed = false;
+        }
+    }
 };

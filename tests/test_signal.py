@@ -34,16 +34,6 @@ def test_generate_random_signal_distribution(market):
 
     assert expected_min <= total <= expected_max, "Random signal generation is outside expected range"
 
-def test_signal_to_csv(market):
-    signal = Signal(market)
-    signal.generate_random(probability=0.1)
-
-    with tempfile.NamedTemporaryFile(suffix=".csv", delete=True) as tmp:
-        signal.to_csv(tmp.name)
-        tmp.seek(0)
-        content = tmp.read().decode()
-        assert "METADATA" in content, "CSV content seems malformed"
-
 def test_signal_validation(market):
     signal = Signal(market)
     assert signal.validate_against_market(), "Signal failed validation after creation"

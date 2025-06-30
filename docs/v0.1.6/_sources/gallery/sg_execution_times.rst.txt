@@ -33,16 +33,16 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_gallery_backtester.py` (``backtester.py``)
-     - 00:00.965
+     - 00:00.967
      - 0.0
    * - :ref:`sphx_glr_gallery_relative_momentum_index.py` (``relative_momentum_index.py``)
-     - 00:00.429
+     - 00:00.424
      - 0.0
    * - :ref:`sphx_glr_gallery_moving_average_crossings.py` (``moving_average_crossings.py``)
-     - 00:00.371
+     - 00:00.372
      - 0.0
    * - :ref:`sphx_glr_gallery_bollinger_bands.py` (``bollinger_bands.py``)
-     - 00:00.289
+     - 00:00.291
      - 0.0
    * - :ref:`sphx_glr_gallery_workflow.py` (``workflow.py``)
      - 00:00.280

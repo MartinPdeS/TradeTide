@@ -1,9 +1,25 @@
-|Logo|
+|logo|
 
-|python|
-|docs|
-|PyPi|
-|PyPi_download|
+.. list-table::
+   :widths: 10 25 25 25
+   :header-rows: 0
+
+   * - Meta
+     - |python|
+     - |docs|
+     -
+   * - Testing
+     - |ci/cd|
+     - |coverage|
+     - |colab|
+   * - PyPI
+     - |PyPI|
+     - |PyPI_download|
+     -
+   * - Anaconda
+     - |anaconda|
+     - |anaconda_download|
+     - |anaconda_date|
 
 TradeTide
 =========
@@ -60,7 +76,6 @@ Coding example
 
    backtester.backtest(capital_managment=capital_managment)
 
-
    backtester.plot(show_price=True)
 
    metrics = backtester.metrics
@@ -68,37 +83,50 @@ Coding example
    metrics.print()
 
 
-|example_image|
+|example|
 
 ----
 
 
 Contact Information
 ************************
-As of 2024, the project is still under development. If you want to collaborate, it would be a pleasure! I encourage you to contact me.
+As of 2025, the project is still under development. If you want to collaborate, it would be a pleasure! I encourage you to contact me.
 
-PyMieSim was written by `Martin Poinsinet de Sivry-Houle <https://github.com/MartinPdS>`_  .
+TradeTide was written by `Martin Poinsinet de Sivry-Houle <https://github.com/MartinPdS>`_  .
 
-Email:`martin.poinsinet-de-sivry@polymtl.ca <mailto:martin.poinsinet-de-sivry@polymtl.ca?subject=TradeTide>`_ .
+Email:`martin.poinsinet-de-sivry@polymtl.ca <mailto:martin.poinsinet.de.sivry@gmail.com?subject=TradeTide>`_ .
 
-
-.. |python| image:: https://img.shields.io/pypi/pyversions/pymiesim.svg
-   :target: https://www.python.org/
-
-.. |Logo| image:: https://github.com/MartinPdeS/TradeTide/raw/master/docs/images/logo.png
-
-.. |example_image| image:: https://github.com/MartinPdeS/TradeTide/raw/master/docs/images/image_example.png
-
+.. |logo| image:: https://github.com/MartinPdeS/TradeTide/raw/master/docs/images/logo.png
+    :alt: TradeTide logo
+.. |python| image:: https://img.shields.io/pypi/pyversions/tradetide.svg
+    :alt: Python
+    :target: https://www.python.org/
+.. |colab| image:: https://colab.research.google.com/assets/colab-badge.svg
+    :alt: Google Colab
+    :target: https://colab.research.google.com/github/MartinPdeS/TradeTide/blob/master/notebook.ipynb
 .. |docs| image:: https://github.com/martinpdes/tradetide/actions/workflows/deploy_documentation.yml/badge.svg
-   :target: https://martinpdes.github.io/TradeTide/
-   :alt: Documentation Status
-
-.. |PyPi| image:: https://badge.fury.io/py/TradeTide.svg
+    :target: https://martinpdes.github.io/TradeTide/
+    :alt: Documentation Status
+.. |PyPI| image:: https://badge.fury.io/py/TradeTide.svg
+    :alt: PyPI version
     :target: https://badge.fury.io/py/TradeTide
-
-.. |PyPi_download| image:: https://img.shields.io/pypi/dm/TradeTide.svg
+.. |PyPI_download| image:: https://img.shields.io/pypi/dm/TradeTide?style=plastic&label=PyPI%20downloads&labelColor=hex&color=hex
+    :alt: PyPI downloads
     :target: https://pypistats.org/packages/tradetide
-
 .. |coverage| image:: https://raw.githubusercontent.com/MartinPdeS/TradeTide/python-coverage-comment-action-data/badge.svg
-   :alt: Unittest coverage
-   :target: https://htmlpreview.github.io/?https://github.com/MartinPdeS/TradeTide/blob/python-coverage-comment-action-data/htmlcov/index.html
+    :alt: Unittest coverage
+    :target: https://htmlpreview.github.io/?https://github.com/MartinPdeS/TradeTide/blob/python-coverage-comment-action-data/htmlcov/index.html
+.. |ci/cd| image:: https://github.com/martinpdes/tradetide/actions/workflows/deploy_coverage.yml/badge.svg
+    :alt: Unittest Status
+.. |example| image:: https://github.com/MartinPdeS/TradeTide/raw/master/docs/images/image_example.png
+    :width: 800
+    :alt: Qsca vs diameter
+.. |anaconda| image:: https://anaconda.org/martinpdes/tradetide/badges/version.svg
+    :alt: Anaconda version
+    :target: https://anaconda.org/martinpdes/tradetide
+.. |anaconda_download| image:: https://anaconda.org/martinpdes/tradetide/badges/downloads.svg
+    :alt: Anaconda downloads
+    :target: https://anaconda.org/martinpdes/tradetide
+.. |anaconda_date| image:: https://anaconda.org/martinpdes/tradetide/badges/latest_release_relative_date.svg
+    :alt: Latest release date
+    :target: https://anaconda.org/martinpdes/tradetide

@@ -1,0 +1,215 @@
+"""
+Complete Trading Strategy Workflow with Bollinger Bands
+========================================================
+
+This comprehensive example demonstrates a complete end-to-end trading workflow
+using the TradeTide library. We'll build a Bollinger Bands-based trading strategy,
+backtest it on historical CAD/USD data, and analyze the results.
+
+The workflow covers:
+- Market data loading and visualization
+- Technical indicator configuration (Bollinger Bands)
+- Strategy setup and signal generation
+- Position management and risk controls
+- Portfolio simulation and performance analysis
+
+This example is perfect for understanding how all TradeTide components work together
+to create a professional trading system.
+"""
+
+# %%
+# Import Required Libraries
+# -------------------------
+# We start by importing all necessary modules from TradeTide and standard libraries.
+
+import matplotlib.pyplot as plt
+import numpy as np
+from TradeTide import Strategy, Portfolio, PositionCollection, Market, Currency, days, hours, minutes
+from TradeTide.indicators import BollingerBands
+from TradeTide import capital_management, exit_strategy
+
+# Configure matplotlib for better plots
+plt.style.use('seaborn-v0_8-darkgrid')
+plt.rcParams['figure.figsize'] = (12, 8)
+plt.rcParams['font.size'] = 10
+
+# %%
+# Load Market Data
+# ----------------
+# First, we load historical forex data for the CAD/USD currency pair.
+# We'll use 4 hours of data to demonstrate the strategy on recent market movements.
+
+market = Market()
+
+# Load 4 hours of CAD/USD data from the database
+market.load_from_database(
+    currency_0=Currency.CAD,
+    currency_1=Currency.USD,
+    time_span=4 * hours,
+)
+
+# Display basic market information
+market.display()
+
+# %%
+# Configure Bollinger Bands Indicator
+# ------------------------------------
+# We'll use Bollinger Bands as our primary technical indicator. Bollinger Bands
+# consist of a moving average with upper and lower bands that expand and contract
+# based on market volatility.
+
+# Configure Bollinger Bands with 3-minute window and 1.0 standard deviation multiplier
+indicator = BollingerBands(
+    window=3 * minutes,      # Moving average window
+    multiplier=1.0           # Standard deviation multiplier for bands
+)
+
+# Run the indicator on our market data
+indicator.run(market)
+
+# %%
+# Build Trading Strategy
+# ----------------------
+# Now we create a trading strategy that uses our Bollinger Bands indicator
+# to generate buy and sell signals.
+
+# Create strategy and add our indicator
+strategy = Strategy()
+strategy.add_indicator(indicator)
+
+# Generate trading signals based on the strategy
+trade_signals = strategy.get_trade_signal(market)
+signal_count = np.count_nonzero(trade_signals)
+
+print(f"Strategy generated {signal_count} trading signals")
+
+# %%
+# Visualize Bollinger Bands and Market Data
+# ------------------------------------------
+# Let's plot the Bollinger Bands to visualize the indicator behavior
+# and understand where trading signals are generated.
+
+# Create the indicator plot (shows only ask prices for clarity)
+fig, ax = indicator.plot(show_bid=False, show=False)
+
+# Enhance the plot with additional information
+ax.set_title('CAD/USD with Bollinger Bands Strategy', fontsize=14, fontweight='bold')
+ax.set_xlabel('Time', fontsize=12)
+ax.set_ylabel('Price', fontsize=12)
+ax.grid(True, alpha=0.3)
+
+# Add legend
+ax.legend(loc='upper left', frameon=True, fancybox=True, shadow=True)
+
+# Show the plot
+plt.tight_layout()
+plt.show()
+
+# %%
+# Configure Risk Management
+# -------------------------
+# Before opening positions, we need to set up our exit strategy and risk management
+# parameters to control losses and secure profits.
+
+# Set up static exit strategy with stop loss and take profit
+risk_strategy = exit_strategy.Static(
+    stop_loss=4,              # Stop loss at 4 pips
+    take_profit=4,            # Take profit at 4 pips
+    save_price_data=True      # Save price data for analysis
+)
+
+# %%
+# Position Management
+# -------------------
+# Create and manage trading positions based on our strategy signals.
+
+# Create position collection with our market data and trading signals
+position_collection = PositionCollection(
+    market=market,
+    trade_signal=trade_signals,
+)
+
+# Open positions based on signals and apply exit strategy
+position_collection.open_positions(exit_strategy=risk_strategy)
+
+# Propagate positions through time to simulate trading
+position_collection.propagate_positions()
+
+total_positions = len(position_collection)
+print(f"Opened {total_positions} positions during simulation")
+
+# %%
+# Capital Management Setup
+# ------------------------
+# Configure capital management rules to control position sizing and overall risk.
+
+# Configure fixed lot capital management
+capital_mgmt = capital_management.FixedLot(
+    capital=1_000_000,              # Starting capital: $1M
+    fixed_lot_size=10_000,          # Fixed position size: $10K
+    max_capital_at_risk=100_000,    # Maximum capital at risk: $100K
+    max_concurrent_positions=100,   # Maximum concurrent positions: 100
+)
+
+# %%
+# Portfolio Simulation
+# --------------------
+# Run the complete portfolio simulation to see how our strategy performs.
+
+# Create portfolio and run simulation
+portfolio = Portfolio(position_collection=position_collection, debug_mode=False)
+portfolio.simulate(capital_management=capital_mgmt)
+
+# %%
+# Performance Analysis
+# --------------------
+# Analyze the results of our trading strategy and display key performance metrics.
+
+# Get comprehensive performance metrics
+metrics = portfolio.get_metrics()
+
+# Display all performance metrics
+metrics.display()
+
+# %%
+# Results Interpretation and Summary
+# ----------------------------------
+# Let's interpret the results and provide insights about the strategy performance.
+
+print("\n" + "="*60)
+print("STRATEGY INSIGHTS AND INTERPRETATION")
+print("="*60)
+
+# Strategy summary
+print(f"\nStrategy Summary:")
+print(f"   - Indicator: Bollinger Bands (3-min window, 1.0 sigma)")
+print(f"   - Risk Management: 4-pip stop loss & take profit")
+print(f"   - Capital: $1M with $10K fixed lot sizes")
+print(f"   - Time Period: 4 hours of CAD/USD data")
+print(f"   - Total Positions: {total_positions}")
+
+print(f"\nKey Takeaways:")
+print(f"   - This example demonstrates a complete TradeTide workflow")
+print(f"   - Bollinger Bands provide volatility-based trading signals")
+print(f"   - Risk management is crucial for protecting capital")
+print(f"   - Portfolio simulation enables strategy evaluation")
+
+print(f"\nNext Steps:")
+print(f"   - Experiment with different indicator parameters")
+print(f"   - Try alternative exit strategies")
+print(f"   - Test on different currency pairs and timeframes")
+print(f"   - Implement additional technical indicators")
+
+# %%
+# Conclusion
+# ----------
+# This example showcased a complete trading workflow using TradeTide.
+# The modular design allows easy experimentation with different strategies,
+# indicators, and risk management approaches.
+#
+# For more advanced examples, explore:
+#
+# * Multi-indicator strategies
+# * Dynamic exit strategies
+# * Portfolio optimization
+# * Walk-forward analysis

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Trading Workflow Example &#8212; TradeTide  documentation</title>
+    <title>Complete Trading Strategy Workflow with Bollinger Bands &#8212; TradeTide  documentation</title>
   
   
   
@@ -400,7 +400,7 @@
 <li class="toctree-l1"><a class="reference internal" href="bollinger_bands.html">Bollinger Bands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="moving_average_crossings.html">Moving Average Crossings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="relative_momentum_index.html">Relative Momentum Index</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Trading Workflow Example</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Complete Trading Strategy Workflow with Bollinger Bands</a></li>
 </ul>
 </div>
 </nav></div>
@@ -444,7 +444,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">Examples: Tutorials</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Trading Workflow Example</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Complete Trading Strategy Workflow with Bollinger Bands</span></li>
   </ul>
 </nav>
 </div>
@@ -466,69 +466,245 @@
 <p><a class="reference internal" href="#sphx-glr-download-gallery-workflow-py"><span class="std std-ref">Go to the end</span></a>
 to download the full example code.</p>
 </div>
-<section class="sphx-glr-example-title" id="trading-workflow-example">
-<span id="sphx-glr-gallery-workflow-py"></span><h1>Trading Workflow Example<a class="headerlink" href="#trading-workflow-example" title="Link to this heading">#</a></h1>
-<p>This example demonstrates a complete trading workflow using the TradeTide library.</p>
-<img src="../_images/sphx_glr_workflow_001.png" srcset="../_images/sphx_glr_workflow_001.png" alt="CAD/USD - 4:00:00" class = "sphx-glr-single-img"/><div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">Strategy</span><span class="p">,</span> <span class="n">Portfolio</span><span class="p">,</span> <span class="n">PositionCollection</span><span class="p">,</span> <span class="n">Market</span><span class="p">,</span> <span class="n">Currency</span><span class="p">,</span> <span class="n">days</span><span class="p">,</span> <span class="n">hours</span><span class="p">,</span> <span class="n">minutes</span>
+<section class="sphx-glr-example-title" id="complete-trading-strategy-workflow-with-bollinger-bands">
+<span id="sphx-glr-gallery-workflow-py"></span><h1>Complete Trading Strategy Workflow with Bollinger Bands<a class="headerlink" href="#complete-trading-strategy-workflow-with-bollinger-bands" title="Link to this heading">#</a></h1>
+<p>This comprehensive example demonstrates a complete end-to-end trading workflow
+using the TradeTide library. We’ll build a Bollinger Bands-based trading strategy,
+backtest it on historical CAD/USD data, and analyze the results.</p>
+<p>The workflow covers:
+- Market data loading and visualization
+- Technical indicator configuration (Bollinger Bands)
+- Strategy setup and signal generation
+- Position management and risk controls
+- Portfolio simulation and performance analysis</p>
+<p>This example is perfect for understanding how all TradeTide components work together
+to create a professional trading system.</p>
+<section id="import-required-libraries">
+<h2>Import Required Libraries<a class="headerlink" href="#import-required-libraries" title="Link to this heading">#</a></h2>
+<p>We start by importing all necessary modules from TradeTide and standard libraries.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">Strategy</span><span class="p">,</span> <span class="n">Portfolio</span><span class="p">,</span> <span class="n">PositionCollection</span><span class="p">,</span> <span class="n">Market</span><span class="p">,</span> <span class="n">Currency</span><span class="p">,</span> <span class="n">days</span><span class="p">,</span> <span class="n">hours</span><span class="p">,</span> <span class="n">minutes</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.indicators</span><span class="w"> </span><span class="kn">import</span> <span class="n">BollingerBands</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">capital_management</span><span class="p">,</span> <span class="n">exit_strategy</span>
 
-<span class="n">market</span> <span class="o">=</span> <span class="n">Market</span><span class="p">()</span>
+<span class="c1"># Configure matplotlib for better plots</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;seaborn-v0_8-darkgrid&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
+</pre></div>
+</div>
+</section>
+<section id="load-market-data">
+<h2>Load Market Data<a class="headerlink" href="#load-market-data" title="Link to this heading">#</a></h2>
+<p>First, we load historical forex data for the CAD/USD currency pair.
+We’ll use 4 hours of data to demonstrate the strategy on recent market movements.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">market</span> <span class="o">=</span> <span class="n">Market</span><span class="p">()</span>
 
+<span class="c1"># Load 4 hours of CAD/USD data from the database</span>
 <span class="n">market</span><span class="o">.</span><span class="n">load_from_database</span><span class="p">(</span>
     <span class="n">currency_0</span><span class="o">=</span><span class="n">Currency</span><span class="o">.</span><span class="n">CAD</span><span class="p">,</span>
     <span class="n">currency_1</span><span class="o">=</span><span class="n">Currency</span><span class="o">.</span><span class="n">USD</span><span class="p">,</span>
     <span class="n">time_span</span><span class="o">=</span><span class="mi">4</span> <span class="o">*</span> <span class="n">hours</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="c1"># market.display()</span>
-
-
+<span class="c1"># Display basic market information</span>
+<span class="n">market</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="configure-bollinger-bands-indicator">
+<h2>Configure Bollinger Bands Indicator<a class="headerlink" href="#configure-bollinger-bands-indicator" title="Link to this heading">#</a></h2>
+<p>We’ll use Bollinger Bands as our primary technical indicator. Bollinger Bands
+consist of a moving average with upper and lower bands that expand and contract
+based on market volatility.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Configure Bollinger Bands with 3-minute window and 1.0 standard deviation multiplier</span>
 <span class="n">indicator</span> <span class="o">=</span> <span class="n">BollingerBands</span><span class="p">(</span>
-    <span class="n">window</span><span class="o">=</span><span class="mi">3</span> <span class="o">*</span> <span class="n">minutes</span><span class="p">,</span>
-    <span class="n">multiplier</span><span class="o">=</span><span class="mf">2.0</span>
+    <span class="n">window</span><span class="o">=</span><span class="mi">3</span> <span class="o">*</span> <span class="n">minutes</span><span class="p">,</span>      <span class="c1"># Moving average window</span>
+    <span class="n">multiplier</span><span class="o">=</span><span class="mf">1.0</span>           <span class="c1"># Standard deviation multiplier for bands</span>
 <span class="p">)</span>
 
+<span class="c1"># Run the indicator on our market data</span>
 <span class="n">indicator</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">market</span><span class="p">)</span>
-
+</pre></div>
+</div>
+</section>
+<section id="build-trading-strategy">
+<h2>Build Trading Strategy<a class="headerlink" href="#build-trading-strategy" title="Link to this heading">#</a></h2>
+<p>Now we create a trading strategy that uses our Bollinger Bands indicator
+to generate buy and sell signals.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create strategy and add our indicator</span>
 <span class="n">strategy</span> <span class="o">=</span> <span class="n">Strategy</span><span class="p">()</span>
-
 <span class="n">strategy</span><span class="o">.</span><span class="n">add_indicator</span><span class="p">(</span><span class="n">indicator</span><span class="p">)</span>
 
-<span class="n">indicator</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">show_bid</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="c1"># Generate trading signals based on the strategy</span>
+<span class="n">trade_signals</span> <span class="o">=</span> <span class="n">strategy</span><span class="o">.</span><span class="n">get_trade_signal</span><span class="p">(</span><span class="n">market</span><span class="p">)</span>
+<span class="n">signal_count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">trade_signals</span><span class="p">)</span>
 
-<span class="n">exit_strategy</span> <span class="o">=</span> <span class="n">exit_strategy</span><span class="o">.</span><span class="n">Static</span><span class="p">(</span>
-    <span class="n">stop_loss</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-    <span class="n">take_profit</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-    <span class="n">save_price_data</span><span class="o">=</span><span class="kc">True</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Strategy generated </span><span class="si">{</span><span class="n">signal_count</span><span class="si">}</span><span class="s2"> trading signals&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Strategy generated 72 trading signals
+</pre></div>
+</div>
+</section>
+<section id="visualize-bollinger-bands-and-market-data">
+<h2>Visualize Bollinger Bands and Market Data<a class="headerlink" href="#visualize-bollinger-bands-and-market-data" title="Link to this heading">#</a></h2>
+<p>Let’s plot the Bollinger Bands to visualize the indicator behavior
+and understand where trading signals are generated.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create the indicator plot (shows only ask prices for clarity)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">indicator</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">show_bid</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Enhance the plot with additional information</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;CAD/USD with Bollinger Bands Strategy&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Time&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Price&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+<span class="c1"># Add legend</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper left&#39;</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fancybox</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shadow</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Show the plot</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_workflow_001.png" srcset="../_images/sphx_glr_workflow_001.png" alt="CAD/USD with Bollinger Bands Strategy" class = "sphx-glr-single-img"/></section>
+<section id="configure-risk-management">
+<h2>Configure Risk Management<a class="headerlink" href="#configure-risk-management" title="Link to this heading">#</a></h2>
+<p>Before opening positions, we need to set up our exit strategy and risk management
+parameters to control losses and secure profits.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set up static exit strategy with stop loss and take profit</span>
+<span class="n">risk_strategy</span> <span class="o">=</span> <span class="n">exit_strategy</span><span class="o">.</span><span class="n">Static</span><span class="p">(</span>
+    <span class="n">stop_loss</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>              <span class="c1"># Stop loss at 4 pips</span>
+    <span class="n">take_profit</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>            <span class="c1"># Take profit at 4 pips</span>
+    <span class="n">save_price_data</span><span class="o">=</span><span class="kc">True</span>      <span class="c1"># Save price data for analysis</span>
 <span class="p">)</span>
-
+</pre></div>
+</div>
+</section>
+<section id="position-management">
+<h2>Position Management<a class="headerlink" href="#position-management" title="Link to this heading">#</a></h2>
+<p>Create and manage trading positions based on our strategy signals.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create position collection with our market data and trading signals</span>
 <span class="n">position_collection</span> <span class="o">=</span> <span class="n">PositionCollection</span><span class="p">(</span>
     <span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">,</span>
-    <span class="n">trade_signal</span><span class="o">=</span><span class="n">strategy</span><span class="o">.</span><span class="n">get_trade_signal</span><span class="p">(</span><span class="n">market</span><span class="p">),</span>
+    <span class="n">trade_signal</span><span class="o">=</span><span class="n">trade_signals</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">position_collection</span><span class="o">.</span><span class="n">open_positions</span><span class="p">(</span><span class="n">exit_strategy</span><span class="o">=</span><span class="n">exit_strategy</span><span class="p">)</span>
+<span class="c1"># Open positions based on signals and apply exit strategy</span>
+<span class="n">position_collection</span><span class="o">.</span><span class="n">open_positions</span><span class="p">(</span><span class="n">exit_strategy</span><span class="o">=</span><span class="n">risk_strategy</span><span class="p">)</span>
 
+<span class="c1"># Propagate positions through time to simulate trading</span>
 <span class="n">position_collection</span><span class="o">.</span><span class="n">propagate_positions</span><span class="p">()</span>
 
-<span class="n">capital_management</span> <span class="o">=</span> <span class="n">capital_management</span><span class="o">.</span><span class="n">FixedLot</span><span class="p">(</span>
-    <span class="n">capital</span><span class="o">=</span><span class="mi">1_000_000</span><span class="p">,</span>
-    <span class="n">fixed_lot_size</span><span class="o">=</span><span class="mi">10_000</span><span class="p">,</span>
-    <span class="n">max_capital_at_risk</span><span class="o">=</span><span class="mi">100_000</span><span class="p">,</span>
-    <span class="n">max_concurrent_positions</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+<span class="n">total_positions</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">position_collection</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Opened </span><span class="si">{</span><span class="n">total_positions</span><span class="si">}</span><span class="s2"> positions during simulation&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Opened 72 positions during simulation
+</pre></div>
+</div>
+</section>
+<section id="capital-management-setup">
+<h2>Capital Management Setup<a class="headerlink" href="#capital-management-setup" title="Link to this heading">#</a></h2>
+<p>Configure capital management rules to control position sizing and overall risk.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Configure fixed lot capital management</span>
+<span class="n">capital_mgmt</span> <span class="o">=</span> <span class="n">capital_management</span><span class="o">.</span><span class="n">FixedLot</span><span class="p">(</span>
+    <span class="n">capital</span><span class="o">=</span><span class="mi">1_000_000</span><span class="p">,</span>              <span class="c1"># Starting capital: $1M</span>
+    <span class="n">fixed_lot_size</span><span class="o">=</span><span class="mi">10_000</span><span class="p">,</span>          <span class="c1"># Fixed position size: $10K</span>
+    <span class="n">max_capital_at_risk</span><span class="o">=</span><span class="mi">100_000</span><span class="p">,</span>    <span class="c1"># Maximum capital at risk: $100K</span>
+    <span class="n">max_concurrent_positions</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>   <span class="c1"># Maximum concurrent positions: 100</span>
 <span class="p">)</span>
-
-<span class="n">portfolio</span>  <span class="o">=</span> <span class="n">Portfolio</span><span class="p">(</span><span class="n">position_collection</span><span class="o">=</span><span class="n">position_collection</span><span class="p">,</span> <span class="n">debug_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-<span class="n">portfolio</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">capital_management</span><span class="o">=</span><span class="n">capital_management</span><span class="p">)</span>
-
+</pre></div>
+</div>
+</section>
+<section id="portfolio-simulation">
+<h2>Portfolio Simulation<a class="headerlink" href="#portfolio-simulation" title="Link to this heading">#</a></h2>
+<p>Run the complete portfolio simulation to see how our strategy performs.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create portfolio and run simulation</span>
+<span class="n">portfolio</span> <span class="o">=</span> <span class="n">Portfolio</span><span class="p">(</span><span class="n">position_collection</span><span class="o">=</span><span class="n">position_collection</span><span class="p">,</span> <span class="n">debug_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">portfolio</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">capital_management</span><span class="o">=</span><span class="n">capital_mgmt</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="performance-analysis">
+<h2>Performance Analysis<a class="headerlink" href="#performance-analysis" title="Link to this heading">#</a></h2>
+<p>Analyze the results of our trading strategy and display key performance metrics.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get comprehensive performance metrics</span>
 <span class="n">metrics</span> <span class="o">=</span> <span class="n">portfolio</span><span class="o">.</span><span class="n">get_metrics</span><span class="p">()</span>
 
+<span class="c1"># Display all performance metrics</span>
 <span class="n">metrics</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.277 seconds)</p>
+</section>
+<section id="results-interpretation-and-summary">
+<h2>Results Interpretation and Summary<a class="headerlink" href="#results-interpretation-and-summary" title="Link to this heading">#</a></h2>
+<p>Let’s interpret the results and provide insights about the strategy performance.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span><span class="o">*</span><span class="mi">60</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;STRATEGY INSIGHTS AND INTERPRETATION&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="o">*</span><span class="mi">60</span><span class="p">)</span>
+
+<span class="c1"># Strategy summary</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Strategy Summary:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   - Indicator: Bollinger Bands (3-min window, 1.0 sigma)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   - Risk Management: 4-pip stop loss &amp; take profit&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   - Capital: $1M with $10K fixed lot sizes&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   - Time Period: 4 hours of CAD/USD data&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   - Total Positions: </span><span class="si">{</span><span class="n">total_positions</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Key Takeaways:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   - This example demonstrates a complete TradeTide workflow&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   - Bollinger Bands provide volatility-based trading signals&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   - Risk management is crucial for protecting capital&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   - Portfolio simulation enables strategy evaluation&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Next Steps:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   - Experiment with different indicator parameters&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   - Try alternative exit strategies&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   - Test on different currency pairs and timeframes&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   - Implement additional technical indicators&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>============================================================
+STRATEGY INSIGHTS AND INTERPRETATION
+============================================================
+
+Strategy Summary:
+   - Indicator: Bollinger Bands (3-min window, 1.0 sigma)
+   - Risk Management: 4-pip stop loss &amp; take profit
+   - Capital: $1M with $10K fixed lot sizes
+   - Time Period: 4 hours of CAD/USD data
+   - Total Positions: 72
+
+Key Takeaways:
+   - This example demonstrates a complete TradeTide workflow
+   - Bollinger Bands provide volatility-based trading signals
+   - Risk management is crucial for protecting capital
+   - Portfolio simulation enables strategy evaluation
+
+Next Steps:
+   - Experiment with different indicator parameters
+   - Try alternative exit strategies
+   - Test on different currency pairs and timeframes
+   - Implement additional technical indicators
+</pre></div>
+</div>
+</section>
+<section id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading">#</a></h2>
+<p>This example showcased a complete trading workflow using TradeTide.
+The modular design allows easy experimentation with different strategies,
+indicators, and risk management approaches.</p>
+<p>For more advanced examples, explore:</p>
+<ul class="simple">
+<li><p>Multi-indicator strategies</p></li>
+<li><p>Dynamic exit strategies</p></li>
+<li><p>Portfolio optimization</p></li>
+<li><p>Walk-forward analysis</p></li>
+</ul>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.322 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-workflow-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/41125c336e4e3c3f05d6c417dd13e207/workflow.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">workflow.ipynb</span></code></a></p>
@@ -541,6 +717,7 @@ to download the full example code.</p>
 </div>
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
 </section>
 
 
@@ -557,6 +734,29 @@ to download the full example code.</p>
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-required-libraries">Import Required Libraries</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-market-data">Load Market Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configure-bollinger-bands-indicator">Configure Bollinger Bands Indicator</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-trading-strategy">Build Trading Strategy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-bollinger-bands-and-market-data">Visualize Bollinger Bands and Market Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configure-risk-management">Configure Risk Management</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#position-management">Position Management</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#capital-management-setup">Capital Management Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#portfolio-simulation">Portfolio Simulation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-analysis">Performance Analysis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#results-interpretation-and-summary">Results Interpretation and Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusion">Conclusion</a></li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

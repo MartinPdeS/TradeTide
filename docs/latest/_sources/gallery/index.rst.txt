@@ -80,7 +80,7 @@ Examples: Tutorials
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates a complete trading workflow using the TradeTide library.">
+    <div class="sphx-glr-thumbcontainer" tooltip="This comprehensive example demonstrates a complete end-to-end trading workflow using the TradeTide library. We&#x27;ll build a Bollinger Bands-based trading strategy, backtest it on historical CAD/USD data, and analyze the results.">
 
 .. only:: html
 
@@ -91,7 +91,7 @@ Examples: Tutorials
 
 .. raw:: html
 
-      <div class="sphx-glr-thumbnail-title">Trading Workflow Example</div>
+      <div class="sphx-glr-thumbnail-title">Complete Trading Strategy Workflow with Bollinger Bands</div>
     </div>
 
 

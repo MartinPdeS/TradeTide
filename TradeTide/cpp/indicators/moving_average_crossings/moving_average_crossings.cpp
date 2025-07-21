@@ -1,6 +1,9 @@
 #include "moving_average_crossings.h"
+#include <iostream>
 
-MovingAverageCrossing::MovingAverageCrossing(size_t short_window, size_t long_window) : short_window(short_window), long_window(long_window) {
+MovingAverageCrossing::MovingAverageCrossing(size_t short_window, size_t long_window)
+: short_window(short_window), long_window(long_window)
+{
     assert(short_window < long_window && "short_window should be smaller than long_window");
 }
 

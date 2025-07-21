@@ -5,6 +5,7 @@ from TradeTide.market import Market
 from datetime import timedelta
 import matplotlib.pyplot as plt
 from TradeTide.indicators.base import BaseIndicator
+from TradeTide.simulation_settings import SimulationSettings
 
 
 class BollingerBands(BOLLINGERBANDS, BaseIndicator):
@@ -25,7 +26,12 @@ class BollingerBands(BOLLINGERBANDS, BaseIndicator):
         self.window = window
         self.multiplier = multiplier
 
-        super().__init__()
+        int_window = int(window.total_seconds() / SimulationSettings().get_time_unit().total_seconds())
+
+        super().__init__(
+            window=int_window,
+            multiplier=multiplier
+        )
 
     def run(self, market: Market) -> None:
         """
@@ -43,10 +49,6 @@ class BollingerBands(BOLLINGERBANDS, BaseIndicator):
         ValueError: If the market does not contain enough data points to calculate the moving averages.
         """
         self.market = market
-        time_delta = market.dates[1] - market.dates[0]
-
-        self._cpp_window = int(self.window / time_delta)
-        self._cpp_multiplier = self.multiplier
 
         self._cpp_run_with_market(market)
 

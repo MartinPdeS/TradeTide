@@ -5,6 +5,7 @@ from TradeTide.market import Market
 from datetime import timedelta
 import matplotlib.pyplot as plt
 from TradeTide.indicators.base import BaseIndicator
+from TradeTide.simulation_settings import SimulationSettings
 
 
 class MovingAverageCrossing(MOVINGAVERAGECROSSING, BaseIndicator):
@@ -26,7 +27,13 @@ class MovingAverageCrossing(MOVINGAVERAGECROSSING, BaseIndicator):
         self.short_window = short_window
         self.long_window = long_window
 
-        super().__init__()
+        int_short_window = int(short_window.total_seconds() / SimulationSettings().get_time_unit().total_seconds())
+        int_long_window = int(long_window.total_seconds() / SimulationSettings().get_time_unit().total_seconds())
+
+        super().__init__(
+            short_window=int_short_window,
+            long_window=int_long_window
+        )
 
     def run(self, market: Market) -> None:
         """
@@ -44,10 +51,6 @@ class MovingAverageCrossing(MOVINGAVERAGECROSSING, BaseIndicator):
         ValueError: If the market does not contain enough data points to calculate the moving averages.
         """
         self.market = market
-        time_delta = market.dates[1] - market.dates[0]
-
-        self._cpp_short_window = int(self.short_window / time_delta)
-        self._cpp_long_window = int(self.long_window / time_delta)
 
         self._cpp_run_with_market(market)
 

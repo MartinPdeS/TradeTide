@@ -29,9 +29,7 @@ class Signal {
          * @brief Construct signal aligned with given market.
          * @param market Market object providing timeline and metadata.
          */
-        explicit Signal(const Market& market) : market(market) {
-            this->trade_signal.resize(market.dates.size(), 0);
-        }
+        explicit Signal(const Market& market);
 
         /**
          * @brief Generate random long/short/neutral signals.

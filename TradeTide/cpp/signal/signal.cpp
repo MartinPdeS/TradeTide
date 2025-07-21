@@ -1,25 +1,27 @@
 #include "signal.h"
 
 
-/**
- * @brief Represents a trading signal time series linked to a Market.
- *
- * A signal is a vector of integers (typically -1, 0, +1) representing short, no trade, or long entries.
- * Provides utilities to generate, inspect, and validate signal sequences.
- */
+Signal::Signal(const Market& market) : market(market) {
+    if (market.dates.empty())
+        throw std::invalid_argument("Market must have valid dates for signal alignment.");
+    this->trade_signal.resize(market.dates.size(), 0);
+}
 
 void Signal::generate_random(const double probability) {
+    if (probability < 0.0 || probability > 1.0)
+        throw std::invalid_argument("Probability must be between 0.0 and 1.0");
+
     std::mt19937 rng(std::random_device{}());
     std::uniform_real_distribution<double> dist(0.0, 1.0);
     std::bernoulli_distribution direction(0.5);
 
     this->trade_signal.clear();
     for (size_t i = 0; i < this->market.dates.size(); ++i) {
-        if (dist(rng) < probability) {
+        if (dist(rng) < probability)
             this->trade_signal.push_back(direction(rng) ? 1 : -1);
-        } else {
+        else
             this->trade_signal.push_back(0);
-        }
+
     }
 }
 

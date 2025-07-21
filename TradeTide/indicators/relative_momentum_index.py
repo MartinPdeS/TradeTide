@@ -5,6 +5,7 @@ from TradeTide.market import Market
 from datetime import timedelta
 import matplotlib.pyplot as plt
 from TradeTide.indicators.base import BaseIndicator
+from TradeTide.simulation_settings import SimulationSettings
 
 
 class RelativeMomentumIndex(RELATIVEMOMENTUMINDEX, BaseIndicator):
@@ -30,7 +31,15 @@ class RelativeMomentumIndex(RELATIVEMOMENTUMINDEX, BaseIndicator):
         self.over_bought = over_bought
         self.over_sold = over_sold
 
-        super().__init__()
+        int_momentum_period = int(momentum_period.total_seconds() / SimulationSettings().get_time_unit().total_seconds())
+        int_smooth_window = int(smooth_window.total_seconds() / SimulationSettings().get_time_unit().total_seconds())
+
+        super().__init__(
+            momentum_period=int_momentum_period,
+            smooth_period=int_smooth_window,
+            over_bought=over_bought,
+            over_sold=over_sold
+        )
 
     def run(self, market: Market) -> None:
         """
@@ -48,12 +57,6 @@ class RelativeMomentumIndex(RELATIVEMOMENTUMINDEX, BaseIndicator):
         ValueError: If the market does not contain enough data points to calculate the moving averages.
         """
         self.market = market
-        time_delta = market.dates[1] - market.dates[0]
-
-        self._cpp_momentum_period = int(self.momentum_period / time_delta)
-        self._cpp_smooth_window = int(self.smooth_window / time_delta)
-        self._cpp_over_bought = self.over_bought
-        self._cpp_over_sold = self.over_sold
 
         self._cpp_run_with_market(market)
 

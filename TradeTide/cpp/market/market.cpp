@@ -97,6 +97,9 @@ std::vector<std::string> Market::split_csv_line(const std::string& line) {
 
     // Loads CSV and stops when time_span is exceeded, requiring pip_value metadata
 void Market::load_from_csv(const std::string& filename, const std::chrono::system_clock::duration& time_span) {
+    if (time_span <= std::chrono::system_clock::duration::zero())
+        throw std::invalid_argument("Time span must be positive");
+
     std::ifstream file(filename);
     if (!file.is_open())
         throw std::runtime_error("Cannot open file: " + filename);
@@ -170,3 +173,63 @@ void Market::load_from_csv(const std::string& filename, const std::chrono::syste
         );
     }
 };
+
+void Market::add_market_data(const TimePoint& timestamp, double ask_open, double ask_high, double ask_low, double ask_close, double bid_open, double bid_high, double bid_low, double bid_close) {
+    // Validate OHLC relationships for ask prices
+    if (ask_low > ask_open || ask_low > ask_close || ask_low > ask_high) {
+        throw std::invalid_argument("Ask low price cannot be greater than open, close, or high prices");
+    }
+    if (ask_high < ask_open || ask_high < ask_close || ask_high < ask_low) {
+        throw std::invalid_argument("Ask high price cannot be less than open, close, or low prices");
+    }
+
+    // Validate OHLC relationships for bid prices
+    if (bid_low > bid_open || bid_low > bid_close || bid_low > bid_high) {
+        throw std::invalid_argument("Bid low price cannot be greater than open, close, or high prices");
+    }
+    if (bid_high < bid_open || bid_high < bid_close || bid_high < bid_low) {
+        throw std::invalid_argument("Bid high price cannot be less than open, close, or low prices");
+    }
+
+    // Validate bid-ask spread (bid should be <= ask for all prices)
+    if (bid_open > ask_open || bid_high > ask_high || bid_low > ask_low || bid_close > ask_close) {
+        throw std::invalid_argument("Bid prices cannot be greater than corresponding ask prices");
+    }
+
+    // Validate chronological order
+    if (!dates.empty() && timestamp < dates.back()) {
+        throw std::logic_error("New timestamp must be greater than or equal to the last timestamp");
+    }
+
+    // Add data to the respective containers
+    ask.push_back(timestamp, ask_open, ask_low, ask_high, ask_close);
+    bid.push_back(timestamp, bid_open, bid_low, bid_high, bid_close);
+    dates.push_back(timestamp);
+
+    // Update market metadata
+    number_of_elements = dates.size();
+    if (dates.size() == 1) {
+        start_date = timestamp;
+    }
+    end_date = timestamp;
+
+    // Calculate interval if we have at least 2 data points
+    if (dates.size() >= 2) {
+        interval = dates.back() - dates[dates.size() - 2];
+    }
+}
+
+void Market::add_tick(const TimePoint& timestamp, double ask_price, double bid_price) {
+    // Validate bid-ask spread
+    if (bid_price > ask_price) {
+        throw std::invalid_argument("Bid price cannot be greater than ask price");
+    }
+
+    // Validate chronological order
+    if (!dates.empty() && timestamp < dates.back()) {
+        throw std::logic_error("New timestamp must be greater than or equal to the last timestamp");
+    }
+
+    // Use the same price for all OHLC values (tick data)
+    add_market_data(timestamp, ask_price, ask_price, ask_price, ask_price, bid_price, bid_price, bid_price, bid_price);
+}

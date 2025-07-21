@@ -91,6 +91,7 @@ class Market(interface_market.Market):
             ValueError: If `time_span` cannot be parsed or `price_type` is invalid.
             RuntimeError: On CSV parsing errors (malformed lines, missing columns, etc.).
         """
+        self.currency_pair = (currency_0, currency_1)
         # 1) Normalize time_span to a timedelta
         ts = self._parse_timespan(time_span)
         self.time_span = ts

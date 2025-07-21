@@ -76,7 +76,7 @@ This example demonstrates how to use the Moving Average Crossings indicator with
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.372 seconds)
+   **Total running time of the script:** (0 minutes 0.386 seconds)
 
 
 .. _sphx_glr_download_gallery_moving_average_crossings.py:

@@ -107,7 +107,6 @@ void Portfolio::try_open_positions() {
         PositionPtr& position = this->position_collection.positions[this->state.position_index];
 
         // If we can't open more positions now, skip this one (but advance index!)
-        // if (this->capital_management->can_open_position(position))
         this->open_position(position);
 
         ++this->state.position_index;
@@ -134,7 +133,7 @@ void Portfolio::simulate(BaseCapitalManagement& capital_management) {
         this->try_close_positions();
         this->try_open_positions();
 
-        if (time_idx == this->position_collection.market.dates.size() - 1)
+        if (time_idx == this->position_collection.market.dates.size() - 2)
             this->terminate_open_positions();
 
         this->state.capital_at_risk = this->calculate_capital_at_risk();

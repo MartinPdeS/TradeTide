@@ -47,40 +47,52 @@ Coding example
 
 .. code-block:: python
 
-   from TradeTide import BackTester, indicators, get_market_data
-   from TradeTide import capital_managment, risk_management
+   from TradeTide import Backtester, Strategy, Market, Currency, days, hours, minutes
+   from TradeTide.indicators import BollingerBands
+   from TradeTide import capital_management, exit_strategy
 
-   market_data = get_market_data('eur', 'usd', year=2023, time_span='30day', spread=0)
+   market = Market()
 
-   indicator =  indicators.BB(periods=20)
-
-   indicator.generate_signal(market_data)
-
-   indicator.plot()
-
-   backtester = BackTester(market=market_data, strategy=indicator)
-
-   risk = risk_management.DirectLossProfit(
-       market=market_data,
-       stop_loss='10pip',
-       take_profit='10pip',
+   market.load_from_database(
+      currency_0=Currency.CAD,
+      currency_1=Currency.USD,
+      time_span=100 * days,
    )
 
-   capital_managment = capital_managment.LimitedCapital(
-       initial_capital=100_000,
-       risk_management=risk,
-       max_cap_per_trade=10_000,
-       limit_of_positions=1,
-       micro_lot=1_000
+   indicator = BollingerBands(
+      window=3 * minutes,
+      multiplier=2.0
    )
 
-   backtester.backtest(capital_managment=capital_managment)
+   indicator.run(market)
 
-   backtester.plot(show_price=True)
+   strategy = Strategy()
 
-   metrics = backtester.metrics
+   strategy.add_indicator(indicator)
 
-   metrics.print()
+   exit_strategy = exit_strategy.Static(
+      stop_loss=4,
+      take_profit=4,
+      save_price_data=True
+   )
+
+   capital_management = capital_management.FixedLot(
+      capital=1_000_000,
+      fixed_lot_size=10_000,
+      max_capital_at_risk=100_000,
+      max_concurrent_positions=100,
+   )
+
+   backtester = Backtester(
+      strategy=strategy,
+      exit_strategy=exit_strategy,
+      market=market,
+      capital_management=capital_management,
+   )
+
+   backtester.run()
+
+   backtester.print_performance()
 
 
 |example|

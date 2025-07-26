@@ -12,7 +12,7 @@ Examples: Tutorials
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates a complete backtesting workflow using the TradeTide library.">
+    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to use TradeTide&#x27;s Backtester class for automated strategy evaluation. The Backtester streamlines the entire workflow by handling position management, portfolio simulation, and performance analysis automatically.">
 
 .. only:: html
 
@@ -23,7 +23,7 @@ Examples: Tutorials
 
 .. raw:: html
 
-      <div class="sphx-glr-thumbnail-title">Backtester Workflow Example</div>
+      <div class="sphx-glr-thumbnail-title">Automated Backtesting with Bollinger Bands Strategy</div>
     </div>
 
 

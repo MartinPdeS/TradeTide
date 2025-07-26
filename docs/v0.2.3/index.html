@@ -428,7 +428,7 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <p><strong>Date</strong>: Jul 21, 2025, <strong>Version</strong>: 0.2.3</p>
+  <p><strong>Date</strong>: Jul 26, 2025, <strong>Version</strong>: 0.2.3</p>
 <p><img alt="TradeTide logo" src="https://github.com/MartinPdeS/TradeTide/raw/master/docs/images/logo.png" /></p>
 <div class="pst-scrollable-table-container"><table class="table">
 <colgroup>
@@ -477,40 +477,52 @@
 <hr class="docutils" />
 <section id="coding-example">
 <h2>Coding example<a class="headerlink" href="#coding-example" title="Link to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">BackTester</span><span class="p">,</span> <span class="n">indicators</span><span class="p">,</span> <span class="n">get_market_data</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">capital_managment</span><span class="p">,</span> <span class="n">risk_management</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">Backtester</span><span class="p">,</span> <span class="n">Strategy</span><span class="p">,</span> <span class="n">Market</span><span class="p">,</span> <span class="n">Currency</span><span class="p">,</span> <span class="n">days</span><span class="p">,</span> <span class="n">hours</span><span class="p">,</span> <span class="n">minutes</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.indicators</span><span class="w"> </span><span class="kn">import</span> <span class="n">BollingerBands</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">capital_management</span><span class="p">,</span> <span class="n">exit_strategy</span>
 
-<span class="n">market_data</span> <span class="o">=</span> <span class="n">get_market_data</span><span class="p">(</span><span class="s1">&#39;eur&#39;</span><span class="p">,</span> <span class="s1">&#39;usd&#39;</span><span class="p">,</span> <span class="n">year</span><span class="o">=</span><span class="mi">2023</span><span class="p">,</span> <span class="n">time_span</span><span class="o">=</span><span class="s1">&#39;30day&#39;</span><span class="p">,</span> <span class="n">spread</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">market</span> <span class="o">=</span> <span class="n">Market</span><span class="p">()</span>
 
-<span class="n">indicator</span> <span class="o">=</span>  <span class="n">indicators</span><span class="o">.</span><span class="n">BB</span><span class="p">(</span><span class="n">periods</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
-
-<span class="n">indicator</span><span class="o">.</span><span class="n">generate_signal</span><span class="p">(</span><span class="n">market_data</span><span class="p">)</span>
-
-<span class="n">indicator</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-
-<span class="n">backtester</span> <span class="o">=</span> <span class="n">BackTester</span><span class="p">(</span><span class="n">market</span><span class="o">=</span><span class="n">market_data</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="n">indicator</span><span class="p">)</span>
-
-<span class="n">risk</span> <span class="o">=</span> <span class="n">risk_management</span><span class="o">.</span><span class="n">DirectLossProfit</span><span class="p">(</span>
-    <span class="n">market</span><span class="o">=</span><span class="n">market_data</span><span class="p">,</span>
-    <span class="n">stop_loss</span><span class="o">=</span><span class="s1">&#39;10pip&#39;</span><span class="p">,</span>
-    <span class="n">take_profit</span><span class="o">=</span><span class="s1">&#39;10pip&#39;</span><span class="p">,</span>
+<span class="n">market</span><span class="o">.</span><span class="n">load_from_database</span><span class="p">(</span>
+   <span class="n">currency_0</span><span class="o">=</span><span class="n">Currency</span><span class="o">.</span><span class="n">CAD</span><span class="p">,</span>
+   <span class="n">currency_1</span><span class="o">=</span><span class="n">Currency</span><span class="o">.</span><span class="n">USD</span><span class="p">,</span>
+   <span class="n">time_span</span><span class="o">=</span><span class="mi">100</span> <span class="o">*</span> <span class="n">days</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">capital_managment</span> <span class="o">=</span> <span class="n">capital_managment</span><span class="o">.</span><span class="n">LimitedCapital</span><span class="p">(</span>
-    <span class="n">initial_capital</span><span class="o">=</span><span class="mi">100_000</span><span class="p">,</span>
-    <span class="n">risk_management</span><span class="o">=</span><span class="n">risk</span><span class="p">,</span>
-    <span class="n">max_cap_per_trade</span><span class="o">=</span><span class="mi">10_000</span><span class="p">,</span>
-    <span class="n">limit_of_positions</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="n">micro_lot</span><span class="o">=</span><span class="mi">1_000</span>
+<span class="n">indicator</span> <span class="o">=</span> <span class="n">BollingerBands</span><span class="p">(</span>
+   <span class="n">window</span><span class="o">=</span><span class="mi">3</span> <span class="o">*</span> <span class="n">minutes</span><span class="p">,</span>
+   <span class="n">multiplier</span><span class="o">=</span><span class="mf">2.0</span>
 <span class="p">)</span>
 
-<span class="n">backtester</span><span class="o">.</span><span class="n">backtest</span><span class="p">(</span><span class="n">capital_managment</span><span class="o">=</span><span class="n">capital_managment</span><span class="p">)</span>
+<span class="n">indicator</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">market</span><span class="p">)</span>
 
-<span class="n">backtester</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">show_price</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">strategy</span> <span class="o">=</span> <span class="n">Strategy</span><span class="p">()</span>
 
-<span class="n">metrics</span> <span class="o">=</span> <span class="n">backtester</span><span class="o">.</span><span class="n">metrics</span>
+<span class="n">strategy</span><span class="o">.</span><span class="n">add_indicator</span><span class="p">(</span><span class="n">indicator</span><span class="p">)</span>
 
-<span class="n">metrics</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+<span class="n">exit_strategy</span> <span class="o">=</span> <span class="n">exit_strategy</span><span class="o">.</span><span class="n">Static</span><span class="p">(</span>
+   <span class="n">stop_loss</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+   <span class="n">take_profit</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+   <span class="n">save_price_data</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="n">capital_management</span> <span class="o">=</span> <span class="n">capital_management</span><span class="o">.</span><span class="n">FixedLot</span><span class="p">(</span>
+   <span class="n">capital</span><span class="o">=</span><span class="mi">1_000_000</span><span class="p">,</span>
+   <span class="n">fixed_lot_size</span><span class="o">=</span><span class="mi">10_000</span><span class="p">,</span>
+   <span class="n">max_capital_at_risk</span><span class="o">=</span><span class="mi">100_000</span><span class="p">,</span>
+   <span class="n">max_concurrent_positions</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">backtester</span> <span class="o">=</span> <span class="n">Backtester</span><span class="p">(</span>
+   <span class="n">strategy</span><span class="o">=</span><span class="n">strategy</span><span class="p">,</span>
+   <span class="n">exit_strategy</span><span class="o">=</span><span class="n">exit_strategy</span><span class="p">,</span>
+   <span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">,</span>
+   <span class="n">capital_management</span><span class="o">=</span><span class="n">capital_management</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">backtester</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="n">backtester</span><span class="o">.</span><span class="n">print_performance</span><span class="p">()</span>
 </pre></div>
 </div>
 <p><a class="reference internal" href="https://github.com/MartinPdeS/TradeTide/raw/master/docs/images/image_example.png"><img alt="Qsca vs diameter" src="https://github.com/MartinPdeS/TradeTide/raw/master/docs/images/image_example.png" style="width: 800px;" /></a></p>

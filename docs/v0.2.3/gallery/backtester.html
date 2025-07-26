@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Backtester Workflow Example &#8212; TradeTide  documentation</title>
+    <title>Automated Backtesting with Bollinger Bands Strategy &#8212; TradeTide  documentation</title>
   
   
   
@@ -405,7 +405,7 @@
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Backtester Workflow Example</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Automated Backtesting with Bollinger Bands Strategy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bollinger_bands.html">Bollinger Bands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="moving_average_crossings.html">Moving Average Crossings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="relative_momentum_index.html">Relative Momentum Index</a></li>
@@ -453,7 +453,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">Examples: Tutorials</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Backtester Workflow Example</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Automated Backtesting with Bollinger Bands Strategy</span></li>
   </ul>
 </nav>
 </div>
@@ -475,22 +475,49 @@
 <p><a class="reference internal" href="#sphx-glr-download-gallery-backtester-py"><span class="std std-ref">Go to the end</span></a>
 to download the full example code.</p>
 </div>
-<section class="sphx-glr-example-title" id="backtester-workflow-example">
-<span id="sphx-glr-gallery-backtester-py"></span><h1>Backtester Workflow Example<a class="headerlink" href="#backtester-workflow-example" title="Link to this heading">#</a></h1>
-<p>This example demonstrates a complete backtesting workflow using the TradeTide library.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">Backtester</span><span class="p">,</span> <span class="n">Strategy</span><span class="p">,</span> <span class="n">Market</span><span class="p">,</span> <span class="n">Currency</span><span class="p">,</span> <span class="n">days</span><span class="p">,</span> <span class="n">hours</span><span class="p">,</span> <span class="n">minutes</span>
+<section class="sphx-glr-example-title" id="automated-backtesting-with-bollinger-bands-strategy">
+<span id="sphx-glr-gallery-backtester-py"></span><h1>Automated Backtesting with Bollinger Bands Strategy<a class="headerlink" href="#automated-backtesting-with-bollinger-bands-strategy" title="Link to this heading">#</a></h1>
+<p>This example demonstrates how to use TradeTide’s Backtester class for automated
+strategy evaluation. The Backtester streamlines the entire workflow by handling
+position management, portfolio simulation, and performance analysis automatically.</p>
+<p>We’ll test a Bollinger Bands strategy on 100 days of CAD/USD data to evaluate
+its historical performance and risk characteristics.</p>
+<section id="import-libraries-and-setup">
+<h2>Import Libraries and Setup<a class="headerlink" href="#import-libraries-and-setup" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">Backtester</span><span class="p">,</span> <span class="n">Strategy</span><span class="p">,</span> <span class="n">Market</span><span class="p">,</span> <span class="n">Currency</span><span class="p">,</span> <span class="n">days</span><span class="p">,</span> <span class="n">hours</span><span class="p">,</span> <span class="n">minutes</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.indicators</span><span class="w"> </span><span class="kn">import</span> <span class="n">BollingerBands</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">capital_management</span><span class="p">,</span> <span class="n">exit_strategy</span>
 
-<span class="n">market</span> <span class="o">=</span> <span class="n">Market</span><span class="p">()</span>
+<span class="c1"># Configure plotting</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;seaborn-v0_8-darkgrid&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="load-historical-market-data">
+<h2>Load Historical Market Data<a class="headerlink" href="#load-historical-market-data" title="Link to this heading">#</a></h2>
+<p>Load 100 days of CAD/USD forex data for comprehensive backtesting.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">market</span> <span class="o">=</span> <span class="n">Market</span><span class="p">()</span>
 
 <span class="n">market</span><span class="o">.</span><span class="n">load_from_database</span><span class="p">(</span>
     <span class="n">currency_0</span><span class="o">=</span><span class="n">Currency</span><span class="o">.</span><span class="n">CAD</span><span class="p">,</span>
     <span class="n">currency_1</span><span class="o">=</span><span class="n">Currency</span><span class="o">.</span><span class="n">USD</span><span class="p">,</span>
-    <span class="n">time_span</span><span class="o">=</span><span class="mi">100</span> <span class="o">*</span> <span class="n">days</span><span class="p">,</span>
+    <span class="n">time_span</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">days</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">indicator</span> <span class="o">=</span> <span class="n">BollingerBands</span><span class="p">(</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">market</span><span class="o">.</span><span class="n">dates</span><span class="p">)</span><span class="si">}</span><span class="s2"> data points over </span><span class="si">{</span><span class="mi">100</span><span class="si">}</span><span class="s2"> days&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Loaded 2857 data points over 100 days
+</pre></div>
+</div>
+</section>
+<section id="configure-trading-strategy">
+<h2>Configure Trading Strategy<a class="headerlink" href="#configure-trading-strategy" title="Link to this heading">#</a></h2>
+<p>Set up a Bollinger Bands strategy with 2.0 standard deviation bands
+for more conservative signal generation.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">indicator</span> <span class="o">=</span> <span class="n">BollingerBands</span><span class="p">(</span>
     <span class="n">window</span><span class="o">=</span><span class="mi">3</span> <span class="o">*</span> <span class="n">minutes</span><span class="p">,</span>
     <span class="n">multiplier</span><span class="o">=</span><span class="mf">2.0</span>
 <span class="p">)</span>
@@ -498,35 +525,57 @@ to download the full example code.</p>
 <span class="n">indicator</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">market</span><span class="p">)</span>
 
 <span class="n">strategy</span> <span class="o">=</span> <span class="n">Strategy</span><span class="p">()</span>
-
 <span class="n">strategy</span><span class="o">.</span><span class="n">add_indicator</span><span class="p">(</span><span class="n">indicator</span><span class="p">)</span>
-
-<span class="n">exit_strategy</span> <span class="o">=</span> <span class="n">exit_strategy</span><span class="o">.</span><span class="n">Static</span><span class="p">(</span>
+</pre></div>
+</div>
+</section>
+<section id="define-risk-management">
+<h2>Define Risk Management<a class="headerlink" href="#define-risk-management" title="Link to this heading">#</a></h2>
+<p>Configure exit strategy and capital management parameters.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">exit_strat</span> <span class="o">=</span> <span class="n">exit_strategy</span><span class="o">.</span><span class="n">Static</span><span class="p">(</span>
     <span class="n">stop_loss</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
     <span class="n">take_profit</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
     <span class="n">save_price_data</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 
-<span class="n">capital_management</span> <span class="o">=</span> <span class="n">capital_management</span><span class="o">.</span><span class="n">FixedLot</span><span class="p">(</span>
-    <span class="n">capital</span><span class="o">=</span><span class="mi">1_000_000</span><span class="p">,</span>
-    <span class="n">fixed_lot_size</span><span class="o">=</span><span class="mi">10_000</span><span class="p">,</span>
+<span class="n">capital_mgmt</span> <span class="o">=</span> <span class="n">capital_management</span><span class="o">.</span><span class="n">FixedLot</span><span class="p">(</span>
+    <span class="n">capital</span><span class="o">=</span><span class="mi">1_000</span><span class="p">,</span>
+    <span class="n">fixed_lot_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
     <span class="n">max_capital_at_risk</span><span class="o">=</span><span class="mi">100_000</span><span class="p">,</span>
-    <span class="n">max_concurrent_positions</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">max_concurrent_positions</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
 <span class="p">)</span>
-
-<span class="n">backtester</span> <span class="o">=</span> <span class="n">Backtester</span><span class="p">(</span>
+</pre></div>
+</div>
+</section>
+<section id="run-backtest">
+<h2>Run Backtest<a class="headerlink" href="#run-backtest" title="Link to this heading">#</a></h2>
+<p>The Backtester automatically handles the complete workflow:
+strategy execution, position management, and performance calculation.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">backtester</span> <span class="o">=</span> <span class="n">Backtester</span><span class="p">(</span>
     <span class="n">strategy</span><span class="o">=</span><span class="n">strategy</span><span class="p">,</span>
-    <span class="n">exit_strategy</span><span class="o">=</span><span class="n">exit_strategy</span><span class="p">,</span>
+    <span class="n">exit_strategy</span><span class="o">=</span><span class="n">exit_strat</span><span class="p">,</span>
     <span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">,</span>
-    <span class="n">capital_management</span><span class="o">=</span><span class="n">capital_management</span><span class="p">,</span>
+    <span class="n">capital_management</span><span class="o">=</span><span class="n">capital_mgmt</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">backtester</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 
-<span class="n">backtester</span><span class="o">.</span><span class="n">print_performance</span><span class="p">()</span>
+<span class="n">backtester</span><span class="o">.</span><span class="n">plot_summary</span><span class="p">()</span>
+
+<span class="c1"># print(backtester.portfolio)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.482 seconds)</p>
+<img src="../_images/sphx_glr_backtester_001.png" srcset="../_images/sphx_glr_backtester_001.png" alt="Backtesting Summary Dashboard, Trading Strategy Overview, Portfolio Equity Curve, Portfolio Drawdown, Open Positions Over Time, Key Performance Indicators" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;Figure size 1600x1200 with 5 Axes&gt;
+</pre></div>
+</div>
+</section>
+<section id="display-results">
+<h2>Display Results<a class="headerlink" href="#display-results" title="Link to this heading">#</a></h2>
+<p>View comprehensive performance metrics and analysis.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">backtester</span><span class="o">.</span><span class="n">print_performance</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.099 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-backtester-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/5eac73c04a7f10b4518daee59f2aac94/backtester.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">backtester.ipynb</span></code></a></p>
@@ -539,6 +588,7 @@ to download the full example code.</p>
 </div>
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
 </section>
 
 
@@ -555,6 +605,23 @@ to download the full example code.</p>
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-libraries-and-setup">Import Libraries and Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-historical-market-data">Load Historical Market Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configure-trading-strategy">Configure Trading Strategy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#define-risk-management">Define Risk Management</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-backtest">Run Backtest</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#display-results">Display Results</a></li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

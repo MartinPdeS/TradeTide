@@ -18,34 +18,87 @@
 .. _sphx_glr_gallery_backtester.py:
 
 
-Backtester Workflow Example
----------------------------
+Automated Backtesting with Bollinger Bands Strategy
+====================================================
 
-This example demonstrates a complete backtesting workflow using the TradeTide library.
+This example demonstrates how to use TradeTide's Backtester class for automated
+strategy evaluation. The Backtester streamlines the entire workflow by handling
+position management, portfolio simulation, and performance analysis automatically.
 
-.. GENERATED FROM PYTHON SOURCE LINES 8-55
+We'll test a Bollinger Bands strategy on 100 days of CAD/USD data to evaluate
+its historical performance and risk characteristics.
 
+.. GENERATED FROM PYTHON SOURCE LINES 14-16
 
+Import Libraries and Setup
+--------------------------
 
-
-
-
+.. GENERATED FROM PYTHON SOURCE LINES 16-26
 
 .. code-block:: Python
 
 
-
+    import matplotlib.pyplot as plt
     from TradeTide import Backtester, Strategy, Market, Currency, days, hours, minutes
     from TradeTide.indicators import BollingerBands
     from TradeTide import capital_management, exit_strategy
+
+    # Configure plotting
+    plt.style.use('seaborn-v0_8-darkgrid')
+    plt.rcParams['figure.figsize'] = (12, 6)
+
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 27-30
+
+Load Historical Market Data
+---------------------------
+Load 100 days of CAD/USD forex data for comprehensive backtesting.
+
+.. GENERATED FROM PYTHON SOURCE LINES 30-41
+
+.. code-block:: Python
+
 
     market = Market()
 
     market.load_from_database(
         currency_0=Currency.CAD,
         currency_1=Currency.USD,
-        time_span=100 * days,
+        time_span=2 * days,
     )
+
+    print(f"Loaded {len(market.dates)} data points over {100} days")
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    Loaded 2857 data points over 100 days
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 42-46
+
+Configure Trading Strategy
+--------------------------
+Set up a Bollinger Bands strategy with 2.0 standard deviation bands
+for more conservative signal generation.
+
+.. GENERATED FROM PYTHON SOURCE LINES 46-57
+
+.. code-block:: Python
+
 
     indicator = BollingerBands(
         window=3 * minutes,
@@ -55,36 +108,111 @@ This example demonstrates a complete backtesting workflow using the TradeTide li
     indicator.run(market)
 
     strategy = Strategy()
-
     strategy.add_indicator(indicator)
 
-    exit_strategy = exit_strategy.Static(
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 58-61
+
+Define Risk Management
+----------------------
+Configure exit strategy and capital management parameters.
+
+.. GENERATED FROM PYTHON SOURCE LINES 61-75
+
+.. code-block:: Python
+
+
+    exit_strat = exit_strategy.Static(
         stop_loss=4,
         take_profit=4,
         save_price_data=True
     )
 
-    capital_management = capital_management.FixedLot(
-        capital=1_000_000,
-        fixed_lot_size=10_000,
+    capital_mgmt = capital_management.FixedLot(
+        capital=1_000,
+        fixed_lot_size=10,
         max_capital_at_risk=100_000,
-        max_concurrent_positions=100,
+        max_concurrent_positions=10,
     )
+
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 76-80
+
+Run Backtest
+------------
+The Backtester automatically handles the complete workflow:
+strategy execution, position management, and performance calculation.
+
+.. GENERATED FROM PYTHON SOURCE LINES 80-94
+
+.. code-block:: Python
+
 
     backtester = Backtester(
         strategy=strategy,
-        exit_strategy=exit_strategy,
+        exit_strategy=exit_strat,
         market=market,
-        capital_management=capital_management,
+        capital_management=capital_mgmt,
     )
 
     backtester.run()
 
+    backtester.plot_summary()
+
+    # print(backtester.portfolio)
+
+
+
+
+.. image-sg:: /gallery/images/sphx_glr_backtester_001.png
+   :alt: Backtesting Summary Dashboard, Trading Strategy Overview, Portfolio Equity Curve, Portfolio Drawdown, Open Positions Over Time, Key Performance Indicators
+   :srcset: /gallery/images/sphx_glr_backtester_001.png
+   :class: sphx-glr-single-img
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+
+    <Figure size 1600x1200 with 5 Axes>
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 95-98
+
+Display Results
+---------------
+View comprehensive performance metrics and analysis.
+
+.. GENERATED FROM PYTHON SOURCE LINES 98-99
+
+.. code-block:: Python
+
+
     backtester.print_performance()
+
+
+
+
+
+
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.482 seconds)
+   **Total running time of the script:** (0 minutes 1.099 seconds)
 
 
 .. _sphx_glr_download_gallery_backtester.py:

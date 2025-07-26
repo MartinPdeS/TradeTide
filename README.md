@@ -4,7 +4,7 @@
 
 | Name                                               |    Stmts |     Miss |   Branch |   BrPart |   Cover |   Missing |
 |--------------------------------------------------- | -------: | -------: | -------: | -------: | ------: | --------: |
-| TradeTide/backtester.py                            |        4 |        1 |        0 |        0 |     75% |        13 |
+| TradeTide/backtester.py                            |      132 |      116 |       34 |        0 |     10% |18-28, 56-100, 105-136, 140-156, 160-179, 183-209, 213-219, 237-268, 272-316 |
 | TradeTide/currencies.py                            |       25 |        0 |        0 |        0 |    100% |           |
 | TradeTide/data/utils.py                            |       27 |       27 |        8 |        0 |      0% |      1-69 |
 | TradeTide/indicators/base.py                       |       20 |        1 |        2 |        1 |     91% |        47 |
@@ -21,7 +21,7 @@
 | TradeTide/strategy.py                              |        3 |        0 |        0 |        0 |    100% |           |
 | TradeTide/times.py                                 |        8 |        0 |        0 |        0 |    100% |           |
 | TradeTide/tools.py                                 |       80 |        4 |       36 |        3 |     94% |24-25, 28, 65 |
-|                                          **TOTAL** |  **629** |  **218** |  **130** |   **19** | **62%** |           |
+|                                          **TOTAL** |  **757** |  **333** |  **164** |   **19** | **53%** |           |
 
 
 ## Setup coverage badge

@@ -4,24 +4,24 @@
 
 | Name                                               |    Stmts |     Miss |   Branch |   BrPart |   Cover |   Missing |
 |--------------------------------------------------- | -------: | -------: | -------: | -------: | ------: | --------: |
-| TradeTide/backtester.py                            |      132 |      116 |       34 |        0 |     10% |18-28, 56-100, 105-136, 140-156, 160-179, 183-209, 213-219, 237-268, 272-316 |
+| TradeTide/backtester.py                            |      124 |      100 |       24 |        0 |     16% |22-32, 57-78, 84-123, 128-171, 176-214, 219-256, 261-281, 299-332, 337-392 |
 | TradeTide/currencies.py                            |       25 |        0 |        0 |        0 |    100% |           |
 | TradeTide/data/utils.py                            |       27 |       27 |        8 |        0 |      0% |      1-69 |
-| TradeTide/indicators/base.py                       |       20 |        1 |        2 |        1 |     91% |        47 |
-| TradeTide/indicators/bollinger\_bands.py           |       27 |        3 |        2 |        1 |     86% |     72-86 |
-| TradeTide/indicators/moving\_average\_crossings.py |       35 |        0 |        0 |        0 |    100% |           |
-| TradeTide/indicators/relative\_momentum\_index.py  |       37 |        0 |        0 |        0 |    100% |           |
+| TradeTide/indicators/base.py                       |       15 |        0 |        2 |        0 |    100% |           |
+| TradeTide/indicators/bollinger\_bands.py           |       30 |        0 |        2 |        1 |     97% |    71->96 |
+| TradeTide/indicators/moving\_average\_crossings.py |       36 |        0 |        0 |        0 |    100% |           |
+| TradeTide/indicators/relative\_momentum\_index.py  |       35 |        0 |        0 |        0 |    100% |           |
 | TradeTide/loader.py                                |       39 |       32 |       10 |        0 |     14% |26-33, 52-96, 114-128 |
-| TradeTide/market.py                                |       92 |       31 |       34 |        9 |     57% |25-46, 118-119, 163-164, 173-174, 218-219, 227-228, 233->239, 239->245, 252-253 |
+| TradeTide/market.py                                |       76 |       25 |       18 |        1 |     57% |28-54, 224-237 |
 | TradeTide/plottings.py                             |       65 |       65 |        8 |        0 |      0% |     4-322 |
-| TradeTide/portfolio.py                             |      115 |       32 |       24 |        5 |     69% |64->73, 82, 96, 104, 107, 212-215, 238-239, 262-263, 286-287, 310-315, 327-352 |
+| TradeTide/portfolio.py                             |       97 |       28 |       16 |        1 |     69% |65->exit, 208-217, 240-243, 266-267, 290-296, 319-324, 335-368 |
 | TradeTide/position\_collection.py                  |       34 |       19 |        2 |        0 |     42% |    60-105 |
 | TradeTide/signal.py                                |        4 |        0 |        0 |        0 |    100% |           |
 | TradeTide/simulation\_settings.py                  |       14 |        3 |        4 |        0 |     72% |     16-18 |
 | TradeTide/strategy.py                              |        3 |        0 |        0 |        0 |    100% |           |
 | TradeTide/times.py                                 |        8 |        0 |        0 |        0 |    100% |           |
 | TradeTide/tools.py                                 |       80 |        4 |       36 |        3 |     94% |24-25, 28, 65 |
-|                                          **TOTAL** |  **757** |  **333** |  **164** |   **19** | **53%** |           |
+|                                          **TOTAL** |  **712** |  **303** |  **130** |    **6** | **55%** |           |
 
 
 ## Setup coverage badge

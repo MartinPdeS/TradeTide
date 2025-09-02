@@ -1,16 +1,19 @@
-
 from typing import Union
 
 import matplotlib.pyplot as plt
 from MPSPlots.styles import mps
+from MPSPlots import helper
 from datetime import timedelta
 import pathlib
-from TradeTide import directories
-from TradeTide.binary import interface_market
 import re
 
+
+from TradeTide import directories
 from TradeTide.currencies import Currency
+from TradeTide.binary import interface_market
+
 # database taken from https://forexsb.com/historical-forex-data
+
 
 class Market(interface_market.Market):
     def __init__(self):
@@ -23,10 +26,15 @@ class Market(interface_market.Market):
             return time_span
 
         if not isinstance(time_span, str):
-            raise TypeError(f"time_span must be timedelta or str, got {type(time_span)}")
+            raise TypeError(
+                f"time_span must be timedelta or str, got {type(time_span)}"
+            )
 
         # Match one or more “number+unit” chunks, e.g. “3days”, “ 20 minutes”, “1d 2h”
-        pattern = re.compile(r"(?P<value>\d+)\s*(?P<unit>d(?:ays?)?|h(?:ours?)?|m(?:inutes?)?|s(?:econds?)?)", re.I)
+        pattern = re.compile(
+            r"(?P<value>\d+)\s*(?P<unit>d(?:ays?)?|h(?:ours?)?|m(?:inutes?)?|s(?:econds?)?)",
+            re.I,
+        )
         parts = pattern.findall(time_span)
         if not parts:
             raise ValueError(f"Could not parse time span: {time_span!r}")
@@ -64,13 +72,17 @@ class Market(interface_market.Market):
 
         data_file = data_folder / f"{currency_0}_{currency_1}.csv"
 
-        if not data_file.with_suffix('.csv').exists():
+        if not data_file.with_suffix(".csv").exists():
             data_file = data_folder / f"{currency_1}_{currency_0}"
 
         return data_file
 
-
-    def load_from_database(self, currency_0: Currency, currency_1: Currency, time_span: Union[str, timedelta]) -> None:
+    def load_from_database(
+        self,
+        currency_0: Currency,
+        currency_1: Currency,
+        time_span: Union[str, timedelta],
+    ) -> None:
         """Load market data for a currency pair from CSV, with optional overrides.
 
         This method constructs the CSV filename from the given currency pair and
@@ -104,150 +116,122 @@ class Market(interface_market.Market):
             currency_1=currency_1.value,
         ).with_suffix(".csv")
 
-        self.load_from_csv(
-            filename=str(csv_path),
-            time_span=ts
-        )
+        self.load_from_csv(filename=str(csv_path), time_span=ts)
 
-    def plot_ask(self, ax: plt.Axes = None, show: bool = True) -> None:
+    @helper.pre_plot(nrows=1, ncols=1)
+    def plot_ask(self, axes: plt.Axes = None) -> None:
         """
         Plot low-high ranges as filled bands with step="pre",
         and open-close as solid/dashed step lines for Ask.
         """
-        if ax is None:
-            plt.style.use(mps)
-            _, ax = plt.subplots(figsize=(12, 6))
-
         # -----------------------------------------------------------------------------
         # 1. Fill between low and high with a lightly shaded band
         # -----------------------------------------------------------------------------
-        ax.fill_between(
+        axes.fill_between(
             self.dates,
             self.ask.low,
             self.ask.high,
             step="pre",
             alpha=0.2,
             color="blue",
-            label="Ask Low-High"
+            label="Ask Low-High",
         )
 
         # -----------------------------------------------------------------------------
         # 2. Plot open and close as step lines
         # -----------------------------------------------------------------------------
-        ax.plot(
+        axes.plot(
             self.dates,
             self.ask.open,
             drawstyle="steps-pre",
             color="blue",
-            linestyle="-",    # solid line for Open
-            label="Ask Open"
+            linestyle="-",  # solid line for Open
+            label="Ask Open",
         )
-        ax.plot(
+        axes.plot(
             self.dates,
             self.ask.close,
             drawstyle="steps-pre",
             color="blue",
-            linestyle=":",    # dashed line for Close
-            label="Ask Close"
+            linestyle=":",  # dashed line for Close
+            label="Ask Close",
         )
 
         # -----------------------------------------------------------------------------
         # 3. Final formatting
         # -----------------------------------------------------------------------------
-        ax.set_xlabel("Time")
-        ax.set_ylabel("Price")
-        ax.set_title(f"{self.currency_pair} - {self.time_span}")
-        ax.legend(loc="upper left")
+        axes.set_xlabel("Time")
+        axes.set_ylabel("Price")
+        axes.set_title(f"{self.currency_pair} - {self.time_span}")
+        axes.legend(loc="upper left")
 
-        if show:
-            plt.tight_layout()
-            plt.show()
-
-
-    def plot_bid(self, ax: plt.Axes = None, show: bool = True) -> None:
+    @helper.pre_plot(nrows=1, ncols=1)
+    def plot_bid(self, axes: plt.Axes) -> None:
         """
         Plot low-high ranges as filled bands with step="pre",
         and open-close as solid/dashed step lines for Bid.
         """
-        if ax is None:
-            plt.style.use(mps)
-            _, ax = plt.subplots(figsize=(12, 6))
-
         # -----------------------------------------------------------------------------
         # 1. Fill between low and high with a lightly shaded band
         # -----------------------------------------------------------------------------
-        ax.fill_between(
+        axes.fill_between(
             self.dates,
             self.bid.low,
             self.bid.high,
             step="pre",
             alpha=0.2,
             color="orange",
-            label="Bid Low-High"
+            label="Bid Low-High",
         )
 
         # -----------------------------------------------------------------------------
         # 2. Plot open and close as step lines
         # -----------------------------------------------------------------------------
-        ax.plot(
+        axes.plot(
             self.dates,
             self.bid.open,
             drawstyle="steps-pre",
             color="orange",
-            linestyle="-",    # solid line for Open
-            label="Bid Open"
+            linestyle="-",  # solid line for Open
+            label="Bid Open",
         )
-        ax.plot(
+        axes.plot(
             self.dates,
             self.bid.close,
             drawstyle="steps-pre",
             color="orange",
-            linestyle=":",    # dashed line for Close
-            label="Bid Close"
+            linestyle=":",  # dashed line for Close
+            label="Bid Close",
         )
 
         # -----------------------------------------------------------------------------
         # 3. Final formatting
         # -----------------------------------------------------------------------------
-        ax.set_xlabel("Time")
-        ax.set_ylabel("Price")
-        ax.set_title(f"{self.currency_pair} - {self.time_span}")
-        ax.legend(loc="upper left")
+        axes.set_xlabel("Time")
+        axes.set_ylabel("Price")
+        axes.set_title(f"{self.currency_pair} - {self.time_span}")
+        axes.legend(loc="upper left")
 
-        if show:
-            plt.tight_layout()
-            plt.show()
-
-    def plot(self, ax: plt.Axes = None, show_ask: bool = True, show_bid: bool = True, show: bool = True) -> None:
+    @helper.pre_plot(nrows=1, ncols=1)
+    def plot(self, axes: plt.Axes) -> None:
         """
         Plot low-high ranges as filled bands with step="pre",
         and open-close as solid/dashed step lines for Ask and Bid.
         """
-        if ax is None:
-            plt.style.use(mps)
-            _, ax = plt.subplots(figsize=(12, 6))
-
         # -----------------------------------------------------------------------------
         # 1. Ask: fill between low and high with a lightly shaded band
         # -----------------------------------------------------------------------------
-        if show_ask:
-            self.plot_ask(ax=ax, show=False)
+        self.plot_ask(axes=axes, show=False)
 
         # -----------------------------------------------------------------------------
         # 3. Bid: fill between low and high with a lightly shaded band (shift color)
         # -----------------------------------------------------------------------------
-        if show_bid:
-            self.plot_bid(ax=ax, show=False)
+        self.plot_bid(axes=axes, show=False)
 
         # -----------------------------------------------------------------------------
         # 5. Final formatting
         # -----------------------------------------------------------------------------
-        ax.set_xlabel("Time")
-        ax.set_ylabel("Price")
-        ax.set_title(f"{self.currency_pair} - {self.time_span}")
-        ax.legend(loc="upper left")
-
-
-        if show:
-            plt.tight_layout()
-            plt.show()
+        axes.set_xlabel("Time")
+        axes.set_ylabel("Price")
+        axes.set_title(f"{self.currency_pair} - {self.time_span}")
+        axes.legend(loc="upper left")

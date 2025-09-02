@@ -20,8 +20,8 @@ from TradeTide.indicators import BollingerBands
 from TradeTide import capital_management, exit_strategy
 
 # Configure plotting
-plt.style.use('seaborn-v0_8-darkgrid')
-plt.rcParams['figure.figsize'] = (12, 6)
+plt.style.use("seaborn-v0_8-darkgrid")
+plt.rcParams["figure.figsize"] = (12, 6)
 
 # %%
 # Load Historical Market Data
@@ -35,6 +35,7 @@ market.load_from_database(
     currency_1=Currency.USD,
     time_span=2 * days,
 )
+# market.plot()
 
 print(f"Loaded {len(market.dates)} data points over {100} days")
 
@@ -44,10 +45,7 @@ print(f"Loaded {len(market.dates)} data points over {100} days")
 # Set up a Bollinger Bands strategy with 2.0 standard deviation bands
 # for more conservative signal generation.
 
-indicator = BollingerBands(
-    window=3 * minutes,
-    multiplier=2.0
-)
+indicator = BollingerBands(window=3 * minutes, multiplier=2.0)
 
 indicator.run(market)
 
@@ -59,11 +57,7 @@ strategy.add_indicator(indicator)
 # ----------------------
 # Configure exit strategy and capital management parameters.
 
-exit_strat = exit_strategy.Static(
-    stop_loss=4,
-    take_profit=4,
-    save_price_data=True
-)
+exit_strat = exit_strategy.Static(stop_loss=4, take_profit=4, save_price_data=True)
 
 capital_mgmt = capital_management.FixedLot(
     capital=1_000,
@@ -87,7 +81,7 @@ backtester = Backtester(
 
 backtester.run()
 
-backtester.plot_summary()
+# backtester.plot_summary()
 
 # print(backtester.portfolio)
 

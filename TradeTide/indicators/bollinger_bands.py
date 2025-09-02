@@ -1,9 +1,10 @@
-
 import numpy as np
-from TradeTide.binary.interface_indicators import BOLLINGERBANDS
-from TradeTide.market import Market
 from datetime import timedelta
 import matplotlib.pyplot as plt
+from MPSPlots import helper
+
+from TradeTide.binary.interface_indicators import BOLLINGERBANDS
+from TradeTide.market import Market
 from TradeTide.indicators.base import BaseIndicator
 from TradeTide.simulation_settings import SimulationSettings
 
@@ -22,16 +23,17 @@ class BollingerBands(BOLLINGERBANDS, BaseIndicator):
     Methods:
         plot: Plots the Bollinger Bands on a given Matplotlib axis.
     """
+
     def __init__(self, window: timedelta, multiplier: float):
         self.window = window
         self.multiplier = multiplier
 
-        int_window = int(window.total_seconds() / SimulationSettings().get_time_unit().total_seconds())
-
-        super().__init__(
-            window=int_window,
-            multiplier=multiplier
+        int_window = int(
+            window.total_seconds()
+            / SimulationSettings().get_time_unit().total_seconds()
         )
+
+        super().__init__(window=int_window, multiplier=multiplier)
 
     def run(self, market: Market) -> None:
         """
@@ -52,9 +54,8 @@ class BollingerBands(BOLLINGERBANDS, BaseIndicator):
 
         self._cpp_run_with_market(market)
 
-
-    @BaseIndicator._pre_plot
-    def plot(self, ax: plt.Axes, show_metric: bool = False) -> None:
+    @helper.pre_plot(nrows=1, ncols=1)
+    def plot(self, axes: plt.Axes, show_metric: bool = True) -> None:
         """
         Plot price, Bollinger Bands, and trading signals on the given axis.
 
@@ -63,43 +64,47 @@ class BollingerBands(BOLLINGERBANDS, BaseIndicator):
         ax : matplotlib.axes.Axes
             Axis on which to draw the Bollinger Bands chart.
         """
-        sma     = np.asarray(self._cpp_sma)
-        upper   = np.asarray(self._cpp_upper_band)
-        lower   = np.asarray(self._cpp_lower_band)
+        sma = np.asarray(self._cpp_sma)
+        upper = np.asarray(self._cpp_upper_band)
+        lower = np.asarray(self._cpp_lower_band)
 
         if show_metric:
             # price and bands
-            ax.plot(
+            axes.plot(
                 self.market.dates,
                 sma,
-                label=f'SMA ({self.window})',
-                linestyle='-',
-                linewidth=1
+                label=f"SMA ({self.window})",
+                linestyle="-",
+                linewidth=1,
             )
-            ax.plot(
+            axes.plot(
                 self.market.dates,
                 upper,
-                label=rf'Upper Band (+{self.multiplier} $\sigma$)',
-                linestyle='--',
-                linewidth=1
+                label=rf"Upper Band (+{self.multiplier} $\sigma$)",
+                linestyle="--",
+                linewidth=1,
             )
-            ax.plot(
+            axes.plot(
                 self.market.dates,
                 lower,
-                label=rf'Lower Band (-{self.multiplier} $\sigma$)',
-                linestyle='--',
-                linewidth=1
+                label=rf"Lower Band (-{self.multiplier} $\sigma$)",
+                linestyle="--",
+                linewidth=1,
             )
 
         # fill the band region
-        ax.fill_between(
+        axes.fill_between(
             self.market.dates,
             lower,
             upper,
             where=~np.isnan(sma),
             interpolate=True,
-            alpha=0.2,
-            label='Band Range'
+            alpha=0.7,
+            label="Band Range",
         )
 
-        ax.legend(loc='upper left')
+        self._add_region_to_ax(ax=axes)
+
+        self.market.plot_ask(axes=axes, show=False)
+
+        axes.legend(loc="upper left")

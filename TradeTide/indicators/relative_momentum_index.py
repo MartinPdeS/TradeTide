@@ -1,9 +1,10 @@
-
 import numpy as np
-from TradeTide.binary.interface_indicators import RELATIVEMOMENTUMINDEX
-from TradeTide.market import Market
 from datetime import timedelta
 import matplotlib.pyplot as plt
+from MPSPlots import helper
+
+from TradeTide.binary.interface_indicators import RELATIVEMOMENTUMINDEX
+from TradeTide.market import Market
 from TradeTide.indicators.base import BaseIndicator
 from TradeTide.simulation_settings import SimulationSettings
 
@@ -24,21 +25,34 @@ class RelativeMomentumIndex(RELATIVEMOMENTUMINDEX, BaseIndicator):
     Methods:
         plot: Plots the short and long moving averages on a given Matplotlib axis.
     """
-    def __init__(self, momentum_period: timedelta, smooth_window: timedelta, over_bought: float = 70.0, over_sold: float = 30.0):
+
+    def __init__(
+        self,
+        momentum_period: timedelta,
+        smooth_window: timedelta,
+        over_bought: float = 70.0,
+        over_sold: float = 30.0,
+    ):
 
         self.momentum_period = momentum_period
         self.smooth_window = smooth_window
         self.over_bought = over_bought
         self.over_sold = over_sold
 
-        int_momentum_period = int(momentum_period.total_seconds() / SimulationSettings().get_time_unit().total_seconds())
-        int_smooth_window = int(smooth_window.total_seconds() / SimulationSettings().get_time_unit().total_seconds())
+        int_momentum_period = int(
+            momentum_period.total_seconds()
+            / SimulationSettings().get_time_unit().total_seconds()
+        )
+        int_smooth_window = int(
+            smooth_window.total_seconds()
+            / SimulationSettings().get_time_unit().total_seconds()
+        )
 
         super().__init__(
             momentum_period=int_momentum_period,
             smooth_period=int_smooth_window,
             over_bought=over_bought,
-            over_sold=over_sold
+            over_sold=over_sold,
         )
 
     def run(self, market: Market) -> None:
@@ -60,8 +74,8 @@ class RelativeMomentumIndex(RELATIVEMOMENTUMINDEX, BaseIndicator):
 
         self._cpp_run_with_market(market)
 
-    @BaseIndicator._pre_plot
-    def plot(self, ax: plt.Axes) -> None:
+    @helper.pre_plot(nrows=1, ncols=1)
+    def plot(self, axes: plt.Axes) -> None:
         """
         Plot RMI, thresholds, and crossover signals on the given axis.
 
@@ -72,46 +86,32 @@ class RelativeMomentumIndex(RELATIVEMOMENTUMINDEX, BaseIndicator):
         """
         dates = np.asarray(self.market.dates)
         price = np.asarray(self.market.ask.close)
-        rmi   = np.asarray(self._cpp_rmi)
-        regions   = np.asarray(self._cpp_regions)
+        rmi = np.asarray(self._cpp_rmi)
 
         # plot price on secondary axis for context
-        ax2 = ax.twinx()
-        ax2.plot(
-            dates,
-            price,
-            label='Price',
-            color='gray',
-            linewidth=0.5
-        )
-        ax2.set_ylabel('Price', color='gray')
+        ax2 = axes.twinx()
+        ax2.plot(dates, price, label="Price", color="gray", linewidth=0.5)
+        ax2.set_ylabel("Price", color="gray")
 
         # plot RMI
-        ax.plot(
-            dates,
-            rmi,
-            label='RMI',
-            color='blue',
-            linewidth=1
-        )
+        axes.plot(dates, rmi, label="RMI", color="blue", linewidth=1)
         # thresholds
-        ax.hlines(
+        axes.hlines(
             [self._cpp_over_bought, self._cpp_over_sold],
-            dates[0], dates[-1],
-            colors=['red','green'],
-            linestyles='--',
+            dates[0],
+            dates[-1],
+            colors=["red", "green"],
+            linestyles="--",
             linewidth=1,
-            label='Thresholds'
+            label="Thresholds",
         )
-
 
         # labels and legend
-        ax.set_xlabel('Date')
-        ax.set_ylabel('RMI')
-        lines, labels = ax.get_legend_handles_labels()
-        lines2, labels2 = ax2.get_legend_handles_labels()
-        unique = dict(zip(labels+labels2, lines+lines2))
-        ax.legend(unique.values(), unique.keys(), loc='upper left')
-        plt.tight_layout()
+        axes.set_xlabel("Date")
+        axes.set_ylabel("RMI")
 
+        self._unify_axes_legend(axes, ax2)
 
+        self._add_region_to_ax(ax=axes)
+
+        self.market.plot_ask(axes=axes, show=False)

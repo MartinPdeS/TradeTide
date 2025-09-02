@@ -4,9 +4,11 @@ import pytest
 import numpy as np
 from datetime import datetime, timedelta
 from unittest.mock import patch
+import matplotlib.pyplot as plt
+
 from TradeTide.indicators.relative_momentum_index import RelativeMomentumIndex
 from TradeTide.market import Market
-from TradeTide.times import minutes, hours, days
+from TradeTide.times import minutes, hours
 from TradeTide.currencies import Currency
 import TradeTide
 
@@ -28,6 +30,7 @@ DEFAULT_START_DATE = datetime(2023, 1, 1)
 # Pytest Fixtures
 # ===============================
 
+
 @pytest.fixture
 def indicator():
     """Create a RelativeMomentumIndex indicator instance for testing.
@@ -41,8 +44,9 @@ def indicator():
         momentum_period=DEFAULT_MOMENTUM_PERIOD,
         smooth_window=DEFAULT_SMOOTH_WINDOW,
         over_bought=DEFAULT_OVERBOUGHT,
-        over_sold=DEFAULT_OVERSOLD
+        over_sold=DEFAULT_OVERSOLD,
     )
+
 
 @pytest.fixture
 def sample_prices():
@@ -53,7 +57,36 @@ def sample_prices():
     numpy.ndarray
         Array of sample prices including uptrends, downtrends, and consolidation periods that provide comprehensive test coverage for different market conditions and momentum behavior.
     """
-    return np.array([100.0, 101.0, 102.0, 103.0, 104.0, 105.0, 106.0, 107.0, 108.0, 109.0, 110.0, 109.0, 108.0, 107.0, 106.0, 105.0, 104.0, 103.0, 102.0, 101.0, 100.0, 101.0, 102.0, 103.0, 104.0])
+    return np.array(
+        [
+            100.0,
+            101.0,
+            102.0,
+            103.0,
+            104.0,
+            105.0,
+            106.0,
+            107.0,
+            108.0,
+            109.0,
+            110.0,
+            109.0,
+            108.0,
+            107.0,
+            106.0,
+            105.0,
+            104.0,
+            103.0,
+            102.0,
+            101.0,
+            100.0,
+            101.0,
+            102.0,
+            103.0,
+            104.0,
+        ]
+    )
+
 
 @pytest.fixture
 def trending_up_prices():
@@ -66,6 +99,7 @@ def trending_up_prices():
     """
     return np.array([100.0 + i * 1.0 for i in range(30)])
 
+
 @pytest.fixture
 def trending_down_prices():
     """Generate consistently downward trending price data for bearish market testing.
@@ -76,6 +110,7 @@ def trending_down_prices():
         Array of steadily decreasing prices that simulate a strong bearish market trend for testing negative momentum and oversold condition detection.
     """
     return np.array([130.0 - i * 1.0 for i in range(30)])
+
 
 @pytest.fixture
 def volatile_prices():
@@ -90,6 +125,7 @@ def volatile_prices():
     noise = np.random.normal(0, 3.0, 50)  # Higher volatility for momentum testing
     return base_prices + noise
 
+
 @pytest.fixture
 def oscillating_prices():
     """Generate oscillating price data for testing RMI behavior in range-bound markets.
@@ -101,6 +137,7 @@ def oscillating_prices():
     """
     return np.array([100.0 + 10.0 * np.sin(i * 0.3) for i in range(60)])
 
+
 @pytest.fixture
 def sample_market():
     """Create a sample Market object with realistic price data for integration testing.
@@ -111,7 +148,9 @@ def sample_market():
         A Market instance populated with sample date/price data that provides a realistic testing environment for indicator integration and end-to-end functionality validation.
     """
     dates = [DEFAULT_START_DATE + i * minutes for i in range(100)]
-    prices = [100.0 + np.sin(i * 0.001) * 15 + np.random.normal(0, 2) for i in range(100)]
+    prices = [
+        100.0 + np.sin(i * 0.001) * 15 + np.random.normal(0, 2) for i in range(100)
+    ]
     market = Market()
     for date, price in zip(dates, prices):
         ask_price = abs(price) * 1.001
@@ -126,13 +165,15 @@ def sample_market():
             bid_open=bid_price,
             bid_high=bid_price,
             bid_low=bid_price,
-            bid_close=bid_price
+            bid_close=bid_price,
         )
     return market
+
 
 # ===============================
 # Core Functionality Tests
 # ===============================
+
 
 def test_initialization_with_timedelta_parameters(indicator):
     """Test RelativeMomentumIndex initialization with timedelta parameters and threshold values ensuring proper storage of parameters and successful creation of indicator instance without errors or exceptions during constructor execution.
@@ -142,20 +183,36 @@ def test_initialization_with_timedelta_parameters(indicator):
     indicator : RelativeMomentumIndex
         Indicator fixture with default configuration for initialization testing.
     """
-    assert indicator.momentum_period == DEFAULT_MOMENTUM_PERIOD, f"Expected momentum_period {DEFAULT_MOMENTUM_PERIOD}, got {indicator.momentum_period}"
-    assert indicator.smooth_window == DEFAULT_SMOOTH_WINDOW, f"Expected smooth_window {DEFAULT_SMOOTH_WINDOW}, got {indicator.smooth_window}"
-    assert indicator.over_bought == DEFAULT_OVERBOUGHT, f"Expected over_bought {DEFAULT_OVERBOUGHT}, got {indicator.over_bought}"
-    assert indicator.over_sold == DEFAULT_OVERSOLD, f"Expected over_sold {DEFAULT_OVERSOLD}, got {indicator.over_sold}"
-    assert hasattr(indicator, 'run'), "Indicator should have run method for execution"
-    assert hasattr(indicator, 'plot'), "Indicator should have plot method for visualization"
+    assert (
+        indicator.momentum_period == DEFAULT_MOMENTUM_PERIOD
+    ), f"Expected momentum_period {DEFAULT_MOMENTUM_PERIOD}, got {indicator.momentum_period}"
+    assert (
+        indicator.smooth_window == DEFAULT_SMOOTH_WINDOW
+    ), f"Expected smooth_window {DEFAULT_SMOOTH_WINDOW}, got {indicator.smooth_window}"
+    assert (
+        indicator.over_bought == DEFAULT_OVERBOUGHT
+    ), f"Expected over_bought {DEFAULT_OVERBOUGHT}, got {indicator.over_bought}"
+    assert (
+        indicator.over_sold == DEFAULT_OVERSOLD
+    ), f"Expected over_sold {DEFAULT_OVERSOLD}, got {indicator.over_sold}"
+    assert hasattr(indicator, "run"), "Indicator should have run method for execution"
+    assert hasattr(
+        indicator, "plot"
+    ), "Indicator should have plot method for visualization"
 
-@pytest.mark.parametrize("momentum_period,smooth_window,overbought,oversold", [
-    (10 * minutes, 10 * minutes, 75.0, 25.0),
-    (14 * minutes, 14 * minutes, 70.0, 30.0),
-    (21 * minutes, 21 * minutes, 80.0, 20.0),
-    (1 * hours, 1 * hours, 65.0, 35.0)
-])
-def test_initialization_with_different_parameters(momentum_period, smooth_window, overbought, oversold):
+
+@pytest.mark.parametrize(
+    "momentum_period,smooth_window,overbought,oversold",
+    [
+        (10 * minutes, 10 * minutes, 75.0, 25.0),
+        (14 * minutes, 14 * minutes, 70.0, 30.0),
+        (21 * minutes, 21 * minutes, 80.0, 20.0),
+        (1 * hours, 1 * hours, 65.0, 35.0),
+    ],
+)
+def test_initialization_with_different_parameters(
+    momentum_period, smooth_window, overbought, oversold
+):
     """Test RelativeMomentumIndex initialization using various parameter combinations to ensure proper handling of different configurations and correct storage of parameter values.
 
     Parameters
@@ -173,12 +230,17 @@ def test_initialization_with_different_parameters(momentum_period, smooth_window
         momentum_period=momentum_period,
         smooth_window=smooth_window,
         over_bought=overbought,
-        over_sold=oversold
+        over_sold=oversold,
     )
-    assert indicator.momentum_period == momentum_period, f"Momentum period mismatch for {momentum_period}"
-    assert indicator.smooth_window == smooth_window, f"Smooth window mismatch for {smooth_window}"
+    assert (
+        indicator.momentum_period == momentum_period
+    ), f"Momentum period mismatch for {momentum_period}"
+    assert (
+        indicator.smooth_window == smooth_window
+    ), f"Smooth window mismatch for {smooth_window}"
     assert indicator.over_bought == overbought, f"Overbought mismatch for {overbought}"
     assert indicator.over_sold == oversold, f"Oversold mismatch for {oversold}"
+
 
 def test_run_with_sample_market_data(sample_market):
     """Test RelativeMomentumIndex execution with sample market data ensuring proper processing of Market objects and generation of RMI data with appropriate array lengths matching input data and successful computation without errors or exceptions.
@@ -192,15 +254,18 @@ def test_run_with_sample_market_data(sample_market):
         momentum_period=DEFAULT_MOMENTUM_PERIOD,
         smooth_window=DEFAULT_SMOOTH_WINDOW,
         over_bought=DEFAULT_OVERBOUGHT,
-        over_sold=DEFAULT_OVERSOLD
+        over_sold=DEFAULT_OVERSOLD,
     )
     indicator.run(sample_market)
-    assert hasattr(indicator, 'market'), "Indicator should store market reference after run"
+    assert hasattr(
+        indicator, "market"
+    ), "Indicator should store market reference after run"
     assert indicator.market == sample_market, "Stored market should match input market"
-    assert hasattr(indicator, '_cpp_rmi'), "Should have RMI data"
-    assert hasattr(indicator, '_cpp_regions'), "Should have signal regions data"
-    assert hasattr(indicator, '_cpp_over_bought'), "Should have overbought threshold"
-    assert hasattr(indicator, '_cpp_over_sold'), "Should have oversold threshold"
+    assert hasattr(indicator, "_cpp_rmi"), "Should have RMI data"
+    assert hasattr(indicator, "_cpp_regions"), "Should have signal regions data"
+    assert hasattr(indicator, "_cpp_over_bought"), "Should have overbought threshold"
+    assert hasattr(indicator, "_cpp_over_sold"), "Should have oversold threshold"
+
 
 def test_rmi_array_lengths(sample_market):
     """Test that computed RMI arrays have correct lengths matching input market data ensuring consistent output dimensions and proper handling of array sizing regardless of market data length or parameter values used during computation.
@@ -211,13 +276,17 @@ def test_rmi_array_lengths(sample_market):
         Sample market fixture for array length validation.
     """
     indicator = RelativeMomentumIndex(
-        momentum_period=DEFAULT_MOMENTUM_PERIOD,
-        smooth_window=DEFAULT_SMOOTH_WINDOW
+        momentum_period=DEFAULT_MOMENTUM_PERIOD, smooth_window=DEFAULT_SMOOTH_WINDOW
     )
     indicator.run(sample_market)
     market_length = len(sample_market.dates)
-    assert len(indicator._cpp_rmi) == market_length, f"RMI length {len(indicator._cpp_rmi)} should match market length {market_length}"
-    assert len(indicator._cpp_regions) == market_length, f"Regions length {len(indicator._cpp_regions)} should match market length {market_length}"
+    assert (
+        len(indicator._cpp_rmi) == market_length
+    ), f"RMI length {len(indicator._cpp_rmi)} should match market length {market_length}"
+    assert (
+        len(indicator._cpp_regions) == market_length
+    ), f"Regions length {len(indicator._cpp_regions)} should match market length {market_length}"
+
 
 def test_rmi_value_range():
     """Test that RMI values are within the expected 0-100 range ensuring proper normalization and mathematical correctness of the relative momentum index calculation with validation of output bounds."""
@@ -228,7 +297,9 @@ def test_rmi_value_range():
     for date, price in zip(dates, prices):
         market.add_tick(timestamp=date, ask_price=price + 0.01, bid_price=price - 0.01)
 
-    indicator = RelativeMomentumIndex(momentum_period=10 * minutes, smooth_window=10 * minutes)
+    indicator = RelativeMomentumIndex(
+        momentum_period=10 * minutes, smooth_window=10 * minutes
+    )
     indicator.run(market)
 
     rmi_values = np.asarray(indicator._cpp_rmi)
@@ -241,9 +312,10 @@ def test_rmi_value_range():
 
         # In a strong uptrend, RMI should trend towards higher values
         if len(valid_rmi) > 10:
-            early_rmi = np.mean(valid_rmi[:len(valid_rmi)//3])
-            late_rmi = np.mean(valid_rmi[-len(valid_rmi)//3:])
+            early_rmi = np.mean(valid_rmi[: len(valid_rmi) // 3])
+            late_rmi = np.mean(valid_rmi[-len(valid_rmi) // 3 :])
             assert late_rmi >= early_rmi, "RMI should increase in uptrending market"
+
 
 def test_overbought_oversold_detection(oscillating_prices):
     """Test detection of overbought and oversold conditions ensuring proper threshold crossing identification and correct signal generation for momentum extremes with validation of signal timing and accuracy.
@@ -263,7 +335,7 @@ def test_overbought_oversold_detection(oscillating_prices):
         momentum_period=10 * minutes,
         smooth_window=5 * minutes,
         over_bought=70.0,
-        over_sold=30.0
+        over_sold=30.0,
     )
     indicator.run(market)
 
@@ -284,6 +356,7 @@ def test_overbought_oversold_detection(oscillating_prices):
             has_signals = np.any(valid_regions != 0)
             assert has_signals, "Should generate signals when crossing thresholds"
 
+
 def test_signal_generation_consistency(sample_market):
     """Test consistency of signal generation ensuring proper correlation between RMI values and generated signals with validation of signal logic and threshold-based decision making accuracy.
 
@@ -296,7 +369,7 @@ def test_signal_generation_consistency(sample_market):
         momentum_period=DEFAULT_MOMENTUM_PERIOD,
         smooth_window=DEFAULT_SMOOTH_WINDOW,
         over_bought=70.0,
-        over_sold=30.0
+        over_sold=30.0,
     )
     indicator.run(sample_market)
 
@@ -304,7 +377,9 @@ def test_signal_generation_consistency(sample_market):
     regions = np.asarray(indicator._cpp_regions)
 
     # All signal values should be within reasonable range
-    assert np.all(np.abs(regions) <= 1), "Signal values should be normalized between -1 and 1"
+    assert np.all(
+        np.abs(regions) <= 1
+    ), "Signal values should be normalized between -1 and 1"
 
     # Check signal consistency with RMI values
     valid_mask = ~np.isnan(rmi_values)
@@ -312,6 +387,7 @@ def test_signal_generation_consistency(sample_market):
         # Signals should exist where RMI crosses thresholds
         unique_signals = np.unique(regions[valid_mask])
         assert len(unique_signals) >= 1, "Should generate at least some signal values"
+
 
 def test_edge_case_insufficient_data():
     """Test handling of edge case where market data is insufficient for computing RMI ensuring graceful handling of boundary conditions and appropriate behavior when data length is less than required window sizes."""
@@ -323,20 +399,24 @@ def test_edge_case_insufficient_data():
         market.add_tick(timestamp=date, ask_price=price + 0.01, bid_price=price - 0.01)
 
     indicator = RelativeMomentumIndex(
-        momentum_period=DEFAULT_MOMENTUM_PERIOD,
-        smooth_window=DEFAULT_SMOOTH_WINDOW
+        momentum_period=DEFAULT_MOMENTUM_PERIOD, smooth_window=DEFAULT_SMOOTH_WINDOW
     )
     # Should handle insufficient data gracefully without crashing
     try:
         indicator.run(market)
         # If it runs, check that arrays have correct length
-        assert len(indicator._cpp_rmi) == len(short_dates), "Array length should match input data"
+        assert len(indicator._cpp_rmi) == len(
+            short_dates
+        ), "Array length should match input data"
         # Early values should be NaN due to insufficient data
         rmi = np.asarray(indicator._cpp_rmi)
         assert np.isnan(rmi[0]), "Early RMI values should be NaN with insufficient data"
     except Exception as e:
         # Expected behavior - should handle gracefully or raise informative error
-        assert "insufficient" in str(e).lower() or "data" in str(e).lower(), f"Unexpected error message: {e}"
+        assert (
+            "insufficient" in str(e).lower() or "data" in str(e).lower()
+        ), f"Unexpected error message: {e}"
+
 
 def test_momentum_sensitivity(volatile_prices):
     """Test RMI sensitivity to momentum changes ensuring proper response to price acceleration and deceleration with validation of momentum capture effectiveness in various market conditions.
@@ -352,7 +432,9 @@ def test_momentum_sensitivity(volatile_prices):
         price = abs(price)  # Ensure positive prices
         market.add_tick(timestamp=date, ask_price=price + 0.01, bid_price=price - 0.01)
 
-    indicator = RelativeMomentumIndex(momentum_period=5 * minutes, smooth_window=3 * minutes)
+    indicator = RelativeMomentumIndex(
+        momentum_period=5 * minutes, smooth_window=3 * minutes
+    )
     indicator.run(market)
 
     rmi_values = np.asarray(indicator._cpp_rmi)
@@ -367,11 +449,15 @@ def test_momentum_sensitivity(volatile_prices):
         rmi_range = np.max(valid_rmi) - np.min(valid_rmi)
         assert rmi_range > 10, "RMI should utilize reasonable range in volatile markets"
 
-@pytest.mark.parametrize("threshold_pair", [
-    (80.0, 20.0),  # Wide thresholds
-    (70.0, 30.0),  # Standard thresholds
-    (60.0, 40.0),  # Narrow thresholds
-])
+
+@pytest.mark.parametrize(
+    "threshold_pair",
+    [
+        (80.0, 20.0),  # Wide thresholds
+        (70.0, 30.0),  # Standard thresholds
+        (60.0, 40.0),  # Narrow thresholds
+    ],
+)
 def test_different_threshold_settings(sample_market, threshold_pair):
     """Test RMI behavior with different overbought/oversold threshold settings ensuring proper threshold sensitivity and signal generation frequency adaptation for various threshold configurations.
 
@@ -388,12 +474,16 @@ def test_different_threshold_settings(sample_market, threshold_pair):
         momentum_period=10 * minutes,
         smooth_window=5 * minutes,
         over_bought=overbought,
-        over_sold=oversold
+        over_sold=oversold,
     )
     indicator.run(sample_market)
 
-    assert indicator._cpp_over_bought == overbought, f"Overbought threshold should be {overbought}"
-    assert indicator._cpp_over_sold == oversold, f"Oversold threshold should be {oversold}"
+    assert (
+        indicator._cpp_over_bought == overbought
+    ), f"Overbought threshold should be {overbought}"
+    assert (
+        indicator._cpp_over_sold == oversold
+    ), f"Oversold threshold should be {oversold}"
 
     rmi_values = np.asarray(indicator._cpp_rmi)
     regions = np.asarray(indicator._cpp_regions)
@@ -405,6 +495,7 @@ def test_different_threshold_settings(sample_market, threshold_pair):
         # This is market-dependent, but we can at least check consistency
         assert signal_count >= 0, "Signal count should be non-negative"
 
+
 def test_plot_method_execution(sample_market):
     """Test execution of plot method ensuring proper visualization generation without errors and correct handling of matplotlib backend configuration for testing environment compatibility.
 
@@ -414,35 +505,35 @@ def test_plot_method_execution(sample_market):
         Sample market fixture for plot generation testing.
     """
     indicator = RelativeMomentumIndex(
-        momentum_period=DEFAULT_MOMENTUM_PERIOD,
-        smooth_window=DEFAULT_SMOOTH_WINDOW
+        momentum_period=DEFAULT_MOMENTUM_PERIOD, smooth_window=DEFAULT_SMOOTH_WINDOW
     )
     indicator.run(sample_market)
 
     # Test plot method execution (requires matplotlib)
     try:
-        with patch('matplotlib.pyplot.show'):  # Mock plt.show to prevent display
-            figure, ax = indicator.plot(show=False)
-            assert figure is not None, "Plot should return a figure object"
-            assert ax is not None, "Plot should return an axes object"
+        with patch("matplotlib.pyplot.show"):  # Mock plt.show to prevent display
+            figure = indicator.plot(show=False)
+            assert isinstance(figure, plt.Figure), "Plot should return a figure object"
     except ImportError:
         pytest.skip("Matplotlib not available for plotting tests")
     except Exception as e:
         pytest.fail(f"Plot method failed with error: {e}")
 
+
 def test_performance_with_large_dataset():
     """Test performance characteristics with large datasets ensuring acceptable computation times for enterprise-scale market data processing and memory usage optimization validation under high-volume scenarios."""
     # Create large dataset for performance testing
     large_dates = [DEFAULT_START_DATE + i * minutes for i in range(5000)]
-    large_prices = [100.0 + np.sin(i * 0.001) * 10 + np.random.normal(0, 1) for i in range(5000)]
+    large_prices = [
+        100.0 + np.sin(i * 0.001) * 10 + np.random.normal(0, 1) for i in range(5000)
+    ]
     market = Market()
     for date, price in zip(large_dates, large_prices):
         price = abs(price)
         market.add_tick(timestamp=date, ask_price=price + 0.01, bid_price=price - 0.01)
 
     indicator = RelativeMomentumIndex(
-        momentum_period=DEFAULT_MOMENTUM_PERIOD,
-        smooth_window=DEFAULT_SMOOTH_WINDOW
+        momentum_period=DEFAULT_MOMENTUM_PERIOD, smooth_window=DEFAULT_SMOOTH_WINDOW
     )
 
     start_time = time.time()
@@ -450,8 +541,13 @@ def test_performance_with_large_dataset():
     execution_time = time.time() - start_time
 
     # Performance should be reasonable (less than 10 seconds for 5k data points)
-    assert execution_time < 10.0, f"Execution time {execution_time:.2f}s exceeds performance threshold"
-    assert len(indicator._cpp_rmi) == len(large_dates), "Output length should match input length"
+    assert (
+        execution_time < 10.0
+    ), f"Execution time {execution_time:.2f}s exceeds performance threshold"
+    assert len(indicator._cpp_rmi) == len(
+        large_dates
+    ), "Output length should match input length"
+
 
 def test_memory_usage_and_cleanup():
     """Test memory usage patterns and garbage collection effectiveness ensuring proper cleanup of resources after indicator computation and verification of memory leak prevention in repeated execution scenarios."""
@@ -464,11 +560,12 @@ def test_memory_usage_and_cleanup():
         market = Market()
         for date, price in zip(dates, prices):
             price = abs(price)
-            market.add_tick(timestamp=date, ask_price=price + 0.01, bid_price=price - 0.01)
+            market.add_tick(
+                timestamp=date, ask_price=price + 0.01, bid_price=price - 0.01
+            )
 
         indicator = RelativeMomentumIndex(
-            momentum_period=DEFAULT_MOMENTUM_PERIOD,
-            smooth_window=DEFAULT_SMOOTH_WINDOW
+            momentum_period=DEFAULT_MOMENTUM_PERIOD, smooth_window=DEFAULT_SMOOTH_WINDOW
         )
         indicator.run(market)
         del indicator, market
@@ -479,7 +576,10 @@ def test_memory_usage_and_cleanup():
 
     # Memory usage should not grow excessively
     object_growth = final_objects - initial_objects
-    assert object_growth < 1000, f"Excessive object growth: {object_growth} new objects remain"
+    assert (
+        object_growth < 1000
+    ), f"Excessive object growth: {object_growth} new objects remain"
+
 
 @pytest.mark.parametrize("frequency", [1, 5, 15, 60])
 def test_different_market_data_frequencies(frequency):
@@ -503,29 +603,54 @@ def test_different_market_data_frequencies(frequency):
     smooth_window = max(5 * time_delta, 5 * minutes)
 
     indicator = RelativeMomentumIndex(
-        momentum_period=momentum_period,
-        smooth_window=smooth_window
+        momentum_period=momentum_period, smooth_window=smooth_window
     )
     indicator.run(market)
 
-    assert len(indicator._cpp_rmi) == len(dates), f"Output length mismatch for {frequency}min frequency"
-    assert len(indicator._cpp_regions) == len(dates), f"Output length mismatch for {frequency}min frequency"
+    assert len(indicator._cpp_rmi) == len(
+        dates
+    ), f"Output length mismatch for {frequency}min frequency"
+    assert len(indicator._cpp_regions) == len(
+        dates
+    ), f"Output length mismatch for {frequency}min frequency"
+
 
 def test_numerical_stability_extreme_values():
     """Test indicator handling of extreme price values ensuring numerical stability and accuracy across wide value ranges including very small, very large, and edge case pricing scenarios."""
     extreme_test_cases = [
-        ([0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.01], "very small prices"),
-        ([10000.0, 20000.0, 30000.0, 40000.0, 50000.0, 60000.0, 70000.0, 80000.0, 90000.0, 100000.0], "very large prices"),
-        ([100.0] * 10, "constant prices")
+        (
+            [0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.01],
+            "very small prices",
+        ),
+        (
+            [
+                10000.0,
+                20000.0,
+                30000.0,
+                40000.0,
+                50000.0,
+                60000.0,
+                70000.0,
+                80000.0,
+                90000.0,
+                100000.0,
+            ],
+            "very large prices",
+        ),
+        ([100.0] * 10, "constant prices"),
     ]
 
     for prices, description in extreme_test_cases:
         dates = [DEFAULT_START_DATE + i * minutes for i in range(len(prices))]
         market = Market()
         for date, price in zip(dates, prices):
-            market.add_tick(timestamp=date, ask_price=price + 0.01, bid_price=price - 0.01)
+            market.add_tick(
+                timestamp=date, ask_price=price + 0.01, bid_price=price - 0.01
+            )
 
-        indicator = RelativeMomentumIndex(momentum_period=5 * minutes, smooth_window=3 * minutes)
+        indicator = RelativeMomentumIndex(
+            momentum_period=5 * minutes, smooth_window=3 * minutes
+        )
         indicator.run(market)
 
         rmi_values = np.asarray(indicator._cpp_rmi)
@@ -533,15 +658,21 @@ def test_numerical_stability_extreme_values():
         # Check for numerical stability (no infinite values in valid range)
         valid_mask = ~np.isnan(rmi_values)
         if np.sum(valid_mask) > 0:
-            assert not np.any(np.isinf(rmi_values[valid_mask])), f"RMI should not contain infinite values for {description}"
+            assert not np.any(
+                np.isinf(rmi_values[valid_mask])
+            ), f"RMI should not contain infinite values for {description}"
             # For constant prices, RMI should stabilize around 50 (neutral momentum)
             if "constant" in description and len(rmi_values[valid_mask]) > 0:
                 stable_rmi = rmi_values[valid_mask][-1]  # Last value should be stable
-                assert 40 <= stable_rmi <= 60, f"RMI should be around 50 for constant prices, got {stable_rmi}"
+                assert (
+                    40 <= stable_rmi <= 60
+                ), f"RMI should be around 50 for constant prices, got {stable_rmi}"
+
 
 # ===============================
 # Integration and End-to-End Tests
 # ===============================
+
 
 def test_end_to_end_workflow(sample_market):
     """Test complete end-to-end workflow from market data loading through indicator computation to signal generation ensuring seamless integration of all components and correct data flow through the entire processing pipeline.
@@ -556,17 +687,17 @@ def test_end_to_end_workflow(sample_market):
         momentum_period=DEFAULT_MOMENTUM_PERIOD,
         smooth_window=DEFAULT_SMOOTH_WINDOW,
         over_bought=DEFAULT_OVERBOUGHT,
-        over_sold=DEFAULT_OVERSOLD
+        over_sold=DEFAULT_OVERSOLD,
     )
 
     # Step 1: Run computation
     indicator.run(sample_market)
 
     # Step 2: Verify all outputs are generated
-    assert hasattr(indicator, '_cpp_rmi'), "Should have RMI values"
-    assert hasattr(indicator, '_cpp_regions'), "Should have signal regions"
-    assert hasattr(indicator, '_cpp_over_bought'), "Should have overbought threshold"
-    assert hasattr(indicator, '_cpp_over_sold'), "Should have oversold threshold"
+    assert hasattr(indicator, "_cpp_rmi"), "Should have RMI values"
+    assert hasattr(indicator, "_cpp_regions"), "Should have signal regions"
+    assert hasattr(indicator, "_cpp_over_bought"), "Should have overbought threshold"
+    assert hasattr(indicator, "_cpp_over_sold"), "Should have oversold threshold"
 
     # Step 3: Verify data consistency
     data_length = len(sample_market.dates)
@@ -585,8 +716,13 @@ def test_end_to_end_workflow(sample_market):
         assert np.all(valid_rmi <= 100), "RMI values should be <= 100"
 
     # Threshold values should match input parameters
-    assert indicator._cpp_over_bought == DEFAULT_OVERBOUGHT, "Overbought threshold should match input"
-    assert indicator._cpp_over_sold == DEFAULT_OVERSOLD, "Oversold threshold should match input"
+    assert (
+        indicator._cpp_over_bought == DEFAULT_OVERBOUGHT
+    ), "Overbought threshold should match input"
+    assert (
+        indicator._cpp_over_sold == DEFAULT_OVERSOLD
+    ), "Oversold threshold should match input"
+
 
 # ===============================
 # Test Execution

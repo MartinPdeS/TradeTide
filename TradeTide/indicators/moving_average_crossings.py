@@ -1,9 +1,10 @@
-
 import numpy as np
-from TradeTide.binary.interface_indicators import MOVINGAVERAGECROSSING
-from TradeTide.market import Market
 from datetime import timedelta
 import matplotlib.pyplot as plt
+from MPSPlots import helper
+
+from TradeTide.market import Market
+from TradeTide.binary.interface_indicators import MOVINGAVERAGECROSSING
 from TradeTide.indicators.base import BaseIndicator
 from TradeTide.simulation_settings import SimulationSettings
 
@@ -23,17 +24,21 @@ class MovingAverageCrossing(MOVINGAVERAGECROSSING, BaseIndicator):
     Methods:
         plot: Plots the short and long moving averages on a given Matplotlib axis.
     """
+
     def __init__(self, short_window: timedelta, long_window: timedelta):
         self.short_window = short_window
         self.long_window = long_window
 
-        int_short_window = int(short_window.total_seconds() / SimulationSettings().get_time_unit().total_seconds())
-        int_long_window = int(long_window.total_seconds() / SimulationSettings().get_time_unit().total_seconds())
-
-        super().__init__(
-            short_window=int_short_window,
-            long_window=int_long_window
+        int_short_window = int(
+            short_window.total_seconds()
+            / SimulationSettings().get_time_unit().total_seconds()
         )
+        int_long_window = int(
+            long_window.total_seconds()
+            / SimulationSettings().get_time_unit().total_seconds()
+        )
+
+        super().__init__(short_window=int_short_window, long_window=int_long_window)
 
     def run(self, market: Market) -> None:
         """
@@ -54,8 +59,8 @@ class MovingAverageCrossing(MOVINGAVERAGECROSSING, BaseIndicator):
 
         self._cpp_run_with_market(market)
 
-    @BaseIndicator._pre_plot
-    def plot(self, ax: plt.Axes) -> None:
+    @helper.pre_plot(nrows=1, ncols=1)
+    def plot(self, axes: plt.Axes) -> None:
         """
         Plots the raw price, both SMAs, the SMA-difference and the crossover signals
         on the provided axis.
@@ -69,39 +74,39 @@ class MovingAverageCrossing(MOVINGAVERAGECROSSING, BaseIndicator):
 
         # get the two moving‐averages
         short_ma = np.asarray(self._cpp_short_moving_average)
-        long_ma  = np.asarray(self._cpp_long_moving_average)
-        diff_ma  = short_ma - long_ma
+        long_ma = np.asarray(self._cpp_long_moving_average)
+        diff_ma = short_ma - long_ma
 
         # plot price and MAs
-        ax.plot(
+        axes.plot(
             dates,
             short_ma,
             label=f"Short MA ({self.short_window})",
             linestyle="--",
-            linewidth=2
+            linewidth=2,
         )
-        ax.plot(
+        axes.plot(
             dates,
             long_ma,
             label=f"Long MA ({self.long_window})",
             linestyle="-",
-            linewidth=2
+            linewidth=2,
         )
 
         # optional: show the difference on a secondary axis
-        ax2 = ax.twinx()
-        ax2.plot(dates, diff_ma, label="MA Diff (Short-Long)", linestyle=":", linewidth=1)
+        ax2 = axes.twinx()
+        ax2.plot(
+            dates, diff_ma, label="MA Diff (Short-Long)", linestyle=":", linewidth=1
+        )
         ax2.set_ylabel("MA Difference")
+        axes.set_xlabel("Date")
+        axes.set_ylabel("Price / SMA")
 
-        # combine legends
-        lines, labels   = ax.get_legend_handles_labels()
-        lines2, labels2 = ax2.get_legend_handles_labels()
-        ax.legend(lines + lines2, labels + labels2, loc="upper left")
+        self._unify_axes_legend(axes, ax2)
 
-        # labels
-        ax.set_xlabel("Date")
-        ax.set_ylabel("Price / SMA")
+        self._add_region_to_ax(ax=axes)
+
+        self.market.plot_ask(axes=axes, show=False)
 
         ax2.grid(False)
         ax2.set_zorder(-1)
-

@@ -41,21 +41,30 @@ Import Required Libraries
 -------------------------
 We start by importing all necessary modules from TradeTide and standard libraries.
 
-.. GENERATED FROM PYTHON SOURCE LINES 24-36
+.. GENERATED FROM PYTHON SOURCE LINES 24-45
 
 .. code-block:: Python
 
 
     import matplotlib.pyplot as plt
     import numpy as np
-    from TradeTide import Strategy, Portfolio, PositionCollection, Market, Currency, days, hours, minutes
+    from TradeTide import (
+        Strategy,
+        Portfolio,
+        PositionCollection,
+        Market,
+        Currency,
+        days,
+        hours,
+        minutes,
+    )
     from TradeTide.indicators import BollingerBands
     from TradeTide import capital_management, exit_strategy
 
     # Configure matplotlib for better plots
-    plt.style.use('seaborn-v0_8-darkgrid')
-    plt.rcParams['figure.figsize'] = (12, 8)
-    plt.rcParams['font.size'] = 10
+    plt.style.use("seaborn-v0_8-darkgrid")
+    plt.rcParams["figure.figsize"] = (12, 8)
+    plt.rcParams["font.size"] = 10
 
 
 
@@ -64,14 +73,14 @@ We start by importing all necessary modules from TradeTide and standard librarie
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 37-41
+.. GENERATED FROM PYTHON SOURCE LINES 46-50
 
 Load Market Data
 ----------------
 First, we load historical forex data for the CAD/USD currency pair.
 We'll use 4 hours of data to demonstrate the strategy on recent market movements.
 
-.. GENERATED FROM PYTHON SOURCE LINES 41-54
+.. GENERATED FROM PYTHON SOURCE LINES 50-63
 
 .. code-block:: Python
 
@@ -95,7 +104,7 @@ We'll use 4 hours of data to demonstrate the strategy on recent market movements
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 55-60
+.. GENERATED FROM PYTHON SOURCE LINES 64-69
 
 Configure Bollinger Bands Indicator
 ------------------------------------
@@ -103,15 +112,15 @@ We'll use Bollinger Bands as our primary technical indicator. Bollinger Bands
 consist of a moving average with upper and lower bands that expand and contract
 based on market volatility.
 
-.. GENERATED FROM PYTHON SOURCE LINES 60-70
+.. GENERATED FROM PYTHON SOURCE LINES 69-79
 
 .. code-block:: Python
 
 
     # Configure Bollinger Bands with 3-minute window and 1.0 standard deviation multiplier
     indicator = BollingerBands(
-        window=3 * minutes,      # Moving average window
-        multiplier=1.0           # Standard deviation multiplier for bands
+        window=3 * minutes,  # Moving average window
+        multiplier=1.0,  # Standard deviation multiplier for bands
     )
 
     # Run the indicator on our market data
@@ -124,14 +133,14 @@ based on market volatility.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 71-75
+.. GENERATED FROM PYTHON SOURCE LINES 80-84
 
 Build Trading Strategy
 ----------------------
 Now we create a trading strategy that uses our Bollinger Bands indicator
 to generate buy and sell signals.
 
-.. GENERATED FROM PYTHON SOURCE LINES 75-86
+.. GENERATED FROM PYTHON SOURCE LINES 84-95
 
 .. code-block:: Python
 
@@ -159,29 +168,31 @@ to generate buy and sell signals.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 87-91
+.. GENERATED FROM PYTHON SOURCE LINES 96-100
 
 Visualize Bollinger Bands and Market Data
 ------------------------------------------
 Let's plot the Bollinger Bands to visualize the indicator behavior
 and understand where trading signals are generated.
 
-.. GENERATED FROM PYTHON SOURCE LINES 91-108
+.. GENERATED FROM PYTHON SOURCE LINES 100-119
 
 .. code-block:: Python
 
 
     # Create the indicator plot (shows only ask prices for clarity)
-    fig, ax = indicator.plot(show_bid=False, show=False)
+    figure = indicator.plot(show=False)
+
+    ax = figure.axes[0]
 
     # Enhance the plot with additional information
-    ax.set_title('CAD/USD with Bollinger Bands Strategy', fontsize=14, fontweight='bold')
-    ax.set_xlabel('Time', fontsize=12)
-    ax.set_ylabel('Price', fontsize=12)
+    ax.set_title("CAD/USD with Bollinger Bands Strategy", fontsize=14, fontweight="bold")
+    ax.set_xlabel("Time", fontsize=12)
+    ax.set_ylabel("Price", fontsize=12)
     ax.grid(True, alpha=0.3)
 
     # Add legend
-    ax.legend(loc='upper left', frameon=True, fancybox=True, shadow=True)
+    ax.legend(loc="upper left", frameon=True, fancybox=True, shadow=True)
 
     # Show the plot
     plt.tight_layout()
@@ -199,23 +210,23 @@ and understand where trading signals are generated.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 109-113
+.. GENERATED FROM PYTHON SOURCE LINES 120-124
 
 Configure Risk Management
 -------------------------
 Before opening positions, we need to set up our exit strategy and risk management
 parameters to control losses and secure profits.
 
-.. GENERATED FROM PYTHON SOURCE LINES 113-121
+.. GENERATED FROM PYTHON SOURCE LINES 124-132
 
 .. code-block:: Python
 
 
     # Set up static exit strategy with stop loss and take profit
     risk_strategy = exit_strategy.Static(
-        stop_loss=4,              # Stop loss at 4 pips
-        take_profit=4,            # Take profit at 4 pips
-        save_price_data=True      # Save price data for analysis
+        stop_loss=4,  # Stop loss at 4 pips
+        take_profit=4,  # Take profit at 4 pips
+        save_price_data=True,  # Save price data for analysis
     )
 
 
@@ -225,13 +236,13 @@ parameters to control losses and secure profits.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 122-125
+.. GENERATED FROM PYTHON SOURCE LINES 133-136
 
 Position Management
 -------------------
 Create and manage trading positions based on our strategy signals.
 
-.. GENERATED FROM PYTHON SOURCE LINES 125-141
+.. GENERATED FROM PYTHON SOURCE LINES 136-152
 
 .. code-block:: Python
 
@@ -264,23 +275,23 @@ Create and manage trading positions based on our strategy signals.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 142-145
+.. GENERATED FROM PYTHON SOURCE LINES 153-156
 
 Capital Management Setup
 ------------------------
 Configure capital management rules to control position sizing and overall risk.
 
-.. GENERATED FROM PYTHON SOURCE LINES 145-154
+.. GENERATED FROM PYTHON SOURCE LINES 156-165
 
 .. code-block:: Python
 
 
     # Configure fixed lot capital management
     capital_mgmt = capital_management.FixedLot(
-        capital=1_000_000,              # Starting capital: $1M
-        fixed_lot_size=10_000,          # Fixed position size: $10K
-        max_capital_at_risk=100_000,    # Maximum capital at risk: $100K
-        max_concurrent_positions=100,   # Maximum concurrent positions: 100
+        capital=1_000_000,  # Starting capital: $1M
+        fixed_lot_size=10_000,  # Fixed position size: $10K
+        max_capital_at_risk=100_000,  # Maximum capital at risk: $100K
+        max_concurrent_positions=100,  # Maximum concurrent positions: 100
     )
 
 
@@ -290,13 +301,13 @@ Configure capital management rules to control position sizing and overall risk.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 155-158
+.. GENERATED FROM PYTHON SOURCE LINES 166-169
 
 Portfolio Simulation
 --------------------
 Run the complete portfolio simulation to see how our strategy performs.
 
-.. GENERATED FROM PYTHON SOURCE LINES 158-163
+.. GENERATED FROM PYTHON SOURCE LINES 169-174
 
 .. code-block:: Python
 
@@ -312,13 +323,13 @@ Run the complete portfolio simulation to see how our strategy performs.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 164-167
+.. GENERATED FROM PYTHON SOURCE LINES 175-178
 
 Performance Analysis
 --------------------
 Analyze the results of our trading strategy and display key performance metrics.
 
-.. GENERATED FROM PYTHON SOURCE LINES 167-174
+.. GENERATED FROM PYTHON SOURCE LINES 178-185
 
 .. code-block:: Python
 
@@ -336,20 +347,20 @@ Analyze the results of our trading strategy and display key performance metrics.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 175-178
+.. GENERATED FROM PYTHON SOURCE LINES 186-189
 
 Results Interpretation and Summary
 ----------------------------------
 Let's interpret the results and provide insights about the strategy performance.
 
-.. GENERATED FROM PYTHON SOURCE LINES 178-203
+.. GENERATED FROM PYTHON SOURCE LINES 189-214
 
 .. code-block:: Python
 
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("STRATEGY INSIGHTS AND INTERPRETATION")
-    print("="*60)
+    print("=" * 60)
 
     # Strategy summary
     print(f"\nStrategy Summary:")
@@ -406,7 +417,7 @@ Let's interpret the results and provide insights about the strategy performance.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 204-215
+.. GENERATED FROM PYTHON SOURCE LINES 215-227
 
 Conclusion
 ----------
@@ -424,7 +435,7 @@ For more advanced examples, explore:
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.368 seconds)
+   **Total running time of the script:** (0 minutes 0.406 seconds)
 
 
 .. _sphx_glr_download_gallery_workflow.py:

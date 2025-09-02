@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:02.522** total execution time for 5 files **from gallery**:
+**00:01.574** total execution time for 5 files **from gallery**:
 
 .. container::
 
@@ -32,18 +32,18 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
-   * - :ref:`sphx_glr_gallery_backtester.py` (``backtester.py``)
-     - 00:01.087
-     - 0.0
    * - :ref:`sphx_glr_gallery_moving_average_crossings.py` (``moving_average_crossings.py``)
-     - 00:00.417
-     - 0.0
-   * - :ref:`sphx_glr_gallery_relative_momentum_index.py` (``relative_momentum_index.py``)
-     - 00:00.395
+     - 00:00.413
      - 0.0
    * - :ref:`sphx_glr_gallery_workflow.py` (``workflow.py``)
-     - 00:00.368
+     - 00:00.406
      - 0.0
    * - :ref:`sphx_glr_gallery_bollinger_bands.py` (``bollinger_bands.py``)
-     - 00:00.254
+     - 00:00.369
+     - 0.0
+   * - :ref:`sphx_glr_gallery_relative_momentum_index.py` (``relative_momentum_index.py``)
+     - 00:00.363
+     - 0.0
+   * - :ref:`sphx_glr_gallery_backtester.py` (``backtester.py``)
+     - 00:00.024
      - 0.0

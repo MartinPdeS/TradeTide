@@ -478,7 +478,7 @@ to download the full example code.</p>
 <section class="sphx-glr-example-title" id="bollinger-bands">
 <span id="sphx-glr-gallery-bollinger-bands-py"></span><h1>Bollinger Bands<a class="headerlink" href="#bollinger-bands" title="Link to this heading">#</a></h1>
 <p>This example demonstrates how to use the Bollinger Bands indicator with the TradeTide library.</p>
-<img src="../_images/sphx_glr_bollinger_bands_001.png" srcset="../_images/sphx_glr_bollinger_bands_001.png" alt="CAD/USD - 0:30:00" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>(&lt;Figure size 800x500 with 1 Axes&gt;, &lt;Axes: title={&#39;center&#39;: &#39;CAD/USD - 0:30:00&#39;}, xlabel=&#39;Time&#39;, ylabel=&#39;Price&#39;&gt;)
+<img src="../_images/sphx_glr_bollinger_bands_001.png" srcset="../_images/sphx_glr_bollinger_bands_001.png" alt="CAD/USD - 1:30:00" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;Figure size 800x500 with 1 Axes&gt;
 </pre></div>
 </div>
 <div class="line-block">
@@ -496,20 +496,17 @@ to download the full example code.</p>
 <span class="n">market</span><span class="o">.</span><span class="n">load_from_database</span><span class="p">(</span>
     <span class="n">currency_0</span><span class="o">=</span><span class="n">Currency</span><span class="o">.</span><span class="n">CAD</span><span class="p">,</span>
     <span class="n">currency_1</span><span class="o">=</span><span class="n">Currency</span><span class="o">.</span><span class="n">USD</span><span class="p">,</span>
-    <span class="n">time_span</span><span class="o">=</span><span class="mi">30</span> <span class="o">*</span> <span class="n">minutes</span><span class="p">,</span>
+    <span class="n">time_span</span><span class="o">=</span><span class="mi">90</span> <span class="o">*</span> <span class="n">minutes</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">indicator</span> <span class="o">=</span> <span class="n">BollingerBands</span><span class="p">(</span>
-    <span class="n">window</span><span class="o">=</span><span class="mi">3</span> <span class="o">*</span> <span class="n">minutes</span><span class="p">,</span>
-    <span class="n">multiplier</span><span class="o">=</span><span class="mf">2.0</span>
-<span class="p">)</span>
+<span class="n">indicator</span> <span class="o">=</span> <span class="n">BollingerBands</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">10</span> <span class="o">*</span> <span class="n">minutes</span><span class="p">,</span> <span class="n">multiplier</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
 
 <span class="n">indicator</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">market</span><span class="p">)</span>
 
 <span class="n">indicator</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.254 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.369 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-bollinger-bands-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/55158936ec2f597a414d87791441a7d0/bollinger_bands.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">bollinger_bands.ipynb</span></code></a></p>

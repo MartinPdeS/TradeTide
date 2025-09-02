@@ -38,7 +38,7 @@ This example demonstrates how to use the Moving Average Crossings indicator with
  .. code-block:: none
 
 
-    (<Figure size 800x500 with 2 Axes>, <Axes: title={'center': 'CAD/USD - 1:00:00'}, xlabel='Time', ylabel='Price / SMA'>)
+    <Figure size 800x500 with 2 Axes>
 
 
 
@@ -76,7 +76,7 @@ This example demonstrates how to use the Moving Average Crossings indicator with
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.417 seconds)
+   **Total running time of the script:** (0 minutes 0.413 seconds)
 
 
 .. _sphx_glr_download_gallery_moving_average_crossings.py:

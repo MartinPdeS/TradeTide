@@ -493,14 +493,23 @@ to create a professional trading system.</p>
 <p>We start by importing all necessary modules from TradeTide and standard libraries.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">Strategy</span><span class="p">,</span> <span class="n">Portfolio</span><span class="p">,</span> <span class="n">PositionCollection</span><span class="p">,</span> <span class="n">Market</span><span class="p">,</span> <span class="n">Currency</span><span class="p">,</span> <span class="n">days</span><span class="p">,</span> <span class="n">hours</span><span class="p">,</span> <span class="n">minutes</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Strategy</span><span class="p">,</span>
+    <span class="n">Portfolio</span><span class="p">,</span>
+    <span class="n">PositionCollection</span><span class="p">,</span>
+    <span class="n">Market</span><span class="p">,</span>
+    <span class="n">Currency</span><span class="p">,</span>
+    <span class="n">days</span><span class="p">,</span>
+    <span class="n">hours</span><span class="p">,</span>
+    <span class="n">minutes</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.indicators</span><span class="w"> </span><span class="kn">import</span> <span class="n">BollingerBands</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">capital_management</span><span class="p">,</span> <span class="n">exit_strategy</span>
 
 <span class="c1"># Configure matplotlib for better plots</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;seaborn-v0_8-darkgrid&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;seaborn-v0_8-darkgrid&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.figsize&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
 </pre></div>
 </div>
 </section>
@@ -529,8 +538,8 @@ consist of a moving average with upper and lower bands that expand and contract
 based on market volatility.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Configure Bollinger Bands with 3-minute window and 1.0 standard deviation multiplier</span>
 <span class="n">indicator</span> <span class="o">=</span> <span class="n">BollingerBands</span><span class="p">(</span>
-    <span class="n">window</span><span class="o">=</span><span class="mi">3</span> <span class="o">*</span> <span class="n">minutes</span><span class="p">,</span>      <span class="c1"># Moving average window</span>
-    <span class="n">multiplier</span><span class="o">=</span><span class="mf">1.0</span>           <span class="c1"># Standard deviation multiplier for bands</span>
+    <span class="n">window</span><span class="o">=</span><span class="mi">3</span> <span class="o">*</span> <span class="n">minutes</span><span class="p">,</span>  <span class="c1"># Moving average window</span>
+    <span class="n">multiplier</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># Standard deviation multiplier for bands</span>
 <span class="p">)</span>
 
 <span class="c1"># Run the indicator on our market data</span>
@@ -562,16 +571,18 @@ to generate buy and sell signals.</p>
 <p>Let’s plot the Bollinger Bands to visualize the indicator behavior
 and understand where trading signals are generated.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create the indicator plot (shows only ask prices for clarity)</span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">indicator</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">show_bid</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">figure</span> <span class="o">=</span> <span class="n">indicator</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">figure</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="c1"># Enhance the plot with additional information</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;CAD/USD with Bollinger Bands Strategy&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Time&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Price&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;CAD/USD with Bollinger Bands Strategy&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Price&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
 
 <span class="c1"># Add legend</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper left&#39;</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fancybox</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shadow</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper left&quot;</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fancybox</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shadow</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="c1"># Show the plot</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
@@ -585,9 +596,9 @@ and understand where trading signals are generated.</p>
 parameters to control losses and secure profits.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set up static exit strategy with stop loss and take profit</span>
 <span class="n">risk_strategy</span> <span class="o">=</span> <span class="n">exit_strategy</span><span class="o">.</span><span class="n">Static</span><span class="p">(</span>
-    <span class="n">stop_loss</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>              <span class="c1"># Stop loss at 4 pips</span>
-    <span class="n">take_profit</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>            <span class="c1"># Take profit at 4 pips</span>
-    <span class="n">save_price_data</span><span class="o">=</span><span class="kc">True</span>      <span class="c1"># Save price data for analysis</span>
+    <span class="n">stop_loss</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>  <span class="c1"># Stop loss at 4 pips</span>
+    <span class="n">take_profit</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>  <span class="c1"># Take profit at 4 pips</span>
+    <span class="n">save_price_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Save price data for analysis</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -620,10 +631,10 @@ parameters to control losses and secure profits.</p>
 <p>Configure capital management rules to control position sizing and overall risk.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Configure fixed lot capital management</span>
 <span class="n">capital_mgmt</span> <span class="o">=</span> <span class="n">capital_management</span><span class="o">.</span><span class="n">FixedLot</span><span class="p">(</span>
-    <span class="n">capital</span><span class="o">=</span><span class="mi">1_000_000</span><span class="p">,</span>              <span class="c1"># Starting capital: $1M</span>
-    <span class="n">fixed_lot_size</span><span class="o">=</span><span class="mi">10_000</span><span class="p">,</span>          <span class="c1"># Fixed position size: $10K</span>
-    <span class="n">max_capital_at_risk</span><span class="o">=</span><span class="mi">100_000</span><span class="p">,</span>    <span class="c1"># Maximum capital at risk: $100K</span>
-    <span class="n">max_concurrent_positions</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>   <span class="c1"># Maximum concurrent positions: 100</span>
+    <span class="n">capital</span><span class="o">=</span><span class="mi">1_000_000</span><span class="p">,</span>  <span class="c1"># Starting capital: $1M</span>
+    <span class="n">fixed_lot_size</span><span class="o">=</span><span class="mi">10_000</span><span class="p">,</span>  <span class="c1"># Fixed position size: $10K</span>
+    <span class="n">max_capital_at_risk</span><span class="o">=</span><span class="mi">100_000</span><span class="p">,</span>  <span class="c1"># Maximum capital at risk: $100K</span>
+    <span class="n">max_concurrent_positions</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>  <span class="c1"># Maximum concurrent positions: 100</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -651,9 +662,9 @@ parameters to control losses and secure profits.</p>
 <section id="results-interpretation-and-summary">
 <h2>Results Interpretation and Summary<a class="headerlink" href="#results-interpretation-and-summary" title="Link to this heading">#</a></h2>
 <p>Let’s interpret the results and provide insights about the strategy performance.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span><span class="o">*</span><span class="mi">60</span><span class="p">)</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;STRATEGY INSIGHTS AND INTERPRETATION&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="o">*</span><span class="mi">60</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
 
 <span class="c1"># Strategy summary</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Strategy Summary:&quot;</span><span class="p">)</span>
@@ -713,7 +724,7 @@ indicators, and risk management approaches.</p>
 <li><p>Portfolio optimization</p></li>
 <li><p>Walk-forward analysis</p></li>
 </ul>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.368 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.406 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-workflow-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/41125c336e4e3c3f05d6c417dd13e207/workflow.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">workflow.ipynb</span></code></a></p>

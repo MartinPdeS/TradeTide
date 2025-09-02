@@ -44,8 +44,8 @@ Import Libraries and Setup
     from TradeTide import capital_management, exit_strategy
 
     # Configure plotting
-    plt.style.use('seaborn-v0_8-darkgrid')
-    plt.rcParams['figure.figsize'] = (12, 6)
+    plt.style.use("seaborn-v0_8-darkgrid")
+    plt.rcParams["figure.figsize"] = (12, 6)
 
 
 
@@ -60,7 +60,7 @@ Load Historical Market Data
 ---------------------------
 Load 100 days of CAD/USD forex data for comprehensive backtesting.
 
-.. GENERATED FROM PYTHON SOURCE LINES 30-41
+.. GENERATED FROM PYTHON SOURCE LINES 30-42
 
 .. code-block:: Python
 
@@ -72,6 +72,7 @@ Load 100 days of CAD/USD forex data for comprehensive backtesting.
         currency_1=Currency.USD,
         time_span=2 * days,
     )
+    # market.plot()
 
     print(f"Loaded {len(market.dates)} data points over {100} days")
 
@@ -88,22 +89,19 @@ Load 100 days of CAD/USD forex data for comprehensive backtesting.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 42-46
+.. GENERATED FROM PYTHON SOURCE LINES 43-47
 
 Configure Trading Strategy
 --------------------------
 Set up a Bollinger Bands strategy with 2.0 standard deviation bands
 for more conservative signal generation.
 
-.. GENERATED FROM PYTHON SOURCE LINES 46-57
+.. GENERATED FROM PYTHON SOURCE LINES 47-55
 
 .. code-block:: Python
 
 
-    indicator = BollingerBands(
-        window=3 * minutes,
-        multiplier=2.0
-    )
+    indicator = BollingerBands(window=3 * minutes, multiplier=2.0)
 
     indicator.run(market)
 
@@ -117,22 +115,18 @@ for more conservative signal generation.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 58-61
+.. GENERATED FROM PYTHON SOURCE LINES 56-59
 
 Define Risk Management
 ----------------------
 Configure exit strategy and capital management parameters.
 
-.. GENERATED FROM PYTHON SOURCE LINES 61-75
+.. GENERATED FROM PYTHON SOURCE LINES 59-69
 
 .. code-block:: Python
 
 
-    exit_strat = exit_strategy.Static(
-        stop_loss=4,
-        take_profit=4,
-        save_price_data=True
-    )
+    exit_strat = exit_strategy.Static(stop_loss=4, take_profit=4, save_price_data=True)
 
     capital_mgmt = capital_management.FixedLot(
         capital=1_000,
@@ -148,14 +142,14 @@ Configure exit strategy and capital management parameters.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 76-80
+.. GENERATED FROM PYTHON SOURCE LINES 70-74
 
 Run Backtest
 ------------
 The Backtester automatically handles the complete workflow:
 strategy execution, position management, and performance calculation.
 
-.. GENERATED FROM PYTHON SOURCE LINES 80-94
+.. GENERATED FROM PYTHON SOURCE LINES 74-88
 
 .. code-block:: Python
 
@@ -169,35 +163,24 @@ strategy execution, position management, and performance calculation.
 
     backtester.run()
 
-    backtester.plot_summary()
+    # backtester.plot_summary()
 
     # print(backtester.portfolio)
 
 
 
 
-.. image-sg:: /gallery/images/sphx_glr_backtester_001.png
-   :alt: Backtesting Summary Dashboard, Trading Strategy Overview, Portfolio Equity Curve, Portfolio Drawdown, Open Positions Over Time, Key Performance Indicators
-   :srcset: /gallery/images/sphx_glr_backtester_001.png
-   :class: sphx-glr-single-img
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-
-    <Figure size 1600x1200 with 5 Axes>
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 95-98
+
+.. GENERATED FROM PYTHON SOURCE LINES 89-92
 
 Display Results
 ---------------
 View comprehensive performance metrics and analysis.
 
-.. GENERATED FROM PYTHON SOURCE LINES 98-99
+.. GENERATED FROM PYTHON SOURCE LINES 92-94
 
 .. code-block:: Python
 
@@ -210,9 +193,10 @@ View comprehensive performance metrics and analysis.
 
 
 
+
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.087 seconds)
+   **Total running time of the script:** (0 minutes 0.024 seconds)
 
 
 .. _sphx_glr_download_gallery_backtester.py:

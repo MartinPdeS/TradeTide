@@ -24,14 +24,23 @@ to create a professional trading system.
 
 import matplotlib.pyplot as plt
 import numpy as np
-from TradeTide import Strategy, Portfolio, PositionCollection, Market, Currency, days, hours, minutes
+from TradeTide import (
+    Strategy,
+    Portfolio,
+    PositionCollection,
+    Market,
+    Currency,
+    days,
+    hours,
+    minutes,
+)
 from TradeTide.indicators import BollingerBands
 from TradeTide import capital_management, exit_strategy
 
 # Configure matplotlib for better plots
-plt.style.use('seaborn-v0_8-darkgrid')
-plt.rcParams['figure.figsize'] = (12, 8)
-plt.rcParams['font.size'] = 10
+plt.style.use("seaborn-v0_8-darkgrid")
+plt.rcParams["figure.figsize"] = (12, 8)
+plt.rcParams["font.size"] = 10
 
 # %%
 # Load Market Data
@@ -60,8 +69,8 @@ market.display()
 
 # Configure Bollinger Bands with 3-minute window and 1.0 standard deviation multiplier
 indicator = BollingerBands(
-    window=3 * minutes,      # Moving average window
-    multiplier=1.0           # Standard deviation multiplier for bands
+    window=3 * minutes,  # Moving average window
+    multiplier=1.0,  # Standard deviation multiplier for bands
 )
 
 # Run the indicator on our market data
@@ -90,16 +99,18 @@ print(f"Strategy generated {signal_count} trading signals")
 # and understand where trading signals are generated.
 
 # Create the indicator plot (shows only ask prices for clarity)
-fig, ax = indicator.plot(show_bid=False, show=False)
+figure = indicator.plot(show=False)
+
+ax = figure.axes[0]
 
 # Enhance the plot with additional information
-ax.set_title('CAD/USD with Bollinger Bands Strategy', fontsize=14, fontweight='bold')
-ax.set_xlabel('Time', fontsize=12)
-ax.set_ylabel('Price', fontsize=12)
+ax.set_title("CAD/USD with Bollinger Bands Strategy", fontsize=14, fontweight="bold")
+ax.set_xlabel("Time", fontsize=12)
+ax.set_ylabel("Price", fontsize=12)
 ax.grid(True, alpha=0.3)
 
 # Add legend
-ax.legend(loc='upper left', frameon=True, fancybox=True, shadow=True)
+ax.legend(loc="upper left", frameon=True, fancybox=True, shadow=True)
 
 # Show the plot
 plt.tight_layout()
@@ -113,9 +124,9 @@ plt.show()
 
 # Set up static exit strategy with stop loss and take profit
 risk_strategy = exit_strategy.Static(
-    stop_loss=4,              # Stop loss at 4 pips
-    take_profit=4,            # Take profit at 4 pips
-    save_price_data=True      # Save price data for analysis
+    stop_loss=4,  # Stop loss at 4 pips
+    take_profit=4,  # Take profit at 4 pips
+    save_price_data=True,  # Save price data for analysis
 )
 
 # %%
@@ -145,10 +156,10 @@ print(f"Opened {total_positions} positions during simulation")
 
 # Configure fixed lot capital management
 capital_mgmt = capital_management.FixedLot(
-    capital=1_000_000,              # Starting capital: $1M
-    fixed_lot_size=10_000,          # Fixed position size: $10K
-    max_capital_at_risk=100_000,    # Maximum capital at risk: $100K
-    max_concurrent_positions=100,   # Maximum concurrent positions: 100
+    capital=1_000_000,  # Starting capital: $1M
+    fixed_lot_size=10_000,  # Fixed position size: $10K
+    max_capital_at_risk=100_000,  # Maximum capital at risk: $100K
+    max_concurrent_positions=100,  # Maximum concurrent positions: 100
 )
 
 # %%
@@ -176,9 +187,9 @@ metrics.display()
 # ----------------------------------
 # Let's interpret the results and provide insights about the strategy performance.
 
-print("\n" + "="*60)
+print("\n" + "=" * 60)
 print("STRATEGY INSIGHTS AND INTERPRETATION")
-print("="*60)
+print("=" * 60)
 
 # Strategy summary
 print(f"\nStrategy Summary:")

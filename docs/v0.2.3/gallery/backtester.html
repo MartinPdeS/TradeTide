@@ -490,8 +490,8 @@ its historical performance and risk characteristics.</p>
 <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">capital_management</span><span class="p">,</span> <span class="n">exit_strategy</span>
 
 <span class="c1"># Configure plotting</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;seaborn-v0_8-darkgrid&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;seaborn-v0_8-darkgrid&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.figsize&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -505,6 +505,7 @@ its historical performance and risk characteristics.</p>
     <span class="n">currency_1</span><span class="o">=</span><span class="n">Currency</span><span class="o">.</span><span class="n">USD</span><span class="p">,</span>
     <span class="n">time_span</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">days</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="c1"># market.plot()</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">market</span><span class="o">.</span><span class="n">dates</span><span class="p">)</span><span class="si">}</span><span class="s2"> data points over </span><span class="si">{</span><span class="mi">100</span><span class="si">}</span><span class="s2"> days&quot;</span><span class="p">)</span>
 </pre></div>
@@ -517,10 +518,7 @@ its historical performance and risk characteristics.</p>
 <h2>Configure Trading Strategy<a class="headerlink" href="#configure-trading-strategy" title="Link to this heading">#</a></h2>
 <p>Set up a Bollinger Bands strategy with 2.0 standard deviation bands
 for more conservative signal generation.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">indicator</span> <span class="o">=</span> <span class="n">BollingerBands</span><span class="p">(</span>
-    <span class="n">window</span><span class="o">=</span><span class="mi">3</span> <span class="o">*</span> <span class="n">minutes</span><span class="p">,</span>
-    <span class="n">multiplier</span><span class="o">=</span><span class="mf">2.0</span>
-<span class="p">)</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">indicator</span> <span class="o">=</span> <span class="n">BollingerBands</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">3</span> <span class="o">*</span> <span class="n">minutes</span><span class="p">,</span> <span class="n">multiplier</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
 
 <span class="n">indicator</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">market</span><span class="p">)</span>
 
@@ -532,11 +530,7 @@ for more conservative signal generation.</p>
 <section id="define-risk-management">
 <h2>Define Risk Management<a class="headerlink" href="#define-risk-management" title="Link to this heading">#</a></h2>
 <p>Configure exit strategy and capital management parameters.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">exit_strat</span> <span class="o">=</span> <span class="n">exit_strategy</span><span class="o">.</span><span class="n">Static</span><span class="p">(</span>
-    <span class="n">stop_loss</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-    <span class="n">take_profit</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-    <span class="n">save_price_data</span><span class="o">=</span><span class="kc">True</span>
-<span class="p">)</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">exit_strat</span> <span class="o">=</span> <span class="n">exit_strategy</span><span class="o">.</span><span class="n">Static</span><span class="p">(</span><span class="n">stop_loss</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">take_profit</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">save_price_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="n">capital_mgmt</span> <span class="o">=</span> <span class="n">capital_management</span><span class="o">.</span><span class="n">FixedLot</span><span class="p">(</span>
     <span class="n">capital</span><span class="o">=</span><span class="mi">1_000</span><span class="p">,</span>
@@ -560,12 +554,9 @@ strategy execution, position management, and performance calculation.</p>
 
 <span class="n">backtester</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 
-<span class="n">backtester</span><span class="o">.</span><span class="n">plot_summary</span><span class="p">()</span>
+<span class="c1"># backtester.plot_summary()</span>
 
 <span class="c1"># print(backtester.portfolio)</span>
-</pre></div>
-</div>
-<img src="../_images/sphx_glr_backtester_001.png" srcset="../_images/sphx_glr_backtester_001.png" alt="Backtesting Summary Dashboard, Trading Strategy Overview, Portfolio Equity Curve, Portfolio Drawdown, Open Positions Over Time, Key Performance Indicators" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;Figure size 1600x1200 with 5 Axes&gt;
 </pre></div>
 </div>
 </section>
@@ -575,7 +566,7 @@ strategy execution, position management, and performance calculation.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">backtester</span><span class="o">.</span><span class="n">print_performance</span><span class="p">()</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.087 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.024 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-backtester-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/5eac73c04a7f10b4518daee59f2aac94/backtester.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">backtester.ipynb</span></code></a></p>

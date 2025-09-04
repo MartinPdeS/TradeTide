@@ -12,16 +12,15 @@
 | TradeTide/indicators/moving\_average\_crossings.py |       36 |        0 |        0 |        0 |    100% |           |
 | TradeTide/indicators/relative\_momentum\_index.py  |       35 |        0 |        0 |        0 |    100% |           |
 | TradeTide/loader.py                                |       39 |       32 |       10 |        0 |     14% |26-33, 52-96, 114-128 |
-| TradeTide/market.py                                |       76 |       25 |       18 |        1 |     57% |28-54, 224-237 |
-| TradeTide/plottings.py                             |       65 |       65 |        8 |        0 |      0% |     4-322 |
-| TradeTide/portfolio.py                             |       97 |       28 |       16 |        1 |     69% |65->exit, 208-217, 240-243, 266-267, 290-296, 319-324, 335-368 |
-| TradeTide/position\_collection.py                  |       34 |       19 |        2 |        0 |     42% |    60-105 |
+| TradeTide/market.py                                |       75 |       25 |       18 |        1 |     57% |26-52, 221-228 |
+| TradeTide/portfolio.py                             |       97 |       28 |       16 |        1 |     69% |56->exit, 177-186, 198-201, 213-214, 226-232, 245-250, 261-294 |
+| TradeTide/position\_collection.py                  |       31 |       16 |        2 |        0 |     45% |     48-88 |
 | TradeTide/signal.py                                |        4 |        0 |        0 |        0 |    100% |           |
-| TradeTide/simulation\_settings.py                  |       14 |        3 |        4 |        0 |     72% |     16-18 |
+| TradeTide/simulation\_settings.py                  |       14 |        3 |        4 |        0 |     72% |     17-19 |
 | TradeTide/strategy.py                              |        3 |        0 |        0 |        0 |    100% |           |
 | TradeTide/times.py                                 |        8 |        0 |        0 |        0 |    100% |           |
 | TradeTide/tools.py                                 |       80 |        4 |       36 |        3 |     94% |24-25, 28, 65 |
-|                                          **TOTAL** |  **712** |  **303** |  **130** |    **6** | **55%** |           |
+|                                          **TOTAL** |  **643** |  **235** |  **122** |    **6** | **60%** |           |
 
 
 ## Setup coverage badge

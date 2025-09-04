@@ -1,8 +1,9 @@
 # make a Singleton class for simulation settings
 # to ensure that the simulation settings are consistent across the application
 # The class should have a setting like time_unit, which can be set to seconds, minutes, hours, days, or weeks but by default it's minute
-
 from datetime import timedelta
+
+
 class SimulationSettings:
     _instance = None
 

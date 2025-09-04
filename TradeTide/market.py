@@ -1,7 +1,5 @@
 from typing import Union
-
 import matplotlib.pyplot as plt
-from MPSPlots.styles import mps
 from MPSPlots import helper
 from datetime import timedelta
 import pathlib
@@ -124,9 +122,9 @@ class Market(interface_market.Market):
         Plot low-high ranges as filled bands with step="pre",
         and open-close as solid/dashed step lines for Ask.
         """
-        # -----------------------------------------------------------------------------
+
         # 1. Fill between low and high with a lightly shaded band
-        # -----------------------------------------------------------------------------
+
         axes.fill_between(
             self.dates,
             self.ask.low,
@@ -137,9 +135,8 @@ class Market(interface_market.Market):
             label="Ask Low-High",
         )
 
-        # -----------------------------------------------------------------------------
         # 2. Plot open and close as step lines
-        # -----------------------------------------------------------------------------
+
         axes.plot(
             self.dates,
             self.ask.open,
@@ -157,9 +154,8 @@ class Market(interface_market.Market):
             label="Ask Close",
         )
 
-        # -----------------------------------------------------------------------------
         # 3. Final formatting
-        # -----------------------------------------------------------------------------
+
         axes.set_xlabel("Time")
         axes.set_ylabel("Price")
         axes.set_title(f"{self.currency_pair} - {self.time_span}")
@@ -170,10 +166,13 @@ class Market(interface_market.Market):
         """
         Plot low-high ranges as filled bands with step="pre",
         and open-close as solid/dashed step lines for Bid.
+
+        Parameters
+        ----------
+        axes : matplotlib.axes.Axes
+            Axes to draw on. If None, a new figure+axes are created.
         """
-        # -----------------------------------------------------------------------------
         # 1. Fill between low and high with a lightly shaded band
-        # -----------------------------------------------------------------------------
         axes.fill_between(
             self.dates,
             self.bid.low,
@@ -184,9 +183,7 @@ class Market(interface_market.Market):
             label="Bid Low-High",
         )
 
-        # -----------------------------------------------------------------------------
         # 2. Plot open and close as step lines
-        # -----------------------------------------------------------------------------
         axes.plot(
             self.dates,
             self.bid.open,
@@ -204,9 +201,7 @@ class Market(interface_market.Market):
             label="Bid Close",
         )
 
-        # -----------------------------------------------------------------------------
         # 3. Final formatting
-        # -----------------------------------------------------------------------------
         axes.set_xlabel("Time")
         axes.set_ylabel("Price")
         axes.set_title(f"{self.currency_pair} - {self.time_span}")
@@ -217,20 +212,16 @@ class Market(interface_market.Market):
         """
         Plot low-high ranges as filled bands with step="pre",
         and open-close as solid/dashed step lines for Ask and Bid.
+
+        Parameters
+        ----------
+        axes : matplotlib.axes.Axes
+            Axes to draw on. If None, a new figure+axes are created.
         """
-        # -----------------------------------------------------------------------------
-        # 1. Ask: fill between low and high with a lightly shaded band
-        # -----------------------------------------------------------------------------
         self.plot_ask(axes=axes, show=False)
 
-        # -----------------------------------------------------------------------------
-        # 3. Bid: fill between low and high with a lightly shaded band (shift color)
-        # -----------------------------------------------------------------------------
         self.plot_bid(axes=axes, show=False)
 
-        # -----------------------------------------------------------------------------
-        # 5. Final formatting
-        # -----------------------------------------------------------------------------
         axes.set_xlabel("Time")
         axes.set_ylabel("Price")
         axes.set_title(f"{self.currency_pair} - {self.time_span}")

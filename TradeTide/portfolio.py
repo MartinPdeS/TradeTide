@@ -43,19 +43,10 @@ class Portfolio(PORTFOLIO):
 
         Parameters
         ----------
-        figsize : tuple[int, int], default=(12,4)
-            Size of the figure in inches.
+        axes : matplotlib.axes.Axes, optional
+            Axes to draw on. If None, a new figure+axes are created.
         max_positions : int or float, default=np.inf
             Maximum number of positions to draw (in chronological order).
-        show : bool, default=True
-            Whether to display the plot after creation.
-        save_as : str, optional
-            If provided, save the figure to this path.
-
-        Returns
-        -------
-        plt.Figure : Figure and Axes objects for further customization or saving.
-
         """
         long_list = []
         short_list = []
@@ -82,7 +73,7 @@ class Portfolio(PORTFOLIO):
     @helper.pre_plot(nrows=1, ncols=1)
     def _plot_long_positions(
         self, position_list: list[position.Long], axes: plt.Axes
-    ) -> plt.Axes:
+    ) -> None:
         """
         Plot the long positions in the portfolio.
 
@@ -90,11 +81,6 @@ class Portfolio(PORTFOLIO):
         ----------
         axes : matplotlib.axes.Axes, optional
             Axes to draw on. If None, a new figure+axes are created.
-
-        Returns
-        -------
-        axes : matplotlib.axes.Axes
-            The axes with the long positions plot.
         """
         color_fill = "lightblue"
         sl_color = "#d62728"
@@ -134,7 +120,7 @@ class Portfolio(PORTFOLIO):
     @helper.pre_plot(nrows=1, ncols=1)
     def _plot_short_positions(
         self, position_list: list[position.Long], axes: plt.Axes
-    ) -> plt.Axes:
+    ) -> None:
         """
         Plot the short positions in the portfolio.
 
@@ -142,11 +128,6 @@ class Portfolio(PORTFOLIO):
         ----------
         axes : matplotlib.axes.Axes, optional
             Axes to draw on. If None, a new figure+axes are created.
-
-        Returns
-        -------
-        axes : matplotlib.axes.Axes
-            The axes with the long positions plot.
         """
         color_fill = (0.8, 0.2, 0.2, 0.3)
         sl_color = "#d62728"
@@ -184,26 +165,14 @@ class Portfolio(PORTFOLIO):
         axes.legend(handles=legend_handles, loc="upper left", framealpha=0.9)
 
     @helper.pre_plot(nrows=1, ncols=1)
-    def plot_equity(self, axes: plt.Axes) -> plt.Axes:
+    def plot_equity(self, axes: plt.Axes) -> None:
         """
         Plot the portfolio's equity over time.
 
         Parameters
         ----------
-        show : bool, default=True
-            Show the plot after creation.
-        figure_size : tuple, default=(12, 4)
-            Size of the figure in inches.
         axes : matplotlib.axes.Axes, optional
             Axes to draw on. If None, a new figure+axes are created.
-        save_as : str, optional
-            If provided, save the figure to this path.
-
-        Returns
-        -------
-        axes : matplotlib.axes.Axes
-            The axes with the equity plot.
-
         """
         axes.plot(self.record.time, self.record.equity, color="black")
         axes.axhline(
@@ -217,25 +186,14 @@ class Portfolio(PORTFOLIO):
         axes.legend()
 
     @helper.pre_plot(nrows=1, ncols=1)
-    def plot_capital_at_risk(self, axes: plt.Axes) -> plt.Axes:
+    def plot_capital_at_risk(self, axes: plt.Axes) -> None:
         """
         Plot the capital at risk over time.
 
         Parameters
         ----------
-        show : bool, default=True
-            Show the plot after creation.
-        figure_size : tuple, default=(12, 4)
-            Size of the figure in inches.
         axes : matplotlib.axes.Axes, optional
             Axes to draw on. If None, a new figure+axes are created.
-        save_as : str, optional
-            If provided, save the figure to this path.
-
-        Returns
-        -------
-        axes : matplotlib.axes.Axes
-            The axes with the capital at risk plot.
         """
         axes.step(
             self.record.time, self.record.capital_at_risk, color="black", where="mid"
@@ -243,49 +201,27 @@ class Portfolio(PORTFOLIO):
         axes.set_ylabel("Capital at Risk")
 
     @helper.pre_plot(nrows=1, ncols=1)
-    def plot_capital(self, axes: plt.Axes) -> plt.Axes:
+    def plot_capital(self, axes: plt.Axes) -> None:
         """
         Plot the capital over time.
 
         Parameters
         ----------
-        show : bool, default=True
-            Show the plot after creation.
-        figure_size : tuple, default=(12, 4)
-            Size of the figure in inches.
         axes : matplotlib.axes.Axes, optional
             Axes to draw on. If None, a new figure+axes are created.
-        save_as : str, optional
-            If provided, save the figure to this path.
-
-        Returns
-        -------
-        axes : matplotlib.axes.Axes
-            The axes with the capital plot.
         """
         axes.step(self.record.time, self.record.capital, color="black", where="mid")
         axes.set_ylabel("Capital")
 
     @helper.pre_plot(nrows=1, ncols=1)
-    def plot_number_of_positions(self, axes: plt.Axes) -> plt.Axes:
+    def plot_number_of_positions(self, axes: plt.Axes) -> None:
         """
         Plot the number of open positions over time.
 
         Parameters
         ----------
-        show : bool, default=True
-            Show the plot after creation.
-        figure_size : tuple, default=(12, 4)
-            Size of the figure in inches.
         axes : matplotlib.axes.Axes, optional
             Axes to draw on. If None, a new figure+axes are created.
-        save_as : str, optional
-            If provided, save the figure to this path.
-
-        Returns
-        -------
-        axes : matplotlib.axes.Axes
-            The axes with the number of open positions plot.
         """
         axes.step(
             self.record.time,
@@ -296,25 +232,15 @@ class Portfolio(PORTFOLIO):
         axes.set_ylabel("Number of open positions")
 
     @helper.pre_plot(nrows=1, ncols=1)
-    def plot_prices(self, axes: plt.Axes) -> plt.Axes:
+    def plot_prices(self, axes: plt.Axes) -> None:
         """
         Plot the market bid and ask prices over time.
 
         Parameters
         ----------
-        show : bool, default=True
-            Show the plot after creation.
-        figure_size : tuple, default=(12, 4)
-            Size of the figure in inches.
         axes : matplotlib.axes.Axes, optional
             Axes to draw on. If None, a new figure+axes are created.
-        save_as : str, optional
-            If provided, save the figure to this path.
 
-        Returns
-        -------
-        axes : matplotlib.axes.Axes
-            The axes with the market prices plot.
         """
         axes.plot(self.dates, self.market.ask.open, label="Ask-Open", color="C0")
         axes.plot(self.dates, self.market.bid.open, label="Bid-Open", color="C1")

@@ -70,4 +70,10 @@
   "version": "empty.txt",
   "url": "https://martinpdes.github.io/TradeTide/docs/empty.txt"
 }
+,
+{
+  "name": "0.0.0.0",
+  "version": "0.0.0.0",
+  "url": "https://martinpdes.github.io/TradeTide/docs/0.0.0.0"
+}
 ]

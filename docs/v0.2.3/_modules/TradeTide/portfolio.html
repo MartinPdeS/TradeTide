@@ -499,19 +499,10 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        figsize : tuple[int, int], default=(12,4)</span>
-<span class="sd">            Size of the figure in inches.</span>
+<span class="sd">        axes : matplotlib.axes.Axes, optional</span>
+<span class="sd">            Axes to draw on. If None, a new figure+axes are created.</span>
 <span class="sd">        max_positions : int or float, default=np.inf</span>
 <span class="sd">            Maximum number of positions to draw (in chronological order).</span>
-<span class="sd">        show : bool, default=True</span>
-<span class="sd">            Whether to display the plot after creation.</span>
-<span class="sd">        save_as : str, optional</span>
-<span class="sd">            If provided, save the figure to this path.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        plt.Figure : Figure and Axes objects for further customization or saving.</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">long_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">short_list</span> <span class="o">=</span> <span class="p">[]</span>
@@ -539,7 +530,7 @@
     <span class="nd">@helper</span><span class="o">.</span><span class="n">pre_plot</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_plot_long_positions</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">position_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">position</span><span class="o">.</span><span class="n">Long</span><span class="p">],</span> <span class="n">axes</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot the long positions in the portfolio.</span>
 
@@ -547,11 +538,6 @@
 <span class="sd">        ----------</span>
 <span class="sd">        axes : matplotlib.axes.Axes, optional</span>
 <span class="sd">            Axes to draw on. If None, a new figure+axes are created.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        axes : matplotlib.axes.Axes</span>
-<span class="sd">            The axes with the long positions plot.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">color_fill</span> <span class="o">=</span> <span class="s2">&quot;lightblue&quot;</span>
         <span class="n">sl_color</span> <span class="o">=</span> <span class="s2">&quot;#d62728&quot;</span>
@@ -591,7 +577,7 @@
     <span class="nd">@helper</span><span class="o">.</span><span class="n">pre_plot</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_plot_short_positions</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">position_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">position</span><span class="o">.</span><span class="n">Long</span><span class="p">],</span> <span class="n">axes</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot the short positions in the portfolio.</span>
 
@@ -599,11 +585,6 @@
 <span class="sd">        ----------</span>
 <span class="sd">        axes : matplotlib.axes.Axes, optional</span>
 <span class="sd">            Axes to draw on. If None, a new figure+axes are created.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        axes : matplotlib.axes.Axes</span>
-<span class="sd">            The axes with the long positions plot.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">color_fill</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
         <span class="n">sl_color</span> <span class="o">=</span> <span class="s2">&quot;#d62728&quot;</span>
@@ -643,26 +624,14 @@
 <div class="viewcode-block" id="Portfolio.plot_equity">
 <a class="viewcode-back" href="../../code.html#TradeTide.portfolio.Portfolio.plot_equity">[docs]</a>
     <span class="nd">@helper</span><span class="o">.</span><span class="n">pre_plot</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">plot_equity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axes</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_equity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axes</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot the portfolio&#39;s equity over time.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        show : bool, default=True</span>
-<span class="sd">            Show the plot after creation.</span>
-<span class="sd">        figure_size : tuple, default=(12, 4)</span>
-<span class="sd">            Size of the figure in inches.</span>
 <span class="sd">        axes : matplotlib.axes.Axes, optional</span>
 <span class="sd">            Axes to draw on. If None, a new figure+axes are created.</span>
-<span class="sd">        save_as : str, optional</span>
-<span class="sd">            If provided, save the figure to this path.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        axes : matplotlib.axes.Axes</span>
-<span class="sd">            The axes with the equity plot.</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">equity</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
         <span class="n">axes</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span>
@@ -679,25 +648,14 @@
 <div class="viewcode-block" id="Portfolio.plot_capital_at_risk">
 <a class="viewcode-back" href="../../code.html#TradeTide.portfolio.Portfolio.plot_capital_at_risk">[docs]</a>
     <span class="nd">@helper</span><span class="o">.</span><span class="n">pre_plot</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">plot_capital_at_risk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axes</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_capital_at_risk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axes</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot the capital at risk over time.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        show : bool, default=True</span>
-<span class="sd">            Show the plot after creation.</span>
-<span class="sd">        figure_size : tuple, default=(12, 4)</span>
-<span class="sd">            Size of the figure in inches.</span>
 <span class="sd">        axes : matplotlib.axes.Axes, optional</span>
 <span class="sd">            Axes to draw on. If None, a new figure+axes are created.</span>
-<span class="sd">        save_as : str, optional</span>
-<span class="sd">            If provided, save the figure to this path.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        axes : matplotlib.axes.Axes</span>
-<span class="sd">            The axes with the capital at risk plot.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">axes</span><span class="o">.</span><span class="n">step</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">capital_at_risk</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="s2">&quot;mid&quot;</span>
@@ -708,25 +666,14 @@
 <div class="viewcode-block" id="Portfolio.plot_capital">
 <a class="viewcode-back" href="../../code.html#TradeTide.portfolio.Portfolio.plot_capital">[docs]</a>
     <span class="nd">@helper</span><span class="o">.</span><span class="n">pre_plot</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">plot_capital</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axes</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_capital</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axes</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot the capital over time.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        show : bool, default=True</span>
-<span class="sd">            Show the plot after creation.</span>
-<span class="sd">        figure_size : tuple, default=(12, 4)</span>
-<span class="sd">            Size of the figure in inches.</span>
 <span class="sd">        axes : matplotlib.axes.Axes, optional</span>
 <span class="sd">            Axes to draw on. If None, a new figure+axes are created.</span>
-<span class="sd">        save_as : str, optional</span>
-<span class="sd">            If provided, save the figure to this path.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        axes : matplotlib.axes.Axes</span>
-<span class="sd">            The axes with the capital plot.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">axes</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">capital</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="s2">&quot;mid&quot;</span><span class="p">)</span>
         <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Capital&quot;</span><span class="p">)</span></div>
@@ -735,25 +682,14 @@
 <div class="viewcode-block" id="Portfolio.plot_number_of_positions">
 <a class="viewcode-back" href="../../code.html#TradeTide.portfolio.Portfolio.plot_number_of_positions">[docs]</a>
     <span class="nd">@helper</span><span class="o">.</span><span class="n">pre_plot</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">plot_number_of_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axes</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_number_of_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axes</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot the number of open positions over time.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        show : bool, default=True</span>
-<span class="sd">            Show the plot after creation.</span>
-<span class="sd">        figure_size : tuple, default=(12, 4)</span>
-<span class="sd">            Size of the figure in inches.</span>
 <span class="sd">        axes : matplotlib.axes.Axes, optional</span>
 <span class="sd">            Axes to draw on. If None, a new figure+axes are created.</span>
-<span class="sd">        save_as : str, optional</span>
-<span class="sd">            If provided, save the figure to this path.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        axes : matplotlib.axes.Axes</span>
-<span class="sd">            The axes with the number of open positions plot.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">axes</span><span class="o">.</span><span class="n">step</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">time</span><span class="p">,</span>
@@ -767,25 +703,15 @@
 <div class="viewcode-block" id="Portfolio.plot_prices">
 <a class="viewcode-back" href="../../code.html#TradeTide.portfolio.Portfolio.plot_prices">[docs]</a>
     <span class="nd">@helper</span><span class="o">.</span><span class="n">pre_plot</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">plot_prices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axes</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_prices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axes</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot the market bid and ask prices over time.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        show : bool, default=True</span>
-<span class="sd">            Show the plot after creation.</span>
-<span class="sd">        figure_size : tuple, default=(12, 4)</span>
-<span class="sd">            Size of the figure in inches.</span>
 <span class="sd">        axes : matplotlib.axes.Axes, optional</span>
 <span class="sd">            Axes to draw on. If None, a new figure+axes are created.</span>
-<span class="sd">        save_as : str, optional</span>
-<span class="sd">            If provided, save the figure to this path.</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        axes : matplotlib.axes.Axes</span>
-<span class="sd">            The axes with the market prices plot.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dates</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">market</span><span class="o">.</span><span class="n">ask</span><span class="o">.</span><span class="n">open</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Ask-Open&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C0&quot;</span><span class="p">)</span>
         <span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dates</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">market</span><span class="o">.</span><span class="n">bid</span><span class="o">.</span><span class="n">open</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Bid-Open&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C1&quot;</span><span class="p">)</span>

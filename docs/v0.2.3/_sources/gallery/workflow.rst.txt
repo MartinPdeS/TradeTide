@@ -196,7 +196,7 @@ and understand where trading signals are generated.
 
     # Show the plot
     plt.tight_layout()
-    plt.show()
+    # plt.show()
 
 
 
@@ -242,7 +242,7 @@ Position Management
 -------------------
 Create and manage trading positions based on our strategy signals.
 
-.. GENERATED FROM PYTHON SOURCE LINES 136-152
+.. GENERATED FROM PYTHON SOURCE LINES 136-154
 
 .. code-block:: Python
 
@@ -252,6 +252,8 @@ Create and manage trading positions based on our strategy signals.
         market=market,
         trade_signal=trade_signals,
     )
+
+    position_collection.plot()
 
     # Open positions based on signals and apply exit strategy
     position_collection.open_positions(exit_strategy=risk_strategy)
@@ -265,6 +267,11 @@ Create and manage trading positions based on our strategy signals.
 
 
 
+.. image-sg:: /gallery/images/sphx_glr_workflow_002.png
+   :alt: CAD/USD - 4:00:00, CAD/USD - 4:00:00
+   :srcset: /gallery/images/sphx_glr_workflow_002.png
+   :class: sphx-glr-single-img
+
 
 .. rst-class:: sphx-glr-script-out
 
@@ -275,13 +282,13 @@ Create and manage trading positions based on our strategy signals.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 153-156
+.. GENERATED FROM PYTHON SOURCE LINES 155-158
 
 Capital Management Setup
 ------------------------
 Configure capital management rules to control position sizing and overall risk.
 
-.. GENERATED FROM PYTHON SOURCE LINES 156-165
+.. GENERATED FROM PYTHON SOURCE LINES 158-167
 
 .. code-block:: Python
 
@@ -301,13 +308,13 @@ Configure capital management rules to control position sizing and overall risk.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 166-169
+.. GENERATED FROM PYTHON SOURCE LINES 168-171
 
 Portfolio Simulation
 --------------------
 Run the complete portfolio simulation to see how our strategy performs.
 
-.. GENERATED FROM PYTHON SOURCE LINES 169-174
+.. GENERATED FROM PYTHON SOURCE LINES 171-176
 
 .. code-block:: Python
 
@@ -323,13 +330,13 @@ Run the complete portfolio simulation to see how our strategy performs.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 175-178
+.. GENERATED FROM PYTHON SOURCE LINES 177-180
 
 Performance Analysis
 --------------------
 Analyze the results of our trading strategy and display key performance metrics.
 
-.. GENERATED FROM PYTHON SOURCE LINES 178-185
+.. GENERATED FROM PYTHON SOURCE LINES 180-187
 
 .. code-block:: Python
 
@@ -347,13 +354,13 @@ Analyze the results of our trading strategy and display key performance metrics.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 186-189
+.. GENERATED FROM PYTHON SOURCE LINES 188-191
 
 Results Interpretation and Summary
 ----------------------------------
 Let's interpret the results and provide insights about the strategy performance.
 
-.. GENERATED FROM PYTHON SOURCE LINES 189-214
+.. GENERATED FROM PYTHON SOURCE LINES 191-216
 
 .. code-block:: Python
 
@@ -417,7 +424,7 @@ Let's interpret the results and provide insights about the strategy performance.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 215-227
+.. GENERATED FROM PYTHON SOURCE LINES 217-229
 
 Conclusion
 ----------
@@ -435,7 +442,7 @@ For more advanced examples, explore:
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.406 seconds)
+   **Total running time of the script:** (0 minutes 0.904 seconds)
 
 
 .. _sphx_glr_download_gallery_workflow.py:

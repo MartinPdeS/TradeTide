@@ -114,7 +114,7 @@ ax.legend(loc="upper left", frameon=True, fancybox=True, shadow=True)
 
 # Show the plot
 plt.tight_layout()
-plt.show()
+# plt.show()
 
 # %%
 # Configure Risk Management
@@ -139,6 +139,8 @@ position_collection = PositionCollection(
     market=market,
     trade_signal=trade_signals,
 )
+
+position_collection.plot()
 
 # Open positions based on signals and apply exit strategy
 position_collection.open_positions(exit_strategy=risk_strategy)

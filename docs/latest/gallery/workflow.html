@@ -586,7 +586,7 @@ and understand where trading signals are generated.</p>
 
 <span class="c1"># Show the plot</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="c1"># plt.show()</span>
 </pre></div>
 </div>
 <img src="../_images/sphx_glr_workflow_001.png" srcset="../_images/sphx_glr_workflow_001.png" alt="CAD/USD with Bollinger Bands Strategy" class = "sphx-glr-single-img"/></section>
@@ -612,6 +612,8 @@ parameters to control losses and secure profits.</p>
     <span class="n">trade_signal</span><span class="o">=</span><span class="n">trade_signals</span><span class="p">,</span>
 <span class="p">)</span>
 
+<span class="n">position_collection</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+
 <span class="c1"># Open positions based on signals and apply exit strategy</span>
 <span class="n">position_collection</span><span class="o">.</span><span class="n">open_positions</span><span class="p">(</span><span class="n">exit_strategy</span><span class="o">=</span><span class="n">risk_strategy</span><span class="p">)</span>
 
@@ -622,7 +624,7 @@ parameters to control losses and secure profits.</p>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Opened </span><span class="si">{</span><span class="n">total_positions</span><span class="si">}</span><span class="s2"> positions during simulation&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Opened 72 positions during simulation
+<img src="../_images/sphx_glr_workflow_002.png" srcset="../_images/sphx_glr_workflow_002.png" alt="CAD/USD - 4:00:00, CAD/USD - 4:00:00" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Opened 72 positions during simulation
 </pre></div>
 </div>
 </section>
@@ -724,7 +726,7 @@ indicators, and risk management approaches.</p>
 <li><p>Portfolio optimization</p></li>
 <li><p>Walk-forward analysis</p></li>
 </ul>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.406 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.904 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-workflow-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/41125c336e4e3c3f05d6c417dd13e207/workflow.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">workflow.ipynb</span></code></a></p>

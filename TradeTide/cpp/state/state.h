@@ -71,4 +71,16 @@ public:
      * @brief Print a summary of the current state to std::cout.
      */
     void display() const;
+
+    void debug_print() const {
+        printf(
+            "     Step: %-4zu/ %-4zu  Capital: %-7.2f  Equity: %-7.2f \tAtRisk=%-10.2f \tOpenPos=%-4zu \n",
+            this->time_idx,
+            this->n_elements,
+            this->capital,
+            this->equity,
+            this->capital_at_risk,
+            this->number_of_concurrent_positions
+        );
+    }
 };

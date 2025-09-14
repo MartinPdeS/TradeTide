@@ -11,7 +11,9 @@ void Record::start_record(size_t n_element) {
 
 
 void Record::update() {
-    if (!this->record_enabled) return;
+    if (!this->record_enabled) {
+        return;
+    }
     this->equity.push_back(this->state->equity);
     this->capital.push_back(this->state->capital);
     this->capital_at_risk.push_back(this->state->capital_at_risk);

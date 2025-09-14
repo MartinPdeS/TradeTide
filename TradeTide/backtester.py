@@ -14,6 +14,17 @@ class Backtester(BACKTESTER):
 
     This class provides methods to run backtests, manage capital, and evaluate trading strategies
     using historical market data.
+
+    Parameters
+    ----------
+    strategy : Strategy
+        The trading strategy to be tested.
+    exit_strategy : ExitStrategy
+        The exit strategy to manage open positions.
+    market : Market
+        The market data on which to run the backtest.
+    capital_management : CapitalManagement
+        The capital management rules for the backtest.
     """
 
     def __init__(
@@ -36,13 +47,6 @@ class Backtester(BACKTESTER):
     def plot(self, axes: plt.Axes) -> plt.Figure:
         """
         Create comprehensive visualization of backtesting results.
-
-        Parameters
-        ----------
-        show : bool, optional
-            Whether to display the plot immediately, by default True
-        figsize : tuple, optional
-            Figure size in inches, by default (14, 10)
 
         Returns
         -------
@@ -291,7 +295,6 @@ class Backtester(BACKTESTER):
         matplotlib.figure.Figure
             The figure object containing the summary dashboard
         """
-
         figure = plt.figure(figsize=(12, 8))
 
         # Create a 3x2 grid layout
@@ -299,23 +302,23 @@ class Backtester(BACKTESTER):
 
         # Strategy overview (top, full width)
         ax1 = figure.add_subplot(gs[0, :])
-        self._plot_strategy(axes=ax1, show=False)
+        self._plot_strategy(axes=ax1, show=False, tight_layout=False)
 
         # Equity curve (middle left)
         ax2 = figure.add_subplot(gs[1, 0])
-        self._plot_equity(axes=ax2, show=False)
+        self._plot_equity(axes=ax2, show=False, tight_layout=False)
 
         # Drawdown (middle right)
         ax3 = figure.add_subplot(gs[1, 1])
-        self._plot_drawdown(axes=ax3, show=False)
+        self._plot_drawdown(axes=ax3, show=False, tight_layout=False)
 
         # Positions (bottom left)
         ax4 = figure.add_subplot(gs[2, 0])
-        self._plot_positions(axes=ax4, show=False)
+        self._plot_positions(axes=ax4, show=False, tight_layout=False)
 
         # Performance metrics (bottom right)
         ax5 = figure.add_subplot(gs[2, 1])
-        self._plot_performance_metrics(axes=ax5, show=False)
+        self._plot_performance_metrics(axes=ax5, show=False, tight_layout=False)
 
         figure.suptitle(
             "Backtesting Summary Dashboard", fontsize=18, fontweight="bold", y=0.98

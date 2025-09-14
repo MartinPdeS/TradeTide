@@ -31,7 +31,7 @@ market = Market()
 market.load_from_database(
     currency_0=Currency.CAD,
     currency_1=Currency.USD,
-    time_span=130 * minutes,
+    time_span=630 * minutes,
 )
 # market.plot()
 
@@ -61,7 +61,7 @@ exit_strat = exit_strategy.Static(stop_loss=4, take_profit=4, save_price_data=Tr
 
 capital_mgmt = capital_management.FixedLot(
     capital=1_000,
-    fixed_lot_size=10,
+    fixed_lot_size=100,
     max_capital_at_risk=100_000,
     max_concurrent_positions=10,
 )
@@ -81,7 +81,7 @@ backtester = Backtester(
 
 backtester.run()
 
-backtester.plot_summary()
+backtester.plot_summary(tight_layout=False)
 
 # %%
 # Display Results

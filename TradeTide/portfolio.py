@@ -16,7 +16,7 @@ Short = position.Short
 
 
 class Portfolio(PORTFOLIO):
-    def __init__(self, position_collection, debug_mode: bool = False):
+    def __init__(self, position_collection):
         """
         Initialize the Portfolio with a position collection and optional debug mode.
 
@@ -25,9 +25,11 @@ class Portfolio(PORTFOLIO):
         position_collection : PositionCollection
             The collection of positions to manage.
         """
+        print(TradeTide.debug_mode)
+        dsa
         super().__init__(
             position_collection=position_collection,
-            debug_mode=TradeTide.debug_mode if TradeTide.debug_mode else debug_mode,
+            debug_mode=TradeTide.debug_mode,
         )
         self.position_collection = position_collection
 

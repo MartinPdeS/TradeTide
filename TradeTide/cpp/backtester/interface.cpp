@@ -7,25 +7,26 @@
 PYBIND11_MODULE(interface_backtester, module) {
 
     pybind11::class_<Backtester>(module, "BACKTESTER")
-    .def(pybind11::init<Strategy&, ExitStrategy&, Market&, BaseCapitalManagement&>(),
-         pybind11::arg("strategy"),
-         pybind11::arg("exit_strategy"),
-         pybind11::arg("market"),
-         pybind11::arg("capital_management"),
-         R"pbdoc(
+    .def(pybind11::init<Strategy&, ExitStrategy&, Market&, BaseCapitalManagement&, const bool>(),
+        pybind11::arg("strategy"),
+        pybind11::arg("exit_strategy"),
+        pybind11::arg("market"),
+        pybind11::arg("capital_management"),
+        pybind11::arg("debug_mode") = false,
+        R"pbdoc(
             Create a new Backtester instance.
 
-            Parameters
-            ----------
-            strategy : Strategy
-                The trading strategy to be applied.
-            exit_strategy : ExitStrategy
-                The exit strategy for managing positions.
-            market : Market
-                The market data reference.
-            capital_management : BaseCapitalManagement
-                The capital management strategy to use.
-         )pbdoc"
+        Parameters
+        ----------
+        strategy : Strategy
+            The trading strategy to be applied.
+        exit_strategy : ExitStrategy
+            The exit strategy for managing positions.
+        market : Market
+            The market data reference.
+        capital_management : BaseCapitalManagement
+            The capital management strategy to use.
+        )pbdoc"
      )
     .def("run",
         &Backtester::run,

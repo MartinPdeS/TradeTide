@@ -1,11 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from MPSPlots import helper
-from MPSPlots.styles import mps as plot_style
 
 from TradeTide.binary.interface_backtester import BACKTESTER
 from TradeTide.market import Market
 from TradeTide.strategy import Strategy
+import TradeTide
 
 
 class Backtester(BACKTESTER):
@@ -24,6 +24,7 @@ class Backtester(BACKTESTER):
             exit_strategy=exit_strategy,
             market=market,
             capital_management=capital_management,
+            debug_mode=TradeTide.debug_mode,
         )
 
         self.strategy = strategy
@@ -280,56 +281,47 @@ class Backtester(BACKTESTER):
         axes.set_ylabel("Trade P&L")
         axes.set_title("Trade Distribution")
 
-    def plot_summary(self, show: bool = True, figsize: tuple = (16, 12)) -> plt.Figure:
+    @helper.post_mpl_plot
+    def plot_summary(self) -> plt.Figure:
         """
         Create a comprehensive summary dashboard of backtesting results.
-
-        Parameters
-        ----------
-        show : bool, optional
-            Whether to display the plot immediately, by default True
-        figsize : tuple, optional
-            Figure size in inches, by default (16, 12)
 
         Returns
         -------
         matplotlib.figure.Figure
             The figure object containing the summary dashboard
         """
-        with plt.style.context(plot_style):
-            fig = plt.figure(figsize=figsize)
 
-            # Create a 3x2 grid layout
-            gs = fig.add_gridspec(3, 2, hspace=0.3, wspace=0.3)
+        figure = plt.figure(figsize=(12, 8))
 
-            # Strategy overview (top, full width)
-            ax1 = fig.add_subplot(gs[0, :])
-            self._plot_strategy(axes=ax1, show=False)
+        # Create a 3x2 grid layout
+        gs = figure.add_gridspec(3, 2, hspace=0.3, wspace=0.3)
 
-            # Equity curve (middle left)
-            ax2 = fig.add_subplot(gs[1, 0])
-            self._plot_equity(axes=ax2, show=False)
+        # Strategy overview (top, full width)
+        ax1 = figure.add_subplot(gs[0, :])
+        self._plot_strategy(axes=ax1, show=False)
 
-            # Drawdown (middle right)
-            ax3 = fig.add_subplot(gs[1, 1])
-            self._plot_drawdown(axes=ax3, show=False)
+        # Equity curve (middle left)
+        ax2 = figure.add_subplot(gs[1, 0])
+        self._plot_equity(axes=ax2, show=False)
 
-            # Positions (bottom left)
-            ax4 = fig.add_subplot(gs[2, 0])
-            self._plot_positions(axes=ax4, show=False)
+        # Drawdown (middle right)
+        ax3 = figure.add_subplot(gs[1, 1])
+        self._plot_drawdown(axes=ax3, show=False)
 
-            # Performance metrics (bottom right)
-            ax5 = fig.add_subplot(gs[2, 1])
-            self._plot_performance_metrics(axes=ax5, show=False)
+        # Positions (bottom left)
+        ax4 = figure.add_subplot(gs[2, 0])
+        self._plot_positions(axes=ax4, show=False)
 
-            fig.suptitle(
-                "Backtesting Summary Dashboard", fontsize=18, fontweight="bold", y=0.98
-            )
+        # Performance metrics (bottom right)
+        ax5 = figure.add_subplot(gs[2, 1])
+        self._plot_performance_metrics(axes=ax5, show=False)
 
-            if show:
-                plt.show()
+        figure.suptitle(
+            "Backtesting Summary Dashboard", fontsize=18, fontweight="bold", y=0.98
+        )
 
-        return fig
+        return figure
 
     @helper.pre_plot(nrows=1, ncols=1)
     def _plot_performance_metrics(self, axes: plt.Axes) -> None:

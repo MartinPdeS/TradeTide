@@ -1,11 +1,12 @@
+#define LOG_DEBUG(enabled, fmt, ...) \
+    do { if (enabled) { \
+        printf("[DEBUG][Portfolio - %s] " fmt "\n", __func__, ##__VA_ARGS__); \
+    } } while(0)
+
 #include "portfolio.h"
-
-
 
 using Duration = std::chrono::system_clock::duration;
 using TimePoint = std::chrono::system_clock::time_point;
-
-
 
 
 // ---------------- Constructor ----------------
@@ -13,9 +14,7 @@ Portfolio::Portfolio(PositionCollection& position_collection, bool debug_mode): 
     this->record.state = &this->state;
     this->record.start_record(this->position_collection.market.dates.size());
 
-    if (this->debug_mode) {
-        printf("[DEBUG: PORTFOLIO - CONSTRUCT] Portfolio constructed with %zu market dates\n", this->position_collection.market.dates.size());
-    }
+    LOG_DEBUG(debug_mode, "Portfolio constructed\tMarketDates=%zu", position_collection.market.dates.size());
 }
 
 
@@ -57,8 +56,14 @@ void Portfolio::close_position(PositionPtr& position, const size_t &position_idx
     else if (profit_loss < 0)
         ++this->record.fail_count;
 
-    if (this->debug_mode)
-        printf("[DEBUG: PORTFOLIO - CLOSE] Closed position at price %.2f, PnL: %.2f\n", position->exit_price, profit_loss);
+    LOG_DEBUG(debug_mode,
+        "Closed position\tExitPrice=%.2f\tPnL=%.2f\tLotSize=%.2f\tIsLong=%s",
+        position->exit_price,
+        profit_loss,
+        position->lot_size,
+        position->is_long ? "True" : "False"
+    );
+
 
 }
 
@@ -67,8 +72,14 @@ void Portfolio::open_position(PositionPtr& position) {
     double lot_size = this->capital_management->can_open_position(position);
 
     if (lot_size == 0.0) {
-        if (this->debug_mode)
-            printf("[DEBUG: PORTFOLIO - OPEN] Skipping position: computed lot size is 0.0\n");
+
+        LOG_DEBUG(debug_mode,
+            "Opened position\tEntryPrice=%.2f\tLotSize=%.2f\tIdx=%zu\tType=%s",
+            position->entry_price,
+            position->lot_size,
+            position->start_idx,
+            position->is_long ? "Long" : "Short"
+        );
         return;
     }
 
@@ -81,8 +92,14 @@ void Portfolio::open_position(PositionPtr& position) {
     this->state.capital -= position->entry_price * position->lot_size;
     position->is_closed = false;
 
-    if (this->debug_mode)
-        printf("[DEBUG: PORTFOLIO - OPEN] Opened position at price %.2f, lot size %.2f\n", position->entry_price, position->lot_size);
+    LOG_DEBUG(debug_mode,
+        "Opened position\tEntryPrice=%.2f\tLotSize=%.2f\tIdx=%zu\tType=%s",
+        position->entry_price,
+        position->lot_size,
+        position->start_idx,
+        position->is_long ? "Long" : "Short"
+    );
+
 
 }
 
@@ -114,6 +131,44 @@ void Portfolio::try_open_positions() {
 
 }
 
+// void Portfolio::simulate(BaseCapitalManagement& capital_management) {
+//     this->selected_positions.clear();
+//     this->executed_positions.clear();
+//     this->active_positions.clear();
+
+//     this->capital_management = &capital_management;
+
+//     this->state = State(this->position_collection.market, this->capital_management->initial_capital);
+//     this->record.initial_capital = this->capital_management->initial_capital;
+//     this->capital_management->state  = &this->state;
+
+//     this->position_collection.set_all_position_to_open();
+
+//     for (size_t time_idx = 0; time_idx < this->position_collection.market.dates.size(); time_idx++) {
+//         this->state.update_time_idx(time_idx);
+
+//         this->try_close_positions();
+//         this->try_open_positions();
+
+//         if (time_idx == this->position_collection.market.dates.size() - 1)
+//             this->terminate_open_positions();
+
+//         this->state.capital_at_risk = this->calculate_capital_at_risk();
+//         this->state.equity = this->calculate_equity();
+//         this->record.update();
+
+//         LOG_DEBUG(debug_mode,
+//             "Step=%zu/%zu\tCapital=%.2f\tEquity=%.2f\tAtRisk=%.2f\tOpenPos=%zu",
+//             time_idx,
+//             this->position_collection.market.dates.size(),
+//             this->state.capital,
+//             this->state.equity,
+//             this->state.capital_at_risk,
+//             this->active_positions.size()
+//         );
+//     }
+// }
+
 void Portfolio::simulate(BaseCapitalManagement& capital_management) {
     this->selected_positions.clear();
     this->executed_positions.clear();
@@ -127,44 +182,53 @@ void Portfolio::simulate(BaseCapitalManagement& capital_management) {
 
     this->position_collection.set_all_position_to_open();
 
-    for (size_t time_idx = 0; time_idx < this->position_collection.market.dates.size(); time_idx++) {
+    for (size_t time_idx = 0; time_idx < this->position_collection.market.dates.size() - 1; time_idx++) {
         this->state.update_time_idx(time_idx);
 
         this->try_close_positions();
         this->try_open_positions();
 
-        if (time_idx == this->position_collection.market.dates.size() - 2)
-            this->terminate_open_positions();
-
         this->state.capital_at_risk = this->calculate_capital_at_risk();
         this->state.equity = this->calculate_equity();
         this->record.update();
 
-        if (this->debug_mode) {
-            printf("[DEBUG: PORTFOLIO - SIMULATE] Step %zu / %zu | Capital: %.2f | Equity: %.2f | At Risk: %.2f\n",
-                time_idx,
-                this->position_collection.market.dates.size(),
-                this->state.capital,
-                this->state.equity,
-                this->state.capital_at_risk);
-        }
+        LOG_DEBUG(debug_mode,
+            "Step=%zu/%zu\tCapital=%.2f\tEquity=%.2f\tAtRisk=%.2f\tOpenPos=%zu",
+            time_idx,
+            this->position_collection.market.dates.size(),
+            this->state.capital,
+            this->state.equity,
+            this->state.capital_at_risk,
+            this->active_positions.size()
+        );
     }
+
+    this->terminate_open_positions();
+
+    this->state.capital_at_risk = this->calculate_capital_at_risk();
+    this->state.equity = this->calculate_equity();
+    this->record.update();
 }
 
 void Portfolio::terminate_open_positions() {
     for (const auto& position : this->active_positions) {
+        position->close_at(this->position_collection.market.dates.size() - 1);
         this->state.number_of_concurrent_positions -= 1;
         this->state.capital += position->exit_price * position->lot_size;
-        position->is_closed = true;
         this->executed_positions.push_back(position);
 
-        if (this->debug_mode)
-            printf("[DEBUG: PORTFOLIO - TERMINATE] Terminating position at exit price %.2f with lot size %.2f\n", position->exit_price, position->lot_size);
+        LOG_DEBUG(debug_mode,
+            "Terminating position\tExitPrice=%.2f\tLotSize=%.2f\tIdx=%zu\tType=%s\tCapital=%.2f",
+            position->exit_price,
+            position->lot_size,
+            position->start_idx,
+            position->is_long ? "Long" : "Short",
+            this->state.capital
+        );
 
     }
 
-    if (this->debug_mode)
-        printf("[DEBUG: PORTFOLIO - TERMINATE] All remaining open positions have been terminated. Total: %zu\n", this->active_positions.size());
+    LOG_DEBUG(debug_mode, "All remaining positions terminated\tCount=%zu", this->active_positions.size());
 
     this->active_positions.clear();
 }

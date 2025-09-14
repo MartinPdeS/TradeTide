@@ -1,14 +1,16 @@
 import numpy as np
-from datetime import timedelta
+import datetime
 import matplotlib.pyplot as plt
 from MPSPlots import helper
+from pydantic.dataclasses import dataclass
 
 from TradeTide.binary.interface_indicators import BOLLINGERBANDS
-from TradeTide.market import Market
 from TradeTide.indicators.base import BaseIndicator
 from TradeTide.simulation_settings import SimulationSettings
+from TradeTide.utils import config_dict
 
 
+@dataclass(config=config_dict)
 class BollingerBands(BOLLINGERBANDS, BaseIndicator):
     """
     Implements a Bollinger Bands indicator as an extension of the BaseIndicator class.
@@ -16,46 +18,32 @@ class BollingerBands(BOLLINGERBANDS, BaseIndicator):
     This indicator consists of a middle band (the simple moving average) and two outer bands (the standard deviations).
     It is commonly used to identify overbought or oversold conditions in a market.
 
-    Attributes:
-        window (int | str): The window size for the moving average.
-        multiplier (int | float): The number of standard deviations to use for the outer bands.
+    Attributes
+    ----------
+    window : datetime.timedelta
+        The window size for the moving average.
+    multiplier float
+        The number of standard deviations to use for the outer bands.
 
-    Methods:
-        plot: Plots the Bollinger Bands on a given Matplotlib axis.
+    Methods
+    -------
+    run: Runs the RMI indicator on the provided market data.
+    plot: Plots the short and long moving averages on a given Matplotlib axis.
     """
 
-    def __init__(self, window: timedelta, multiplier: float):
-        self.window = window
-        self.multiplier = multiplier
+    window: datetime.timedelta
+    multiplier: float
 
-        int_window = int(
-            window.total_seconds()
+    def __post_init__(self):
+        window = (
+            self.window.total_seconds()
             / SimulationSettings().get_time_unit().total_seconds()
         )
 
-        super().__init__(window=int_window, multiplier=multiplier)
-
-    def run(self, market: Market) -> None:
-        """
-        Runs the Bollinger Bands indicator on the provided market data.
-        This method initializes the indicator with the market's dates and calculates the moving average
-        and standard deviation based on the specified window size.
-
-        Parameters
-        ----------
-        market (Market):
-            The market data to run the indicator on. It should contain the dates and price data.
-
-        Raises
-        -------
-        ValueError: If the market does not contain enough data points to calculate the moving averages.
-        """
-        self.market = market
-
-        self._cpp_run_with_market(market)
+        super().__init__(window=int(window), multiplier=self.multiplier)
 
     @helper.pre_plot(nrows=1, ncols=1)
-    def plot(self, axes: plt.Axes, show_metric: bool = True) -> None:
+    def plot(self, axes: plt.Axes, show_metric: bool = False) -> None:
         """
         Plot price, Bollinger Bands, and trading signals on the given axis.
 

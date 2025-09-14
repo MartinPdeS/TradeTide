@@ -13,15 +13,13 @@ its historical performance and risk characteristics.
 # %%
 # Import Libraries and Setup
 # --------------------------
-
-import matplotlib.pyplot as plt
 from TradeTide import Backtester, Strategy, Market, Currency, days, hours, minutes
 from TradeTide.indicators import BollingerBands
 from TradeTide import capital_management, exit_strategy
+import TradeTide
 
-# Configure plotting
-plt.style.use("seaborn-v0_8-darkgrid")
-plt.rcParams["figure.figsize"] = (12, 6)
+TradeTide.debug_mode = True
+
 
 # %%
 # Load Historical Market Data
@@ -33,7 +31,7 @@ market = Market()
 market.load_from_database(
     currency_0=Currency.CAD,
     currency_1=Currency.USD,
-    time_span=2 * days,
+    time_span=130 * minutes,
 )
 # market.plot()
 
@@ -45,9 +43,11 @@ print(f"Loaded {len(market.dates)} data points over {100} days")
 # Set up a Bollinger Bands strategy with 2.0 standard deviation bands
 # for more conservative signal generation.
 
-indicator = BollingerBands(window=3 * minutes, multiplier=2.0)
+indicator = BollingerBands(window=3 * minutes, multiplier=1.0)
 
 indicator.run(market)
+
+# indicator.plot()
 
 strategy = Strategy()
 strategy.add_indicator(indicator)
@@ -81,13 +81,11 @@ backtester = Backtester(
 
 backtester.run()
 
-# backtester.plot_summary()
-
-# print(backtester.portfolio)
+backtester.plot_summary()
 
 # %%
 # Display Results
 # ---------------
 # View comprehensive performance metrics and analysis.
 
-backtester.print_performance()
+# backtester.print_performance()

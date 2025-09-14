@@ -52,7 +52,7 @@ public:
     std::chrono::microseconds propagate_time;
     std::chrono::microseconds simulate_time;
 
-    Backtester(Strategy& strategy, ExitStrategy& exit_strategy, Market& market, BaseCapitalManagement& capital_management);
+    Backtester(Strategy& strategy, ExitStrategy& exit_strategy, Market& market, BaseCapitalManagement& capital_management, const bool debug_mode);
 
     void run();
 

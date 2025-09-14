@@ -37,11 +37,6 @@ from TradeTide import (
 from TradeTide.indicators import BollingerBands
 from TradeTide import capital_management, exit_strategy
 
-# Configure matplotlib for better plots
-plt.style.use("seaborn-v0_8-darkgrid")
-plt.rcParams["figure.figsize"] = (12, 8)
-plt.rcParams["font.size"] = 10
-
 # %%
 # Load Market Data
 # ----------------

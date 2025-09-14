@@ -1,3 +1,9 @@
+#define LOG_DEBUG(enabled, fmt, ...) \
+    do { if (enabled) { \
+        printf("[DEBUG][PositionCollection - %s] " fmt "\n", __func__, ##__VA_ARGS__); \
+    } } while(0)
+
+
 #include "position_collection.h"
 
 PositionCollection::PositionCollection(const Market& market, const std::vector<int>& trade_signal, const bool save_price_data, const bool debug_mode)
@@ -11,9 +17,8 @@ PositionCollection::PositionCollection(const Market& market, const std::vector<i
 
     this->positions.reserve(this->number_of_trade);
 
-    if (this->debug_mode) {
-        printf("[DEBUG - POSITION_COLLECTION - CONSTRUCT] PositionCollection initialized with %zu trades to process\n", this->number_of_trade);
-    }
+    LOG_DEBUG(this->debug_mode, "PositionCollection initialized with %zu trades to process\n", this->number_of_trade);
+
 }
 
 std::vector<double> PositionCollection::extract_vector(std::function<double(PositionPtr)> accessor) {
@@ -82,31 +87,36 @@ void PositionCollection::open_positions(const ExitStrategy &exit_strategy) {
         else
             position = std::make_unique<Short>(exit_strategy, time_idx, this->market);
 
-        if (this->debug_mode) {
-            printf("[DEBUG - POSITION_COLLECTION - OPEN] Opened a %s position at time index %zu (date idx: %zu)\n",
-                   signal_value == 1 ? "Long" : "Short",
-                   time_idx,
-                   position->start_idx);
-        }
+        LOG_DEBUG(debug_mode,
+            "Opened position  Type=%-5s  TimeIdx=%-6zu  StartIdx=%-6zu",
+            signal_value == 1 ? "Long" : "Short",
+            time_idx,
+            position->start_idx);
+                positions.push_back(std::move(position));
+            }
 
-        positions.push_back(std::move(position));
-    }
-
-    if (this->debug_mode) {
-        printf("[DEBUG - POSITION_COLLECTION - OPEN] Total positions opened: %zu\n", positions.size());
-    }
+        LOG_DEBUG(debug_mode, "Total positions opened  Count=%-6zu\n", positions.size());
 }
 
 
 
 void PositionCollection::propagate_positions() {
-    #pragma omp parallel for
-    for (const auto& position : this->positions) {
-        position->propagate();
-        if (this->debug_mode)
-            printf("[DEBUG - POSITION_COLLECTION - PROPAGATE] Propagated position starting at index %zu\n", position->start_idx);
+    LOG_DEBUG(debug_mode, "Propagating %zu positions...", positions.size());
 
+    #pragma omp parallel for
+    for (const auto& position : positions) {
+        position->propagate();
+        LOG_DEBUG(debug_mode,
+            "Propagated position #%-4zu  [%-5s]  entry: %-8.2f  lot: %-6.2f  is_closed: %s",
+            position->start_idx,
+            position->is_long ? "Long" : "Short",
+            position->entry_price,
+            position->lot_size,
+            position->is_closed ? "True" : "False"
+        );
     }
+
+    LOG_DEBUG(debug_mode, "All positions propagated\n");
 
     this->terminate_open_positions();
 
@@ -131,11 +141,18 @@ void PositionCollection::terminate_open_positions() {
             position->close_at(this->market.dates.size());
             position->is_closed = true;
 
-            if (this->debug_mode)
-                printf("[DEBUG - POSITION_COLLECTION - TERMINATE] Terminated unclosed position. Exit price: %.2f, Lot size: %.2f\n", position->exit_price, position->lot_size);
-
+        LOG_DEBUG(debug_mode,
+            "Terminated unclosed position %s \tstart_idx: %zu \texit_price: %.2f \tlot_size: %.2f \tpnl: %.2f",
+            position->is_long ? "[Long]" : "[Short]",
+            position->start_idx,
+            position->exit_price,
+            position->lot_size,
+            position->get_price_difference()
+        );
         }
     }
+
+    LOG_DEBUG(debug_mode, "Checked all positions for termination\n");
 }
 
 

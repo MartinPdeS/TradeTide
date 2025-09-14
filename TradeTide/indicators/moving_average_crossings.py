@@ -1,14 +1,16 @@
 import numpy as np
-from datetime import timedelta
+import datetime
 import matplotlib.pyplot as plt
 from MPSPlots import helper
+from pydantic.dataclasses import dataclass
 
-from TradeTide.market import Market
 from TradeTide.binary.interface_indicators import MOVINGAVERAGECROSSING
 from TradeTide.indicators.base import BaseIndicator
 from TradeTide.simulation_settings import SimulationSettings
+from TradeTide.utils import config_dict
 
 
+@dataclass(config=config_dict)
 class MovingAverageCrossing(MOVINGAVERAGECROSSING, BaseIndicator):
     """
     Implements a Moving Average Crossing (MAC) indicator as an extension of the BaseIndicator class.
@@ -17,47 +19,34 @@ class MovingAverageCrossing(MOVINGAVERAGECROSSING, BaseIndicator):
     is generated when the short moving average crosses above (bullish signal) or below (bearish signal) the long moving average.
     The indicator is commonly used to identify the momentum and direction of a trend.
 
-    Attributes:
-        short_window (int | str): The window size of the short moving average.
-        long_window (int | str): The window size of the long moving average.
+    Attributes
+    ----------
+    short_window : datetime.timedelta
+        The window size of the short moving average.
+    long_window : datetime.timedelta
+        The window size of the long moving average.
 
-    Methods:
-        plot: Plots the short and long moving averages on a given Matplotlib axis.
+    Methods
+    -------
+    run: Runs the RMI indicator on the provided market data.
+    plot: Plots the short and long moving averages on a given Matplotlib axis.
     """
 
-    def __init__(self, short_window: timedelta, long_window: timedelta):
-        self.short_window = short_window
-        self.long_window = long_window
+    short_window: datetime.timedelta
+    long_window: datetime.timedelta
 
-        int_short_window = int(
-            short_window.total_seconds()
-            / SimulationSettings().get_time_unit().total_seconds()
-        )
-        int_long_window = int(
-            long_window.total_seconds()
+    def __post_init__(self):
+        _short_window = (
+            self.short_window.total_seconds()
             / SimulationSettings().get_time_unit().total_seconds()
         )
 
-        super().__init__(short_window=int_short_window, long_window=int_long_window)
+        _long_window = (
+            self.long_window.total_seconds()
+            / SimulationSettings().get_time_unit().total_seconds()
+        )
 
-    def run(self, market: Market) -> None:
-        """
-        Runs the Moving Average Crossing indicator on the provided market data.
-        This method initializes the indicator with the market's dates and calculates the short and long moving averages
-        based on the specified window sizes.
-
-        Parameters
-        ----------
-        market (Market):
-            The market data to run the indicator on. It should contain the dates and price data.
-
-        Raises
-        -------
-        ValueError: If the market does not contain enough data points to calculate the moving averages.
-        """
-        self.market = market
-
-        self._cpp_run_with_market(market)
+        super().__init__(short_window=int(_short_window), long_window=int(_long_window))
 
     @helper.pre_plot(nrows=1, ncols=1)
     def plot(self, axes: plt.Axes) -> None:

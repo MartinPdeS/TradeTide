@@ -48,9 +48,9 @@ void BollingerBands::detect_regions(size_t idx) {
     double price = (*this->prices)[idx];
 
     if (price < this->lower_band[idx]) // buy when price crosses below lower band
-        this->regions[idx] = +1;
-    else if (price > this->upper_band[idx])  // sell when price crosses above upper band
         this->regions[idx] = -1;
+    else if (price > this->upper_band[idx])  // sell when price crosses above upper band
+        this->regions[idx] = +1;
     else
         this->regions[idx] = 0;  // neutral region
 }

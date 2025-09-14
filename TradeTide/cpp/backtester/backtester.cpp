@@ -1,10 +1,16 @@
 #include "backtester.h"
 
 
-Backtester::Backtester(Strategy& strategy, ExitStrategy& exit_strategy, Market& market, BaseCapitalManagement& capital_management) :
-    strategy(strategy), exit_strategy(exit_strategy), market(market), capital_management(capital_management), position_collection(market, strategy.get_trade_signal(market), exit_strategy.save_price_data), portfolio(position_collection)
+Backtester::Backtester(Strategy& strategy, ExitStrategy& exit_strategy, Market& market, BaseCapitalManagement& capital_management, const bool debug_mode) :
+    strategy(strategy),
+    exit_strategy(exit_strategy),
+    market(market),
+    capital_management(capital_management),
+    position_collection(market, strategy.get_trade_signal(market), exit_strategy.save_price_data),
+    portfolio(position_collection)
 {
-
+    position_collection.debug_mode = debug_mode;
+    portfolio.debug_mode = debug_mode;
 }
 
 void Backtester::run() {

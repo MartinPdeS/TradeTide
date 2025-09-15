@@ -25,8 +25,6 @@ class Portfolio(PORTFOLIO):
         position_collection : PositionCollection
             The collection of positions to manage.
         """
-        print(TradeTide.debug_mode)
-        dsa
         super().__init__(
             position_collection=position_collection,
             debug_mode=TradeTide.debug_mode,

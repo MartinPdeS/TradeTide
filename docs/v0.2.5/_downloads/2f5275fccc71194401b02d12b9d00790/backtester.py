@@ -13,15 +13,10 @@ its historical performance and risk characteristics.
 # %%
 # Import Libraries and Setup
 # --------------------------
-
-import matplotlib.pyplot as plt
 from TradeTide import Backtester, Strategy, Market, Currency, days, hours, minutes
 from TradeTide.indicators import BollingerBands
 from TradeTide import capital_management, exit_strategy
 
-# Configure plotting
-plt.style.use("seaborn-v0_8-darkgrid")
-plt.rcParams["figure.figsize"] = (12, 6)
 
 # %%
 # Load Historical Market Data
@@ -33,11 +28,9 @@ market = Market()
 market.load_from_database(
     currency_0=Currency.CAD,
     currency_1=Currency.USD,
-    time_span=2 * days,
+    time_span=120 * minutes,
 )
-# market.plot()
-
-print(f"Loaded {len(market.dates)} data points over {100} days")
+market.plot()
 
 # %%
 # Configure Trading Strategy
@@ -45,9 +38,11 @@ print(f"Loaded {len(market.dates)} data points over {100} days")
 # Set up a Bollinger Bands strategy with 2.0 standard deviation bands
 # for more conservative signal generation.
 
-indicator = BollingerBands(window=3 * minutes, multiplier=2.0)
+indicator = BollingerBands(window=3 * minutes, multiplier=1.0)
 
 indicator.run(market)
+
+# indicator.plot()
 
 strategy = Strategy()
 strategy.add_indicator(indicator)
@@ -61,7 +56,7 @@ exit_strat = exit_strategy.Static(stop_loss=4, take_profit=4, save_price_data=Tr
 
 capital_mgmt = capital_management.FixedLot(
     capital=1_000,
-    fixed_lot_size=10,
+    fixed_lot_size=100,
     max_capital_at_risk=100_000,
     max_concurrent_positions=10,
 )
@@ -81,13 +76,11 @@ backtester = Backtester(
 
 backtester.run()
 
-# backtester.plot_summary()
-
-# print(backtester.portfolio)
+backtester.plot_summary(tight_layout=False)
 
 # %%
 # Display Results
 # ---------------
 # View comprehensive performance metrics and analysis.
 
-backtester.print_performance()
+# backtester.print_performance()

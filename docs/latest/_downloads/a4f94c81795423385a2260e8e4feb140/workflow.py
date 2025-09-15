@@ -37,11 +37,6 @@ from TradeTide import (
 from TradeTide.indicators import BollingerBands
 from TradeTide import capital_management, exit_strategy
 
-# Configure matplotlib for better plots
-plt.style.use("seaborn-v0_8-darkgrid")
-plt.rcParams["figure.figsize"] = (12, 8)
-plt.rcParams["font.size"] = 10
-
 # %%
 # Load Market Data
 # ----------------
@@ -170,7 +165,7 @@ capital_mgmt = capital_management.FixedLot(
 # Run the complete portfolio simulation to see how our strategy performs.
 
 # Create portfolio and run simulation
-portfolio = Portfolio(position_collection=position_collection, debug_mode=False)
+portfolio = Portfolio(position_collection=position_collection)
 portfolio.simulate(capital_management=capital_mgmt)
 
 # %%

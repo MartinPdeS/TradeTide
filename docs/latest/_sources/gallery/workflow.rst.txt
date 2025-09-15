@@ -41,7 +41,7 @@ Import Required Libraries
 -------------------------
 We start by importing all necessary modules from TradeTide and standard libraries.
 
-.. GENERATED FROM PYTHON SOURCE LINES 24-45
+.. GENERATED FROM PYTHON SOURCE LINES 24-40
 
 .. code-block:: Python
 
@@ -61,10 +61,6 @@ We start by importing all necessary modules from TradeTide and standard librarie
     from TradeTide.indicators import BollingerBands
     from TradeTide import capital_management, exit_strategy
 
-    # Configure matplotlib for better plots
-    plt.style.use("seaborn-v0_8-darkgrid")
-    plt.rcParams["figure.figsize"] = (12, 8)
-    plt.rcParams["font.size"] = 10
 
 
 
@@ -72,15 +68,14 @@ We start by importing all necessary modules from TradeTide and standard librarie
 
 
 
-
-.. GENERATED FROM PYTHON SOURCE LINES 46-50
+.. GENERATED FROM PYTHON SOURCE LINES 41-45
 
 Load Market Data
 ----------------
 First, we load historical forex data for the CAD/USD currency pair.
 We'll use 4 hours of data to demonstrate the strategy on recent market movements.
 
-.. GENERATED FROM PYTHON SOURCE LINES 50-63
+.. GENERATED FROM PYTHON SOURCE LINES 45-58
 
 .. code-block:: Python
 
@@ -104,7 +99,7 @@ We'll use 4 hours of data to demonstrate the strategy on recent market movements
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 64-69
+.. GENERATED FROM PYTHON SOURCE LINES 59-64
 
 Configure Bollinger Bands Indicator
 ------------------------------------
@@ -112,7 +107,7 @@ We'll use Bollinger Bands as our primary technical indicator. Bollinger Bands
 consist of a moving average with upper and lower bands that expand and contract
 based on market volatility.
 
-.. GENERATED FROM PYTHON SOURCE LINES 69-79
+.. GENERATED FROM PYTHON SOURCE LINES 64-74
 
 .. code-block:: Python
 
@@ -133,14 +128,14 @@ based on market volatility.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 80-84
+.. GENERATED FROM PYTHON SOURCE LINES 75-79
 
 Build Trading Strategy
 ----------------------
 Now we create a trading strategy that uses our Bollinger Bands indicator
 to generate buy and sell signals.
 
-.. GENERATED FROM PYTHON SOURCE LINES 84-95
+.. GENERATED FROM PYTHON SOURCE LINES 79-90
 
 .. code-block:: Python
 
@@ -168,14 +163,14 @@ to generate buy and sell signals.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 96-100
+.. GENERATED FROM PYTHON SOURCE LINES 91-95
 
 Visualize Bollinger Bands and Market Data
 ------------------------------------------
 Let's plot the Bollinger Bands to visualize the indicator behavior
 and understand where trading signals are generated.
 
-.. GENERATED FROM PYTHON SOURCE LINES 100-119
+.. GENERATED FROM PYTHON SOURCE LINES 95-114
 
 .. code-block:: Python
 
@@ -210,14 +205,14 @@ and understand where trading signals are generated.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 120-124
+.. GENERATED FROM PYTHON SOURCE LINES 115-119
 
 Configure Risk Management
 -------------------------
 Before opening positions, we need to set up our exit strategy and risk management
 parameters to control losses and secure profits.
 
-.. GENERATED FROM PYTHON SOURCE LINES 124-132
+.. GENERATED FROM PYTHON SOURCE LINES 119-127
 
 .. code-block:: Python
 
@@ -236,13 +231,13 @@ parameters to control losses and secure profits.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 133-136
+.. GENERATED FROM PYTHON SOURCE LINES 128-131
 
 Position Management
 -------------------
 Create and manage trading positions based on our strategy signals.
 
-.. GENERATED FROM PYTHON SOURCE LINES 136-154
+.. GENERATED FROM PYTHON SOURCE LINES 131-149
 
 .. code-block:: Python
 
@@ -277,18 +272,18 @@ Create and manage trading positions based on our strategy signals.
 
  .. code-block:: none
 
-    Opened 72 positions during simulation
+    Opened 71 positions during simulation
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 155-158
+.. GENERATED FROM PYTHON SOURCE LINES 150-153
 
 Capital Management Setup
 ------------------------
 Configure capital management rules to control position sizing and overall risk.
 
-.. GENERATED FROM PYTHON SOURCE LINES 158-167
+.. GENERATED FROM PYTHON SOURCE LINES 153-162
 
 .. code-block:: Python
 
@@ -308,19 +303,19 @@ Configure capital management rules to control position sizing and overall risk.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 168-171
+.. GENERATED FROM PYTHON SOURCE LINES 163-166
 
 Portfolio Simulation
 --------------------
 Run the complete portfolio simulation to see how our strategy performs.
 
-.. GENERATED FROM PYTHON SOURCE LINES 171-176
+.. GENERATED FROM PYTHON SOURCE LINES 166-171
 
 .. code-block:: Python
 
 
     # Create portfolio and run simulation
-    portfolio = Portfolio(position_collection=position_collection, debug_mode=False)
+    portfolio = Portfolio(position_collection=position_collection)
     portfolio.simulate(capital_management=capital_mgmt)
 
 
@@ -330,13 +325,13 @@ Run the complete portfolio simulation to see how our strategy performs.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 177-180
+.. GENERATED FROM PYTHON SOURCE LINES 172-175
 
 Performance Analysis
 --------------------
 Analyze the results of our trading strategy and display key performance metrics.
 
-.. GENERATED FROM PYTHON SOURCE LINES 180-187
+.. GENERATED FROM PYTHON SOURCE LINES 175-182
 
 .. code-block:: Python
 
@@ -354,13 +349,13 @@ Analyze the results of our trading strategy and display key performance metrics.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 188-191
+.. GENERATED FROM PYTHON SOURCE LINES 183-186
 
 Results Interpretation and Summary
 ----------------------------------
 Let's interpret the results and provide insights about the strategy performance.
 
-.. GENERATED FROM PYTHON SOURCE LINES 191-216
+.. GENERATED FROM PYTHON SOURCE LINES 186-211
 
 .. code-block:: Python
 
@@ -407,7 +402,7 @@ Let's interpret the results and provide insights about the strategy performance.
        - Risk Management: 4-pip stop loss & take profit
        - Capital: $1M with $10K fixed lot sizes
        - Time Period: 4 hours of CAD/USD data
-       - Total Positions: 72
+       - Total Positions: 71
 
     Key Takeaways:
        - This example demonstrates a complete TradeTide workflow
@@ -424,7 +419,7 @@ Let's interpret the results and provide insights about the strategy performance.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 217-229
+.. GENERATED FROM PYTHON SOURCE LINES 212-224
 
 Conclusion
 ----------
@@ -442,7 +437,7 @@ For more advanced examples, explore:
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.886 seconds)
+   **Total running time of the script:** (0 minutes 0.811 seconds)
 
 
 .. _sphx_glr_download_gallery_workflow.py:

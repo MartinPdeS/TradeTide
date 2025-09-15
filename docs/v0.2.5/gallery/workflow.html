@@ -505,11 +505,6 @@ to create a professional trading system.</p>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.indicators</span><span class="w"> </span><span class="kn">import</span> <span class="n">BollingerBands</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">capital_management</span><span class="p">,</span> <span class="n">exit_strategy</span>
-
-<span class="c1"># Configure matplotlib for better plots</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;seaborn-v0_8-darkgrid&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.figsize&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
 </pre></div>
 </div>
 </section>
@@ -624,7 +619,7 @@ parameters to control losses and secure profits.</p>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Opened </span><span class="si">{</span><span class="n">total_positions</span><span class="si">}</span><span class="s2"> positions during simulation&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_workflow_002.png" srcset="../_images/sphx_glr_workflow_002.png" alt="CAD/USD - 4:00:00, CAD/USD - 4:00:00" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Opened 72 positions during simulation
+<img src="../_images/sphx_glr_workflow_002.png" srcset="../_images/sphx_glr_workflow_002.png" alt="CAD/USD - 4:00:00, CAD/USD - 4:00:00" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Opened 71 positions during simulation
 </pre></div>
 </div>
 </section>
@@ -645,7 +640,7 @@ parameters to control losses and secure profits.</p>
 <h2>Portfolio Simulation<a class="headerlink" href="#portfolio-simulation" title="Link to this heading">#</a></h2>
 <p>Run the complete portfolio simulation to see how our strategy performs.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create portfolio and run simulation</span>
-<span class="n">portfolio</span> <span class="o">=</span> <span class="n">Portfolio</span><span class="p">(</span><span class="n">position_collection</span><span class="o">=</span><span class="n">position_collection</span><span class="p">,</span> <span class="n">debug_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">portfolio</span> <span class="o">=</span> <span class="n">Portfolio</span><span class="p">(</span><span class="n">position_collection</span><span class="o">=</span><span class="n">position_collection</span><span class="p">)</span>
 <span class="n">portfolio</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">capital_management</span><span class="o">=</span><span class="n">capital_mgmt</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -698,7 +693,7 @@ Strategy Summary:
    - Risk Management: 4-pip stop loss &amp; take profit
    - Capital: $1M with $10K fixed lot sizes
    - Time Period: 4 hours of CAD/USD data
-   - Total Positions: 72
+   - Total Positions: 71
 
 Key Takeaways:
    - This example demonstrates a complete TradeTide workflow
@@ -726,7 +721,7 @@ indicators, and risk management approaches.</p>
 <li><p>Portfolio optimization</p></li>
 <li><p>Walk-forward analysis</p></li>
 </ul>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.886 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.811 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-workflow-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/41125c336e4e3c3f05d6c417dd13e207/workflow.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">workflow.ipynb</span></code></a></p>

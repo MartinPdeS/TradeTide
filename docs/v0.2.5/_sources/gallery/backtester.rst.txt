@@ -33,19 +33,14 @@ its historical performance and risk characteristics.
 Import Libraries and Setup
 --------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 16-26
+.. GENERATED FROM PYTHON SOURCE LINES 16-21
 
 .. code-block:: Python
 
-
-    import matplotlib.pyplot as plt
     from TradeTide import Backtester, Strategy, Market, Currency, days, hours, minutes
     from TradeTide.indicators import BollingerBands
     from TradeTide import capital_management, exit_strategy
 
-    # Configure plotting
-    plt.style.use("seaborn-v0_8-darkgrid")
-    plt.rcParams["figure.figsize"] = (12, 6)
 
 
 
@@ -54,13 +49,13 @@ Import Libraries and Setup
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 27-30
+.. GENERATED FROM PYTHON SOURCE LINES 22-25
 
 Load Historical Market Data
 ---------------------------
 Load 100 days of CAD/USD forex data for comprehensive backtesting.
 
-.. GENERATED FROM PYTHON SOURCE LINES 30-42
+.. GENERATED FROM PYTHON SOURCE LINES 25-35
 
 .. code-block:: Python
 
@@ -70,40 +65,45 @@ Load 100 days of CAD/USD forex data for comprehensive backtesting.
     market.load_from_database(
         currency_0=Currency.CAD,
         currency_1=Currency.USD,
-        time_span=2 * days,
+        time_span=120 * minutes,
     )
-    # market.plot()
-
-    print(f"Loaded {len(market.dates)} data points over {100} days")
+    market.plot()
 
 
 
+
+.. image-sg:: /gallery/images/sphx_glr_backtester_001.png
+   :alt: CAD/USD - 2:00:00
+   :srcset: /gallery/images/sphx_glr_backtester_001.png
+   :class: sphx-glr-single-img
 
 
 .. rst-class:: sphx-glr-script-out
 
  .. code-block:: none
 
-    Loaded 2857 data points over 100 days
+
+    <Figure size 800x500 with 1 Axes>
 
 
 
-
-.. GENERATED FROM PYTHON SOURCE LINES 43-47
+.. GENERATED FROM PYTHON SOURCE LINES 36-40
 
 Configure Trading Strategy
 --------------------------
 Set up a Bollinger Bands strategy with 2.0 standard deviation bands
 for more conservative signal generation.
 
-.. GENERATED FROM PYTHON SOURCE LINES 47-55
+.. GENERATED FROM PYTHON SOURCE LINES 40-50
 
 .. code-block:: Python
 
 
-    indicator = BollingerBands(window=3 * minutes, multiplier=2.0)
+    indicator = BollingerBands(window=3 * minutes, multiplier=1.0)
 
     indicator.run(market)
+
+    # indicator.plot()
 
     strategy = Strategy()
     strategy.add_indicator(indicator)
@@ -115,13 +115,13 @@ for more conservative signal generation.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 56-59
+.. GENERATED FROM PYTHON SOURCE LINES 51-54
 
 Define Risk Management
 ----------------------
 Configure exit strategy and capital management parameters.
 
-.. GENERATED FROM PYTHON SOURCE LINES 59-69
+.. GENERATED FROM PYTHON SOURCE LINES 54-64
 
 .. code-block:: Python
 
@@ -130,7 +130,7 @@ Configure exit strategy and capital management parameters.
 
     capital_mgmt = capital_management.FixedLot(
         capital=1_000,
-        fixed_lot_size=10,
+        fixed_lot_size=100,
         max_capital_at_risk=100_000,
         max_concurrent_positions=10,
     )
@@ -142,14 +142,14 @@ Configure exit strategy and capital management parameters.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 70-74
+.. GENERATED FROM PYTHON SOURCE LINES 65-69
 
 Run Backtest
 ------------
 The Backtester automatically handles the complete workflow:
 strategy execution, position management, and performance calculation.
 
-.. GENERATED FROM PYTHON SOURCE LINES 74-88
+.. GENERATED FROM PYTHON SOURCE LINES 69-81
 
 .. code-block:: Python
 
@@ -163,29 +163,42 @@ strategy execution, position management, and performance calculation.
 
     backtester.run()
 
-    # backtester.plot_summary()
-
-    # print(backtester.portfolio)
+    backtester.plot_summary(tight_layout=False)
 
 
 
 
+.. image-sg:: /gallery/images/sphx_glr_backtester_002.png
+   :alt: Backtesting Summary Dashboard, Trading Strategy Overview, Portfolio Equity Curve, Portfolio Drawdown, Open Positions Over Time, Key Performance Indicators
+   :srcset: /gallery/images/sphx_glr_backtester_002.png
+   :class: sphx-glr-single-img
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    /opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/MPSPlots/helper.py:192: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+      figure.tight_layout()
+    /opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/MPSPlots/helper.py:192: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+      figure.tight_layout()
+
+    <Figure size 1200x800 with 5 Axes>
 
 
 
-
-.. GENERATED FROM PYTHON SOURCE LINES 89-92
+.. GENERATED FROM PYTHON SOURCE LINES 82-85
 
 Display Results
 ---------------
 View comprehensive performance metrics and analysis.
 
-.. GENERATED FROM PYTHON SOURCE LINES 92-94
+.. GENERATED FROM PYTHON SOURCE LINES 85-87
 
 .. code-block:: Python
 
 
-    backtester.print_performance()
+    # backtester.print_performance()
 
 
 
@@ -196,7 +209,7 @@ View comprehensive performance metrics and analysis.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.024 seconds)
+   **Total running time of the script:** (0 minutes 1.393 seconds)
 
 
 .. _sphx_glr_download_gallery_backtester.py:

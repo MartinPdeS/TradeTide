@@ -22,7 +22,42 @@ class BaseIndicator:
 
         self._cpp_run_with_market(market)
 
-    def _add_region_to_ax(self, ax):
+    def _unify_axes_legend(self, *axes) -> None:
+        """
+        Unifies the legends of multiple axes into a single legend on the first axis.
+        Parameters
+        ----------
+        *axes: matplotlib.axes.Axes
+            The axes whose legends are to be unified.
+
+        Returns
+        -------
+        None
+        """
+        lines = []
+        labels = []
+        for ax in axes:
+            line, label = ax.get_legend_handles_labels()
+            lines += line
+            labels += label
+
+        unique = dict(zip(labels, lines))
+        axes[0].legend(unique.values(), unique.keys(), loc="upper left")
+
+    def _add_region_to_ax(self, ax) -> None:
+        """
+        Adds colored regions to the provided axis based on the indicator's regions.
+        Green regions indicate a positive signal, while red regions indicate a negative signal.
+
+        Parameters
+        ----------
+        ax: matplotlib.axes.Axes
+            The axis to which the regions will be added.
+
+        Returns
+        -------
+        None
+        """
         regions = np.asarray(self._cpp_regions)
 
         dates = np.array(self.market.dates)

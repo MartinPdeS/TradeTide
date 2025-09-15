@@ -16,9 +16,6 @@ its historical performance and risk characteristics.
 from TradeTide import Backtester, Strategy, Market, Currency, days, hours, minutes
 from TradeTide.indicators import BollingerBands
 from TradeTide import capital_management, exit_strategy
-import TradeTide
-
-TradeTide.debug_mode = True
 
 
 # %%
@@ -31,11 +28,9 @@ market = Market()
 market.load_from_database(
     currency_0=Currency.CAD,
     currency_1=Currency.USD,
-    time_span=630 * minutes,
+    time_span=120 * minutes,
 )
-# market.plot()
-
-print(f"Loaded {len(market.dates)} data points over {100} days")
+market.plot()
 
 # %%
 # Configure Trading Strategy

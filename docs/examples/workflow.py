@@ -165,7 +165,7 @@ capital_mgmt = capital_management.FixedLot(
 # Run the complete portfolio simulation to see how our strategy performs.
 
 # Create portfolio and run simulation
-portfolio = Portfolio(position_collection=position_collection, debug_mode=False)
+portfolio = Portfolio(position_collection=position_collection)
 portfolio.simulate(capital_management=capital_mgmt)
 
 # %%

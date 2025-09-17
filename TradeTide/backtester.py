@@ -70,7 +70,7 @@ class Backtester(BACKTESTER):
         ]
 
         for ax, plot_method in zip(axes.flatten(), plot_methods):
-            plot_method(axes=ax, show=False)
+            plot_method(axes=ax, show=False, tight_layout=False)
 
         # Set common x-axis label on bottom plot
         axes[-1].set_xlabel("Time")
@@ -86,7 +86,7 @@ class Backtester(BACKTESTER):
     def _plot_strategy(self, axes: plt.Axes) -> None:
         """Plot market prices with strategy signals and indicators."""
         # Plot market data
-        self.market.plot(axes=axes, show=False)
+        self.market.plot(axes=axes, show=False, tight_layout=False)
 
         # Get strategy signals
         trade_signals = self.strategy.get_trade_signal(self.market)
@@ -385,3 +385,56 @@ Run backtest first.
         )
 
         axes.set_title("Key Performance Indicators")
+
+    def print_summary(self) -> None:
+        """
+        Print a formatted summary of backtesting performance metrics to the console.
+
+        Examples
+        --------
+        >>> backtester.print_summary()
+        """
+        if not hasattr(self, "_cpp_portfolio") or self._cpp_portfolio is None:
+            print("\n" + "=" * 60)
+            print("         Backtesting Performance Summary")
+            print("=" * 60)
+            print("No data available. Run backtest first.")
+            print("=" * 60 + "\n")
+            return
+
+        metrics = self._cpp_portfolio.get_metrics()
+        equity_data = np.array(self._cpp_portfolio.record.equity)
+        initial_capital = self._cpp_portfolio.record.initial_capital
+        final_equity = equity_data[-1]
+
+        def _print_line(label: str, value: str) -> None:
+            print(f"{label:<25} {value:>20}")
+
+        # Header
+        print("\n" + "=" * 60)
+        print("              Backtesting Performance Summary")
+        print("=" * 60)
+
+        # Capital
+        _print_line("Initial Capital:", f"${initial_capital:,.2f}")
+        _print_line("Final Equity:", f"${final_equity:,.2f}")
+        print("-" * 60)
+
+        # Core metrics
+        _print_line("Total Return:", f"{metrics.total_return:,.2f} %")
+        _print_line("Annualized Return:", f"{metrics.annualized_return:,.2f} %")
+        _print_line("Volatility:", f"{metrics.volatility * 100:,.2f} %")
+        print("-" * 60)
+
+        # Risk metrics
+        _print_line("Sharpe Ratio:", f"{metrics.sharpe_ratio:,.3f}")
+        _print_line("Sortino Ratio:", f"{metrics.sortino_ratio:,.3f}")
+        _print_line("Max Drawdown:", f"{metrics.max_drawdown:,.2f} %")
+        _print_line("Peak Equity:", f"{metrics.peak_equity:,.2f} %")
+        print("-" * 60)
+
+        # Trade stats
+        _print_line("Win Rate:", f"{metrics.win_loss_ratio * 100:,.2f} %")
+
+        # Footer
+        print("=" * 60 + "\n")

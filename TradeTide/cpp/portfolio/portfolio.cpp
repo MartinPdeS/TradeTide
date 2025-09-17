@@ -1,7 +1,3 @@
-// #define LOG_DEBUG(enabled, fmt, ...) \
-//     do { if (enabled) { \
-//         printf("[DEBUG][Portfolio - %-20s] " fmt "\n", __func__, ##__VA_ARGS__); \
-//     } } while(0)
 #define LOG_DEBUG(enabled, fmt, ...)                                     \
     do { if (enabled) {                                                  \
         int n = printf("[DEBUG][Portfolio - %s] ", __func__);            \

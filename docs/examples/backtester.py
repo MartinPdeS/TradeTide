@@ -13,7 +13,8 @@ its historical performance and risk characteristics.
 # %%
 # Import Libraries and Setup
 # --------------------------
-from TradeTide import Backtester, Strategy, Market, Currency, days, hours, minutes
+from TradeTide import Backtester, Strategy, Market, Currency
+from TradeTide.times import months, days, hours, minutes
 from TradeTide.indicators import BollingerBands
 from TradeTide import capital_management, exit_strategy
 
@@ -28,9 +29,9 @@ market = Market()
 market.load_from_database(
     currency_0=Currency.CAD,
     currency_1=Currency.USD,
-    time_span=120 * minutes,
+    time_span=2 * months,
 )
-market.plot()
+# market.plot()
 
 # %%
 # Configure Trading Strategy
@@ -38,7 +39,7 @@ market.plot()
 # Set up a Bollinger Bands strategy with 2.0 standard deviation bands
 # for more conservative signal generation.
 
-indicator = BollingerBands(window=3 * minutes, multiplier=1.0)
+indicator = BollingerBands(window=20 * minutes, multiplier=1.0)
 
 indicator.run(market)
 
@@ -76,11 +77,10 @@ backtester = Backtester(
 
 backtester.run()
 
-backtester.plot_summary(tight_layout=False)
+backtester.print_summary()
 
 # %%
 # Display Results
 # ---------------
 # View comprehensive performance metrics and analysis.
-
-# backtester.print_performance()
+backtester.print_performance()

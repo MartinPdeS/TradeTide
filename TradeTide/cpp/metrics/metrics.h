@@ -115,6 +115,7 @@ class Metrics {
      * 8. Sharpe ratio calculation (prerequisite for Sortino)
      * 9. Sortino ratio calculation
      * 10. Total executed positions count
+     * 11. Peak equity calculation
      *
      * @note This method modifies all metric member variables in place.
      * @warning Ensure the record object is properly initialized before calling.
@@ -129,6 +130,8 @@ class Metrics {
         this->calculate_max_drawdown();
         this->calculate_sharpe_ratio();    // It has to be computed before Sortino ratio
         this->calculate_sortino_ratio();
+        this->calculate_peak_equity();
+        this->calculate_annualized_return();
 
         this->total_exected_positions = this->record.success_count + this->record.fail_count;
 

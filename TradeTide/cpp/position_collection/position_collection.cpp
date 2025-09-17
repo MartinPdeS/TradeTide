@@ -120,18 +120,6 @@ void PositionCollection::propagate_positions() {
 
     this->terminate_open_positions();
 
-    for (auto& position : this->positions)
-        printf(
-            "Position #%-4zu  [%-5s]  entry: %-8.2f  exit: %-8.2f  lot: %-6.2f  pnl: %-8.2f  is_closed: %s\n",
-            position->start_idx,
-            position->is_long ? "Long" : "Short",
-            position->entry_price,
-            position->exit_price,
-            position->lot_size,
-            position->get_price_difference(),
-            position->is_closed ? "True" : "False"
-        );
-
     std::sort(
         this->positions.begin(),
         this->positions.end(),

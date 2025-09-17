@@ -41,23 +41,16 @@ Import Required Libraries
 -------------------------
 We start by importing all necessary modules from TradeTide and standard libraries.
 
-.. GENERATED FROM PYTHON SOURCE LINES 24-40
+.. GENERATED FROM PYTHON SOURCE LINES 24-33
 
 .. code-block:: Python
 
 
     import matplotlib.pyplot as plt
     import numpy as np
-    from TradeTide import (
-        Strategy,
-        Portfolio,
-        PositionCollection,
-        Market,
-        Currency,
-        days,
-        hours,
-        minutes,
-    )
+    from TradeTide import Strategy, Portfolio, PositionCollection, Market, Currency
+    from TradeTide.times import days, hours, minutes
+
     from TradeTide.indicators import BollingerBands
     from TradeTide import capital_management, exit_strategy
 
@@ -68,14 +61,14 @@ We start by importing all necessary modules from TradeTide and standard librarie
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 41-45
+.. GENERATED FROM PYTHON SOURCE LINES 34-38
 
 Load Market Data
 ----------------
 First, we load historical forex data for the CAD/USD currency pair.
 We'll use 4 hours of data to demonstrate the strategy on recent market movements.
 
-.. GENERATED FROM PYTHON SOURCE LINES 45-58
+.. GENERATED FROM PYTHON SOURCE LINES 38-51
 
 .. code-block:: Python
 
@@ -99,7 +92,7 @@ We'll use 4 hours of data to demonstrate the strategy on recent market movements
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 59-64
+.. GENERATED FROM PYTHON SOURCE LINES 52-57
 
 Configure Bollinger Bands Indicator
 ------------------------------------
@@ -107,7 +100,7 @@ We'll use Bollinger Bands as our primary technical indicator. Bollinger Bands
 consist of a moving average with upper and lower bands that expand and contract
 based on market volatility.
 
-.. GENERATED FROM PYTHON SOURCE LINES 64-74
+.. GENERATED FROM PYTHON SOURCE LINES 57-67
 
 .. code-block:: Python
 
@@ -128,14 +121,14 @@ based on market volatility.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 75-79
+.. GENERATED FROM PYTHON SOURCE LINES 68-72
 
 Build Trading Strategy
 ----------------------
 Now we create a trading strategy that uses our Bollinger Bands indicator
 to generate buy and sell signals.
 
-.. GENERATED FROM PYTHON SOURCE LINES 79-90
+.. GENERATED FROM PYTHON SOURCE LINES 72-81
 
 .. code-block:: Python
 
@@ -148,71 +141,55 @@ to generate buy and sell signals.
     trade_signals = strategy.get_trade_signal(market)
     signal_count = np.count_nonzero(trade_signals)
 
-    print(f"Strategy generated {signal_count} trading signals")
 
 
 
 
 
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    Strategy generated 72 trading signals
 
 
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 91-95
+.. GENERATED FROM PYTHON SOURCE LINES 82-86
 
 Visualize Bollinger Bands and Market Data
 ------------------------------------------
 Let's plot the Bollinger Bands to visualize the indicator behavior
 and understand where trading signals are generated.
 
-.. GENERATED FROM PYTHON SOURCE LINES 95-114
+.. GENERATED FROM PYTHON SOURCE LINES 86-91
 
 .. code-block:: Python
 
 
     # Create the indicator plot (shows only ask prices for clarity)
-    figure = indicator.plot(show=False)
+    indicator.plot()
 
-    ax = figure.axes[0]
-
-    # Enhance the plot with additional information
-    ax.set_title("CAD/USD with Bollinger Bands Strategy", fontsize=14, fontweight="bold")
-    ax.set_xlabel("Time", fontsize=12)
-    ax.set_ylabel("Price", fontsize=12)
-    ax.grid(True, alpha=0.3)
-
-    # Add legend
-    ax.legend(loc="upper left", frameon=True, fancybox=True, shadow=True)
-
-    # Show the plot
-    plt.tight_layout()
-    # plt.show()
 
 
 
 
 .. image-sg:: /gallery/images/sphx_glr_workflow_001.png
-   :alt: CAD/USD with Bollinger Bands Strategy
+   :alt: CAD/USD - 4:00:00
    :srcset: /gallery/images/sphx_glr_workflow_001.png
    :class: sphx-glr-single-img
 
 
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+
+    <Figure size 800x500 with 1 Axes>
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 115-119
+.. GENERATED FROM PYTHON SOURCE LINES 92-96
 
 Configure Risk Management
 -------------------------
 Before opening positions, we need to set up our exit strategy and risk management
 parameters to control losses and secure profits.
 
-.. GENERATED FROM PYTHON SOURCE LINES 119-127
+.. GENERATED FROM PYTHON SOURCE LINES 96-104
 
 .. code-block:: Python
 
@@ -231,13 +208,13 @@ parameters to control losses and secure profits.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 128-131
+.. GENERATED FROM PYTHON SOURCE LINES 105-108
 
 Position Management
 -------------------
 Create and manage trading positions based on our strategy signals.
 
-.. GENERATED FROM PYTHON SOURCE LINES 131-149
+.. GENERATED FROM PYTHON SOURCE LINES 108-123
 
 .. code-block:: Python
 
@@ -256,9 +233,6 @@ Create and manage trading positions based on our strategy signals.
     # Propagate positions through time to simulate trading
     position_collection.propagate_positions()
 
-    total_positions = len(position_collection)
-    print(f"Opened {total_positions} positions during simulation")
-
 
 
 
@@ -268,22 +242,16 @@ Create and manage trading positions based on our strategy signals.
    :class: sphx-glr-single-img
 
 
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    Opened 71 positions during simulation
 
 
 
-
-.. GENERATED FROM PYTHON SOURCE LINES 150-153
+.. GENERATED FROM PYTHON SOURCE LINES 124-127
 
 Capital Management Setup
 ------------------------
 Configure capital management rules to control position sizing and overall risk.
 
-.. GENERATED FROM PYTHON SOURCE LINES 153-162
+.. GENERATED FROM PYTHON SOURCE LINES 127-136
 
 .. code-block:: Python
 
@@ -303,13 +271,13 @@ Configure capital management rules to control position sizing and overall risk.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 163-166
+.. GENERATED FROM PYTHON SOURCE LINES 137-140
 
 Portfolio Simulation
 --------------------
 Run the complete portfolio simulation to see how our strategy performs.
 
-.. GENERATED FROM PYTHON SOURCE LINES 166-171
+.. GENERATED FROM PYTHON SOURCE LINES 140-145
 
 .. code-block:: Python
 
@@ -325,13 +293,13 @@ Run the complete portfolio simulation to see how our strategy performs.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 172-175
+.. GENERATED FROM PYTHON SOURCE LINES 146-149
 
 Performance Analysis
 --------------------
 Analyze the results of our trading strategy and display key performance metrics.
 
-.. GENERATED FROM PYTHON SOURCE LINES 175-182
+.. GENERATED FROM PYTHON SOURCE LINES 149-155
 
 .. code-block:: Python
 
@@ -349,95 +317,9 @@ Analyze the results of our trading strategy and display key performance metrics.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 183-186
-
-Results Interpretation and Summary
-----------------------------------
-Let's interpret the results and provide insights about the strategy performance.
-
-.. GENERATED FROM PYTHON SOURCE LINES 186-211
-
-.. code-block:: Python
-
-
-    print("\n" + "=" * 60)
-    print("STRATEGY INSIGHTS AND INTERPRETATION")
-    print("=" * 60)
-
-    # Strategy summary
-    print(f"\nStrategy Summary:")
-    print(f"   - Indicator: Bollinger Bands (3-min window, 1.0 sigma)")
-    print(f"   - Risk Management: 4-pip stop loss & take profit")
-    print(f"   - Capital: $1M with $10K fixed lot sizes")
-    print(f"   - Time Period: 4 hours of CAD/USD data")
-    print(f"   - Total Positions: {total_positions}")
-
-    print(f"\nKey Takeaways:")
-    print(f"   - This example demonstrates a complete TradeTide workflow")
-    print(f"   - Bollinger Bands provide volatility-based trading signals")
-    print(f"   - Risk management is crucial for protecting capital")
-    print(f"   - Portfolio simulation enables strategy evaluation")
-
-    print(f"\nNext Steps:")
-    print(f"   - Experiment with different indicator parameters")
-    print(f"   - Try alternative exit strategies")
-    print(f"   - Test on different currency pairs and timeframes")
-    print(f"   - Implement additional technical indicators")
-
-
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-
-    ============================================================
-    STRATEGY INSIGHTS AND INTERPRETATION
-    ============================================================
-
-    Strategy Summary:
-       - Indicator: Bollinger Bands (3-min window, 1.0 sigma)
-       - Risk Management: 4-pip stop loss & take profit
-       - Capital: $1M with $10K fixed lot sizes
-       - Time Period: 4 hours of CAD/USD data
-       - Total Positions: 71
-
-    Key Takeaways:
-       - This example demonstrates a complete TradeTide workflow
-       - Bollinger Bands provide volatility-based trading signals
-       - Risk management is crucial for protecting capital
-       - Portfolio simulation enables strategy evaluation
-
-    Next Steps:
-       - Experiment with different indicator parameters
-       - Try alternative exit strategies
-       - Test on different currency pairs and timeframes
-       - Implement additional technical indicators
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 212-224
-
-Conclusion
-----------
-This example showcased a complete trading workflow using TradeTide.
-The modular design allows easy experimentation with different strategies,
-indicators, and risk management approaches.
-
-For more advanced examples, explore:
-
-* Multi-indicator strategies
-* Dynamic exit strategies
-* Portfolio optimization
-* Walk-forward analysis
-
-
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.871 seconds)
+   **Total running time of the script:** (0 minutes 0.774 seconds)
 
 
 .. _sphx_glr_download_gallery_workflow.py:

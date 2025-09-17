@@ -24,16 +24,9 @@ to create a professional trading system.
 
 import matplotlib.pyplot as plt
 import numpy as np
-from TradeTide import (
-    Strategy,
-    Portfolio,
-    PositionCollection,
-    Market,
-    Currency,
-    days,
-    hours,
-    minutes,
-)
+from TradeTide import Strategy, Portfolio, PositionCollection, Market, Currency
+from TradeTide.times import days, hours, minutes
+
 from TradeTide.indicators import BollingerBands
 from TradeTide import capital_management, exit_strategy
 
@@ -85,8 +78,6 @@ strategy.add_indicator(indicator)
 trade_signals = strategy.get_trade_signal(market)
 signal_count = np.count_nonzero(trade_signals)
 
-print(f"Strategy generated {signal_count} trading signals")
-
 # %%
 # Visualize Bollinger Bands and Market Data
 # ------------------------------------------
@@ -94,22 +85,8 @@ print(f"Strategy generated {signal_count} trading signals")
 # and understand where trading signals are generated.
 
 # Create the indicator plot (shows only ask prices for clarity)
-figure = indicator.plot(show=False)
+indicator.plot()
 
-ax = figure.axes[0]
-
-# Enhance the plot with additional information
-ax.set_title("CAD/USD with Bollinger Bands Strategy", fontsize=14, fontweight="bold")
-ax.set_xlabel("Time", fontsize=12)
-ax.set_ylabel("Price", fontsize=12)
-ax.grid(True, alpha=0.3)
-
-# Add legend
-ax.legend(loc="upper left", frameon=True, fancybox=True, shadow=True)
-
-# Show the plot
-plt.tight_layout()
-# plt.show()
 
 # %%
 # Configure Risk Management
@@ -143,9 +120,6 @@ position_collection.open_positions(exit_strategy=risk_strategy)
 # Propagate positions through time to simulate trading
 position_collection.propagate_positions()
 
-total_positions = len(position_collection)
-print(f"Opened {total_positions} positions during simulation")
-
 # %%
 # Capital Management Setup
 # ------------------------
@@ -178,46 +152,3 @@ metrics = portfolio.get_metrics()
 
 # Display all performance metrics
 metrics.display()
-
-# %%
-# Results Interpretation and Summary
-# ----------------------------------
-# Let's interpret the results and provide insights about the strategy performance.
-
-print("\n" + "=" * 60)
-print("STRATEGY INSIGHTS AND INTERPRETATION")
-print("=" * 60)
-
-# Strategy summary
-print(f"\nStrategy Summary:")
-print(f"   - Indicator: Bollinger Bands (3-min window, 1.0 sigma)")
-print(f"   - Risk Management: 4-pip stop loss & take profit")
-print(f"   - Capital: $1M with $10K fixed lot sizes")
-print(f"   - Time Period: 4 hours of CAD/USD data")
-print(f"   - Total Positions: {total_positions}")
-
-print(f"\nKey Takeaways:")
-print(f"   - This example demonstrates a complete TradeTide workflow")
-print(f"   - Bollinger Bands provide volatility-based trading signals")
-print(f"   - Risk management is crucial for protecting capital")
-print(f"   - Portfolio simulation enables strategy evaluation")
-
-print(f"\nNext Steps:")
-print(f"   - Experiment with different indicator parameters")
-print(f"   - Try alternative exit strategies")
-print(f"   - Test on different currency pairs and timeframes")
-print(f"   - Implement additional technical indicators")
-
-# %%
-# Conclusion
-# ----------
-# This example showcased a complete trading workflow using TradeTide.
-# The modular design allows easy experimentation with different strategies,
-# indicators, and risk management approaches.
-#
-# For more advanced examples, explore:
-#
-# * Multi-indicator strategies
-# * Dynamic exit strategies
-# * Portfolio optimization
-# * Walk-forward analysis

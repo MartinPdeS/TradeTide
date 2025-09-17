@@ -33,11 +33,12 @@ its historical performance and risk characteristics.
 Import Libraries and Setup
 --------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 16-21
+.. GENERATED FROM PYTHON SOURCE LINES 16-22
 
 .. code-block:: Python
 
-    from TradeTide import Backtester, Strategy, Market, Currency, days, hours, minutes
+    from TradeTide import Backtester, Strategy, Market, Currency
+    from TradeTide.times import months, days, hours, minutes
     from TradeTide.indicators import BollingerBands
     from TradeTide import capital_management, exit_strategy
 
@@ -49,13 +50,13 @@ Import Libraries and Setup
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 22-25
+.. GENERATED FROM PYTHON SOURCE LINES 23-26
 
 Load Historical Market Data
 ---------------------------
 Load 100 days of CAD/USD forex data for comprehensive backtesting.
 
-.. GENERATED FROM PYTHON SOURCE LINES 25-35
+.. GENERATED FROM PYTHON SOURCE LINES 26-36
 
 .. code-block:: Python
 
@@ -65,41 +66,30 @@ Load 100 days of CAD/USD forex data for comprehensive backtesting.
     market.load_from_database(
         currency_0=Currency.CAD,
         currency_1=Currency.USD,
-        time_span=120 * minutes,
+        time_span=2 * months,
     )
-    market.plot()
+    # market.plot()
 
 
 
 
-.. image-sg:: /gallery/images/sphx_glr_backtester_001.png
-   :alt: CAD/USD - 2:00:00
-   :srcset: /gallery/images/sphx_glr_backtester_001.png
-   :class: sphx-glr-single-img
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-
-    <Figure size 800x500 with 1 Axes>
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 36-40
+
+.. GENERATED FROM PYTHON SOURCE LINES 37-41
 
 Configure Trading Strategy
 --------------------------
 Set up a Bollinger Bands strategy with 2.0 standard deviation bands
 for more conservative signal generation.
 
-.. GENERATED FROM PYTHON SOURCE LINES 40-50
+.. GENERATED FROM PYTHON SOURCE LINES 41-51
 
 .. code-block:: Python
 
 
-    indicator = BollingerBands(window=3 * minutes, multiplier=1.0)
+    indicator = BollingerBands(window=20 * minutes, multiplier=1.0)
 
     indicator.run(market)
 
@@ -115,13 +105,13 @@ for more conservative signal generation.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 51-54
+.. GENERATED FROM PYTHON SOURCE LINES 52-55
 
 Define Risk Management
 ----------------------
 Configure exit strategy and capital management parameters.
 
-.. GENERATED FROM PYTHON SOURCE LINES 54-64
+.. GENERATED FROM PYTHON SOURCE LINES 55-65
 
 .. code-block:: Python
 
@@ -142,14 +132,14 @@ Configure exit strategy and capital management parameters.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 65-69
+.. GENERATED FROM PYTHON SOURCE LINES 66-70
 
 Run Backtest
 ------------
 The Backtester automatically handles the complete workflow:
 strategy execution, position management, and performance calculation.
 
-.. GENERATED FROM PYTHON SOURCE LINES 69-81
+.. GENERATED FROM PYTHON SOURCE LINES 70-82
 
 .. code-block:: Python
 
@@ -163,42 +153,50 @@ strategy execution, position management, and performance calculation.
 
     backtester.run()
 
-    backtester.plot_summary(tight_layout=False)
+    backtester.print_summary()
 
 
 
-
-.. image-sg:: /gallery/images/sphx_glr_backtester_002.png
-   :alt: Backtesting Summary Dashboard, Trading Strategy Overview, Portfolio Equity Curve, Portfolio Drawdown, Open Positions Over Time, Key Performance Indicators
-   :srcset: /gallery/images/sphx_glr_backtester_002.png
-   :class: sphx-glr-single-img
 
 
 .. rst-class:: sphx-glr-script-out
 
  .. code-block:: none
 
-    /opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/MPSPlots/helper.py:192: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
-      figure.tight_layout()
-    /opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/MPSPlots/helper.py:192: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
-      figure.tight_layout()
 
-    <Figure size 1200x800 with 5 Axes>
+    ============================================================
+                  Backtesting Performance Summary
+    ============================================================
+    Initial Capital:                     $1,000.00
+    Final Equity:                          $998.01
+    ------------------------------------------------------------
+    Total Return:                          -0.00 %
+    Annualized Return:                     -0.01 %
+    Volatility:                             0.00 %
+    ------------------------------------------------------------
+    Sharpe Ratio:                           -0.002
+    Sortino Ratio:                         -61.239
+    Max Drawdown:                           0.01 %
+    Peak Equity:                        1,001.60 %
+    ------------------------------------------------------------
+    Win Rate:                              51.08 %
+    ============================================================
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 82-85
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 83-86
 
 Display Results
 ---------------
 View comprehensive performance metrics and analysis.
 
-.. GENERATED FROM PYTHON SOURCE LINES 85-87
+.. GENERATED FROM PYTHON SOURCE LINES 86-87
 
 .. code-block:: Python
 
-
-    # backtester.print_performance()
+    backtester.print_performance()
 
 
 
@@ -209,7 +207,7 @@ View comprehensive performance metrics and analysis.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.343 seconds)
+   **Total running time of the script:** (0 minutes 0.500 seconds)
 
 
 .. _sphx_glr_download_gallery_backtester.py:

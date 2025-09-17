@@ -484,7 +484,8 @@ position management, portfolio simulation, and performance analysis automaticall
 its historical performance and risk characteristics.</p>
 <section id="import-libraries-and-setup">
 <h2>Import Libraries and Setup<a class="headerlink" href="#import-libraries-and-setup" title="Link to this heading">#</a></h2>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">Backtester</span><span class="p">,</span> <span class="n">Strategy</span><span class="p">,</span> <span class="n">Market</span><span class="p">,</span> <span class="n">Currency</span><span class="p">,</span> <span class="n">days</span><span class="p">,</span> <span class="n">hours</span><span class="p">,</span> <span class="n">minutes</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">Backtester</span><span class="p">,</span> <span class="n">Strategy</span><span class="p">,</span> <span class="n">Market</span><span class="p">,</span> <span class="n">Currency</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.times</span><span class="w"> </span><span class="kn">import</span> <span class="n">months</span><span class="p">,</span> <span class="n">days</span><span class="p">,</span> <span class="n">hours</span><span class="p">,</span> <span class="n">minutes</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.indicators</span><span class="w"> </span><span class="kn">import</span> <span class="n">BollingerBands</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">capital_management</span><span class="p">,</span> <span class="n">exit_strategy</span>
 </pre></div>
@@ -498,12 +499,9 @@ its historical performance and risk characteristics.</p>
 <span class="n">market</span><span class="o">.</span><span class="n">load_from_database</span><span class="p">(</span>
     <span class="n">currency_0</span><span class="o">=</span><span class="n">Currency</span><span class="o">.</span><span class="n">CAD</span><span class="p">,</span>
     <span class="n">currency_1</span><span class="o">=</span><span class="n">Currency</span><span class="o">.</span><span class="n">USD</span><span class="p">,</span>
-    <span class="n">time_span</span><span class="o">=</span><span class="mi">120</span> <span class="o">*</span> <span class="n">minutes</span><span class="p">,</span>
+    <span class="n">time_span</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">months</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">market</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-</pre></div>
-</div>
-<img src="../_images/sphx_glr_backtester_001.png" srcset="../_images/sphx_glr_backtester_001.png" alt="CAD/USD - 2:00:00" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;Figure size 800x500 with 1 Axes&gt;
+<span class="c1"># market.plot()</span>
 </pre></div>
 </div>
 </section>
@@ -511,7 +509,7 @@ its historical performance and risk characteristics.</p>
 <h2>Configure Trading Strategy<a class="headerlink" href="#configure-trading-strategy" title="Link to this heading">#</a></h2>
 <p>Set up a Bollinger Bands strategy with 2.0 standard deviation bands
 for more conservative signal generation.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">indicator</span> <span class="o">=</span> <span class="n">BollingerBands</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">3</span> <span class="o">*</span> <span class="n">minutes</span><span class="p">,</span> <span class="n">multiplier</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">indicator</span> <span class="o">=</span> <span class="n">BollingerBands</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">20</span> <span class="o">*</span> <span class="n">minutes</span><span class="p">,</span> <span class="n">multiplier</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
 
 <span class="n">indicator</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">market</span><span class="p">)</span>
 
@@ -549,25 +547,36 @@ strategy execution, position management, and performance calculation.</p>
 
 <span class="n">backtester</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 
-<span class="n">backtester</span><span class="o">.</span><span class="n">plot_summary</span><span class="p">(</span><span class="n">tight_layout</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">backtester</span><span class="o">.</span><span class="n">print_summary</span><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_backtester_002.png" srcset="../_images/sphx_glr_backtester_002.png" alt="Backtesting Summary Dashboard, Trading Strategy Overview, Portfolio Equity Curve, Portfolio Drawdown, Open Positions Over Time, Key Performance Indicators" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/MPSPlots/helper.py:192: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
-  figure.tight_layout()
-/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/MPSPlots/helper.py:192: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
-  figure.tight_layout()
-
-&lt;Figure size 1200x800 with 5 Axes&gt;
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>============================================================
+              Backtesting Performance Summary
+============================================================
+Initial Capital:                     $1,000.00
+Final Equity:                          $998.01
+------------------------------------------------------------
+Total Return:                          -0.00 %
+Annualized Return:                     -0.01 %
+Volatility:                             0.00 %
+------------------------------------------------------------
+Sharpe Ratio:                           -0.002
+Sortino Ratio:                         -61.239
+Max Drawdown:                           0.01 %
+Peak Equity:                        1,001.60 %
+------------------------------------------------------------
+Win Rate:                              51.08 %
+============================================================
 </pre></div>
 </div>
 </section>
 <section id="display-results">
 <h2>Display Results<a class="headerlink" href="#display-results" title="Link to this heading">#</a></h2>
 <p>View comprehensive performance metrics and analysis.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># backtester.print_performance()</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">backtester</span><span class="o">.</span><span class="n">print_performance</span><span class="p">()</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.343 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.500 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-backtester-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/5eac73c04a7f10b4518daee59f2aac94/backtester.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">backtester.ipynb</span></code></a></p>

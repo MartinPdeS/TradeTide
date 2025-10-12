@@ -111,10 +111,9 @@ Define Risk Management
 ----------------------
 Configure exit strategy and capital management parameters.
 
-.. GENERATED FROM PYTHON SOURCE LINES 55-65
+.. GENERATED FROM PYTHON SOURCE LINES 55-64
 
 .. code-block:: Python
-
 
     exit_strat = exit_strategy.Static(stop_loss=4, take_profit=4, save_price_data=True)
 
@@ -132,14 +131,14 @@ Configure exit strategy and capital management parameters.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 66-70
+.. GENERATED FROM PYTHON SOURCE LINES 65-69
 
 Run Backtest
 ------------
 The Backtester automatically handles the complete workflow:
 strategy execution, position management, and performance calculation.
 
-.. GENERATED FROM PYTHON SOURCE LINES 70-81
+.. GENERATED FROM PYTHON SOURCE LINES 69-80
 
 .. code-block:: Python
 
@@ -161,13 +160,13 @@ strategy execution, position management, and performance calculation.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 82-85
+.. GENERATED FROM PYTHON SOURCE LINES 81-84
 
 Display Results
 ---------------
 View comprehensive performance metrics and analysis.
 
-.. GENERATED FROM PYTHON SOURCE LINES 85-86
+.. GENERATED FROM PYTHON SOURCE LINES 84-85
 
 .. code-block:: Python
 
@@ -193,7 +192,7 @@ View comprehensive performance metrics and analysis.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (1 minutes 52.943 seconds)
+   **Total running time of the script:** (1 minutes 53.700 seconds)
 
 
 .. _sphx_glr_download_gallery_backtester.py:

@@ -52,7 +52,6 @@ strategy.add_indicator(indicator)
 # Define Risk Management
 # ----------------------
 # Configure exit strategy and capital management parameters.
-
 exit_strat = exit_strategy.Static(stop_loss=4, take_profit=4, save_price_data=True)
 
 capital_mgmt = capital_management.FixedLot(

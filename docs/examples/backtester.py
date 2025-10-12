@@ -29,7 +29,7 @@ market = Market()
 market.load_from_database(
     currency_0=Currency.CAD,
     currency_1=Currency.USD,
-    time_span=2 * months,
+    time_span=20 * days,
 )
 # market.plot()
 
@@ -76,11 +76,10 @@ backtester = Backtester(
 )
 
 backtester.run()
-
 backtester.print_summary()
 
 # %%
 # Display Results
 # ---------------
 # View comprehensive performance metrics and analysis.
-backtester.print_performance()
+backtester.plot()

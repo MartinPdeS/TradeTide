@@ -52,6 +52,18 @@ PYBIND11_MODULE(interface_backtester, module) {
         &Backtester::market,
         "The market data reference used in the backtesting."
     )
+    .def("print_summary",
+        &Backtester::print_summary,
+        "Print the summary metrics of the backtest."
+    )
+    .def("print_basic_info",
+        &Backtester::print_basic_info,
+        "Print basic information about the backtest."
+    )
+    .def("print_run_times",
+        &Backtester::print_run_times,
+        "Print the execution times for each phase of the backtest."
+    )
     ;
 
 }

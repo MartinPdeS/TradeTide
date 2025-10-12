@@ -95,84 +95,127 @@ std::vector<std::string> Market::split_csv_line(const std::string& line) {
 
 
 
-    // Loads CSV and stops when time_span is exceeded, requiring pip_value metadata
-void Market::load_from_csv(const std::string& filename, const std::chrono::system_clock::duration& time_span) {
-    if (time_span <= std::chrono::system_clock::duration::zero())
+// Loads a CSV file into the Market object.
+// The CSV must contain ASK and BID OHLC data and a metadata line specifying pip_value.
+// Parsing stops once the specified time_span is exceeded.
+void Market::load_from_csv(
+    const std::string& filename,
+    const std::chrono::system_clock::duration& time_span
+) {
+    if (time_span <= std::chrono::system_clock::duration::zero()) {
         throw std::invalid_argument("Time span must be positive");
+    }
 
     std::ifstream file(filename);
-    if (!file.is_open())
+    if (!file.is_open()) {
         throw std::runtime_error("Cannot open file: " + filename);
+    }
 
+    constexpr std::string_view pip_key = "pip_value=";
+    bool pip_found = false;
     std::string line;
     std::string header_line;
-    bool pip_found = false;
-    static const std::string key = "pip_value=";
 
-    // Read metadata lines (starting with '#') to pick up mandatory pip_value
+    // ─────────────────────────────────────────────
+    // 1. Parse metadata header (lines starting with '#')
+    // ─────────────────────────────────────────────
     while (std::getline(file, line)) {
-        if (line.empty())
-            continue;
+        if (line.empty()) continue;
+
         if (line[0] == '#') {
-            auto meta = line.substr(1);
-            if (meta.rfind(key, 0) == 0) {
-                pip_value = std::stod(meta.substr(key.size()));
+            const std::string meta = line.substr(1);
+            if (meta.rfind(pip_key, 0) == 0) {
+                pip_value = std::stod(meta.substr(pip_key.size()));
                 pip_found = true;
             }
-            continue;
+            continue; // keep reading until we reach the CSV header
         }
+
+        // first non-# line → header
         header_line = line;
         break;
     }
+
     if (!pip_found) {
-        throw std::runtime_error("Missing mandatory metadata: pip_value");
+        std::ostringstream msg;
+        msg << "Missing mandatory metadata: pip_value\n\n"
+            << "Expected header example:\n\n"
+            << "#METADATA:\n"
+            << "#pip_value=0.0001\n"
+            << "#DATA\n"
+            << "date,ask_open,ask_high,ask_low,ask_close,bid_open,bid_high,bid_low,bid_close\n"
+            << "2023-08-08 03:56:00,1.33937,1.33948,1.33937,1.33948,1.33937,1.33948,1.33937,1.33948\n"
+            << "2023-08-08 03:57:00,1.33947,1.33949,1.33934,1.33935,1.33947,1.33949,1.33934,1.33935\n";
+        throw std::runtime_error(msg.str());
     }
+
     if (header_line.empty())
         throw std::runtime_error("Missing CSV header in: " + filename);
 
+    // ─────────────────────────────────────────────
+    // 2. Parse header and validate required columns
+    // ─────────────────────────────────────────────
     ColumnIndices cols = parse_header(header_line);
 
-    bool first_entry = true;
-    auto first_tp = std::chrono::system_clock::time_point();
+    const bool has_ask = cols.ask_open  >= 0 && cols.ask_high  >= 0 &&
+                         cols.ask_low   >= 0 && cols.ask_close >= 0;
 
-    // Read data rows
+    const bool has_bid = cols.bid_open  >= 0 && cols.bid_high  >= 0 &&
+                         cols.bid_low   >= 0 && cols.bid_close >= 0;
+
+    if (!has_ask || !has_bid) {
+        throw std::runtime_error("CSV file must contain complete ASK and BID OHLC columns");
+    }
+
+    // ─────────────────────────────────────────────
+    // 3. Parse data rows
+    // ─────────────────────────────────────────────
+    bool first_entry = true;
+    TimePoint first_time_point{};
+
     while (std::getline(file, line)) {
         if (line.empty()) continue;
-        auto fields = split_csv_line(line);
 
-        // Parse date/time
-        TimePoint time_point = parse_date_time(fields[cols.date]);
+        const auto fields = split_csv_line(line);
 
-        // Enforce time span
+        // Parse timestamp
+        const TimePoint current_time = parse_date_time(fields[cols.date]);
+
+        // Stop when time_span exceeded
         if (first_entry) {
-            first_tp = time_point;
+            first_time_point = current_time;
             first_entry = false;
-        } else if (time_point - first_tp > time_span) {
+        } else if (current_time - first_time_point > time_span) {
             break;
         }
 
-        // Store timestamp
-        this->dates.push_back(time_point);
+        // Save timestamp
+        dates.push_back(current_time);
 
-        this->ask.push_back(
-            time_point,
+        // ASK data
+        ask.push_back(
+            current_time,
             std::stod(fields[cols.ask_open]),
             std::stod(fields[cols.ask_low]),
             std::stod(fields[cols.ask_high]),
             std::stod(fields[cols.ask_close])
         );
 
-
-        // Store timestamp
-        this->bid.push_back(
-            time_point,
+        // BID data
+        bid.push_back(
+            current_time,
             std::stod(fields[cols.bid_open]),
             std::stod(fields[cols.bid_low]),
             std::stod(fields[cols.bid_high]),
             std::stod(fields[cols.bid_close])
         );
     }
-};
+
+    if (dates.empty()) {
+        throw std::runtime_error("No valid data rows found in: " + filename);
+    }
+}
+
 
 void Market::add_market_data(const TimePoint& timestamp, double ask_open, double ask_high, double ask_low, double ask_close, double bid_open, double bid_high, double bid_low, double bid_close) {
     // Validate OHLC relationships for ask prices

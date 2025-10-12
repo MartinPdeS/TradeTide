@@ -30,15 +30,11 @@ Currency : Currency enumeration for supported currencies
 """
 
 import pytest
-import tempfile
 import numpy as np
-from datetime import timedelta, datetime
-from typing import Tuple, List, Optional
 
-from TradeTide.loader import get_market_data
 from TradeTide.currencies import Currency
 from TradeTide.market import Market
-from TradeTide.times import days, hours, minutes, weeks
+from TradeTide.times import days, hours, weeks
 import TradeTide
 
 # Enable debug mode for detailed logging during test execution
@@ -712,7 +708,8 @@ def test_loader_function_integration():
     """
     try:
         # Test direct loader function usage
-        data = get_market_data(
+        market = Market()
+        data = market.load_from_database(
             currency_0=Currency.EUR,
             currency_1=Currency.USD,
             time_span=1 * days,

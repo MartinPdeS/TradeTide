@@ -17,16 +17,26 @@ set(LOCAL_BIN_DIR "${CMAKE_SOURCE_DIR}/${PROJECT_NAME}/binary")
 # Compiler and linker options
 add_compile_options(-fPIC -Wall -Wextra -Wno-uninitialized)
 
+# Find dependencies
+if (CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+    include_directories("/opt/homebrew/opt/libomp/include")   # for if compiler was installed through brew
+endif()
+
 # Find packages
 find_package(OpenMP REQUIRED)
+find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
 find_package(pybind11 CONFIG REQUIRED)
 
 # Platform-specific settings for static linking
 if (WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    message("MinGW detected on Windows")
+    set(STATIC_LINK_OPTIONS "-static")
     add_compile_options(-fopenmp)
     add_link_options(-static -fopenmp -Wl,--whole-archive -lgomp -Wl,--no-whole-archive)
 endif()
 
+# Compiler and linker options
+add_compile_options(-Wall -Wextra -pedantic-errors)
 
 # Print some messages
 message(STATUS "OPENMP flags: ${OpenMP_CXX_FLAGS}")

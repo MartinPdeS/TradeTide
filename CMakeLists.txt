@@ -9,6 +9,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Type of build" FORCE)
 
+# top-level CMakeLists.txt
+if(APPLE)
+  set(CMAKE_C_COMPILER  "/usr/bin/clang"  CACHE STRING "" FORCE)
+  set(CMAKE_CXX_COMPILER "/usr/bin/clang++" CACHE STRING "" FORCE)
+endif()
+
 
 # Set the output directory for libraries
 set(LOCAL_CXX_DIR "${PROJECT_NAME}/cpp")

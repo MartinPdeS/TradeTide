@@ -17,6 +17,40 @@ set(LOCAL_BIN_DIR "${CMAKE_SOURCE_DIR}/${PROJECT_NAME}/binary")
 # Compiler and linker options
 add_compile_options(-fPIC -Wall -Wextra -Wno-uninitialized)
 
+
+
+
+
+
+if(APPLE AND CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+  set(OpenMP_CXX_FLAGS "-Xpreprocessor -fopenmp" CACHE STRING "" FORCE)
+  set(OpenMP_C_FLAGS   "-Xpreprocessor -fopenmp" CACHE STRING "" FORCE)
+  set(OpenMP_CXX_LIB_NAMES "omp" CACHE STRING "" FORCE)
+  set(OpenMP_C_LIB_NAMES  "omp" CACHE STRING "" FORCE)
+  find_library(OpenMP_omp_LIBRARY omp
+               HINTS $ENV{LIBOMP_PREFIX}/lib /opt/homebrew/opt/libomp/lib /usr/local/opt/libomp/lib)
+  if(OpenMP_omp_LIBRARY)
+    set(OpenMP_CXX_LIBRARIES "${OpenMP_omp_LIBRARY}" CACHE STRING "" FORCE)
+    set(OpenMP_C_LIBRARIES  "${OpenMP_omp_LIBRARY}" CACHE STRING "" FORCE)
+  endif()
+endif()
+
+find_package(OpenMP)
+if(OpenMP_CXX_FOUND)
+  target_link_libraries(your_target PRIVATE OpenMP::OpenMP_CXX)
+else()
+  message(WARNING "OpenMP not found on AppleClang. Building without OpenMP")
+endif()
+
+
+
+
+
+
+
+
+
+
 # Find packages
 find_package(OpenMP REQUIRED)
 find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)

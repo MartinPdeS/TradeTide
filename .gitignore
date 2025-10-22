@@ -29,5 +29,8 @@ docs/source/gallery/
 *.DS_Store*
 *.so*
 *.a*
+*.cmake
+*CMakeFiles*
+*Makefile*
 
 # Package specifics

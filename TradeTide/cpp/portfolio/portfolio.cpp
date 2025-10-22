@@ -1,10 +1,7 @@
-#define LOG_DEBUG(enabled, fmt, ...)                                     \
-    do { if (enabled) {                                                  \
-        int n = printf("[DEBUG][Portfolio - %s] ", __func__);            \
-        if (n < 50) printf("%*s", 50 - n, "");                          \
-        printf(fmt "\n", ##__VA_ARGS__);                                 \
+#define LOG_DEBUG(enabled, fmt, ...) \
+    do { if (enabled) { \
+        printf("[DEBUG][Portfolio - %s] " fmt "\n", __func__ __VA_OPT__(,) __VA_ARGS__); \
     } } while(0)
-
 
 
 #include "portfolio.h"

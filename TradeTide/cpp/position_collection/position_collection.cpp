@@ -1,6 +1,6 @@
 #define LOG_DEBUG(enabled, fmt, ...) \
     do { if (enabled) { \
-        printf("[DEBUG][PositionCollection - %s] " fmt "\n", __func__, ##__VA_ARGS__); \
+        printf("[DEBUG][PositionCollection - %s] " fmt "\n", __func__ __VA_OPT__(,) __VA_ARGS__); \
     } } while(0)
 
 

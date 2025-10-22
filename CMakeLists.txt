@@ -9,13 +9,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Type of build" FORCE)
 
-# # top-level CMakeLists.txt
-# if(APPLE)
-#   message("Apple Device detected")
-#   set(CMAKE_C_COMPILER  "/usr/bin/clang"  CACHE STRING "" FORCE)
-#   set(CMAKE_CXX_COMPILER "/usr/bin/clang++" CACHE STRING "" FORCE)
-# endif()
-
 
 # Set the output directory for libraries
 set(LOCAL_CXX_DIR "${PROJECT_NAME}/cpp")
@@ -24,14 +17,8 @@ set(LOCAL_BIN_DIR "${CMAKE_SOURCE_DIR}/${PROJECT_NAME}/binary")
 # Compiler and linker options
 add_compile_options(-fPIC -Wall -Wextra -Wno-uninitialized)
 
-# # Find dependencies
-# if (CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
-#     include_directories("/opt/homebrew/opt/libomp/include")   # for if compiler was installed through brew
-# endif()
-
 # Find packages
-# find_package(OpenMP REQUIRED)
-find_package(OpenMP)
+find_package(OpenMP REQUIRED)
 find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
 find_package(pybind11 CONFIG REQUIRED)
 
@@ -49,9 +36,9 @@ add_compile_options(-Wall -Wextra -pedantic-errors)
 # Print some messages
 message(STATUS "OPENMP flags: ${OpenMP_CXX_FLAGS}")
 message(STATUS "TradeTide version is: ${TRADETIDE_VERSION}")
-message(STATUS "TradeTide includes directory is: ${TRADETIDE_CXX_DIR}")
+message(STATUS "TradeTide includes directory is: ${LOCAL_CXX_DIR}")
 message(STATUS "Python version to be compiled against: ${PYBIND11_PYTHON_VERSION}")
-message(STATUS "Binary will be installed in location: ${TRADETIDE_BIN_DIR}")
+message(STATUS "Binary will be installed in location: ${LOCAL_BIN_DIR}")
 
 add_subdirectory(TradeTide/cpp/market)               # market
 add_subdirectory(TradeTide/cpp/indicators)           # indicators

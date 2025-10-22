@@ -35,15 +35,6 @@ if(APPLE AND CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
   endif()
 endif()
 
-find_package(OpenMP)
-if(OpenMP_CXX_FOUND)
-  target_link_libraries(your_target PRIVATE OpenMP::OpenMP_CXX)
-else()
-  message(WARNING "OpenMP not found on AppleClang. Building without OpenMP")
-endif()
-
-
-
 
 
 

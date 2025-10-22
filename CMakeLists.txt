@@ -11,6 +11,7 @@ set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Type of build" FORCE)
 
 # top-level CMakeLists.txt
 if(APPLE)
+  message("Apple Device detected")
   set(CMAKE_C_COMPILER  "/usr/bin/clang"  CACHE STRING "" FORCE)
   set(CMAKE_CXX_COMPILER "/usr/bin/clang++" CACHE STRING "" FORCE)
 endif()

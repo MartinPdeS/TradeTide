@@ -30,7 +30,8 @@ add_compile_options(-fPIC -Wall -Wextra -Wno-uninitialized)
 # endif()
 
 # Find packages
-find_package(OpenMP REQUIRED)
+# find_package(OpenMP REQUIRED)
+find_package(OpenMP)
 find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
 find_package(pybind11 CONFIG REQUIRED)
 

@@ -16,6 +16,7 @@ sdist.exclude = [
 ]
 
 [tool.setuptools_scm]
+build-dir = ".skbuild/{wheel_tag}"
 write_to = "TradeTide/_version.py"
 version_scheme = "only-version"
 local_scheme = "no-local-version"

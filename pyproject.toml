@@ -77,51 +77,25 @@ dev = [
     "flake==7.2.0",
 ]
 
-[tool.pytest.ini_options]
-minversion = "6.0"
-xfail_strict = true
-log_cli_level = "INFO"
-
-addopts = [
-    '-v',
-    '-rA',
-    '-rw',
-    '--cov=TradeTide',
-    '--cov-report=term'
-]
-
-testpaths = [
-    "tests/*",
-]
-
 [tool.cibuildwheel]
 build-frontend = "build"
-before-test = ""
-test-command = "python -m pytest -rA {project}/tests"
 test-extras = ["testing"]
 
 [tool.cibuildwheel.linux]
 archs = ["x86_64"]
 build = ["cp311-manylinux*", "cp312-manylinux*", "cp313-manylinux*"]
-manylinux-x86_64-image = "manylinux_2_28"
+manylinux-x86_64-image = "manylinux2014"
 repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel}"
+before-test = "yum install -y mesa-libOSMesa mesa-libGLU"
+test-command = "export PYVISTA_OFF_SCREEN=true; cd {project}; python -m pytest --config-file=pytest.ini"
 
 [tool.cibuildwheel.macos]
 archs = ["arm64"]
 build = ["cp311-*", "cp312-*", "cp313-*"]
-repair-wheel-command = "delocate-wheel -w {dest_dir} -v {wheel}"
+repair-wheel-command = "delocate-wheel -w {dest_dir} -v {wheel}"  # --exclude=libomp.dylib
+test-command = 'cd {project}; python -m pytest --config-file=pytest.ini'  # DYLD_PRINT_LIBRARIES=NO
 
 [tool.cibuildwheel.windows]
 archs = ["AMD64"]
 build = ["cp311-*", "cp312-*", "cp313-*"]
-
-
-[tool.coverage.run]
-source = ['TradeTide']
-omit = [
-    '*\__init__.py',
-    '*/_version.py',
-    '*/directories.py',
-]
-branch = true
-relative_files = true
+test-command = 'cd /d {project} && python -m pytest --config-file=pytest.ini'

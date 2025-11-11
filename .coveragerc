@@ -1,16 +1,14 @@
 # .coveragerc
 [run]
-source = PyMieSim
+source = TradeTide
 branch = True
 relative_files = True
 parallel = True
 omit =
     **/__init__.py
-    PyMieSim/_version.py
-    PyMieSim/directories.py
-    PyMieSim/**/__main__.py
-    PyMieSim/gui/**
-    PyMieSim/_utils.py
+    TradeTide/_version.py
+    TradeTide/directories.py
+    TradeTide/**/__main__.py
 
 [report]
 skip_covered = True

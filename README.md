@@ -2,25 +2,20 @@
 
 [Full report](https://htmlpreview.github.io/?https://github.com/MartinPdeS/TradeTide/blob/python-coverage-comment-action-data/htmlcov/index.html)
 
-| Name                                               |    Stmts |     Miss |   Branch |   BrPart |   Cover |   Missing |
-|--------------------------------------------------- | -------: | -------: | -------: | -------: | ------: | --------: |
-| TradeTide/backtester.py                            |       92 |       71 |       20 |        0 |     19% |33-44, 63-88, 94-133, 138-181, 186-224, 229-266, 271-291 |
-| TradeTide/currencies.py                            |       25 |        0 |        0 |        0 |    100% |           |
-| TradeTide/data/utils.py                            |       27 |       27 |        8 |        0 |      0% |      1-73 |
-| TradeTide/indicators/base.py                       |       24 |        0 |        2 |        0 |    100% |           |
-| TradeTide/indicators/bollinger\_bands.py           |       27 |        3 |        2 |        1 |     86% |     61-75 |
-| TradeTide/indicators/moving\_average\_crossings.py |       33 |        0 |        0 |        0 |    100% |           |
-| TradeTide/indicators/relative\_momentum\_index.py  |       32 |        0 |        0 |        0 |    100% |           |
-| TradeTide/market.py                                |       75 |       25 |       18 |        1 |     57% |26-52, 221-228 |
-| TradeTide/portfolio.py                             |       97 |       28 |       16 |        1 |     69% |56->exit, 177-186, 198-201, 213-214, 226-232, 245-250, 261-294 |
-| TradeTide/position\_collection.py                  |       31 |       16 |        2 |        0 |     45% |     48-88 |
-| TradeTide/signal.py                                |        4 |        0 |        0 |        0 |    100% |           |
-| TradeTide/simulation\_settings.py                  |       14 |        3 |        4 |        0 |     72% |     17-19 |
-| TradeTide/strategy.py                              |        3 |        0 |        0 |        0 |    100% |           |
-| TradeTide/times.py                                 |        8 |        0 |        0 |        0 |    100% |           |
-| TradeTide/tools.py                                 |       80 |        4 |       36 |        3 |     94% |24-25, 28, 69 |
-| TradeTide/utils.py                                 |        2 |        0 |        0 |        0 |    100% |           |
-|                                          **TOTAL** |  **574** |  **177** |  **108** |    **6** | **66%** |           |
+| Name                                     |    Stmts |     Miss |   Branch |   BrPart |      Cover |   Missing |
+|----------------------------------------- | -------: | -------: | -------: | -------: | ---------: | --------: |
+| TradeTide/backtester.py                  |       92 |       71 |       20 |        0 |     18.75% |33-44, 63-88, 94-133, 138-181, 186-224, 229-266, 271-291 |
+| TradeTide/currencies.py                  |       25 |        1 |        0 |        0 |     96.00% |        31 |
+| TradeTide/data/utils.py                  |       27 |       27 |        8 |        0 |      0.00% |      1-73 |
+| TradeTide/indicators/bollinger\_bands.py |       27 |        3 |        2 |        1 |     86.21% |     61-75 |
+| TradeTide/market.py                      |       75 |       25 |       18 |        1 |     56.99% |26-52, 221-228 |
+| TradeTide/portfolio.py                   |       97 |       28 |       16 |        1 |     69.03% |56->exit, 177-186, 198-201, 213-214, 226-232, 245-250, 261-294 |
+| TradeTide/position\_collection.py        |       31 |       16 |        2 |        0 |     45.45% |     48-88 |
+| TradeTide/simulation\_settings.py        |       14 |        3 |        4 |        0 |     72.22% |     17-19 |
+| TradeTide/tools.py                       |       80 |       65 |       36 |        0 |     12.93% |23-34, 39-69, 74-75, 80-81, 84-91, 94-95, 98-103, 106-118, 121-124 |
+|                                **TOTAL** |  **574** |  **239** |  **108** |    **3** | **51.61%** |           |
+
+7 files skipped due to complete coverage.
 
 
 ## Setup coverage badge

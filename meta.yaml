@@ -28,11 +28,11 @@ requirements:
     - setuptools_scm[toml] ~=8.0
     - numpy ==2.2.6
   run:
-    - pandas ~=2.3.0
+    - pandas ==2.3.*
     - martinpdes::mpsplots
-    - matplotlib ~=3.8
+    - matplotlib ==3.8.*
     - numpy ==2.2.6
-    - pydantic ~=2.9
+    - pydantic ==2.9.*
 
 
 about:

@@ -80,9 +80,9 @@ message(STATUS "  Python include dir   : ${Python_INCLUDE_DIRS}")
 message(STATUS "  Python site packages : ${Python_SITELIB}")
 
 message(STATUS "")
-message(STATUS "PyMieSim integration")
-message(STATUS "  PyMieSim version     : ${PYMIESIM_VERSION}")
-message(STATUS "  PyMieSim include dir : ${LOCAL_CXX_DIR}")
+message(STATUS "TradeTide integration")
+message(STATUS "  TradeTide version     : ${PYMIESIM_VERSION}")
+message(STATUS "  TradeTide include dir : ${LOCAL_CXX_DIR}")
 
 message(STATUS "")
 message(STATUS "Install destination")

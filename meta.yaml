@@ -19,10 +19,11 @@ requirements:
   build:
     - ninja
     - {{ compiler('cxx') }}
-    - {{ compiler('fortran') }}   # [unix]
-  host:
     - clang
     - libcxx
+  host:
+    - clang =18
+    - libcxx =18
     - python {{ PY_VER }}*
     - scikit-build-core ~=0.3
     - pybind11 ~=2.13
@@ -35,7 +36,6 @@ requirements:
     - matplotlib ~=3.8
     - numpy ==2.2.6
     - pydantic ~=2.9
-    - llvm-openmp
 
 about:
   home: https://github.com/MartinPdeS/TradeTide

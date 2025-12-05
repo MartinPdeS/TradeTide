@@ -8,31 +8,36 @@ source:
 
 build:
   noarch: python
-  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  script: "{{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation"
   number: 0
 
 channels:
   - conda-forge
   - martinpdes
-
 requirements:
+  build:
+    - libcxx  # [osx]
   host:
+    - libcxx
+requirements:
+  build:
     - {{ compiler('cxx') }}
+    - llvm-openmp
+    - numpy ==2.2.6
+  host:
     - clang =18
-    - libcxx =18
+    - libcxx =18  # [osx] clang and libcxx must be pinned to same version prior to 18 because of ABI compatibility issues
     - python {{ PY_VER }}*
     - scikit-build-core ~=0.3
     - pybind11 ~=2.13
     - python-build ~=1.2
     - setuptools_scm[toml] ~=8.0
-    - llvm-openmp
   run:
     - pandas ~=2.3.0
     - martinpdes::mpsplots
     - matplotlib ~=3.8
     - numpy ==2.2.6
     - pydantic ~=2.9
-    - llvm-openmp
 
 about:
   home: https://github.com/MartinPdeS/TradeTide

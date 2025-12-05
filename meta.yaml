@@ -33,7 +33,7 @@ requirements:
     - martinpdes::mpsplots
     - matplotlib ==3.8
     - numpy ==2.2
-    - pydantic ==2.9
+    - pydantic >=2.8,<3
 
 
 about:

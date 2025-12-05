@@ -14,11 +14,7 @@ build:
 channels:
   - conda-forge
   - martinpdes
-requirements:
-  build:
-    - libcxx  # [osx]
-  host:
-    - libcxx
+
 requirements:
   build:
     - {{ compiler('cxx') }}

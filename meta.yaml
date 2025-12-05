@@ -21,6 +21,7 @@ requirements:
     - {{ compiler('cxx') }}
     - {{ compiler('fortran') }}   # [unix]
   host:
+    - clang
     - libcxx
     - python {{ PY_VER }}*
     - scikit-build-core ~=0.3

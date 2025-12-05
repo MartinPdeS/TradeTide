@@ -15,17 +15,11 @@ set_target_properties("interface_${NAME}" PROPERTIES OUTPUT_NAME "interface_${NA
 target_link_libraries(
     "interface_${NAME}"
     PUBLIC
-    cpp_base_indicator
-    cpp_moving_average_crossings
-    cpp_bollinger_bands
-    cpp_relative_momentum_index
+    base_indicator
+    moving_average_crossings
+    bollinger_bands
+    relative_momentum_index
     pybind11::module
 )
 
-
-install(
-    TARGETS interface_${NAME}
-    LIBRARY DESTINATION ${LOCAL_BIN_DIR}
-    ARCHIVE DESTINATION ${LOCAL_BIN_DIR}
-    RUNTIME DESTINATION ${LOCAL_BIN_DIR}
-)
+set_property(GLOBAL APPEND PROPERTY TRADETIDE_TARGETS "interface_${NAME}")

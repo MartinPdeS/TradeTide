@@ -3,13 +3,8 @@
 set(NAME "moving_average_crossings")
 
 # Create a shared library for functionality.
-add_library("cpp_${NAME}" STATIC "${NAME}.cpp")
+add_library("${NAME}" STATIC "${NAME}.cpp")
 
-target_link_libraries("cpp_${NAME}" PUBLIC cpp_base_indicator)
+target_link_libraries("${NAME}" PUBLIC base_indicator)
 
-install(
-    TARGETS cpp_${NAME}
-    LIBRARY DESTINATION ${LOCAL_BIN_DIR}
-    ARCHIVE DESTINATION ${LOCAL_BIN_DIR}
-    RUNTIME DESTINATION ${LOCAL_BIN_DIR}
-)
+set_property(GLOBAL APPEND PROPERTY TRADETIDE_TARGETS "${NAME}")

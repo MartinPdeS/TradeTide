@@ -1,13 +1,7 @@
 # cpp/indicators/base_indicator/CMakeLists.txt
+set(NAME "base_indicator")
 
 # Create a shared library for functionality.
-add_library(cpp_base_indicator STATIC "base_indicator.cpp")
+add_library("${NAME}" STATIC "${NAME}.cpp")
 
-
-
-install(
-    TARGETS cpp_base_indicator
-    LIBRARY DESTINATION ${LOCAL_BIN_DIR}
-    ARCHIVE DESTINATION ${LOCAL_BIN_DIR}
-    RUNTIME DESTINATION ${LOCAL_BIN_DIR}
-)
+set_property(GLOBAL APPEND PROPERTY TRADETIDE_TARGETS "${NAME}")

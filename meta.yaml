@@ -16,10 +16,10 @@ channels:
   - martinpdes
 
 requirements:
-  host:
+  build:
+    - ninja
     - {{ compiler('cxx') }}
-    - clang =18
-    - libcxx =18
+  host:
     - python {{ PY_VER }}*
     - scikit-build-core ~=0.3
     - pybind11 ~=2.13

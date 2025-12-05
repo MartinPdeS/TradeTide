@@ -22,8 +22,8 @@ requirements:
     - clang
     - libcxx
   host:
-    - clang =18
-    - libcxx =18
+    - clang
+    - libcxx
     - python {{ PY_VER }}*
     - scikit-build-core ~=0.3
     - pybind11 ~=2.13

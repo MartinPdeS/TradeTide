@@ -25,8 +25,8 @@ requirements:
     - llvm-openmp
     - numpy ==2.2.6
   host:
-    - clang =18
-    - libcxx =18  # [osx] clang and libcxx must be pinned to same version prior to 18 because of ABI compatibility issues
+    - clang =18.  # [osx]
+    - libcxx =18  # [osx]
     - python {{ PY_VER }}*
     - scikit-build-core ~=0.3
     - pybind11 ~=2.13

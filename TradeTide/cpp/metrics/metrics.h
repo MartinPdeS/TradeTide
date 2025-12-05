@@ -1,20 +1,11 @@
-/**
- * @file metrics.h
- * @brief Performance metrics calculation for trading portfolios
- *
- * This file contains the Metrics class which provides comprehensive performance
- * analysis capabilities for trading simulations, including risk metrics, return
- * calculations, and various financial ratios.
- */
-
 #pragma once
 
 #include <vector>
 #include <chrono>
 #include <algorithm>
+#include <numeric>
 
 #include "../record/record.h"
-// #include "../portfolio/portfolio.h"
 
 /// Type alias for system clock duration representation
 using Duration = std::chrono::system_clock::duration;

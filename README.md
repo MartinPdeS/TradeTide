@@ -9,11 +9,11 @@
 | TradeTide/data/utils.py                  |       27 |       27 |        8 |        0 |      0.00% |      1-73 |
 | TradeTide/indicators/bollinger\_bands.py |       27 |        3 |        2 |        1 |     86.21% |     61-75 |
 | TradeTide/market.py                      |       75 |       25 |       18 |        1 |     56.99% |26-52, 221-228 |
-| TradeTide/portfolio.py                   |       97 |       28 |       16 |        1 |     69.03% |56->exit, 177-186, 198-201, 213-214, 226-232, 245-250, 261-294 |
+| TradeTide/portfolio.py                   |       97 |       28 |       16 |        1 |     69.03% |56-\>exit, 177-186, 198-201, 213-214, 226-232, 245-250, 261-294 |
 | TradeTide/position\_collection.py        |       31 |       16 |        2 |        0 |     45.45% |     48-88 |
 | TradeTide/simulation\_settings.py        |       14 |        3 |        4 |        0 |     72.22% |     17-19 |
 | TradeTide/tools.py                       |       80 |       65 |       36 |        0 |     12.93% |23-34, 39-69, 74-75, 80-81, 84-91, 94-95, 98-103, 106-118, 121-124 |
-|                                **TOTAL** |  **574** |  **239** |  **108** |    **3** | **51.61%** |           |
+| **TOTAL**                                |  **574** |  **239** |  **108** |    **3** | **51.61%** |           |
 
 7 files skipped due to complete coverage.
 

@@ -178,7 +178,7 @@ and understand where trading signals are generated.
  .. code-block:: none
 
 
-    <Figure size 800x500 with 1 Axes>
+    <Figure size 640x480 with 1 Axes>
 
 
 
@@ -319,7 +319,7 @@ Analyze the results of our trading strategy and display key performance metrics.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.777 seconds)
+   **Total running time of the script:** (0 minutes 0.687 seconds)
 
 
 .. _sphx_glr_download_gallery_workflow.py:

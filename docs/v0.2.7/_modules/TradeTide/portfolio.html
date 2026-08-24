@@ -30,7 +30,7 @@
 <link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/docs/source/_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/site-packages/docs/source/_static/default.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
@@ -471,14 +471,14 @@
 <a class="viewcode-back" href="../../code.html#TradeTide.portfolio.Portfolio">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Portfolio</span><span class="p">(</span><span class="n">PORTFOLIO</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position_collection</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Initialize the Portfolio with a position collection and optional debug mode.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        position_collection : PositionCollection</span>
 <span class="sd">            The collection of positions to manage.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">position_collection</span><span class="o">=</span><span class="n">position_collection</span><span class="p">,</span>
             <span class="n">debug_mode</span><span class="o">=</span><span class="n">TradeTide</span><span class="o">.</span><span class="n">debug_mode</span><span class="p">,</span>
@@ -493,9 +493,9 @@
         <span class="n">axes</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">,</span>
         <span class="n">max_positions</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Plot market bid/ask prices and shade closed positions, using the mps style,</span>
-<span class="sd">        consistent naming of &#39;position&#39;, and a clear legend with distinct colors.</span>
+<span class="sd">        consistent naming of 'position', and a clear legend with distinct colors.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -503,7 +503,7 @@
 <span class="sd">            Axes to draw on. If None, a new figure+axes are created.</span>
 <span class="sd">        max_positions : int or float, default=np.inf</span>
 <span class="sd">            Maximum number of positions to draw (in chronological order).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">long_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">short_list</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -531,117 +531,117 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_plot_long_positions</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">position_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">position</span><span class="o">.</span><span class="n">Long</span><span class="p">],</span> <span class="n">axes</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Plot the long positions in the portfolio.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        axes : matplotlib.axes.Axes, optional</span>
 <span class="sd">            Axes to draw on. If None, a new figure+axes are created.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">color_fill</span> <span class="o">=</span> <span class="s2">&quot;lightblue&quot;</span>
-        <span class="n">sl_color</span> <span class="o">=</span> <span class="s2">&quot;#d62728&quot;</span>
-        <span class="n">tp_color</span> <span class="o">=</span> <span class="s2">&quot;#2ca02c&quot;</span>
+<span class="sd">        """</span>
+        <span class="n">color_fill</span> <span class="o">=</span> <span class="s2">"lightblue"</span>
+        <span class="n">sl_color</span> <span class="o">=</span> <span class="s2">"#d62728"</span>
+        <span class="n">tp_color</span> <span class="o">=</span> <span class="s2">"#2ca02c"</span>
 
-        <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Bid Price&quot;</span><span class="p">)</span>
+        <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Bid Price"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">position_collection</span><span class="o">.</span><span class="n">market</span><span class="o">.</span><span class="n">plot_bid</span><span class="p">(</span><span class="n">axes</span><span class="o">=</span><span class="n">axes</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">position</span> <span class="ow">in</span> <span class="n">position_list</span><span class="p">:</span>
-            <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">position</span><span class="o">.</span><span class="n">start_date</span><span class="p">,</span> <span class="n">position</span><span class="o">.</span><span class="n">close_date</span>
-            <span class="n">axes</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="n">color_fill</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">trade</span> <span class="ow">in</span> <span class="n">position_list</span><span class="p">:</span>
+            <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">trade</span><span class="o">.</span><span class="n">start_date</span><span class="p">,</span> <span class="n">trade</span><span class="o">.</span><span class="n">close_date</span>
+            <span class="n">axes</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="n">color_fill</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
             <span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-                <span class="n">position</span><span class="o">.</span><span class="n">dates</span><span class="p">(),</span>
-                <span class="n">position</span><span class="o">.</span><span class="n">stop_loss_prices</span><span class="p">(),</span>
-                <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+                <span class="n">trade</span><span class="o">.</span><span class="n">dates</span><span class="p">(),</span>
+                <span class="n">trade</span><span class="o">.</span><span class="n">stop_loss_prices</span><span class="p">(),</span>
+                <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span>
                 <span class="n">color</span><span class="o">=</span><span class="n">sl_color</span><span class="p">,</span>
                 <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-                <span class="n">position</span><span class="o">.</span><span class="n">dates</span><span class="p">(),</span>
-                <span class="n">position</span><span class="o">.</span><span class="n">take_profit_prices</span><span class="p">(),</span>
-                <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+                <span class="n">trade</span><span class="o">.</span><span class="n">dates</span><span class="p">(),</span>
+                <span class="n">trade</span><span class="o">.</span><span class="n">take_profit_prices</span><span class="p">(),</span>
+                <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span>
                 <span class="n">color</span><span class="o">=</span><span class="n">tp_color</span><span class="p">,</span>
                 <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="c1"># Custom legend</span>
         <span class="n">legend_handles</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">sl_color</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Stop Loss&quot;</span><span class="p">),</span>
-            <span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">tp_color</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Take Profit&quot;</span><span class="p">),</span>
-            <span class="n">Patch</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="n">color_fill</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Long Position&quot;</span><span class="p">),</span>
+            <span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">sl_color</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Stop Loss"</span><span class="p">),</span>
+            <span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">tp_color</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Take Profit"</span><span class="p">),</span>
+            <span class="n">Patch</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="n">color_fill</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"none"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Long Position"</span><span class="p">),</span>
         <span class="p">]</span>
 
-        <span class="n">axes</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">legend_handles</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper left&quot;</span><span class="p">,</span> <span class="n">framealpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+        <span class="n">axes</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">legend_handles</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">"upper left"</span><span class="p">,</span> <span class="n">framealpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
 
     <span class="nd">@helper</span><span class="o">.</span><span class="n">pre_plot</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_plot_short_positions</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">position_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">position</span><span class="o">.</span><span class="n">Long</span><span class="p">],</span> <span class="n">axes</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Plot the short positions in the portfolio.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        axes : matplotlib.axes.Axes, optional</span>
 <span class="sd">            Axes to draw on. If None, a new figure+axes are created.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">color_fill</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
-        <span class="n">sl_color</span> <span class="o">=</span> <span class="s2">&quot;#d62728&quot;</span>
-        <span class="n">tp_color</span> <span class="o">=</span> <span class="s2">&quot;#2ca02c&quot;</span>
+        <span class="n">sl_color</span> <span class="o">=</span> <span class="s2">"#d62728"</span>
+        <span class="n">tp_color</span> <span class="o">=</span> <span class="s2">"#2ca02c"</span>
 
-        <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Bid Price&quot;</span><span class="p">)</span>
+        <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Bid Price"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">position_collection</span><span class="o">.</span><span class="n">market</span><span class="o">.</span><span class="n">plot_bid</span><span class="p">(</span><span class="n">axes</span><span class="o">=</span><span class="n">axes</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">position</span> <span class="ow">in</span> <span class="n">position_list</span><span class="p">:</span>
-            <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">position</span><span class="o">.</span><span class="n">start_date</span><span class="p">,</span> <span class="n">position</span><span class="o">.</span><span class="n">close_date</span>
-            <span class="n">axes</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="n">color_fill</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">trade</span> <span class="ow">in</span> <span class="n">position_list</span><span class="p">:</span>
+            <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">trade</span><span class="o">.</span><span class="n">start_date</span><span class="p">,</span> <span class="n">trade</span><span class="o">.</span><span class="n">close_date</span>
+            <span class="n">axes</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="n">color_fill</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
             <span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-                <span class="n">position</span><span class="o">.</span><span class="n">dates</span><span class="p">(),</span>
-                <span class="n">position</span><span class="o">.</span><span class="n">stop_loss_prices</span><span class="p">(),</span>
-                <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+                <span class="n">trade</span><span class="o">.</span><span class="n">dates</span><span class="p">(),</span>
+                <span class="n">trade</span><span class="o">.</span><span class="n">stop_loss_prices</span><span class="p">(),</span>
+                <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span>
                 <span class="n">color</span><span class="o">=</span><span class="n">sl_color</span><span class="p">,</span>
                 <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-                <span class="n">position</span><span class="o">.</span><span class="n">dates</span><span class="p">(),</span>
-                <span class="n">position</span><span class="o">.</span><span class="n">take_profit_prices</span><span class="p">(),</span>
-                <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+                <span class="n">trade</span><span class="o">.</span><span class="n">dates</span><span class="p">(),</span>
+                <span class="n">trade</span><span class="o">.</span><span class="n">take_profit_prices</span><span class="p">(),</span>
+                <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span>
                 <span class="n">color</span><span class="o">=</span><span class="n">tp_color</span><span class="p">,</span>
                 <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="c1"># Custom legend</span>
         <span class="n">legend_handles</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">sl_color</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Stop Loss&quot;</span><span class="p">),</span>
-            <span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">tp_color</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Take Profit&quot;</span><span class="p">),</span>
-            <span class="n">Patch</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="n">color_fill</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Short Position&quot;</span><span class="p">),</span>
+            <span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">sl_color</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Stop Loss"</span><span class="p">),</span>
+            <span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">tp_color</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Take Profit"</span><span class="p">),</span>
+            <span class="n">Patch</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="n">color_fill</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"none"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Short Position"</span><span class="p">),</span>
         <span class="p">]</span>
 
-        <span class="n">axes</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">legend_handles</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper left&quot;</span><span class="p">,</span> <span class="n">framealpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+        <span class="n">axes</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">legend_handles</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">"upper left"</span><span class="p">,</span> <span class="n">framealpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Portfolio.plot_equity">
 <a class="viewcode-back" href="../../code.html#TradeTide.portfolio.Portfolio.plot_equity">[docs]</a>
     <span class="nd">@helper</span><span class="o">.</span><span class="n">pre_plot</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot_equity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axes</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Plot the portfolio&#39;s equity over time.</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Plot the portfolio's equity over time.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        axes : matplotlib.axes.Axes, optional</span>
 <span class="sd">            Axes to draw on. If None, a new figure+axes are created.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">equity</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+<span class="sd">        """</span>
+        <span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">equity</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">)</span>
         <span class="n">axes</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">initial_capital</span><span class="p">,</span>
-            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
-            <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
+            <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span>
             <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Initial Capital&quot;</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">"Initial Capital"</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Equity&quot;</span><span class="p">)</span>
+        <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Equity"</span><span class="p">)</span>
         <span class="n">axes</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span></div>
 
 
@@ -649,62 +649,62 @@
 <a class="viewcode-back" href="../../code.html#TradeTide.portfolio.Portfolio.plot_capital_at_risk">[docs]</a>
     <span class="nd">@helper</span><span class="o">.</span><span class="n">pre_plot</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot_capital_at_risk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axes</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Plot the capital at risk over time.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        axes : matplotlib.axes.Axes, optional</span>
 <span class="sd">            Axes to draw on. If None, a new figure+axes are created.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">axes</span><span class="o">.</span><span class="n">step</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">capital_at_risk</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="s2">&quot;mid&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">capital_at_risk</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="s2">"mid"</span>
         <span class="p">)</span>
-        <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Capital at Risk&quot;</span><span class="p">)</span></div>
+        <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Capital at Risk"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Portfolio.plot_capital">
 <a class="viewcode-back" href="../../code.html#TradeTide.portfolio.Portfolio.plot_capital">[docs]</a>
     <span class="nd">@helper</span><span class="o">.</span><span class="n">pre_plot</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot_capital</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axes</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Plot the capital over time.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        axes : matplotlib.axes.Axes, optional</span>
 <span class="sd">            Axes to draw on. If None, a new figure+axes are created.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">axes</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">capital</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="s2">&quot;mid&quot;</span><span class="p">)</span>
-        <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Capital&quot;</span><span class="p">)</span></div>
+<span class="sd">        """</span>
+        <span class="n">axes</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">capital</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="s2">"mid"</span><span class="p">)</span>
+        <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Capital"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Portfolio.plot_number_of_positions">
 <a class="viewcode-back" href="../../code.html#TradeTide.portfolio.Portfolio.plot_number_of_positions">[docs]</a>
     <span class="nd">@helper</span><span class="o">.</span><span class="n">pre_plot</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot_number_of_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axes</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Plot the number of open positions over time.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        axes : matplotlib.axes.Axes, optional</span>
 <span class="sd">            Axes to draw on. If None, a new figure+axes are created.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">axes</span><span class="o">.</span><span class="n">step</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">time</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">number_of_concurent_positions</span><span class="p">,</span>
-            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
-            <span class="n">where</span><span class="o">=</span><span class="s2">&quot;mid&quot;</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span>
+            <span class="n">where</span><span class="o">=</span><span class="s2">"mid"</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Number of open positions&quot;</span><span class="p">)</span></div>
+        <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Number of open positions"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Portfolio.plot_prices">
 <a class="viewcode-back" href="../../code.html#TradeTide.portfolio.Portfolio.plot_prices">[docs]</a>
     <span class="nd">@helper</span><span class="o">.</span><span class="n">pre_plot</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot_prices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axes</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Plot the market bid and ask prices over time.</span>
 
 <span class="sd">        Parameters</span>
@@ -712,33 +712,33 @@
 <span class="sd">        axes : matplotlib.axes.Axes, optional</span>
 <span class="sd">            Axes to draw on. If None, a new figure+axes are created.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dates</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">market</span><span class="o">.</span><span class="n">ask</span><span class="o">.</span><span class="n">open</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Ask-Open&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C0&quot;</span><span class="p">)</span>
-        <span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dates</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">market</span><span class="o">.</span><span class="n">bid</span><span class="o">.</span><span class="n">open</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Bid-Open&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C1&quot;</span><span class="p">)</span>
-        <span class="n">axes</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;plain&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>  <span class="c1"># Prevent y-axis offset</span>
+<span class="sd">        """</span>
+        <span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dates</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">market</span><span class="o">.</span><span class="n">ask</span><span class="o">.</span><span class="n">open</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Ask-Open"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"C0"</span><span class="p">)</span>
+        <span class="n">axes</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dates</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">market</span><span class="o">.</span><span class="n">bid</span><span class="o">.</span><span class="n">open</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Bid-Open"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"C1"</span><span class="p">)</span>
+        <span class="n">axes</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">"plain"</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">"y"</span><span class="p">)</span>  <span class="c1"># Prevent y-axis offset</span>
         <span class="c1"># Legend (bottom plot only)</span>
-        <span class="n">axes</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper left&quot;</span><span class="p">)</span>
-        <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Prices&quot;</span><span class="p">)</span></div>
+        <span class="n">axes</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"upper left"</span><span class="p">)</span>
+        <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Prices"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Portfolio.plot">
 <a class="viewcode-back" href="../../code.html#TradeTide.portfolio.Portfolio.plot">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">plot_type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Plot the portfolio&#39;s performance, including equity, capital at risk, capital,</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Plot the portfolio's performance, including equity, capital at risk, capital,</span>
 <span class="sd">        number of open positions, and market prices.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">plot_type</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">plot_type</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="s2">&quot;equity&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;capital_at_risk&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;capital&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;number_of_positions&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;prices&quot;</span><span class="p">,</span>
+                <span class="s2">"equity"</span><span class="p">,</span>
+                <span class="s2">"capital_at_risk"</span><span class="p">,</span>
+                <span class="s2">"capital"</span><span class="p">,</span>
+                <span class="s2">"number_of_positions"</span><span class="p">,</span>
+                <span class="s2">"prices"</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">plot_type</span> <span class="o">=</span> <span class="n">plot_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">plot_type</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">else</span> <span class="n">plot_type</span>
@@ -754,11 +754,11 @@
             <span class="p">)</span>
 
             <span class="n">plot_methods</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;equity&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_equity</span><span class="p">,</span>
-                <span class="s2">&quot;capital_at_risk&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_capital_at_risk</span><span class="p">,</span>
-                <span class="s2">&quot;capital&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_capital</span><span class="p">,</span>
-                <span class="s2">&quot;number_of_positions&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_number_of_positions</span><span class="p">,</span>
-                <span class="s2">&quot;prices&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_prices</span><span class="p">,</span>
+                <span class="s2">"equity"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_equity</span><span class="p">,</span>
+                <span class="s2">"capital_at_risk"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_capital_at_risk</span><span class="p">,</span>
+                <span class="s2">"capital"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_capital</span><span class="p">,</span>
+                <span class="s2">"number_of_positions"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_number_of_positions</span><span class="p">,</span>
+                <span class="s2">"prices"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_prices</span><span class="p">,</span>
             <span class="p">}</span>
 
             <span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">plot</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axs</span><span class="p">,</span> <span class="n">plot_type</span><span class="p">):</span>

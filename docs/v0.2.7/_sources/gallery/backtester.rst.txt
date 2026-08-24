@@ -184,11 +184,6 @@ View comprehensive performance metrics and analysis.
 
  .. code-block:: none
 
-    findfont: Font family ['cursive'] not found. Falling back to DejaVu Sans.
-    findfont: Generic family 'cursive' not found because none of the following families were found: Apple Chancery, Textile, Zapf Chancery, Sand, Script MT, Felipa, Comic Neue, Comic Sans MS, cursive
-    findfont: Font family ['Arial'] not found. Falling back to DejaVu Sans.
-    findfont: Font family ['Arial'] not found. Falling back to DejaVu Sans.
-    findfont: Font family ['Arial'] not found. Falling back to DejaVu Sans.
 
     <Figure size 640x480 with 4 Axes>
 
@@ -197,7 +192,7 @@ View comprehensive performance metrics and analysis.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (1 minutes 59.800 seconds)
+   **Total running time of the script:** (1 minutes 57.904 seconds)
 
 
 .. _sphx_glr_download_gallery_backtester.py:

@@ -453,10 +453,9 @@
 <span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">MPSPlots.styles</span><span class="w"> </span><span class="kn">import</span> <span class="n">mps</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="kn">import</span> <span class="n">Patch</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.lines</span><span class="w"> </span><span class="kn">import</span> <span class="n">Line2D</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">MPSPlots</span><span class="w"> </span><span class="kn">import</span> <span class="n">helper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">pre_plot</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.binary</span><span class="w"> </span><span class="kn">import</span> <span class="n">position</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.binary.interface_portfolio</span><span class="w"> </span><span class="kn">import</span> <span class="n">PORTFOLIO</span>
@@ -487,7 +486,7 @@
 
 <div class="viewcode-block" id="Portfolio.plot_positions">
 <a class="viewcode-back" href="../../code.html#TradeTide.portfolio.Portfolio.plot_positions">[docs]</a>
-    <span class="nd">@helper</span><span class="o">.</span><span class="n">pre_plot</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="nd">@pre_plot</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot_positions</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">axes</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">,</span>
@@ -527,7 +526,7 @@
             <span class="p">)</span></div>
 
 
-    <span class="nd">@helper</span><span class="o">.</span><span class="n">pre_plot</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="nd">@pre_plot</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_plot_long_positions</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">position_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">position</span><span class="o">.</span><span class="n">Long</span><span class="p">],</span> <span class="n">axes</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -574,7 +573,7 @@
 
         <span class="n">axes</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">legend_handles</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">"upper left"</span><span class="p">,</span> <span class="n">framealpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
 
-    <span class="nd">@helper</span><span class="o">.</span><span class="n">pre_plot</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="nd">@pre_plot</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_plot_short_positions</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">position_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">position</span><span class="o">.</span><span class="n">Long</span><span class="p">],</span> <span class="n">axes</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -623,7 +622,7 @@
 
 <div class="viewcode-block" id="Portfolio.plot_equity">
 <a class="viewcode-back" href="../../code.html#TradeTide.portfolio.Portfolio.plot_equity">[docs]</a>
-    <span class="nd">@helper</span><span class="o">.</span><span class="n">pre_plot</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="nd">@pre_plot</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot_equity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axes</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Plot the portfolio's equity over time.</span>
@@ -647,7 +646,7 @@
 
 <div class="viewcode-block" id="Portfolio.plot_capital_at_risk">
 <a class="viewcode-back" href="../../code.html#TradeTide.portfolio.Portfolio.plot_capital_at_risk">[docs]</a>
-    <span class="nd">@helper</span><span class="o">.</span><span class="n">pre_plot</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="nd">@pre_plot</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot_capital_at_risk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axes</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Plot the capital at risk over time.</span>
@@ -665,7 +664,7 @@
 
 <div class="viewcode-block" id="Portfolio.plot_capital">
 <a class="viewcode-back" href="../../code.html#TradeTide.portfolio.Portfolio.plot_capital">[docs]</a>
-    <span class="nd">@helper</span><span class="o">.</span><span class="n">pre_plot</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="nd">@pre_plot</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot_capital</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axes</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Plot the capital over time.</span>
@@ -681,7 +680,7 @@
 
 <div class="viewcode-block" id="Portfolio.plot_number_of_positions">
 <a class="viewcode-back" href="../../code.html#TradeTide.portfolio.Portfolio.plot_number_of_positions">[docs]</a>
-    <span class="nd">@helper</span><span class="o">.</span><span class="n">pre_plot</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="nd">@pre_plot</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot_number_of_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axes</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Plot the number of open positions over time.</span>
@@ -702,7 +701,7 @@
 
 <div class="viewcode-block" id="Portfolio.plot_prices">
 <a class="viewcode-back" href="../../code.html#TradeTide.portfolio.Portfolio.plot_prices">[docs]</a>
-    <span class="nd">@helper</span><span class="o">.</span><span class="n">pre_plot</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="nd">@pre_plot</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot_prices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axes</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Plot the market bid and ask prices over time.</span>
@@ -748,10 +747,11 @@
 
         <span class="n">n_plots</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">plot_type</span><span class="p">)</span>
 
-        <span class="k">with</span> <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">context</span><span class="p">(</span><span class="n">mps</span><span class="p">):</span>
-            <span class="n">_</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+        <span class="k">with</span> <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">context</span><span class="p">(</span><span class="s2">"default"</span><span class="p">):</span>
+            <span class="n">figure</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
                 <span class="n">nrows</span><span class="o">=</span><span class="n">n_plots</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n_plots</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span>
             <span class="p">)</span>
+            <span class="n">axs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">axs</span><span class="p">)</span>
 
             <span class="n">plot_methods</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="s2">"equity"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_equity</span><span class="p">,</span>
@@ -765,7 +765,8 @@
                 <span class="n">plot_methods</span><span class="p">[</span><span class="n">plot</span><span class="p">](</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
             <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">figure</span></div>
 </div>
 
 </pre></div>

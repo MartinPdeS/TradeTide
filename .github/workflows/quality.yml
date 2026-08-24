@@ -1,0 +1,47 @@
+name: Quality
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install native build requirements
+        run: sudo apt-get update && sudo apt-get install --yes cmake libomp-dev
+      - name: Install package and development tools
+        run: python -m pip install --upgrade pip && python -m pip install -e ".[dev]"
+      - name: Run test suite
+        env:
+          MPLBACKEND: Agg
+        run: python -m pytest --config-file=pytest.ini
+      - name: Check native binding imports
+        run: python -m pytest tests/test_native_bindings.py -q
+
+  static-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install static-analysis tools
+        run: python -m pip install --upgrade pip && python -m pip install ruff mypy numpy pandas matplotlib pydantic tabulate GitPython
+      - name: Lint
+        run: python -m ruff check TradeTide tests
+      - name: Type-check new public APIs
+        run: python -m mypy TradeTide/execution.py TradeTide/performance.py TradeTide/validation.py

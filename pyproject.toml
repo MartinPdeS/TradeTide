@@ -33,8 +33,10 @@ authors = [{name="Martin Poinsinet de Sivry-Houle", email="martin.poinsinet.de.s
 classifiers = [
     'Programming Language :: Python',
     'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
     'Programming Language :: Python :: 3.12',
+    'Programming Language :: Python :: 3.13',
     'Programming Language :: Python :: Implementation :: CPython',
     'Development Status :: 4 - Beta',
 ]
@@ -90,6 +92,10 @@ python_version = "3.10"
 check_untyped_defs = true
 warn_unused_ignores = true
 exclude = ["development", "docs"]
+
+[[tool.mypy.overrides]]
+module = ["TradeTide.binary.*"]
+ignore_missing_imports = true
 
 [tool.cibuildwheel]
 build-frontend = "build"

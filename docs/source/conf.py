@@ -47,7 +47,7 @@ napoleon_google_docstring = False
 napoleon_numpy_docstring = True
 
 html_logo = "_static/thumbnail.png"
-html_favicon = "_static/thumbnail.png"
+html_favicon = "_static/tradetide-favicon.png"
 
 
 def reset_mpl(gallery_conf, fname):

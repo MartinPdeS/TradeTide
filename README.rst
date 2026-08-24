@@ -70,9 +70,10 @@ backtest:
 
 .. code-block:: python
 
-   from TradeTide import Backtester, Currency, Market, Strategy, days, minutes
+   from TradeTide import Backtester, Currency, Market, Strategy
    from TradeTide import capital_management, exit_strategy
    from TradeTide.indicators import BollingerBands
+   from TradeTide.times import days, minutes
 
    market = Market()
    market.load_from_database(Currency.EUR, Currency.USD, time_span=3 * days)

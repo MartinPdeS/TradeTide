@@ -6,6 +6,8 @@ from TradeTide.binary.interface_backtester import BACKTESTER
 from TradeTide.market import Market
 from TradeTide.strategy import Strategy
 import TradeTide
+from TradeTide.execution import ExecutionCosts
+from TradeTide.performance import BacktestResult
 
 
 class Backtester(BACKTESTER):
@@ -28,7 +30,12 @@ class Backtester(BACKTESTER):
     """
 
     def __init__(
-        self, strategy: Strategy, exit_strategy, market: Market, capital_management
+        self,
+        strategy: Strategy,
+        exit_strategy,
+        market: Market,
+        capital_management,
+        execution_costs: ExecutionCosts | None = None,
     ):
         super().__init__(
             strategy=strategy,
@@ -42,6 +49,22 @@ class Backtester(BACKTESTER):
         self.exit_strategy = exit_strategy
         self.market = market
         self.capital_management = capital_management
+        self.execution_costs = execution_costs or ExecutionCosts()
+        self.result: BacktestResult | None = None
+
+    def run(self) -> BacktestResult:
+        """Run the native simulation and return a structured net performance report.
+
+        The native simulator continues to use the supplied bid/ask data.  Optional
+        ``execution_costs`` are then applied transparently to the returned equity
+        curve and trade metrics, leaving the raw native record available for
+        inspection via ``_cpp_portfolio.record``.
+        """
+        super().run()
+        self.result = BacktestResult.from_portfolio(
+            self._cpp_portfolio, self.execution_costs
+        )
+        return self.result
 
     @post_mpl_plot
     def plot(self) -> plt.Figure:

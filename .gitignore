@@ -36,5 +36,6 @@ docs/source/gallery/
 *.cmake
 *CMakeFiles*
 *Makefile*
+!Makefile
 
 # Package specifics

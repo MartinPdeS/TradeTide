@@ -41,4 +41,8 @@ def weighted(*regions: Iterable[int], weights: Iterable[float], threshold: float
     if threshold < 0:
         raise ValueError("threshold must be non-negative.")
     scores = vote_weights @ values
-    return np.where(scores > threshold, 1, np.where(scores < -threshold, -1)).astype(int)
+    return np.where(
+        scores > threshold,
+        1,
+        np.where(scores < -threshold, -1, 0),
+    ).astype(int)

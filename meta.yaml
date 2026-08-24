@@ -8,9 +8,14 @@ source:
 
 build:
   number: 0
-  script:
-    - export CXXFLAGS="${CXXFLAGS} -D_LIBCPP_DISABLE_AVAILABILITY"  # [osx]
-    - {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  script: |
+    @echo on  # [win]
+    "%PYTHON%" -m pip install . -vv --no-deps --no-build-isolation ^  # [win]
+      "--config-settings=cmake.args=-GNinja" ^  # [win]
+      || exit /b 1  # [win]
+
+    export CXXFLAGS="${CXXFLAGS} -D_LIBCPP_DISABLE_AVAILABILITY"  # [osx]
+    "${PYTHON}" -m pip install . -vv --no-deps --no-build-isolation  # [unix]
 
 channels:
   - conda-forge
@@ -20,6 +25,9 @@ requirements:
   build:
     - {{ compiler('cxx') }}
     - llvm-openmp  # [osx]
+    - vs2022_win-64  # [win]
+    - ninja  # [win]
+    - cmake  # [win]
   host:
     - python {{ PY_VER }}*
     - python_abi 3.13.* *_cp313   # [py==313]
@@ -30,7 +38,6 @@ requirements:
     - numpy >=2.0,<3
   run:
     - pandas ==2.3
-    - martinpdes::mpsplots
     - numpy >=2.0,<3
     - matplotlib >=3.9,<4
     - pydantic >=2.8,<3

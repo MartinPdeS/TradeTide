@@ -256,7 +256,7 @@ class Backtester(BACKTESTER):
                 0.5,
                 0.5,
                 "Portfolio data not available.\nRun backtest first.",
-                transform=ax.transAxes,
+                transform=axes.transAxes,
                 ha="center",
                 va="center",
             )
@@ -273,7 +273,7 @@ class Backtester(BACKTESTER):
                 0.5,
                 0.5,
                 "Trade analysis plot\n(Implementation depends on\navailable trade data)",
-                transform=ax.transAxes,
+                transform=axes.transAxes,
                 ha="center",
                 va="center",
             )
@@ -282,7 +282,7 @@ class Backtester(BACKTESTER):
                 0.5,
                 0.5,
                 "Portfolio data not available.\nRun backtest first.",
-                transform=ax.transAxes,
+                transform=axes.transAxes,
                 ha="center",
                 va="center",
             )

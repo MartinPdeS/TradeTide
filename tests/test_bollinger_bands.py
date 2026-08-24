@@ -420,7 +420,7 @@ def test_different_multiplier_values(sample_market, multiplier):
             small_band_width = np.mean((small_upper - small_lower)[valid_mask])
             assert (
                 band_width > small_band_width
-            ), f"Larger multiplier should produce wider bands"
+            ), "Larger multiplier should produce wider bands"
 
 
 def test_signal_generation(sample_market):

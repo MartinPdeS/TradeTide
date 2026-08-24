@@ -53,8 +53,8 @@ class PositionCollection(POSITIONCOLLECTION):
         self.market.plot_bid(axes=axes[1], show=False)
 
         axes[0].set_xlabel("Date")
-        axes[1].set_ylabel(f"Bid Price")
-        axes[0].set_ylabel(f"Ask Price")
+        axes[1].set_ylabel("Bid Price")
+        axes[0].set_ylabel("Ask Price")
 
         for idx in range(min(len(self), max_positions)):
 

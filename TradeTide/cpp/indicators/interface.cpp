@@ -5,6 +5,8 @@
 #include "moving_average_crossings/interface.cpp"
 #include "bollinger_bands/interface.cpp"
 #include "relative_momentum_index/interface.cpp"
+#include "relative_strength_index/interface.cpp"
+#include "macd/interface.cpp"
 
 namespace py = pybind11;
 
@@ -33,6 +35,8 @@ PYBIND11_MODULE(interface_indicators, module) {
     register_moving_average_crossings(module);
 
     register_relative_momentum_index(module);
+    register_relative_strength_index(module);
+    register_macd(module);
 
 
 

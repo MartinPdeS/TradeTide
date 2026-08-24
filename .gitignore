@@ -17,6 +17,8 @@
 !meta.yaml
 !pyproject.toml
 !README.rst
+!CONTRIBUTING.md
+!CHANGELOG.md
 !notebook.ipynb
 !CMakeLists.txt
 !pytest.ini

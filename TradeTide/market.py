@@ -21,57 +21,71 @@ class Market(interface_market.Market):
 
     def _parse_timespan(self, time_span) -> timedelta:
         if isinstance(time_span, timedelta):
-            return time_span
+            delta = time_span
+        else:
+            if not isinstance(time_span, str):
+                raise TypeError(
+                    "time_span must be a datetime.timedelta or a duration string "
+                    "such as '2d 6h'; "
+                    f"got {type(time_span).__name__}."
+                )
 
-        if not isinstance(time_span, str):
-            raise TypeError(
-                f"time_span must be timedelta or str, got {type(time_span)}"
+            # Accept one or more number/unit chunks, e.g. ``3days`` or ``1d 2h``.
+            token = re.compile(
+                r"(?P<value>\d+)\s*(?P<unit>d(?:ays?)?|h(?:ours?)?|m(?:inutes?)?|s(?:econds?)?)",
+                re.I,
             )
+            parts = token.findall(time_span)
+            remainder = token.sub("", time_span).strip()
+            if not parts or remainder:
+                raise ValueError(
+                    "time_span must be a positive duration such as '2d 6h', '90m', "
+                    f"or timedelta(hours=2); got {time_span!r}."
+                )
 
-        # Match one or more “number+unit” chunks, e.g. “3days”, “ 20 minutes”, “1d 2h”
-        pattern = re.compile(
-            r"(?P<value>\d+)\s*(?P<unit>d(?:ays?)?|h(?:ours?)?|m(?:inutes?)?|s(?:econds?)?)",
-            re.I,
-        )
-        parts = pattern.findall(time_span)
-        if not parts:
-            raise ValueError(f"Could not parse time span: {time_span!r}")
+            delta = timedelta()
+            for value, unit in parts:
+                value_as_int = int(value)
+                unit = unit.lower()
+                if unit.startswith("d"):
+                    delta += timedelta(days=value_as_int)
+                elif unit.startswith("h"):
+                    delta += timedelta(hours=value_as_int)
+                elif unit.startswith("m"):
+                    delta += timedelta(minutes=value_as_int)
+                elif unit.startswith("s"):
+                    delta += timedelta(seconds=value_as_int)
 
-        delta = timedelta()
-        for value, unit in parts:
-            v = int(value)
-            u = unit.lower()
-            if u.startswith("d"):
-                delta += timedelta(days=v)
-            elif u.startswith("h"):
-                delta += timedelta(hours=v)
-            elif u.startswith("m"):
-                delta += timedelta(minutes=v)
-            elif u.startswith("s"):
-                delta += timedelta(seconds=v)
+        if delta <= timedelta():
+            raise ValueError("time_span must be greater than zero.")
         return delta
 
-    def get_data_path(self, currency_0: Currency, currency_1: Currency) -> pathlib.Path:
-        """
-        Constructs a pathlib.Path object pointing to the data file for a given currency pair and year.
+    @staticmethod
+    def _validate_currency_pair(currency_0: Currency, currency_1: Currency) -> None:
+        for parameter, currency in (("currency_0", currency_0), ("currency_1", currency_1)):
+            if not isinstance(currency, Currency):
+                raise TypeError(
+                    f"{parameter} must be a Currency member (for example Currency.EUR); "
+                    f"got {currency!r}."
+                )
+        if currency_0 is currency_1:
+            raise ValueError(
+                "currency_0 and currency_1 must be different currencies; "
+                f"got {currency_0.value}/{currency_1.value}."
+            )
 
-        The path is constructed using a predefined directory structure from the `directories` module, assuming the data is
-        stored in a specific format: `<base_dir>/<currency_0>_<currency_1>/<year>/data`.
+    def get_data_path(self, currency_0: str, currency_1: str) -> pathlib.Path:
+        """
+        Construct the expected path to a bundled currency-pair CSV file.
 
         Parameters:
-            currency_0 (str): The base currency of the currency pair.
-            currency_1 (str): The quote currency of the currency pair.
-            year (int): The year for which the data is required.
+            currency_0: The base currency code.
+            currency_1: The quote currency code.
 
         Returns:
-            pathlib.Path: The path to the data file for the specified currency pair and year.
+            The expected path, whether or not the bundled dataset exists.
         """
-        data_folder = directories.data
-
-        data_file = data_folder / f"{currency_0}_{currency_1}.csv"
-
-        if not data_file.with_suffix(".csv").exists():
-            data_file = data_folder / f"{currency_1}_{currency_0}"
+        data_file = directories.data / f"{currency_0}_{currency_1}.csv"
 
         return data_file
 
@@ -81,27 +95,20 @@ class Market(interface_market.Market):
         currency_1: Currency,
         time_span: Union[str, timedelta],
     ) -> None:
-        """Load market data for a currency pair from CSV, with optional overrides.
-
-        This method constructs the CSV filename from the given currency pair and
-        start_date.year, parses the provided time span (allowing either a `timedelta`
-        or a human-friendly string like "3days" or "4h30m"), then invokes
-        `load_from_csv(...)` with optional overrides for spread and bid/ask flag.
-        Finally, it selects which price series to use (open/close/high/low).
+        """Load bundled CSV market data for a currency pair.
 
         Args:
             currency_0 (Currency): The base currency of the pair (e.g. Currency.EUR).
             currency_1 (Currency): The quote currency of the pair (e.g. Currency.USD).
-            start_date (datetime): Any datetime within the year whose data file to load.
             time_span (Union[str, timedelta]): Amount of history to load starting at the
                 first timestamp; may be a `timedelta` or a string like "2d 6h".
 
         Raises:
-            FileNotFoundError: If the constructed CSV path does not exist or cannot be opened.
-            ValueError: If `time_span` cannot be parsed or `price_type` is invalid.
-            RuntimeError: On CSV parsing errors (malformed lines, missing columns, etc.).
+            FileNotFoundError: If no bundled CSV exists for the requested pair.
+            TypeError: If a currency is not a ``Currency`` member or the time span type is invalid.
+            ValueError: If currencies are identical or the time span is not positive.
         """
-        self.currency_pair = (currency_0, currency_1)
+        self._validate_currency_pair(currency_0, currency_1)
         # 1) Normalize time_span to a timedelta
         ts = self._parse_timespan(time_span)
         self.time_span = ts
@@ -112,7 +119,16 @@ class Market(interface_market.Market):
         csv_path = self.get_data_path(
             currency_0=currency_0.value,
             currency_1=currency_1.value,
-        ).with_suffix(".csv")
+        )
+
+        if not csv_path.is_file():
+            available_pairs = sorted(
+                path.stem.replace("_", "/") for path in directories.data.glob("*.csv")
+            )
+            raise FileNotFoundError(
+                f"No bundled market data is available for {self.currency_pair}. "
+                f"Available datasets: {', '.join(available_pairs)}."
+            )
 
         self.load_from_csv(filename=str(csv_path), time_span=ts)
 

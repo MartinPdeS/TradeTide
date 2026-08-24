@@ -6,6 +6,8 @@ add_subdirectory(base_indicator)
 add_subdirectory(moving_average_crossings)
 add_subdirectory(bollinger_bands)
 add_subdirectory(relative_momentum_index)
+add_subdirectory(relative_strength_index)
+add_subdirectory(macd)
 
 
 # Create a Python module, if needed.
@@ -19,6 +21,8 @@ target_link_libraries(
     moving_average_crossings
     bollinger_bands
     relative_momentum_index
+    relative_strength_index
+    macd
     pybind11::module
 )
 

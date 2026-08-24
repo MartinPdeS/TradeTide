@@ -86,23 +86,23 @@ class Portfolio(PORTFOLIO):
         sl_color = "#d62728"
         tp_color = "#2ca02c"
 
-        axes.set_ylabel(f"Bid Price")
+        axes.set_ylabel("Bid Price")
 
         self.position_collection.market.plot_bid(axes=axes, show=False)
 
-        for position in position_list:
-            start, end = position.start_date, position.close_date
+        for trade in position_list:
+            start, end = trade.start_date, trade.close_date
             axes.axvspan(start, end, facecolor=color_fill, edgecolor="black", alpha=0.2)
             axes.plot(
-                position.dates(),
-                position.stop_loss_prices(),
+                trade.dates(),
+                trade.stop_loss_prices(),
                 linestyle="--",
                 color=sl_color,
                 linewidth=1,
             )
             axes.plot(
-                position.dates(),
-                position.take_profit_prices(),
+                trade.dates(),
+                trade.take_profit_prices(),
                 linestyle="--",
                 color=tp_color,
                 linewidth=1,
@@ -133,23 +133,23 @@ class Portfolio(PORTFOLIO):
         sl_color = "#d62728"
         tp_color = "#2ca02c"
 
-        axes.set_ylabel(f"Bid Price")
+        axes.set_ylabel("Bid Price")
 
         self.position_collection.market.plot_bid(axes=axes, show=False)
 
-        for position in position_list:
-            start, end = position.start_date, position.close_date
+        for trade in position_list:
+            start, end = trade.start_date, trade.close_date
             axes.axvspan(start, end, facecolor=color_fill, edgecolor="black", alpha=0.2)
             axes.plot(
-                position.dates(),
-                position.stop_loss_prices(),
+                trade.dates(),
+                trade.stop_loss_prices(),
                 linestyle="--",
                 color=sl_color,
                 linewidth=1,
             )
             axes.plot(
-                position.dates(),
-                position.take_profit_prices(),
+                trade.dates(),
+                trade.take_profit_prices(),
                 linestyle="--",
                 color=tp_color,
                 linewidth=1,

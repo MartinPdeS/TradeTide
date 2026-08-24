@@ -1,112 +1,126 @@
 |logo|
 
 .. list-table::
-   :widths: 10 25 25 25
-   :header-rows: 0
+   :widths: 35 65
+   :header-rows: 1
 
-   * - Meta
+   * - Badge
+     - Status
+   * - Python versions
      - |python|
+   * - Documentation
      - |docs|
-     -
-   * - Testing
+   * - Continuous integration
      - |ci/cd|
+   * - Test coverage
      - |coverage|
+   * - Google Colab
      - |colab|
-   * - PyPI
+   * - PyPI package
      - |PyPI|
+   * - PyPI downloads
      - |PyPI_download|
-     -
-   * - Anaconda
+   * - Anaconda package
      - |anaconda|
+   * - Anaconda downloads
      - |anaconda_download|
+   * - Latest Anaconda release
      - |anaconda_date|
 
 TradeTide
 =========
 
-TradeTide is a trading platform designed to empower traders with advanced analytics, real-time market data, and automated trading capabilities. Our platform caters to both novice and experienced traders, offering a wide range of tools to analyze market trends, execute trades, and manage portfolios efficiently.
+**TradeTide** is a Python/C++ package for researching and backtesting
+foreign-exchange trading strategies. It includes bundled historical samples,
+technical indicators, position management, and portfolio simulation.
 
+Features
+--------
 
-Testing
-*******
+- Bundled historical samples for five major FX pairs.
+- Technical indicators including Bollinger Bands, moving-average crossings,
+  RMI, RSI, and MACD.
+- Composable ``all_of``, ``any_of``, and weighted signal rules.
+- Backtesting with configurable exit and capital-management strategies.
 
-To test localy (with cloning the GitHub repository) you'll need to install the dependencies and run the coverage command as
+Installation
+------------
 
-.. code:: python
+TradeTide is available from PyPI and Anaconda:
 
-   >>> git clone https://github.com/MartinPdeS/TradeTide.git
-   >>> cd TradeTide
-   >>> pip install -r requirements/requirements.txt
-   >>> pytest
+.. code-block:: console
 
-----
+   pip install TradeTide
+   conda install TradeTide --channel MartinPdeS
 
+Verify the installation with the Python interpreter used for backtests:
 
-Coding example
-**************
+.. code-block:: console
+
+   python -c "import TradeTide; print(TradeTide.__version__)"
+
+Released wheels are the easiest option. Building from source requires CMake,
+a C++20 compiler, pybind11, and OpenMP.
+
+First backtest
+--------------
+
+Load the bundled EUR/USD sample, add an indicator to a strategy, and run a
+backtest:
 
 .. code-block:: python
 
-   from TradeTide import Backtester, Strategy, Market, Currency, days, hours, minutes
-   from TradeTide.indicators import BollingerBands
+   from TradeTide import Backtester, Currency, Market, Strategy, days, minutes
    from TradeTide import capital_management, exit_strategy
+   from TradeTide.indicators import BollingerBands
 
    market = Market()
-
-   market.load_from_database(
-      currency_0=Currency.CAD,
-      currency_1=Currency.USD,
-      time_span=100 * days,
-   )
-
-   indicator = BollingerBands(
-      window=3 * minutes,
-      multiplier=2.0
-   )
-
-   indicator.run(market)
+   market.load_from_database(Currency.EUR, Currency.USD, time_span=3 * days)
 
    strategy = Strategy()
-
-   strategy.add_indicator(indicator)
-
-   exit_strategy = exit_strategy.Static(
-      stop_loss=4,
-      take_profit=4,
-      save_price_data=True
-   )
-
-   capital_management = capital_management.FixedLot(
-      capital=1_000_000,
-      fixed_lot_size=10_000,
-      max_capital_at_risk=100_000,
-      max_concurrent_positions=100,
-   )
+   strategy.add_indicator(BollingerBands(window=30 * minutes, multiplier=2.0))
 
    backtester = Backtester(
-      strategy=strategy,
-      exit_strategy=exit_strategy,
-      market=market,
-      capital_management=capital_management,
+       strategy=strategy,
+       market=market,
+       exit_strategy=exit_strategy.Static(stop_loss=4, take_profit=4),
+       capital_management=capital_management.FixedLot(
+           capital=100_000,
+           fixed_lot_size=10_000,
+           max_capital_at_risk=10_000,
+           max_concurrent_positions=1,
+       ),
    )
-
    backtester.run()
+   backtester.plot()
 
-   backtester.print_performance()
+Bundled datasets are EUR/USD, GBP/USD, CHF/USD, JPY/USD, and CAD/USD.
+``time_span`` accepts a ``timedelta`` or a positive duration string such as
+``"2d 6h"``.
 
+Testing
+-------
 
-|example|
+For local development, install the development extra and run the suite:
 
-----
+.. code-block:: console
 
+   git clone https://github.com/MartinPdeS/TradeTide.git
+   cd TradeTide
+   pip install -e '.[dev]'
+   pytest
 
-Contact Information
-************************
-As of 2025, the project is still under development. If you want to collaborate, it would be a pleasure! I encourage you to contact me.
+Contributing
+------------
 
-TradeTide was written by `Martin Poinsinet de Sivry-Houle <https://github.com/MartinPdS>`_  .
+See `CONTRIBUTING.md <CONTRIBUTING.md>`_ for the native-build requirements,
+formatting checks, and pull-request guidelines.
 
-Email:`martin.poinsinet-de-sivry@polymtl.ca <mailto:martin.poinsinet.de.sivry@gmail.com?subject=TradeTide>`_ .
+Contact
+-------
+
+For questions or contributions, contact
+`martin.poinsinet.de.sivry@gmail.com <mailto:martin.poinsinet.de.sivry@gmail.com>`_.
 
 .. |logo| image:: https://github.com/MartinPdeS/TradeTide/raw/master/docs/images/logo.png
     :alt: TradeTide logo
@@ -130,9 +144,6 @@ Email:`martin.poinsinet-de-sivry@polymtl.ca <mailto:martin.poinsinet.de.sivry@gm
     :target: https://htmlpreview.github.io/?https://github.com/MartinPdeS/TradeTide/blob/python-coverage-comment-action-data/htmlcov/index.html
 .. |ci/cd| image:: https://github.com/martinpdes/tradetide/actions/workflows/deploy_coverage.yml/badge.svg
     :alt: Unittest Status
-.. |example| image:: https://github.com/MartinPdeS/TradeTide/raw/master/docs/images/image_example.png
-    :width: 800
-    :alt: Qsca vs diameter
 .. |anaconda| image:: https://anaconda.org/martinpdes/tradetide/badges/version.svg
     :alt: Anaconda version
     :target: https://anaconda.org/martinpdes/tradetide

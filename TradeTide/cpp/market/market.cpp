@@ -214,6 +214,12 @@ void Market::load_from_csv(
     if (dates.empty()) {
         throw std::runtime_error("No valid data rows found in: " + filename);
     }
+    number_of_elements = dates.size();
+    start_date = dates.front();
+    end_date = dates.back();
+    if (dates.size() >= 2) {
+        interval = dates.back() - dates[dates.size() - 2];
+    }
 }
 
 

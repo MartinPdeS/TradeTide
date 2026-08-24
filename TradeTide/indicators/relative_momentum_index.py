@@ -98,4 +98,6 @@ class RelativeMomentumIndex(RELATIVEMOMENTUMINDEX, BaseIndicator):
 
         self._add_region_to_ax(ax=axes)
 
-        self.market.plot_ask(axes=axes, show=False)
+        from TradeTide import plot_market_candles
+
+        plot_market_candles(self.market, axes=axes, side="ask", show=False)

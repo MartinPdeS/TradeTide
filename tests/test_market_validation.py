@@ -3,14 +3,18 @@ from datetime import timedelta
 import pytest
 
 from TradeTide.currencies import Currency
-from TradeTide.market import Market
+from TradeTide import Market
 
 
 def test_time_span_accepts_combined_duration_string():
-    assert Market()._parse_timespan("1d 2h 30m") == timedelta(days=1, hours=2, minutes=30)
+    assert Market()._parse_timespan("1d 2h 30m") == timedelta(
+        days=1, hours=2, minutes=30
+    )
 
 
-@pytest.mark.parametrize("value", [timedelta(), timedelta(seconds=-1), "0m", "-1h", "tomorrow"])
+@pytest.mark.parametrize(
+    "value", [timedelta(), timedelta(seconds=-1), "0m", "-1h", "tomorrow"]
+)
 def test_time_span_must_be_a_positive_duration(value):
     with pytest.raises(ValueError, match="time_span"):
         Market()._parse_timespan(value)

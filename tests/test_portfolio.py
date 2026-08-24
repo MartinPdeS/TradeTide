@@ -1,7 +1,7 @@
 import pytest
 import numpy
 from datetime import timedelta
-from TradeTide.market import Market
+from TradeTide import Market
 from TradeTide.portfolio import Portfolio
 from TradeTide.position_collection import PositionCollection
 from TradeTide.currencies import Currency

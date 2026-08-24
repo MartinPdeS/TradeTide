@@ -87,7 +87,11 @@ class Portfolio(PORTFOLIO):
 
         axes.set_ylabel("Bid Price")
 
-        self.position_collection.market.plot_bid(axes=axes, show=False)
+        from TradeTide import plot_market_candles
+
+        plot_market_candles(
+            self.position_collection.market, axes=axes, side="bid", show=False
+        )
 
         for trade in position_list:
             start, end = trade.start_date, trade.close_date
@@ -134,7 +138,11 @@ class Portfolio(PORTFOLIO):
 
         axes.set_ylabel("Bid Price")
 
-        self.position_collection.market.plot_bid(axes=axes, show=False)
+        from TradeTide import plot_market_candles
+
+        plot_market_candles(
+            self.position_collection.market, axes=axes, side="bid", show=False
+        )
 
         for trade in position_list:
             start, end = trade.start_date, trade.close_date

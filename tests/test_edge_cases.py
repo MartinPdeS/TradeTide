@@ -8,7 +8,7 @@ concurrent position caps, and trade signal filtering are enforced correctly.
 import pytest
 from datetime import timedelta
 
-from TradeTide.market import Market
+from TradeTide import Market
 from TradeTide.signal import Signal
 from TradeTide.position_collection import PositionCollection
 from TradeTide import capital_management, exit_strategy

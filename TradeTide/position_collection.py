@@ -13,7 +13,6 @@ Short = position.Short
 
 
 class PositionCollection(POSITIONCOLLECTION):
-
     def __init__(self, market, trade_signal: np.ndarray, debug_mode: bool = False):
         """
         Initialize the PositionCollection with a market and trade signal.
@@ -48,16 +47,17 @@ class PositionCollection(POSITIONCOLLECTION):
         axes[0].sharex(axes[1])
         axes[0].sharey(axes[1])
 
-        self.market.plot_ask(axes=axes[0], show=False)
+        from TradeTide import plot_market_candles
 
-        self.market.plot_bid(axes=axes[1], show=False)
+        plot_market_candles(self.market, axes=axes[0], side="ask", show=False)
+
+        plot_market_candles(self.market, axes=axes[1], side="bid", show=False)
 
         axes[0].set_xlabel("Date")
         axes[1].set_ylabel("Bid Price")
         axes[0].set_ylabel("Ask Price")
 
         for idx in range(min(len(self), max_positions)):
-
             position = self[idx]
 
             ax = axes[0] if position.is_long else axes[1]

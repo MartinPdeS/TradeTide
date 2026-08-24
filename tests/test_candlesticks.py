@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 import pytest
 
-from TradeTide.market import Market
+from TradeTide import Market, plot_market, plot_market_candles
 
 
 def _market_with_ticks(count: int = 10) -> Market:
@@ -19,7 +19,7 @@ def _market_with_ticks(count: int = 10) -> Market:
 
 def test_candles_are_batched_and_decimated():
     market = _market_with_ticks()
-    figure = market.plot_candles(max_candles=3, show=False)
+    figure = plot_market_candles(market, max_candles=3, show=False)
     axes = figure.axes[0]
 
     # Two wick and two body collections, regardless of the source row count.
@@ -33,7 +33,7 @@ def test_candles_are_batched_and_decimated():
 
 def test_market_plot_uses_batched_candles_for_both_sides():
     market = _market_with_ticks()
-    figure = market.plot(show=False)
+    figure = plot_market(market, show=False)
 
     assert len(figure.axes[0].collections) == 8
     plt.close(figure)
@@ -43,4 +43,4 @@ def test_candles_validate_maximum_count():
     market = _market_with_ticks()
 
     with pytest.raises(ValueError, match="max_candles"):
-        market.plot_candles(max_candles=0, show=False)
+        plot_market_candles(market, max_candles=0, show=False)

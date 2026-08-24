@@ -1,12 +1,10 @@
 """Chronological train/test and walk-forward validation utilities."""
 
-from __future__ import annotations
-
 from dataclasses import dataclass
 from typing import Callable
 
 from TradeTide.execution import ExecutionCosts
-from TradeTide.market import Market
+from TradeTide import Market
 from TradeTide.performance import BacktestResult
 
 

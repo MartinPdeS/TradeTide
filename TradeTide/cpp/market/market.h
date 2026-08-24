@@ -18,6 +18,7 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
+#include <filesystem>
 
 /// Type alias for system clock duration representation
 using Duration = std::chrono::system_clock::duration;
@@ -128,12 +129,13 @@ public:
     // Market Metadata
     // ===============================
 
-    std::string currencies;        ///< Currency pair identifier (e.g., "EUR/USD", "GBP/JPY")
+    std::string currency_pair;     ///< Currency pair identifier (e.g., "EUR/USD", "GBP/JPY")
     TimePoint start_date;         ///< First timestamp in the dataset
     TimePoint end_date;           ///< Last timestamp in the dataset
     size_t number_of_elements;    ///< Total number of data points loaded
     double pip_value;             ///< Value of one pip for this currency pair
     Duration interval;            ///< Time interval between consecutive data points
+    Duration time_span{};         ///< Requested duration when loaded from bundled data
 
     // ===============================
     // Constructors

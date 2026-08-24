@@ -9,10 +9,10 @@ This example demonstrates how to use the Moving Average Crossings indicator with
 import numpy as np
 
 from TradeTide.indicators import MovingAverageCrossing
-from TradeTide.market import Market
+from TradeTide import Market
 from TradeTide.currencies import Currency
 from TradeTide.times import minutes, hours
-from TradeTide.market import Market
+from TradeTide import Market
 from TradeTide.currencies import Currency
 
 market = Market()

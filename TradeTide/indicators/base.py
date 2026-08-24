@@ -1,5 +1,5 @@
 import numpy as np
-from TradeTide.market import Market
+from TradeTide import Market
 
 
 class BaseIndicator:

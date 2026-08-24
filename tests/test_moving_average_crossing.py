@@ -7,7 +7,7 @@ from unittest.mock import patch
 import matplotlib.pyplot as plt
 
 from TradeTide.indicators.moving_average_crossings import MovingAverageCrossing
-from TradeTide.market import Market
+from TradeTide import Market
 from TradeTide.times import minutes, hours, days
 from TradeTide.currencies import Currency
 import TradeTide

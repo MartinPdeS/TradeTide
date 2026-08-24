@@ -15,6 +15,10 @@ All notable changes to TradeTide are documented here.
   quality workflow for pull requests and pushes.
 - Batched, automatically decimated candlestick charts for efficient market
   visualisation across all market plots.
+- Deterministic OHLC market, limit, stop, and stop-limit order triggering;
+  trade ledgers with MAE/MFE analytics; and market-data quality reports.
+- Calmar ratio, maximum drawdown duration, equity-candle/drawdown plots, opt-in
+  structured debug logging, and an end-to-end strategy tutorial.
 
 ### Changed
 

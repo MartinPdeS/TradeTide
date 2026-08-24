@@ -7,7 +7,7 @@ from unittest.mock import patch
 import matplotlib.pyplot as plt
 
 from TradeTide.indicators.bollinger_bands import BollingerBands
-from TradeTide.market import Market
+from TradeTide import Market
 from TradeTide.times import minutes, hours, days
 from TradeTide.currencies import Currency
 import TradeTide

@@ -7,7 +7,7 @@ from unittest.mock import patch
 import matplotlib.pyplot as plt
 
 from TradeTide.indicators.relative_momentum_index import RelativeMomentumIndex
-from TradeTide.market import Market
+from TradeTide import Market
 from TradeTide.times import minutes, hours
 from TradeTide.currencies import Currency
 import TradeTide

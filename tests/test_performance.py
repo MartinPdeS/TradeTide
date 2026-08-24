@@ -7,7 +7,7 @@ import numpy as np
 import pytest
 
 from TradeTide.execution import ExecutionCosts
-from TradeTide.market import Market
+from TradeTide import Market
 from TradeTide.performance import BacktestResult
 from TradeTide.validation import WalkForwardSplitter, chronological_split
 
@@ -70,6 +70,23 @@ def test_zero_cost_model_preserves_recorded_equity():
     assert np.asarray(result.equity) == pytest.approx([100.0, 105.0, 102.0])
     assert result.metrics.total_return == pytest.approx(0.02)
     assert result.metrics.total_trades == 0
+
+
+def test_metrics_include_calmar_and_drawdown_duration_and_plot():
+    start = datetime(2024, 1, 1)
+    times = [start + timedelta(days=day) for day in range(5)]
+    portfolio = FakePortfolio(times, [100.0, 110.0, 90.0, 95.0, 115.0], [])
+
+    result = BacktestResult.from_portfolio(portfolio)
+
+    assert result.metrics.max_drawdown == pytest.approx(2 / 11)
+    assert result.metrics.max_drawdown_duration_seconds == pytest.approx(2 * 86_400)
+    assert result.metrics.calmar_ratio == pytest.approx(
+        result.metrics.annualized_return / result.metrics.max_drawdown
+    )
+    figure = result.plot_equity_drawdown(show=False)
+    assert len(figure.axes) == 2
+    assert len(figure.axes[0].collections) == 2
 
 
 def test_execution_costs_reject_negative_inputs():

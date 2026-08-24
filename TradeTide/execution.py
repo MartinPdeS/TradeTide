@@ -1,7 +1,5 @@
 """Transparent post-trade execution-cost modelling."""
 
-from __future__ import annotations
-
 from dataclasses import dataclass
 from datetime import timedelta
 from typing import TYPE_CHECKING
@@ -52,7 +50,7 @@ class ExecutionCosts:
         ):
             raise ValueError("Execution costs must be non-negative.")
 
-    def for_trade(self, position: BasePosition, pip_value: float) -> TradeCost:
+    def for_trade(self, position: "BasePosition", pip_value: float) -> TradeCost:
         """Calculate all costs for a position using its actual duration and size."""
         lot_size = position.lot_size
         nights = max((position.close_date - position.start_date).days, 0)
@@ -64,7 +62,7 @@ class ExecutionCosts:
         )
 
     def cashflow_events(
-        self, position: BasePosition, trade_cost: TradeCost
+        self, position: "BasePosition", trade_cost: TradeCost
     ) -> list[tuple[object, float]]:
         """Return entry, overnight, and exit charges for a net equity curve."""
         entry_cost = (

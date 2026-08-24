@@ -33,7 +33,7 @@ import pytest
 import numpy as np
 
 from TradeTide.currencies import Currency
-from TradeTide.market import Market
+from TradeTide import Market
 from TradeTide.times import days, hours, weeks
 import TradeTide
 

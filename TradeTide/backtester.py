@@ -3,11 +3,12 @@ import numpy as np
 from TradeTide.plotting import post_mpl_plot, pre_plot
 
 from TradeTide.binary.interface_backtester import BACKTESTER
-from TradeTide.market import Market
+from TradeTide import Market, plot_market_candles
 from TradeTide.strategy import Strategy
 import TradeTide
 from TradeTide.execution import ExecutionCosts
 from TradeTide.performance import BacktestResult
+from TradeTide.debug import logger
 
 
 class Backtester(BACKTESTER):
@@ -36,13 +37,14 @@ class Backtester(BACKTESTER):
         market: Market,
         capital_management,
         execution_costs: ExecutionCosts | None = None,
+        debug_mode: bool | None = None,
     ):
         super().__init__(
             strategy=strategy,
             exit_strategy=exit_strategy,
             market=market,
             capital_management=capital_management,
-            debug_mode=TradeTide.debug_mode,
+            debug_mode=TradeTide.debug_mode if debug_mode is None else debug_mode,
         )
 
         self.strategy = strategy
@@ -60,9 +62,20 @@ class Backtester(BACKTESTER):
         curve and trade metrics, leaving the raw native record available for
         inspection via ``_cpp_portfolio.record``.
         """
+        logger.debug(
+            "Starting backtest: observations=%d execution_costs=%s",
+            len(self.market.dates),
+            self.execution_costs,
+        )
         super().run()
         self.result = BacktestResult.from_portfolio(
             self._cpp_portfolio, self.execution_costs
+        )
+        logger.info(
+            "Backtest complete: trades=%d return=%.2f%% max_drawdown=%.2f%%",
+            self.result.metrics.total_trades,
+            self.result.metrics.total_return * 100,
+            self.result.metrics.max_drawdown * 100,
         )
         return self.result
 
@@ -113,7 +126,12 @@ class Backtester(BACKTESTER):
     def _plot_strategy(self, axes: plt.Axes) -> None:
         """Plot market prices with strategy signals and indicators."""
         # Plot market data
-        self.market.plot(axes=axes, show=False, tight_layout=False)
+        plot_market_candles(
+            self.market, axes=axes, side="ask", show=False, tight_layout=False
+        )
+        plot_market_candles(
+            self.market, axes=axes, side="bid", show=False, tight_layout=False
+        )
 
         # Get strategy signals
         trade_signals = self.strategy.get_trade_signal(self.market)

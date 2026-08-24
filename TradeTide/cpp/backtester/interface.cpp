@@ -4,10 +4,10 @@
 #include "backtester.h"
 
 
-PYBIND11_MODULE(interface_backtester, module) {
+PYBIND11_MODULE(backtester, module) {
     module.doc() = "Native orchestration API for complete TradeTide backtests.";
 
-    pybind11::class_<Backtester>(module, "BACKTESTER", R"pbdoc(
+    pybind11::class_<Backtester>(module, "Backtester", R"pbdoc(
         End-to-end backtesting orchestrator.
 
         It derives strategy signals, creates and propagates positions, then
@@ -75,5 +75,6 @@ PYBIND11_MODULE(interface_backtester, module) {
             + " completed=" + (self.portfolio.record.equity.empty() ? "False" : "True") + ">";
     })
     ;
+    module.attr("BACKTESTER") = module.attr("Backtester");
 
 }

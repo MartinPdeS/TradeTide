@@ -28,7 +28,7 @@ import pytest
 import numpy as np
 
 from TradeTide import Market
-from TradeTide.signal import Signal
+from TradeTide import Signal
 from TradeTide.currencies import Currency
 from TradeTide.times import days, hours
 import TradeTide

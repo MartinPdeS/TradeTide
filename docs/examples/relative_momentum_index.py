@@ -6,10 +6,10 @@ This example demonstrates how to use the Relative Momentum Index (RMI) indicator
 
 """
 
-from TradeTide.indicators import RelativeMomentumIndex
+from TradeTide import RelativeMomentumIndex
 from TradeTide import Market
 from TradeTide.currencies import Currency
-from TradeTide.times import days, minutes
+from TradeTide.times import minutes
 
 market = Market()
 
@@ -20,12 +20,14 @@ market.load_from_database(
 )
 
 indicator = RelativeMomentumIndex(
-    momentum_period=3 * minutes,
-    smooth_window=5 * minutes,
+    # Native indicators use bar counts rather than timedelta windows.
+    momentum_period=3,
+    smooth_period=5,
     over_bought=70.0,
     over_sold=30.0,
 )
 
 indicator.run(market)
 
-indicator.plot()
+# Display the figure using Matplotlib's configured interactive backend.
+figure = indicator.plot()

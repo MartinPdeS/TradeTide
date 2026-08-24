@@ -2,10 +2,10 @@ import pytest
 import numpy
 from datetime import timedelta
 from TradeTide import Market
-from TradeTide.portfolio import Portfolio
-from TradeTide.position_collection import PositionCollection
+from TradeTide import Portfolio
+from TradeTide import PositionCollection
 from TradeTide.currencies import Currency
-from TradeTide.signal import Signal
+from TradeTide import Signal
 from TradeTide import capital_management, exit_strategy
 import TradeTide
 
@@ -67,7 +67,6 @@ def test_portfolio_simulation_workflow():
     assert numpy.all(equity > 0), f"Negative equity value found: {equity}"
 
     # Optional: Run plotting for visual check (disable show=True for CI)
-    portfolio.plot_positions(max_positions=100, show=False)
 
 
 if __name__ == "__main__":

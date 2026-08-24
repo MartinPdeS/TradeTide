@@ -137,7 +137,7 @@ class WalkForwardSplitter:
         a strategy ready for the test market; this keeps parameter fitting under
         the caller's control while making the test execution strictly isolated.
         """
-        from TradeTide.backtester import Backtester
+        from TradeTide import Backtester
 
         windows = self.split(market)
         results: list[BacktestResult] = []

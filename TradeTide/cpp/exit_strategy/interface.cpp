@@ -5,7 +5,7 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(interface_exit_strategy, module) {
+PYBIND11_MODULE(exit_strategy, module) {
     module.doc() = "Python bindings for various exit strategies used in trading positions.";
 
     py::class_<ExitStrategy, ExitStrategyPtr>(module, "ExitStrategy")

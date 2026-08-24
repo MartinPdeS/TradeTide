@@ -12,7 +12,7 @@ from TradeTide.ledger import TradeLedger
 from TradeTide.debug import logger
 
 if TYPE_CHECKING:
-    from TradeTide.portfolio import Portfolio
+    from TradeTide import Portfolio
 
 
 @dataclass(frozen=True)
@@ -161,7 +161,12 @@ class BacktestResult:
                     "lot_size": trade.lot_size,
                     "gross_pnl": trade.gross_pnl,
                     "net_pnl": trade.net_pnl,
-                    "costs": asdict(trade.costs),
+                    "costs": {
+                        "commission": trade.costs.commission,
+                        "slippage": trade.costs.slippage,
+                        "spread": trade.costs.spread,
+                        "financing": trade.costs.financing,
+                    },
                     "exit_reason": trade.exit_reason,
                     "maximum_adverse_excursion": trade.maximum_adverse_excursion,
                     "maximum_favorable_excursion": trade.maximum_favorable_excursion,

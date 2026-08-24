@@ -6,7 +6,7 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(interface_position, module) {
+PYBIND11_MODULE(position, module) {
     module.doc() = "Python bindings for trading positions (BasePosition, Long, Short) and their properties.";
 
     py::class_<BasePosition>(module, "BasePosition")

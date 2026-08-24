@@ -14,7 +14,7 @@ set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Type of build")
 
 # --------------------- Set the output directory for libraries --------------------
 set(LOCAL_CXX_DIR "${PROJECT_NAME}/cpp")
-set(LOCAL_BIN_DIR "${CMAKE_SOURCE_DIR}/${PROJECT_NAME}/binary")
+set(LOCAL_BIN_DIR "${CMAKE_SOURCE_DIR}/${PROJECT_NAME}")
 include_directories(${NAME} ${LOCAL_CXX_DIR})
 # --------------------- Set the output directory for libraries --------------------
 
@@ -94,6 +94,9 @@ message(STATUS "")
 
 # ----------------- collect subdirectories --------------------
 add_subdirectory(TradeTide/cpp/market)               # market
+add_subdirectory(TradeTide/cpp/orders)               # orders
+add_subdirectory(TradeTide/cpp/execution)            # execution costs
+add_subdirectory(TradeTide/cpp/ledger)               # trade ledger
 add_subdirectory(TradeTide/cpp/indicators)           # indicators
 add_subdirectory(TradeTide/cpp/strategy)             # strategy
 add_subdirectory(TradeTide/cpp/position)             # position

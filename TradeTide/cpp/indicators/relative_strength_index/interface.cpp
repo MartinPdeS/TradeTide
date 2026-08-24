@@ -3,7 +3,7 @@
 
 void register_relative_strength_index(const pybind11::module& module) {
     pybind11::class_<RelativeStrengthIndex, std::shared_ptr<RelativeStrengthIndex>, BaseIndicator>(
-        module, "RELATIVESTRENGTHINDEX", R"pbdoc(
+        module, "RelativeStrengthIndex", R"pbdoc(
         Relative Strength Index (RSI) calculated with Wilder smoothing.
 
         The indicator emits ``+1`` for oversold values, ``-1`` for overbought

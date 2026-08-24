@@ -6,7 +6,7 @@ This example demonstrates how to use the Moving Average Crossings indicator with
 
 """
 
-from TradeTide.indicators import MovingAverageCrossing
+from TradeTide import MovingAverageCrossing
 from TradeTide import Market
 from TradeTide.currencies import Currency
 from TradeTide.times import minutes

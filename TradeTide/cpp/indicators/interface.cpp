@@ -17,7 +17,7 @@ namespace py = pybind11;
 // BollingerBands - Bollinger Bands calculation with buy/sell signals.
 // RelativeMomentumIndex - Relative Momentum Index with overbought/oversold signals.
 
-PYBIND11_MODULE(interface_indicators, module) {
+PYBIND11_MODULE(indicators, module) {
     module.doc() = R"pbdoc(
         Python bindings for trading indicators.
 
@@ -37,6 +37,11 @@ PYBIND11_MODULE(interface_indicators, module) {
     register_relative_momentum_index(module);
     register_relative_strength_index(module);
     register_macd(module);
+
+    module.attr("BOLLINGERBANDS") = module.attr("BollingerBands");
+    module.attr("MOVINGAVERAGECROSSING") = module.attr("MovingAverageCrossing");
+    module.attr("RELATIVEMOMENTUMINDEX") = module.attr("RelativeMomentumIndex");
+    module.attr("RELATIVESTRENGTHINDEX") = module.attr("RelativeStrengthIndex");
 
 
 

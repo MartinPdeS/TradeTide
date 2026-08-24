@@ -22,7 +22,7 @@ or a claim about live-trading performance.
 
 from TradeTide import Backtester, Currency, Market, Strategy
 from TradeTide import capital_management, exit_strategy
-from TradeTide.indicators import BollingerBands
+from TradeTide import BollingerBands
 from TradeTide.times import days, minutes
 
 

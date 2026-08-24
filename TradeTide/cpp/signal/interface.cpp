@@ -5,7 +5,7 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(interface_signal, module) {
+PYBIND11_MODULE(signal, module) {
     module.doc() = R"pbdoc(
         Python bindings for the Signal class used to encode time-series trade decisions aligned to Market data.
     )pbdoc";

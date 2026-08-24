@@ -15,7 +15,7 @@ its historical performance and risk characteristics.
 # --------------------------
 from TradeTide import Backtester, Strategy, Market, Currency
 from TradeTide.times import months, days, hours, minutes
-from TradeTide.indicators import BollingerBands
+from TradeTide import BollingerBands
 from TradeTide import capital_management, exit_strategy
 
 

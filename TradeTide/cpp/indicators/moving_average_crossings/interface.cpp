@@ -6,7 +6,7 @@
 void register_moving_average_crossings(const pybind11::module& module) {
 
     // MovingAverageCrossing binding
-    pybind11::class_<MovingAverageCrossing, std::shared_ptr<MovingAverageCrossing>, BaseIndicator>(module, "MOVINGAVERAGECROSSING")
+    pybind11::class_<MovingAverageCrossing, std::shared_ptr<MovingAverageCrossing>, BaseIndicator>(module, "MovingAverageCrossing")
         .def(pybind11::init<>())
         .def(
             pybind11::init<size_t, size_t>(),

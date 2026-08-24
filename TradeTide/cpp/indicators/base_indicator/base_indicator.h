@@ -9,6 +9,7 @@
 class BaseIndicator {
 public:
     const std::vector<double> *prices;
+    const Market *market = nullptr;
     std::vector<int> regions;
 
     BaseIndicator() = default;

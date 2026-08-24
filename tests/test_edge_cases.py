@@ -9,10 +9,10 @@ import pytest
 from datetime import timedelta
 
 from TradeTide import Market
-from TradeTide.signal import Signal
-from TradeTide.position_collection import PositionCollection
+from TradeTide import Signal
+from TradeTide import PositionCollection
 from TradeTide import capital_management, exit_strategy
-from TradeTide.portfolio import Portfolio
+from TradeTide import Portfolio
 from TradeTide.currencies import Currency
 import TradeTide
 

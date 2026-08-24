@@ -2,17 +2,30 @@
 
 from datetime import datetime, timedelta
 from types import SimpleNamespace
-
 import pytest
 
+from TradeTide import Market, Order, OrderBook, OrderSide, OrderStatus, OrderType, TradeLedger
 from TradeTide.data_quality import IssueSeverity, validate_market_data
 from TradeTide.execution import TradeCost
-from TradeTide.ledger import TradeLedger
-from TradeTide.orders import Order, OrderBook, OrderSide, OrderStatus, OrderType
 from TradeTide.performance import TradeResult
 
 
-def _market() -> SimpleNamespace:
+def _market() -> Market:
+    start = datetime(2024, 1, 1)
+    market = Market()
+    for index, values in enumerate(
+        (
+            (1.20, 1.40, 0.90, 1.20, 1.19, 1.39, 0.89, 1.19),
+            (1.20, 1.25, 1.10, 1.20, 1.19, 1.24, 1.09, 1.19),
+            (1.20, 1.25, 1.10, 1.20, 1.19, 1.24, 1.09, 1.19),
+        )
+    ):
+        market.add_market_data(start + timedelta(minutes=index), *values)
+    return market
+
+
+def _quality_market() -> SimpleNamespace:
+    """Mutable fixture for Python-side data-quality validation."""
     start = datetime(2024, 1, 1)
     ask = SimpleNamespace(
         open=[1.20, 1.20, 1.20],
@@ -79,11 +92,11 @@ def test_order_cancellation_expiry_and_signals_are_deterministic():
     signals = book.trade_signals(market)
 
     assert signals.tolist() == [0, -1, 0]
-    assert expired.status is OrderStatus.CANCELLED
+    assert expired.status == OrderStatus.CANCELLED
 
 
 def test_market_validation_reports_timestamp_and_spread_problems():
-    market = _market()
+    market = _quality_market()
     market.dates[1] = market.dates[0]
     market.ask.close[0] = 1.50
 

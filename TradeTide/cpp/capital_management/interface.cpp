@@ -4,7 +4,7 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(interface_capital_management, module) {
+PYBIND11_MODULE(capital_management, module) {
     module.doc() = "Python bindings for capital management strategies (lot sizing).";
 
     py::class_<BaseCapitalManagement, std::shared_ptr<BaseCapitalManagement>>(module, "BaseCapitalManagement")

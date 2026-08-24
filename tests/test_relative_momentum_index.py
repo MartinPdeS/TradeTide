@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from unittest.mock import patch
 import matplotlib.pyplot as plt
 
-from TradeTide.indicators.relative_momentum_index import RelativeMomentumIndex
+from TradeTide import RelativeMomentumIndex
 from TradeTide import Market
 from TradeTide.times import minutes, hours
 from TradeTide.currencies import Currency

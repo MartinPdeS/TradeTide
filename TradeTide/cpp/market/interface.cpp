@@ -51,9 +51,47 @@ std::string currency_code(const py::object& currency, const char* parameter) {
     }
     return py::str(currency.attr("value"));
 }
+
+py::object plot_candles(Market& market, py::object axes, const std::string& side, std::optional<size_t> max_candles, bool show) {
+    if (side != "ask" && side != "bid") throw py::value_error("side must be either 'ask' or 'bid'.");
+    const BasePrices& prices = side == "ask" ? market.ask : market.bid;
+    if (prices.open.empty()) throw py::value_error("Market has no observations to plot.");
+    if (max_candles && *max_candles == 0) throw py::value_error("max_candles must be a positive integer or None.");
+    const size_t count = prices.open.size();
+    const size_t target = max_candles ? std::min(*max_candles, count) : count;
+    const size_t group_size = (count + target - 1) / target;
+    py::list dates, segments, bodies, colors;
+    const auto dates_to_num = py::module_::import("matplotlib.dates").attr("date2num");
+    for (size_t start = 0; start < count; start += group_size) {
+        const size_t end = std::min(start + group_size, count);
+        double low = prices.low[start], high = prices.high[start];
+        for (size_t index = start + 1; index < end; ++index) { low = std::min(low, prices.low[index]); high = std::max(high, prices.high[index]); }
+        dates.append(py::cast(market.dates[start]));
+        const double open = prices.open[start], close = prices.close[end - 1];
+        const double x = dates_to_num(py::cast(market.dates[start])).cast<double>();
+        segments.append(py::make_tuple(py::make_tuple(x, low), py::make_tuple(x, high)));
+        const std::string color = close >= open ? "#16a085" : "#e74c3c";
+        colors.append(color);
+        bodies.append(py::make_tuple(py::make_tuple(x - 0.0002, open), py::make_tuple(x + 0.0002, open), py::make_tuple(x + 0.0002, close), py::make_tuple(x - 0.0002, close)));
+    }
+    py::object figure;
+    if (axes.is_none()) {
+        const py::tuple created = py::module_::import("matplotlib.pyplot").attr("subplots")().cast<py::tuple>();
+        figure = created[0]; axes = created[1];
+    } else figure = axes.attr("figure");
+    const auto collections = py::module_::import("matplotlib.collections");
+    axes.attr("add_collection")(collections.attr("LineCollection")(segments, py::arg("colors") = colors, py::arg("linewidths") = 0.8));
+    axes.attr("add_collection")(collections.attr("PolyCollection")(bodies, py::arg("facecolors") = colors, py::arg("edgecolors") = colors, py::arg("linewidths") = 0.5));
+    axes.attr("autoscale_view")();
+    axes.attr("set_xlabel")("Time"); axes.attr("set_ylabel")("Price");
+    axes.attr("set_title")(market.currency_pair + " - candles");
+    figure.attr("tight_layout")();
+    if (show) py::module_::import("matplotlib.pyplot").attr("show")();
+    return figure;
+}
 }
 
-PYBIND11_MODULE(interface_market, module) {
+PYBIND11_MODULE(market, module) {
     module.doc() = R"pbdoc(
         Native market-data containers for TradeTide.
 
@@ -120,6 +158,7 @@ PYBIND11_MODULE(interface_market, module) {
             self.load_from_csv(file.string(), self.time_span);
         }, py::arg("currency_0"), py::arg("currency_1"), py::arg("time_span"), "Load bundled market data for a Currency pair.")
         .def_static("_parse_timespan", &parse_time_span, py::arg("time_span"), "Parse a timedelta or compact duration string.")
+        .def("plot_candles", [](Market& self, py::object axes, const std::string& side, std::optional<size_t> max_candles, bool show) { return plot_candles(self, axes, side, max_candles, show); }, py::arg("axes") = py::none(), py::arg("side") = "ask", py::arg("max_candles") = 2000, py::arg("show") = true, "Render batched native-market candles.")
 
         .def("display", &Market::display_market_data, "Print a preview of the loaded market data.")
         .def("__repr__", [](const Market& self) {

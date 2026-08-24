@@ -1,12 +1,13 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
+#include <limits>
 #include "position_collection.h"
 
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(interface_position_collection, module) {
+PYBIND11_MODULE(position_collection, module) {
     module.doc() = R"pbdoc(
         Python bindings for the PositionCollection class.
 
@@ -18,7 +19,7 @@ PYBIND11_MODULE(interface_position_collection, module) {
 
 
     // Bind the Position class
-    py::class_<PositionCollection, std::shared_ptr<PositionCollection>>(module, "POSITIONCOLLECTION", R"pbdoc(
+    py::class_<PositionCollection, std::shared_ptr<PositionCollection>>(module, "PositionCollection", R"pbdoc(
         Candidate positions generated from a market-aligned trade-signal vector.
 
         Positions are constructed by ``open_positions`` and then evaluated by
@@ -127,9 +128,34 @@ PYBIND11_MODULE(interface_position_collection, module) {
                 Args:
                     filepath (str): Path to the output CSV file.
             )pbdoc")
+        .def("plot", [](const PositionCollection& self, size_t max_positions, bool show) {
+            py::object pyplot = py::module_::import("matplotlib.pyplot");
+            py::tuple figure_axes = pyplot.attr("subplots")(2, 1, py::arg("sharex") = true);
+            py::object axes = figure_axes[1];
+            py::object ask_axes = axes.attr("__getitem__")(0);
+            py::object bid_axes = axes.attr("__getitem__")(1);
+            py::object market = py::cast(const_cast<Market*>(&self.market), py::return_value_policy::reference);
+            market.attr("plot_candles")(py::arg("axes") = ask_axes, py::arg("side") = "ask", py::arg("show") = false);
+            market.attr("plot_candles")(py::arg("axes") = bid_axes, py::arg("side") = "bid", py::arg("show") = false);
+            const size_t count = std::min(max_positions, self.size());
+            for (size_t index = 0; index < count; ++index) {
+                BasePosition* position = self.__getitem__(index);
+                py::object axes_for_position = position->is_long ? ask_axes : bid_axes;
+                axes_for_position.attr("axvspan")(position->start_date, position->close_date,
+                    py::arg("facecolor") = position->is_long ? "C0" : "C1",
+                    py::arg("edgecolor") = "black", py::arg("alpha") = 0.2);
+            }
+            ask_axes.attr("set_ylabel")("Ask price");
+            bid_axes.attr("set_ylabel")("Bid price");
+            bid_axes.attr("set_xlabel")("Date");
+            if (show) pyplot.attr("show")();
+            return py::reinterpret_borrow<py::object>(figure_axes[0]);
+        }, py::arg("max_positions") = std::numeric_limits<size_t>::max(), py::arg("show") = true,
+        "Plot native ask/bid candles and highlight candidate positions.")
         .def("__repr__", [](const PositionCollection& self) {
             return "<PositionCollection positions=" + std::to_string(self.size())
                 + " trade_signals=" + std::to_string(self.number_of_trade) + ">";
         })
         ;
+    module.attr("POSITIONCOLLECTION") = module.attr("PositionCollection");
 }

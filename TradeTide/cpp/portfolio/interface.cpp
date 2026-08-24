@@ -6,7 +6,7 @@
 #include "../state/interface.cpp"
 #include "../record/interface.cpp"
 
-PYBIND11_MODULE(interface_portfolio, module) {
+PYBIND11_MODULE(portfolio, module) {
     module.doc() = R"pbdoc(
         Python bindings for the Portfolio class.
 
@@ -21,7 +21,7 @@ PYBIND11_MODULE(interface_portfolio, module) {
 
     register_record(module);
 
-    pybind11::class_<Portfolio, std::shared_ptr<Portfolio>>(module, "PORTFOLIO", R"pbdoc(
+    pybind11::class_<Portfolio, std::shared_ptr<Portfolio>>(module, "Portfolio", R"pbdoc(
         Capital-constrained portfolio simulator.
 
         A portfolio selects executable positions, records the equity path, and
@@ -118,4 +118,5 @@ PYBIND11_MODULE(interface_portfolio, module) {
                 + " selected_positions=" + std::to_string(self.selected_positions.size()) + ">";
         })
         ;
+    module.attr("PORTFOLIO") = module.attr("Portfolio");
 }

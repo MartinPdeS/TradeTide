@@ -12,7 +12,7 @@ This module tests edge cases and expected band computation behavior:
 
 import pytest
 import numpy as np
-from TradeTide.binary.interface_indicators import BOLLINGERBANDS
+from TradeTide.binary.indicators import BOLLINGERBANDS
 import TradeTide
 
 TradeTide.debug_mode = True  # Enable debug mode for development purpose

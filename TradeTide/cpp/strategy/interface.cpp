@@ -4,11 +4,11 @@
 #include "strategy.h"
 
 
-PYBIND11_MODULE(interface_strategy, module) {
+PYBIND11_MODULE(strategy, module) {
     module.doc() = "Native strategy composition primitives for TradeTide.";
 
     // Strategy binding
-    pybind11::class_<Strategy>(module, "STRATEGY", R"pbdoc(
+    pybind11::class_<Strategy>(module, "Strategy", R"pbdoc(
         A collection of indicators that produces one aligned trade signal.
 
         Indicators are evaluated against the supplied market and their regions
@@ -50,4 +50,5 @@ PYBIND11_MODULE(interface_strategy, module) {
             return "<Strategy indicators=" + std::to_string(self.indicators.size()) + ">";
         })
     ;
+    module.attr("STRATEGY") = module.attr("Strategy");
 }

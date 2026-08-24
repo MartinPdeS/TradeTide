@@ -4,21 +4,23 @@
 
 | Name                                              |    Stmts |     Miss |   Branch |   BrPart |      Cover |   Missing |
 |-------------------------------------------------- | -------: | -------: | -------: | -------: | ---------: | --------: |
-| TradeTide/backtester.py                           |       92 |       71 |       20 |        0 |     18.75% |33-44, 62-87, 93-132, 137-180, 185-223, 228-265, 270-290 |
+| TradeTide/backtester.py                           |      100 |       76 |       20 |        0 |     20.00% |40-53, 63-67, 85-110, 116-155, 160-203, 208-246, 251-288, 293-313 |
 | TradeTide/currencies.py                           |       25 |        1 |        0 |        0 |     96.00% |        31 |
 | TradeTide/data/utils.py                           |       25 |       25 |        8 |        0 |      0.00% |      1-69 |
 | TradeTide/indicators/bollinger\_bands.py          |       27 |        3 |        2 |        1 |     86.21% |     61-75 |
 | TradeTide/indicators/macd.py                      |       20 |        8 |        4 |        0 |     50.00% |     24-34 |
 | TradeTide/indicators/relative\_strength\_index.py |       17 |        6 |        4 |        0 |     52.38% |     20-25 |
-| TradeTide/market.py                               |       85 |        8 |       26 |        1 |     90.09% |56-57, 237-244 |
+| TradeTide/market.py                               |      126 |        4 |       36 |        3 |     94.44% |59-60, 185, 241 |
+| TradeTide/performance.py                          |      123 |        7 |       22 |        7 |     88.97% |87, 150, 152-\>148, 224, 236, 239, 245-246 |
 | TradeTide/plotting.py                             |       34 |        9 |       10 |        2 |     65.91% |25-\>27, 28, 41-48 |
 | TradeTide/portfolio.py                            |       98 |       30 |       16 |        1 |     67.54% |55-\>exit, 176-185, 197-200, 212-213, 225-231, 244-249, 260-295 |
 | TradeTide/position\_collection.py                 |       31 |       16 |        2 |        0 |     45.45% |     48-88 |
 | TradeTide/simulation\_settings.py                 |       14 |        3 |        4 |        0 |     72.22% |     17-19 |
 | TradeTide/tools.py                                |       80 |       65 |       36 |        0 |     12.93% |23-34, 39-69, 74-75, 80-81, 84-91, 94-95, 98-103, 106-118, 121-124 |
-| **TOTAL**                                         |  **684** |  **245** |  **142** |    **5** | **59.08%** |           |
+| TradeTide/validation.py                           |       67 |       16 |       18 |        6 |     71.76% |48, 51, 64, 99, 105, 123, 142-158 |
+| **TOTAL**                                         |  **958** |  **269** |  **196** |   **20** | **66.98%** |           |
 
-8 files skipped due to complete coverage.
+9 files skipped due to complete coverage.
 
 
 ## Setup coverage badge

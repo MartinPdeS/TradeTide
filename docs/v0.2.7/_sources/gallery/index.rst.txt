@@ -64,6 +64,40 @@ Examples: Tutorials
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="This end-to-end tutorial follows the complete TradeTide workflow: load and validate data, calculate an indicator, turn its signals into orders, simulate a portfolio, inspect the trade ledger, and plot net equity and drawdown.  It uses bundled EUR/USD data and is intended as a reproducible research example, not investment advice.">
+
+.. only:: html
+
+  .. image:: /gallery/images/thumb/sphx_glr_complete_strategy_tutorial_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_gallery_complete_strategy_tutorial.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Build a Complete Strategy</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Validate a market after loading it and before research or backtesting.  The report distinguishes invalid data (errors) from suspicious-but-usable data (warnings), such as unusually wide bid/ask spreads.">
+
+.. only:: html
+
+  .. image:: /gallery/images/thumb/sphx_glr_data_quality_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_gallery_data_quality.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Market Data Quality Checks</div>
+    </div>
+
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to use the Moving Average Crossings indicator with the TradeTide library.">
 
 .. only:: html
@@ -76,6 +110,23 @@ Examples: Tutorials
 .. raw:: html
 
       <div class="sphx-glr-thumbnail-title">Moving Average Crossings</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="OrderBook evaluates market, limit, stop, and stop-limit entry orders against bid/ask OHLC data.  It records the fill time, bar index, and execution price, and can produce an entry signal compatible with PositionCollection.">
+
+.. only:: html
+
+  .. image:: /gallery/images/thumb/sphx_glr_order_types_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_gallery_order_types.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Order Types and Deterministic Fills</div>
     </div>
 
 
@@ -115,6 +166,23 @@ Examples: Tutorials
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="Every BacktestResult includes a trade ledger.  Each row records costs, holding time, exit classification, maximum adverse excursion (MAE), and maximum favorable excursion (MFE), while the ledger provides portfolio-level position analytics such as expectancy and streaks.">
+
+.. only:: html
+
+  .. image:: /gallery/images/thumb/sphx_glr_trade_ledger_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_gallery_trade_ledger.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Trade Ledger and Position Analytics</div>
+    </div>
+
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="This comprehensive example demonstrates a complete end-to-end trading workflow using the TradeTide library. We&#x27;ll build a Bollinger Bands-based trading strategy, backtest it on historical CAD/USD data, and analyze the results.">
 
 .. only:: html
@@ -143,9 +211,13 @@ Examples: Tutorials
    /gallery/backtester
    /gallery/bollinger_bands
    /gallery/candlestick_chart
+   /gallery/complete_strategy_tutorial
+   /gallery/data_quality
    /gallery/moving_average_crossings
+   /gallery/order_types
    /gallery/quickstart_backtest
    /gallery/relative_momentum_index
+   /gallery/trade_ledger
    /gallery/workflow
 
 

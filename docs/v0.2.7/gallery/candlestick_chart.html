@@ -58,7 +58,7 @@
     <link rel="icon" href="../_static/tradetide-favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Moving Average Crossings" href="moving_average_crossings.html" />
+    <link rel="next" title="Build a Complete Strategy" href="complete_strategy_tutorial.html" />
     <link rel="prev" title="Bollinger Bands" href="bollinger_bands.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -422,9 +422,13 @@
 <li class="toctree-l1"><a class="reference internal" href="backtester.html">Automated Backtesting with Bollinger Bands Strategy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bollinger_bands.html">Bollinger Bands</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Fast Candlestick Charts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="complete_strategy_tutorial.html">Build a Complete Strategy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_quality.html">Market Data Quality Checks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="moving_average_crossings.html">Moving Average Crossings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="order_types.html">Order Types and Deterministic Fills</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quickstart_backtest.html">Your First FX Backtest</a></li>
 <li class="toctree-l1"><a class="reference internal" href="relative_momentum_index.html">Relative Momentum Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trade_ledger.html">Trade Ledger and Position Analytics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflow.html">Complete Trading Strategy Workflow with Bollinger Bands</a></li>
 </ul>
 </div>
@@ -499,18 +503,18 @@ large intraday datasets.  By default, the renderer aggregates data to no more
 than 2,000 visible candles while preserving each bucket’s OHLC values.</p>
 <p>Load a bundled market and render the ask side.  Pass <code class="docutils literal notranslate"><span class="pre">max_candles=None</span></code> to
 display every observation, or lower it further for fast interactive views.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">Currency</span><span class="p">,</span> <span class="n">Market</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">Currency</span><span class="p">,</span> <span class="n">Market</span><span class="p">,</span> <span class="n">plot_market_candles</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.times</span><span class="w"> </span><span class="kn">import</span> <span class="n">days</span>
 
 <span class="n">market</span> <span class="o">=</span> <span class="n">Market</span><span class="p">()</span>
 <span class="n">market</span><span class="o">.</span><span class="n">load_from_database</span><span class="p">(</span><span class="n">Currency</span><span class="o">.</span><span class="n">EUR</span><span class="p">,</span> <span class="n">Currency</span><span class="o">.</span><span class="n">USD</span><span class="p">,</span> <span class="n">time_span</span><span class="o">=</span><span class="mi">100</span> <span class="o">*</span> <span class="n">days</span><span class="p">)</span>
-<span class="n">market</span><span class="o">.</span><span class="n">plot_candles</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">"ask"</span><span class="p">,</span> <span class="n">max_candles</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+<span class="n">plot_market_candles</span><span class="p">(</span><span class="n">market</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">"ask"</span><span class="p">,</span> <span class="n">max_candles</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
 </pre></div>
 </div>
 <img src="../_images/sphx_glr_candlestick_chart_001.png" srcset="../_images/sphx_glr_candlestick_chart_001.png" alt="EUR/USD - 100 days, 0:00:00" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;Figure size 640x480 with 1 Axes&gt;
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.857 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.339 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-candlestick-chart-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/445617c36457006ff6ca715644a00cfb/candlestick_chart.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">candlestick_chart.ipynb</span></code></a></p>

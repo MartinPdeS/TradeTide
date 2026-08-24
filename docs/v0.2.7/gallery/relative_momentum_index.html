@@ -58,7 +58,7 @@
     <link rel="icon" href="../_static/tradetide-favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Complete Trading Strategy Workflow with Bollinger Bands" href="workflow.html" />
+    <link rel="next" title="Trade Ledger and Position Analytics" href="trade_ledger.html" />
     <link rel="prev" title="Your First FX Backtest" href="quickstart_backtest.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -422,9 +422,13 @@
 <li class="toctree-l1"><a class="reference internal" href="backtester.html">Automated Backtesting with Bollinger Bands Strategy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bollinger_bands.html">Bollinger Bands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="candlestick_chart.html">Fast Candlestick Charts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="complete_strategy_tutorial.html">Build a Complete Strategy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_quality.html">Market Data Quality Checks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="moving_average_crossings.html">Moving Average Crossings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="order_types.html">Order Types and Deterministic Fills</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quickstart_backtest.html">Your First FX Backtest</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Relative Momentum Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trade_ledger.html">Trade Ledger and Position Analytics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflow.html">Complete Trading Strategy Workflow with Bollinger Bands</a></li>
 </ul>
 </div>
@@ -501,11 +505,9 @@ to download the full example code.</p>
 <div class="line"><br /></div>
 </div>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.indicators</span><span class="w"> </span><span class="kn">import</span> <span class="n">RelativeMomentumIndex</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.market</span><span class="w"> </span><span class="kn">import</span> <span class="n">Market</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">Market</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.currencies</span><span class="w"> </span><span class="kn">import</span> <span class="n">Currency</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.times</span><span class="w"> </span><span class="kn">import</span> <span class="n">days</span><span class="p">,</span> <span class="n">minutes</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.market</span><span class="w"> </span><span class="kn">import</span> <span class="n">Market</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.currencies</span><span class="w"> </span><span class="kn">import</span> <span class="n">Currency</span>
 
 <span class="n">market</span> <span class="o">=</span> <span class="n">Market</span><span class="p">()</span>
 
@@ -527,7 +529,7 @@ to download the full example code.</p>
 <span class="n">indicator</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.178 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.114 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-relative-momentum-index-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/920bad0a1c16d9a78ea90a2803e3f0e3/relative_momentum_index.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">relative_momentum_index.ipynb</span></code></a></p>

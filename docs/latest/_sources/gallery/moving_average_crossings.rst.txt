@@ -23,7 +23,7 @@ Moving Average Crossings
 
 This example demonstrates how to use the Moving Average Crossings indicator with the TradeTide library.
 
-.. GENERATED FROM PYTHON SOURCE LINES 8-32
+.. GENERATED FROM PYTHON SOURCE LINES 8-30
 
 
 
@@ -50,11 +50,9 @@ This example demonstrates how to use the Moving Average Crossings indicator with
 
 
     from TradeTide.indicators import MovingAverageCrossing
-    from TradeTide.market import Market
+    from TradeTide import Market
     from TradeTide.currencies import Currency
     from TradeTide.times import minutes
-    from TradeTide.market import Market
-    from TradeTide.currencies import Currency
 
     market = Market()
 
@@ -76,7 +74,7 @@ This example demonstrates how to use the Moving Average Crossings indicator with
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.205 seconds)
+   **Total running time of the script:** (0 minutes 0.127 seconds)
 
 
 .. _sphx_glr_download_gallery_moving_average_crossings.py:

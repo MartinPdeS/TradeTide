@@ -23,7 +23,7 @@ Relative Momentum Index
 
 This example demonstrates how to use the Relative Momentum Index (RMI) indicator
 
-.. GENERATED FROM PYTHON SOURCE LINES 8-34
+.. GENERATED FROM PYTHON SOURCE LINES 8-32
 
 
 
@@ -50,11 +50,9 @@ This example demonstrates how to use the Relative Momentum Index (RMI) indicator
 
 
     from TradeTide.indicators import RelativeMomentumIndex
-    from TradeTide.market import Market
+    from TradeTide import Market
     from TradeTide.currencies import Currency
     from TradeTide.times import days, minutes
-    from TradeTide.market import Market
-    from TradeTide.currencies import Currency
 
     market = Market()
 
@@ -78,7 +76,7 @@ This example demonstrates how to use the Relative Momentum Index (RMI) indicator
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.178 seconds)
+   **Total running time of the script:** (0 minutes 0.114 seconds)
 
 
 .. _sphx_glr_download_gallery_relative_momentum_index.py:

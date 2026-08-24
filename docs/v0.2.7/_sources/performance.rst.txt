@@ -3,8 +3,38 @@ Performance and validation
 
 Every completed :class:`TradeTide.Backtester` returns a structured
 ``BacktestResult``.  Its ``metrics`` field uses decimal fractions (``0.12`` is
-12%) and includes return, annualized return, volatility, maximum drawdown,
-Sharpe and Sortino ratios, win rate, profit factor, exposure, and trade counts.
+12%) and includes return, annualized return, volatility, maximum drawdown and
+its duration, Sharpe, Sortino, and Calmar ratios, win rate, profit factor,
+exposure, and trade counts.
+
+Equity and drawdown chart
+-------------------------
+
+``BacktestResult.plot_equity_drawdown()`` uses compact green/red equity candles:
+each candle opens at the previous observation's equity and closes at the current
+one.  The drawdown panel shares its time axis and uses the same net-of-costs
+equity curve.
+
+.. code-block:: python
+
+   result = backtester.run()
+   result.plot_equity_drawdown(max_candles=500)
+
+Debug logging
+-------------
+
+Logging is opt-in and uses standard Python logging.  DEBUG mode reports market
+validation summaries, order lifecycle events, individual trade costs, and final
+performance metrics.  ``enable_debug_logging`` also enables native diagnostics
+for objects created after it is called.
+
+.. code-block:: python
+
+   import logging
+   from TradeTide import configure_logging, enable_debug_logging
+
+   configure_logging(logging.DEBUG)  # Python-side diagnostics
+   enable_debug_logging()            # Python and native diagnostics
 
 Execution costs
 ---------------

@@ -422,9 +422,13 @@
 <li class="toctree-l1"><a class="reference internal" href="backtester.html">Automated Backtesting with Bollinger Bands Strategy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bollinger_bands.html">Bollinger Bands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="candlestick_chart.html">Fast Candlestick Charts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="complete_strategy_tutorial.html">Build a Complete Strategy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_quality.html">Market Data Quality Checks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="moving_average_crossings.html">Moving Average Crossings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="order_types.html">Order Types and Deterministic Fills</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quickstart_backtest.html">Your First FX Backtest</a></li>
 <li class="toctree-l1"><a class="reference internal" href="relative_momentum_index.html">Relative Momentum Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trade_ledger.html">Trade Ledger and Position Analytics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflow.html">Complete Trading Strategy Workflow with Bollinger Bands</a></li>
 </ul>
 </div>
@@ -494,15 +498,27 @@
 </div><div class="sphx-glr-thumbcontainer" tooltip="TradeTide draws candles with a small number of Matplotlib collections instead of creating one artist per bar.  This makes the visualisation practical for large intraday datasets.  By default, the renderer aggregates data to no more than 2,000 visible candles while preserving each bucket&#x27;s OHLC values."><img alt="" src="../_images/sphx_glr_candlestick_chart_thumb.png" />
 <p><a class="reference internal" href="candlestick_chart.html#sphx-glr-gallery-candlestick-chart-py"><span class="std std-ref">Fast Candlestick Charts</span></a></p>
   <div class="sphx-glr-thumbnail-title">Fast Candlestick Charts</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This end-to-end tutorial follows the complete TradeTide workflow: load and validate data, calculate an indicator, turn its signals into orders, simulate a portfolio, inspect the trade ledger, and plot net equity and drawdown.  It uses bundled EUR/USD data and is intended as a reproducible research example, not investment advice."><img alt="" src="../_images/sphx_glr_complete_strategy_tutorial_thumb.png" />
+<p><a class="reference internal" href="complete_strategy_tutorial.html#sphx-glr-gallery-complete-strategy-tutorial-py"><span class="std std-ref">Build a Complete Strategy</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Build a Complete Strategy</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Validate a market after loading it and before research or backtesting.  The report distinguishes invalid data (errors) from suspicious-but-usable data (warnings), such as unusually wide bid/ask spreads."><img alt="" src="../_images/sphx_glr_data_quality_thumb.png" />
+<p><a class="reference internal" href="data_quality.html#sphx-glr-gallery-data-quality-py"><span class="std std-ref">Market Data Quality Checks</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Market Data Quality Checks</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to use the Moving Average Crossings indicator with the TradeTide library."><img alt="" src="../_images/sphx_glr_moving_average_crossings_thumb.png" />
 <p><a class="reference internal" href="moving_average_crossings.html#sphx-glr-gallery-moving-average-crossings-py"><span class="std std-ref">Moving Average Crossings</span></a></p>
   <div class="sphx-glr-thumbnail-title">Moving Average Crossings</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="OrderBook evaluates market, limit, stop, and stop-limit entry orders against bid/ask OHLC data.  It records the fill time, bar index, and execution price, and can produce an entry signal compatible with PositionCollection."><img alt="" src="../_images/sphx_glr_order_types_thumb.png" />
+<p><a class="reference internal" href="order_types.html#sphx-glr-gallery-order-types-py"><span class="std std-ref">Order Types and Deterministic Fills</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Order Types and Deterministic Fills</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="This tutorial runs a complete, reproducible FX backtest with TradeTide.  It uses the bundled EUR/USD data, so no data-provider account or download is required.  The strategy is deliberately small: Bollinger Bands identify potential mean-reversion entries, while fixed take-profit and stop-loss levels make the risk rules explicit."><img alt="" src="../_images/sphx_glr_quickstart_backtest_thumb.png" />
 <p><a class="reference internal" href="quickstart_backtest.html#sphx-glr-gallery-quickstart-backtest-py"><span class="std std-ref">Your First FX Backtest</span></a></p>
   <div class="sphx-glr-thumbnail-title">Your First FX Backtest</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to use the Relative Momentum Index (RMI) indicator"><img alt="" src="../_images/sphx_glr_relative_momentum_index_thumb.png" />
 <p><a class="reference internal" href="relative_momentum_index.html#sphx-glr-gallery-relative-momentum-index-py"><span class="std std-ref">Relative Momentum Index</span></a></p>
   <div class="sphx-glr-thumbnail-title">Relative Momentum Index</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Every BacktestResult includes a trade ledger.  Each row records costs, holding time, exit classification, maximum adverse excursion (MAE), and maximum favorable excursion (MFE), while the ledger provides portfolio-level position analytics such as expectancy and streaks."><img alt="" src="../_images/sphx_glr_trade_ledger_thumb.png" />
+<p><a class="reference internal" href="trade_ledger.html#sphx-glr-gallery-trade-ledger-py"><span class="std std-ref">Trade Ledger and Position Analytics</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Trade Ledger and Position Analytics</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="This comprehensive example demonstrates a complete end-to-end trading workflow using the TradeTide library. We&#x27;ll build a Bollinger Bands-based trading strategy, backtest it on historical CAD/USD data, and analyze the results."><img alt="" src="../_images/sphx_glr_workflow_thumb.png" />
 <p><a class="reference internal" href="workflow.html#sphx-glr-gallery-workflow-py"><span class="std std-ref">Complete Trading Strategy Workflow with Bollinger Bands</span></a></p>
   <div class="sphx-glr-thumbnail-title">Complete Trading Strategy Workflow with Bollinger Bands</div>

@@ -558,7 +558,11 @@
 
         <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Bid Price"</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">position_collection</span><span class="o">.</span><span class="n">market</span><span class="o">.</span><span class="n">plot_bid</span><span class="p">(</span><span class="n">axes</span><span class="o">=</span><span class="n">axes</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_market_candles</span>
+
+        <span class="n">plot_market_candles</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">position_collection</span><span class="o">.</span><span class="n">market</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="n">axes</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">"bid"</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
 
         <span class="k">for</span> <span class="n">trade</span> <span class="ow">in</span> <span class="n">position_list</span><span class="p">:</span>
             <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">trade</span><span class="o">.</span><span class="n">start_date</span><span class="p">,</span> <span class="n">trade</span><span class="o">.</span><span class="n">close_date</span>
@@ -605,7 +609,11 @@
 
         <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Bid Price"</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">position_collection</span><span class="o">.</span><span class="n">market</span><span class="o">.</span><span class="n">plot_bid</span><span class="p">(</span><span class="n">axes</span><span class="o">=</span><span class="n">axes</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_market_candles</span>
+
+        <span class="n">plot_market_candles</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">position_collection</span><span class="o">.</span><span class="n">market</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="n">axes</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">"bid"</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
 
         <span class="k">for</span> <span class="n">trade</span> <span class="ow">in</span> <span class="n">position_list</span><span class="p">:</span>
             <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">trade</span><span class="o">.</span><span class="n">start_date</span><span class="p">,</span> <span class="n">trade</span><span class="o">.</span><span class="n">close_date</span>

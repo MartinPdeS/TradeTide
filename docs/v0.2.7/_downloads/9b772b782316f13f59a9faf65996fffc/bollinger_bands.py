@@ -7,11 +7,9 @@ This example demonstrates how to use the Bollinger Bands indicator with the Trad
 """
 
 from TradeTide.indicators import BollingerBands
-from TradeTide.market import Market
+from TradeTide import Market
 from TradeTide.currencies import Currency
 from TradeTide.times import days, minutes
-from TradeTide.market import Market
-from TradeTide.currencies import Currency
 
 market = Market()
 

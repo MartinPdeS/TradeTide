@@ -478,8 +478,34 @@
 <h1>Performance and validation<a class="headerlink" href="#performance-and-validation" title="Link to this heading">#</a></h1>
 <p>Every completed <code class="xref py py-class docutils literal notranslate"><span class="pre">TradeTide.Backtester</span></code> returns a structured
 <code class="docutils literal notranslate"><span class="pre">BacktestResult</span></code>.  Its <code class="docutils literal notranslate"><span class="pre">metrics</span></code> field uses decimal fractions (<code class="docutils literal notranslate"><span class="pre">0.12</span></code> is
-12%) and includes return, annualized return, volatility, maximum drawdown,
-Sharpe and Sortino ratios, win rate, profit factor, exposure, and trade counts.</p>
+12%) and includes return, annualized return, volatility, maximum drawdown and
+its duration, Sharpe, Sortino, and Calmar ratios, win rate, profit factor,
+exposure, and trade counts.</p>
+<section id="equity-and-drawdown-chart">
+<h2>Equity and drawdown chart<a class="headerlink" href="#equity-and-drawdown-chart" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">BacktestResult.plot_equity_drawdown()</span></code> uses compact green/red equity candles:
+each candle opens at the previous observation’s equity and closes at the current
+one.  The drawdown panel shares its time axis and uses the same net-of-costs
+equity curve.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">backtester</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">result</span><span class="o">.</span><span class="n">plot_equity_drawdown</span><span class="p">(</span><span class="n">max_candles</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="debug-logging">
+<h2>Debug logging<a class="headerlink" href="#debug-logging" title="Link to this heading">#</a></h2>
+<p>Logging is opt-in and uses standard Python logging.  DEBUG mode reports market
+validation summaries, order lifecycle events, individual trade costs, and final
+performance metrics.  <code class="docutils literal notranslate"><span class="pre">enable_debug_logging</span></code> also enables native diagnostics
+for objects created after it is called.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">configure_logging</span><span class="p">,</span> <span class="n">enable_debug_logging</span>
+
+<span class="n">configure_logging</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>  <span class="c1"># Python-side diagnostics</span>
+<span class="n">enable_debug_logging</span><span class="p">()</span>            <span class="c1"># Python and native diagnostics</span>
+</pre></div>
+</div>
+</section>
 <section id="execution-costs">
 <h2>Execution costs<a class="headerlink" href="#execution-costs" title="Link to this heading">#</a></h2>
 <p>Recorded market bid/ask prices already contain their observed spread.  Use
@@ -547,6 +573,8 @@ Supply factories so every fold receives fresh strategy, exit, and sizing state.<
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#equity-and-drawdown-chart">Equity and drawdown chart</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#debug-logging">Debug logging</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#execution-costs">Execution costs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chronological-validation">Chronological validation</a></li>
 </ul>

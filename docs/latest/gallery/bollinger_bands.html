@@ -422,9 +422,13 @@
 <li class="toctree-l1"><a class="reference internal" href="backtester.html">Automated Backtesting with Bollinger Bands Strategy</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Bollinger Bands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="candlestick_chart.html">Fast Candlestick Charts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="complete_strategy_tutorial.html">Build a Complete Strategy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_quality.html">Market Data Quality Checks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="moving_average_crossings.html">Moving Average Crossings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="order_types.html">Order Types and Deterministic Fills</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quickstart_backtest.html">Your First FX Backtest</a></li>
 <li class="toctree-l1"><a class="reference internal" href="relative_momentum_index.html">Relative Momentum Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trade_ledger.html">Trade Ledger and Position Analytics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflow.html">Complete Trading Strategy Workflow with Bollinger Bands</a></li>
 </ul>
 </div>
@@ -501,11 +505,9 @@ to download the full example code.</p>
 <div class="line"><br /></div>
 </div>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.indicators</span><span class="w"> </span><span class="kn">import</span> <span class="n">BollingerBands</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.market</span><span class="w"> </span><span class="kn">import</span> <span class="n">Market</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">Market</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.currencies</span><span class="w"> </span><span class="kn">import</span> <span class="n">Currency</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.times</span><span class="w"> </span><span class="kn">import</span> <span class="n">days</span><span class="p">,</span> <span class="n">minutes</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.market</span><span class="w"> </span><span class="kn">import</span> <span class="n">Market</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.currencies</span><span class="w"> </span><span class="kn">import</span> <span class="n">Currency</span>
 
 <span class="n">market</span> <span class="o">=</span> <span class="n">Market</span><span class="p">()</span>
 
@@ -522,7 +524,7 @@ to download the full example code.</p>
 <span class="n">indicator</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.153 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.097 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-bollinger-bands-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/55158936ec2f597a414d87791441a7d0/bollinger_bands.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">bollinger_bands.ipynb</span></code></a></p>

@@ -64,10 +64,10 @@
         <p class="text">
             <a id="prevFileLink" class="nav" href="z_4c84c18d1cc97980_relative_strength_index_py.html">&#xab; prev</a> &nbsp; &nbsp;
             <a id="indexLink" class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
-            <a id="nextFileLink" class="nav" href="z_b9659dc163debb8b_portfolio_py.html">&#xbb; next</a>
+            <a id="nextFileLink" class="nav" href="z_b9659dc163debb8b_plotting_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.15.4">coverage.py v7.15.4</a>,
-            created at 2026-08-24 11:46 +0000
+            created at 2026-08-24 12:09 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -84,7 +84,7 @@
 <main id="source">
     <p class="run"><span class="n"><a id="t1" href="#t1">1</a></span><span class="t"><span class="key">from</span> <span class="nam">typing</span> <span class="key">import</span> <span class="nam">Union</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t2" href="#t2">2</a></span><span class="t"><span class="key">import</span> <span class="nam">matplotlib</span><span class="op">.</span><span class="nam">pyplot</span> <span class="key">as</span> <span class="nam">plt</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t3" href="#t3">3</a></span><span class="t"><span class="key">from</span> <span class="nam">MPSPlots</span> <span class="key">import</span> <span class="nam">helper</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t3" href="#t3">3</a></span><span class="t"><span class="key">from</span> <span class="nam">TradeTide</span><span class="op">.</span><span class="nam">plotting</span> <span class="key">import</span> <span class="nam">pre_plot</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t4" href="#t4">4</a></span><span class="t"><span class="key">from</span> <span class="nam">datetime</span> <span class="key">import</span> <span class="nam">timedelta</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t5" href="#t5">5</a></span><span class="t"><span class="key">import</span> <span class="nam">pathlib</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t6" href="#t6">6</a></span><span class="t"><span class="key">import</span> <span class="nam">re</span>&nbsp;</span><span class="r"></span></p>
@@ -216,7 +216,7 @@
     <p class="pln"><span class="n"><a id="t132" href="#t132">132</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t133" href="#t133">133</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">load_from_csv</span><span class="op">(</span><span class="nam">filename</span><span class="op">=</span><span class="nam">str</span><span class="op">(</span><span class="nam">csv_path</span><span class="op">)</span><span class="op">,</span> <span class="nam">time_span</span><span class="op">=</span><span class="nam">ts</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t134" href="#t134">134</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t135" href="#t135">135</a></span><span class="t">    <span class="op">@</span><span class="nam">helper</span><span class="op">.</span><span class="nam">pre_plot</span><span class="op">(</span><span class="nam">nrows</span><span class="op">=</span><span class="num">1</span><span class="op">,</span> <span class="nam">ncols</span><span class="op">=</span><span class="num">1</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t135" href="#t135">135</a></span><span class="t">    <span class="op">@</span><span class="nam">pre_plot</span><span class="op">(</span><span class="nam">nrows</span><span class="op">=</span><span class="num">1</span><span class="op">,</span> <span class="nam">ncols</span><span class="op">=</span><span class="num">1</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t136" href="#t136">136</a></span><span class="t">    <span class="key">def</span> <span class="nam">plot_ask</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">axes</span><span class="op">:</span> <span class="nam">plt</span><span class="op">.</span><span class="nam">Axes</span> <span class="op">=</span> <span class="key">None</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t137" href="#t137">137</a></span><span class="t">        <span class="str">&quot;&quot;&quot;</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t138" href="#t138">138</a></span><span class="t"><span class="str">        Plot low-high ranges as filled bands with step=&quot;pre&quot;,</span>&nbsp;</span><span class="r"></span></p>
@@ -261,7 +261,7 @@
     <p class="run"><span class="n"><a id="t177" href="#t177">177</a></span><span class="t">        <span class="nam">axes</span><span class="op">.</span><span class="nam">set_title</span><span class="op">(</span><span class="fst">f&quot;</span><span class="op">{</span><span class="nam">self</span><span class="op">.</span><span class="nam">currency_pair</span><span class="op">}</span><span class="fst"> - </span><span class="op">{</span><span class="nam">self</span><span class="op">.</span><span class="nam">time_span</span><span class="op">}</span><span class="fst">&quot;</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t178" href="#t178">178</a></span><span class="t">        <span class="nam">axes</span><span class="op">.</span><span class="nam">legend</span><span class="op">(</span><span class="nam">loc</span><span class="op">=</span><span class="str">&quot;upper left&quot;</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t179" href="#t179">179</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t180" href="#t180">180</a></span><span class="t">    <span class="op">@</span><span class="nam">helper</span><span class="op">.</span><span class="nam">pre_plot</span><span class="op">(</span><span class="nam">nrows</span><span class="op">=</span><span class="num">1</span><span class="op">,</span> <span class="nam">ncols</span><span class="op">=</span><span class="num">1</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t180" href="#t180">180</a></span><span class="t">    <span class="op">@</span><span class="nam">pre_plot</span><span class="op">(</span><span class="nam">nrows</span><span class="op">=</span><span class="num">1</span><span class="op">,</span> <span class="nam">ncols</span><span class="op">=</span><span class="num">1</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t181" href="#t181">181</a></span><span class="t">    <span class="key">def</span> <span class="nam">plot_bid</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">axes</span><span class="op">:</span> <span class="nam">plt</span><span class="op">.</span><span class="nam">Axes</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t182" href="#t182">182</a></span><span class="t">        <span class="str">&quot;&quot;&quot;</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t183" href="#t183">183</a></span><span class="t"><span class="str">        Plot low-high ranges as filled bands with step=&quot;pre&quot;,</span>&nbsp;</span><span class="r"></span></p>
@@ -307,7 +307,7 @@
     <p class="run"><span class="n"><a id="t223" href="#t223">223</a></span><span class="t">        <span class="nam">axes</span><span class="op">.</span><span class="nam">set_title</span><span class="op">(</span><span class="fst">f&quot;</span><span class="op">{</span><span class="nam">self</span><span class="op">.</span><span class="nam">currency_pair</span><span class="op">}</span><span class="fst"> - </span><span class="op">{</span><span class="nam">self</span><span class="op">.</span><span class="nam">time_span</span><span class="op">}</span><span class="fst">&quot;</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t224" href="#t224">224</a></span><span class="t">        <span class="nam">axes</span><span class="op">.</span><span class="nam">legend</span><span class="op">(</span><span class="nam">loc</span><span class="op">=</span><span class="str">&quot;upper left&quot;</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t225" href="#t225">225</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t226" href="#t226">226</a></span><span class="t">    <span class="op">@</span><span class="nam">helper</span><span class="op">.</span><span class="nam">pre_plot</span><span class="op">(</span><span class="nam">nrows</span><span class="op">=</span><span class="num">1</span><span class="op">,</span> <span class="nam">ncols</span><span class="op">=</span><span class="num">1</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t226" href="#t226">226</a></span><span class="t">    <span class="op">@</span><span class="nam">pre_plot</span><span class="op">(</span><span class="nam">nrows</span><span class="op">=</span><span class="num">1</span><span class="op">,</span> <span class="nam">ncols</span><span class="op">=</span><span class="num">1</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t227" href="#t227">227</a></span><span class="t">    <span class="key">def</span> <span class="nam">plot</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">axes</span><span class="op">:</span> <span class="nam">plt</span><span class="op">.</span><span class="nam">Axes</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t228" href="#t228">228</a></span><span class="t">        <span class="str">&quot;&quot;&quot;</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t229" href="#t229">229</a></span><span class="t"><span class="str">        Plot low-high ranges as filled bands with step=&quot;pre&quot;,</span>&nbsp;</span><span class="r"></span></p>
@@ -332,10 +332,10 @@
         <p>
             <a class="nav" href="z_4c84c18d1cc97980_relative_strength_index_py.html">&#xab; prev</a> &nbsp; &nbsp;
             <a class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
-            <a class="nav" href="z_b9659dc163debb8b_portfolio_py.html">&#xbb; next</a>
+            <a class="nav" href="z_b9659dc163debb8b_plotting_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.15.4">coverage.py v7.15.4</a>,
-            created at 2026-08-24 11:46 +0000
+            created at 2026-08-24 12:09 +0000
         </p>
     </div>
 </footer>

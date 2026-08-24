@@ -4,4 +4,4 @@ __all__ = ["__version__", "__version_tuple__", "version", "version_tuple", "__co
 
 __version__ = version = '0.2.7'
 __version_tuple__ = version_tuple = (0, 2, 7)
-__commit_id__ = commit_id = 'g488ab3a3c'
+__commit_id__ = commit_id = 'g3d2e6b454'

@@ -8,6 +8,7 @@
     :hidden:
 
     theory
+    performance
     code
     gallery/index
     references

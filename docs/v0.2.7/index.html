@@ -55,7 +55,7 @@
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             true;
         </script>
-    <link rel="icon" href="_static/thumbnail.png"/>
+    <link rel="icon" href="_static/tradetide-favicon.png"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Theoretical background" href="theory.html" />
@@ -148,6 +148,13 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="theory.html">
     Theoretical background
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="performance.html">
+    Performance and validation
   </a>
 </li>
 
@@ -302,6 +309,13 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="theory.html">
     Theoretical background
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="performance.html">
+    Performance and validation
   </a>
 </li>
 
@@ -507,9 +521,10 @@ a C++20 compiler, pybind11, and OpenMP.</p>
 <h2>First backtest<a class="headerlink" href="#first-backtest" title="Link to this heading">#</a></h2>
 <p>Load the bundled EUR/USD sample, add an indicator to a strategy, and run a
 backtest:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">Backtester</span><span class="p">,</span> <span class="n">Currency</span><span class="p">,</span> <span class="n">Market</span><span class="p">,</span> <span class="n">Strategy</span><span class="p">,</span> <span class="n">days</span><span class="p">,</span> <span class="n">minutes</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">Backtester</span><span class="p">,</span> <span class="n">Currency</span><span class="p">,</span> <span class="n">Market</span><span class="p">,</span> <span class="n">Strategy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">capital_management</span><span class="p">,</span> <span class="n">exit_strategy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.indicators</span><span class="w"> </span><span class="kn">import</span> <span class="n">BollingerBands</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.times</span><span class="w"> </span><span class="kn">import</span> <span class="n">days</span><span class="p">,</span> <span class="n">minutes</span>
 
 <span class="n">market</span> <span class="o">=</span> <span class="n">Market</span><span class="p">()</span>
 <span class="n">market</span><span class="o">.</span><span class="n">load_from_database</span><span class="p">(</span><span class="n">Currency</span><span class="o">.</span><span class="n">EUR</span><span class="p">,</span> <span class="n">Currency</span><span class="o">.</span><span class="n">USD</span><span class="p">,</span> <span class="n">time_span</span><span class="o">=</span><span class="mi">3</span> <span class="o">*</span> <span class="n">days</span><span class="p">)</span>

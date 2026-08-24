@@ -55,7 +55,7 @@
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             true;
         </script>
-    <link rel="icon" href="../_static/thumbnail.png"/>
+    <link rel="icon" href="../_static/tradetide-favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Automated Backtesting with Bollinger Bands Strategy" href="backtester.html" />
@@ -149,6 +149,13 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../theory.html">
     Theoretical background
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../performance.html">
+    Performance and validation
   </a>
 </li>
 
@@ -306,6 +313,13 @@
 
 
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../performance.html">
+    Performance and validation
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../code.html">
     Source code
   </a>
@@ -407,7 +421,9 @@
   <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="backtester.html">Automated Backtesting with Bollinger Bands Strategy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bollinger_bands.html">Bollinger Bands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="candlestick_chart.html">Fast Candlestick Charts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="moving_average_crossings.html">Moving Average Crossings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart_backtest.html">Your First FX Backtest</a></li>
 <li class="toctree-l1"><a class="reference internal" href="relative_momentum_index.html">Relative Momentum Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflow.html">Complete Trading Strategy Workflow with Bollinger Bands</a></li>
 </ul>
@@ -475,9 +491,15 @@
 </div><div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to use the Bollinger Bands indicator with the TradeTide library."><img alt="" src="../_images/sphx_glr_bollinger_bands_thumb.png" />
 <p><a class="reference internal" href="bollinger_bands.html#sphx-glr-gallery-bollinger-bands-py"><span class="std std-ref">Bollinger Bands</span></a></p>
   <div class="sphx-glr-thumbnail-title">Bollinger Bands</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="TradeTide draws candles with a small number of Matplotlib collections instead of creating one artist per bar.  This makes the visualisation practical for large intraday datasets.  By default, the renderer aggregates data to no more than 2,000 visible candles while preserving each bucket&#x27;s OHLC values."><img alt="" src="../_images/sphx_glr_candlestick_chart_thumb.png" />
+<p><a class="reference internal" href="candlestick_chart.html#sphx-glr-gallery-candlestick-chart-py"><span class="std std-ref">Fast Candlestick Charts</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Fast Candlestick Charts</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to use the Moving Average Crossings indicator with the TradeTide library."><img alt="" src="../_images/sphx_glr_moving_average_crossings_thumb.png" />
 <p><a class="reference internal" href="moving_average_crossings.html#sphx-glr-gallery-moving-average-crossings-py"><span class="std std-ref">Moving Average Crossings</span></a></p>
   <div class="sphx-glr-thumbnail-title">Moving Average Crossings</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This tutorial runs a complete, reproducible FX backtest with TradeTide.  It uses the bundled EUR/USD data, so no data-provider account or download is required.  The strategy is deliberately small: Bollinger Bands identify potential mean-reversion entries, while fixed take-profit and stop-loss levels make the risk rules explicit."><img alt="" src="../_images/sphx_glr_quickstart_backtest_thumb.png" />
+<p><a class="reference internal" href="quickstart_backtest.html#sphx-glr-gallery-quickstart-backtest-py"><span class="std std-ref">Your First FX Backtest</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Your First FX Backtest</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to use the Relative Momentum Index (RMI) indicator"><img alt="" src="../_images/sphx_glr_relative_momentum_index_thumb.png" />
 <p><a class="reference internal" href="relative_momentum_index.html#sphx-glr-gallery-relative-momentum-index-py"><span class="std std-ref">Relative Momentum Index</span></a></p>
   <div class="sphx-glr-thumbnail-title">Relative Momentum Index</div>

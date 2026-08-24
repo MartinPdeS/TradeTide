@@ -1,3 +1,4 @@
+/** @file signal.h @brief Market-aligned long, short, and neutral trade-signal series. */
 #pragma once
 
 #include <vector>

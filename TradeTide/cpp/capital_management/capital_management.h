@@ -1,3 +1,4 @@
+/** @file capital_management.h @brief Position-sizing and exposure-limit policies for portfolios. */
 #pragma once
 
 #include <vector>

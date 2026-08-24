@@ -116,5 +116,11 @@ PYBIND11_MODULE(interface_signal, module) {
 
         .def_readwrite("trade_signal", &Signal::trade_signal, R"pbdoc(
             Raw trade signal list: -1 (short), 0 (neutral), 1 (long).
-        )pbdoc");
+        )pbdoc")
+        .def("__repr__", [](const Signal& self) {
+            const auto [long_count, short_count] = self.count_signals();
+            return "<Signal observations=" + std::to_string(self.trade_signal.size())
+                + " long=" + std::to_string(long_count)
+                + " short=" + std::to_string(short_count) + ">";
+        });
 }

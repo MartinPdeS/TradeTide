@@ -4,7 +4,6 @@
 import sys
 import os
 from sphinx_gallery.sorting import FileNameSortKey
-from MPSPlots.styles import use_mpsplots_style
 from pathlib import Path
 import TradeTide
 from TradeTide.directories import doc_css_path
@@ -52,7 +51,9 @@ html_favicon = "_static/thumbnail.png"
 
 
 def reset_mpl(gallery_conf, fname):
-    use_mpsplots_style()
+    import matplotlib.pyplot as plt
+
+    plt.style.use("default")
 
 
 sphinx_gallery_conf = {

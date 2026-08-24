@@ -83,6 +83,12 @@ PYBIND11_MODULE(interface_position, module) {
 
                 Used for aligning SL/TP data to the market time series.
             )pbdoc")
+        .def("__repr__", [](const BasePosition& self) {
+            return std::string("<") + (self.is_long ? "Long" : "Short")
+                + " entry_price=" + std::to_string(self.entry_price)
+                + " lot_size=" + std::to_string(self.lot_size)
+                + " closed=" + (self.is_closed ? "True" : "False") + ">";
+        })
         .doc() = R"pbdoc(
             Abstract base class for a trading position.
 

@@ -1,3 +1,4 @@
+/** @file exit_strategy.h @brief Stop-loss and take-profit policies for individual positions. */
 #pragma once
 
 #include <cmath>

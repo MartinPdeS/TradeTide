@@ -21,7 +21,12 @@ PYBIND11_MODULE(interface_portfolio, module) {
 
     register_record(module);
 
-    pybind11::class_<Portfolio, std::shared_ptr<Portfolio>>(module, "PORTFOLIO")
+    pybind11::class_<Portfolio, std::shared_ptr<Portfolio>>(module, "PORTFOLIO", R"pbdoc(
+        Capital-constrained portfolio simulator.
+
+        A portfolio selects executable positions, records the equity path, and
+        provides performance metrics after ``simulate`` has completed.
+    )pbdoc")
         .def(
             pybind11::init<PositionCollection&, bool>(),
             pybind11::arg("position_collection"),
@@ -108,5 +113,9 @@ PYBIND11_MODULE(interface_portfolio, module) {
                 Total time elapsed in the simulation, as a timedelta.
             )pbdoc"
         )
+        .def("__repr__", [](const Portfolio& self) {
+            return "<Portfolio observations=" + std::to_string(self.record.equity.size())
+                + " selected_positions=" + std::to_string(self.selected_positions.size()) + ">";
+        })
         ;
 }

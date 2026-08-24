@@ -1,3 +1,4 @@
+/** @file base_indicator.h @brief Shared lifecycle and region API for native technical indicators. */
 #pragma once
 
 #include <vector>

@@ -1,13 +1,13 @@
 import numpy as np
 import datetime
 import matplotlib.pyplot as plt
-from MPSPlots import helper
 from pydantic.dataclasses import dataclass
 
 from TradeTide.binary.interface_indicators import BOLLINGERBANDS
 from TradeTide.indicators.base import BaseIndicator
 from TradeTide.simulation_settings import SimulationSettings
 from TradeTide.utils import config_dict
+from TradeTide.plotting import pre_plot
 
 
 @dataclass(config=config_dict)
@@ -42,7 +42,7 @@ class BollingerBands(BOLLINGERBANDS, BaseIndicator):
 
         super().__init__(window=int(window), multiplier=self.multiplier)
 
-    @helper.pre_plot(nrows=1, ncols=1)
+    @pre_plot(nrows=1, ncols=1)
     def plot(self, axes: plt.Axes, show_metric: bool = False) -> None:
         """
         Plot price, Bollinger Bands, and trading signals on the given axis.

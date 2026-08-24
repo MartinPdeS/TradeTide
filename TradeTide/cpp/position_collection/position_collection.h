@@ -1,3 +1,4 @@
+/** @file position_collection.h @brief Construction and propagation of signal-derived candidate positions. */
 #pragma once
 
 #include <vector>

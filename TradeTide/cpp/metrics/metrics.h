@@ -1,3 +1,4 @@
+/** @file metrics.h @brief Performance statistics derived from a portfolio record. */
 #pragma once
 
 #include <vector>

@@ -1,3 +1,4 @@
+/** @file strategy.h @brief Indicator composition and consensus trade-signal generation. */
 #pragma once
 
 #include <vector>

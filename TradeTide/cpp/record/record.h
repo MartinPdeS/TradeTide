@@ -1,3 +1,4 @@
+/** @file record.h @brief Time-aligned history of capital, equity, risk, and open positions. */
 #pragma once
 
 #include <vector>

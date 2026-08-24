@@ -1,3 +1,4 @@
+/** @file backtester.h @brief End-to-end orchestration of strategy, execution, and metrics. */
 #pragma once
 
 #include <vector>

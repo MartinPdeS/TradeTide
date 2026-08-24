@@ -1,7 +1,7 @@
 from typing import Union
 import numpy as np
 import matplotlib.pyplot as plt
-from MPSPlots import helper
+from TradeTide.plotting import pre_plot
 
 from TradeTide.binary.interface_position_collection import POSITIONCOLLECTION
 from TradeTide import position
@@ -32,7 +32,7 @@ class PositionCollection(POSITIONCOLLECTION):
             debug_mode=TradeTide.debug_mode if TradeTide.debug_mode else debug_mode,
         )
 
-    @helper.pre_plot(nrows=2, ncols=1)
+    @pre_plot(nrows=2, ncols=1)
     def plot(self, axes: plt.Axes, max_positions: Union[int, float] = np.inf):
         """
         Plot market bid/ask prices and shade closed positions, using the mps style,

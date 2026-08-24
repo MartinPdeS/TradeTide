@@ -5,8 +5,14 @@
 
 
 PYBIND11_MODULE(interface_backtester, module) {
+    module.doc() = "Native orchestration API for complete TradeTide backtests.";
 
-    pybind11::class_<Backtester>(module, "BACKTESTER")
+    pybind11::class_<Backtester>(module, "BACKTESTER", R"pbdoc(
+        End-to-end backtesting orchestrator.
+
+        It derives strategy signals, creates and propagates positions, then
+        simulates their execution under the supplied capital-management rules.
+    )pbdoc")
     .def(pybind11::init<Strategy&, ExitStrategy&, Market&, BaseCapitalManagement&, const bool>(),
         pybind11::arg("strategy"),
         pybind11::arg("exit_strategy"),
@@ -64,6 +70,10 @@ PYBIND11_MODULE(interface_backtester, module) {
         &Backtester::print_run_times,
         "Print the execution times for each phase of the backtest."
     )
+    .def("__repr__", [](const Backtester& self) {
+        return "<Backtester market_observations=" + std::to_string(self.market.dates.size())
+            + " completed=" + (self.portfolio.record.equity.empty() ? "False" : "True") + ">";
+    })
     ;
 
 }

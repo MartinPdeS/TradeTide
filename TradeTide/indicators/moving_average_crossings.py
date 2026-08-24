@@ -1,13 +1,13 @@
 import numpy as np
 import datetime
 import matplotlib.pyplot as plt
-from MPSPlots import helper
 from pydantic.dataclasses import dataclass
 
 from TradeTide.binary.interface_indicators import MOVINGAVERAGECROSSING
 from TradeTide.indicators.base import BaseIndicator
 from TradeTide.simulation_settings import SimulationSettings
 from TradeTide.utils import config_dict
+from TradeTide.plotting import pre_plot
 
 
 @dataclass(config=config_dict)
@@ -48,7 +48,7 @@ class MovingAverageCrossing(MOVINGAVERAGECROSSING, BaseIndicator):
 
         super().__init__(short_window=int(_short_window), long_window=int(_long_window))
 
-    @helper.pre_plot(nrows=1, ncols=1)
+    @pre_plot(nrows=1, ncols=1)
     def plot(self, axes: plt.Axes) -> None:
         """
         Plots the raw price, both SMAs, the SMA-difference and the crossover signals

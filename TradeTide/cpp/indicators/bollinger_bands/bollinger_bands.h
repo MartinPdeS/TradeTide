@@ -1,3 +1,12 @@
+/**
+ * @file bollinger_bands.h
+ * @brief Rolling mean and standard-deviation bands with mean-reversion regions.
+ *
+ * A buy region is emitted below the lower band and a sell region above the
+ * upper band. Values before the rolling window is complete are undefined.
+ */
+#pragma once
+
 #include "../base_indicator/base_indicator.h"
 
 /**

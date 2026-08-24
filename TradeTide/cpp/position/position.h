@@ -1,3 +1,4 @@
+/** @file position.h @brief Long and short position lifecycle, valuation, and exit handling. */
 #pragma once
 
 #include <iostream>

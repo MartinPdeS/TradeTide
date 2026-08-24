@@ -1,3 +1,4 @@
+/** @file relative_momentum_index.h @brief Relative Momentum Index indicator and threshold regions. */
 #pragma once
 
 #include "../base_indicator/base_indicator.h"

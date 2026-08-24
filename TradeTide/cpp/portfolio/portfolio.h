@@ -1,3 +1,4 @@
+/** @file portfolio.h @brief Capital-constrained simulation and equity recording for positions. */
 #pragma once
 
 #include <memory>

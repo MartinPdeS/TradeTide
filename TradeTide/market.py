@@ -1,6 +1,6 @@
 from typing import Union
 import matplotlib.pyplot as plt
-from MPSPlots import helper
+from TradeTide.plotting import pre_plot
 from datetime import timedelta
 import pathlib
 import re
@@ -132,7 +132,7 @@ class Market(interface_market.Market):
 
         self.load_from_csv(filename=str(csv_path), time_span=ts)
 
-    @helper.pre_plot(nrows=1, ncols=1)
+    @pre_plot(nrows=1, ncols=1)
     def plot_ask(self, axes: plt.Axes = None) -> None:
         """
         Plot low-high ranges as filled bands with step="pre",
@@ -177,7 +177,7 @@ class Market(interface_market.Market):
         axes.set_title(f"{self.currency_pair} - {self.time_span}")
         axes.legend(loc="upper left")
 
-    @helper.pre_plot(nrows=1, ncols=1)
+    @pre_plot(nrows=1, ncols=1)
     def plot_bid(self, axes: plt.Axes) -> None:
         """
         Plot low-high ranges as filled bands with step="pre",
@@ -223,7 +223,7 @@ class Market(interface_market.Market):
         axes.set_title(f"{self.currency_pair} - {self.time_span}")
         axes.legend(loc="upper left")
 
-    @helper.pre_plot(nrows=1, ncols=1)
+    @pre_plot(nrows=1, ncols=1)
     def plot(self, axes: plt.Axes) -> None:
         """
         Plot low-high ranges as filled bands with step="pre",

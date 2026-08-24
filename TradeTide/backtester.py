@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from MPSPlots import helper
+from TradeTide.plotting import post_mpl_plot, pre_plot
 
 from TradeTide.binary.interface_backtester import BACKTESTER
 from TradeTide.market import Market
@@ -43,8 +43,7 @@ class Backtester(BACKTESTER):
         self.market = market
         self.capital_management = capital_management
 
-    # @helper.pre_plot(nrows=4, ncols=1)
-    @helper.post_mpl_plot
+    @post_mpl_plot
     def plot(self) -> plt.Figure:
         """
         Create comprehensive visualization of backtesting results.
@@ -87,7 +86,7 @@ class Backtester(BACKTESTER):
 
         return figure
 
-    @helper.pre_plot(nrows=1, ncols=1)
+    @pre_plot(nrows=1, ncols=1)
     def _plot_strategy(self, axes: plt.Axes) -> None:
         """Plot market prices with strategy signals and indicators."""
         # Plot market data
@@ -132,7 +131,7 @@ class Backtester(BACKTESTER):
         axes.set_title("Trading Strategy Overview")
         axes.legend(loc="upper left")
 
-    @helper.pre_plot(nrows=1, ncols=1)
+    @pre_plot(nrows=1, ncols=1)
     def _plot_equity(self, axes: plt.Axes) -> None:
         """Plot portfolio equity curve over time."""
         if hasattr(self, "_cpp_portfolio") and self._cpp_portfolio is not None:
@@ -180,7 +179,7 @@ class Backtester(BACKTESTER):
         axes.set_title("Portfolio Equity Curve")
         axes.legend()
 
-    @helper.pre_plot(nrows=1, ncols=1)
+    @pre_plot(nrows=1, ncols=1)
     def _plot_positions(self, axes: plt.Axes) -> None:
         """Plot number of open positions over time."""
         if hasattr(self, "_cpp_portfolio") and self._cpp_portfolio is not None:
@@ -223,7 +222,7 @@ class Backtester(BACKTESTER):
         axes.set_title("Open Positions Over Time")
         axes.legend()
 
-    @helper.pre_plot(nrows=1, ncols=1)
+    @pre_plot(nrows=1, ncols=1)
     def _plot_drawdown(self, axes: plt.Axes) -> None:
         """Plot portfolio drawdown over time."""
         if hasattr(self, "_cpp_portfolio") and self._cpp_portfolio is not None:
@@ -265,7 +264,7 @@ class Backtester(BACKTESTER):
         axes.set_title("Portfolio Drawdown")
         axes.legend()
 
-    @helper.pre_plot(nrows=1, ncols=1)
+    @pre_plot(nrows=1, ncols=1)
     def _plot_trades(self, axes: plt.Axes) -> None:
         """Plot trade distribution and statistics."""
         if hasattr(self, "portfolio") and self.portfolio is not None:

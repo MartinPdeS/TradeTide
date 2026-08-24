@@ -18,7 +18,12 @@ PYBIND11_MODULE(interface_position_collection, module) {
 
 
     // Bind the Position class
-    py::class_<PositionCollection, std::shared_ptr<PositionCollection>>(module, "POSITIONCOLLECTION")
+    py::class_<PositionCollection, std::shared_ptr<PositionCollection>>(module, "POSITIONCOLLECTION", R"pbdoc(
+        Candidate positions generated from a market-aligned trade-signal vector.
+
+        Positions are constructed by ``open_positions`` and then evaluated by
+        ``propagate_positions`` before portfolio selection.
+    )pbdoc")
         .def(
             py::init<const Market&, const std::vector<int>&, const bool&, const bool&>(),
             py::arg("market"),
@@ -28,11 +33,16 @@ PYBIND11_MODULE(interface_position_collection, module) {
             R"pbdoc(
                 Create a new PositionCollection.
 
-                Args:
-                    market (Market): Reference to the Market object used for price and time series.
-                    risk_managment (ExitStrategy): Exit strategy template applied to each position.
-                    signal (Signal): Signal array with trade entry instructions (1=long, -1=short, 0=ignore).
-                    save_price_data (bool): Whether to record SL/TP price history over time.
+                Parameters
+                ----------
+                market : Market
+                    Price and timestamp source for all positions.
+                trade_signal : list[int]
+                    Market-aligned entry instructions: ``+1`` long, ``-1`` short, ``0`` ignore.
+                save_price_data : bool, default=False
+                    Whether stop-loss and take-profit histories are recorded.
+                debug_mode : bool, default=False
+                    Whether native execution diagnostics are printed.
             )pbdoc"
         )
         .def_readwrite("debug_mode", &PositionCollection::debug_mode,
@@ -117,5 +127,9 @@ PYBIND11_MODULE(interface_position_collection, module) {
                 Args:
                     filepath (str): Path to the output CSV file.
             )pbdoc")
+        .def("__repr__", [](const PositionCollection& self) {
+            return "<PositionCollection positions=" + std::to_string(self.size())
+                + " trade_signals=" + std::to_string(self.number_of_trade) + ">";
+        })
         ;
 }

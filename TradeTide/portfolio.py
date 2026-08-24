@@ -1,10 +1,9 @@
 from typing import Union
 import numpy as np
 import matplotlib.pyplot as plt
-from MPSPlots.styles import mps
 from matplotlib.patches import Patch
 from matplotlib.lines import Line2D
-from MPSPlots import helper
+from TradeTide.plotting import pre_plot
 
 from TradeTide.binary import position
 from TradeTide.binary.interface_portfolio import PORTFOLIO
@@ -31,7 +30,7 @@ class Portfolio(PORTFOLIO):
         )
         self.position_collection = position_collection
 
-    @helper.pre_plot(nrows=2, ncols=1)
+    @pre_plot(nrows=2, ncols=1)
     def plot_positions(
         self,
         axes: plt.Axes,
@@ -70,7 +69,7 @@ class Portfolio(PORTFOLIO):
                 axes=axes[1], position_list=short_list, show=False
             )
 
-    @helper.pre_plot(nrows=1, ncols=1)
+    @pre_plot(nrows=1, ncols=1)
     def _plot_long_positions(
         self, position_list: list[position.Long], axes: plt.Axes
     ) -> None:
@@ -117,7 +116,7 @@ class Portfolio(PORTFOLIO):
 
         axes.legend(handles=legend_handles, loc="upper left", framealpha=0.9)
 
-    @helper.pre_plot(nrows=1, ncols=1)
+    @pre_plot(nrows=1, ncols=1)
     def _plot_short_positions(
         self, position_list: list[position.Long], axes: plt.Axes
     ) -> None:
@@ -164,7 +163,7 @@ class Portfolio(PORTFOLIO):
 
         axes.legend(handles=legend_handles, loc="upper left", framealpha=0.9)
 
-    @helper.pre_plot(nrows=1, ncols=1)
+    @pre_plot(nrows=1, ncols=1)
     def plot_equity(self, axes: plt.Axes) -> None:
         """
         Plot the portfolio's equity over time.
@@ -185,7 +184,7 @@ class Portfolio(PORTFOLIO):
         axes.set_ylabel("Equity")
         axes.legend()
 
-    @helper.pre_plot(nrows=1, ncols=1)
+    @pre_plot(nrows=1, ncols=1)
     def plot_capital_at_risk(self, axes: plt.Axes) -> None:
         """
         Plot the capital at risk over time.
@@ -200,7 +199,7 @@ class Portfolio(PORTFOLIO):
         )
         axes.set_ylabel("Capital at Risk")
 
-    @helper.pre_plot(nrows=1, ncols=1)
+    @pre_plot(nrows=1, ncols=1)
     def plot_capital(self, axes: plt.Axes) -> None:
         """
         Plot the capital over time.
@@ -213,7 +212,7 @@ class Portfolio(PORTFOLIO):
         axes.step(self.record.time, self.record.capital, color="black", where="mid")
         axes.set_ylabel("Capital")
 
-    @helper.pre_plot(nrows=1, ncols=1)
+    @pre_plot(nrows=1, ncols=1)
     def plot_number_of_positions(self, axes: plt.Axes) -> None:
         """
         Plot the number of open positions over time.
@@ -231,7 +230,7 @@ class Portfolio(PORTFOLIO):
         )
         axes.set_ylabel("Number of open positions")
 
-    @helper.pre_plot(nrows=1, ncols=1)
+    @pre_plot(nrows=1, ncols=1)
     def plot_prices(self, axes: plt.Axes) -> None:
         """
         Plot the market bid and ask prices over time.
@@ -274,10 +273,11 @@ class Portfolio(PORTFOLIO):
 
         n_plots = len(plot_type)
 
-        with plt.style.context(mps):
-            _, axs = plt.subplots(
+        with plt.style.context("default"):
+            figure, axs = plt.subplots(
                 nrows=n_plots, ncols=1, figsize=(12, 2 * n_plots), sharex=True
             )
+            axs = np.atleast_1d(axs)
 
             plot_methods = {
                 "equity": self.plot_equity,
@@ -292,3 +292,4 @@ class Portfolio(PORTFOLIO):
 
             plt.tight_layout()
             plt.show()
+            return figure

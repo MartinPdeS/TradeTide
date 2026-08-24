@@ -4,7 +4,12 @@
 #include "market.h"  // Update path as needed
 
 PYBIND11_MODULE(interface_market, module) {
-    module.doc() = "Python bindings for Market, Bid, and Ask classes used in simulation.";
+    module.doc() = R"pbdoc(
+        Native market-data containers for TradeTide.
+
+        ``Market`` stores synchronised bid/ask OHLC observations and is the
+        input to indicators, signals, positions, and backtests.
+    )pbdoc";
 
 
     pybind11::class_<BasePrices>(module, "BasePrices")
@@ -13,6 +18,9 @@ PYBIND11_MODULE(interface_market, module) {
         .def_readonly("high", &BasePrices::high)
         .def_readonly("close", &BasePrices::close)
         .def_readonly("dates", &BasePrices::dates)
+        .def("__repr__", [](const BasePrices& self) {
+            return "<BasePrices observations=" + std::to_string(self.close.size()) + ">";
+        })
     ;
 
     // ---------------------
@@ -38,6 +46,9 @@ PYBIND11_MODULE(interface_market, module) {
         )
 
         .def("display", &Market::display_market_data, "Print a preview of the loaded market data.")
+        .def("__repr__", [](const Market& self) {
+            return "<Market observations=" + std::to_string(self.dates.size()) + ">";
+        })
 
         // Read/write market metadata
         .def_readwrite("dates", &Market::dates, "Vector of datetime timestamps.")

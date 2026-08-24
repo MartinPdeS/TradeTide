@@ -1,3 +1,4 @@
+/** @file moving_average_crossings.h @brief Dual moving-average crossover indicator and regions. */
 #pragma once
 
 #include "../base_indicator/base_indicator.h"

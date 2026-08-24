@@ -1,3 +1,4 @@
+/** @file state.h @brief Mutable simulation state for one point in a market time series. */
 #pragma once
 
 #include <vector>

@@ -101,7 +101,7 @@ TradeTide/
 - Handle edge cases gracefully
 
 ### Plotting and Visualization
-- Use matplotlib with MPSPlots style (`from MPSPlots.styles import mps`)
+- Use Matplotlib's built-in styles; TradeTide has no external plotting-style dependency
 - Standard figure sizes: (12, 8) for most plots
 - Include proper legends, labels, and titles
 - Support both show and return figure patterns

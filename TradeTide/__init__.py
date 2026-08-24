@@ -38,7 +38,7 @@ except ImportError:
 from .signal import Signal  # noqa: F401
 from .execution import ExecutionCosts, TradeCost  # noqa: F401
 from .performance import BacktestResult, PerformanceMetrics, TradeResult  # noqa: F401
-from .performance import plot_equity_drawdown  # noqa: F401
+from .performance import plot_equity_drawdown, write_html_report  # noqa: F401
 from .debug import (  # noqa: F401
     configure_logging,
     disable_debug_logging,

@@ -2,7 +2,9 @@
 
 from dataclasses import asdict, dataclass
 from datetime import datetime
+from html import escape
 from math import sqrt
+from pathlib import Path
 from typing import TYPE_CHECKING, Iterable, Mapping
 
 import numpy as np
@@ -179,6 +181,20 @@ class BacktestResult:
         """Plot net equity as candles with a synchronized drawdown panel."""
         return plot_equity_drawdown(self, **kwargs)
 
+    def to_html(
+        self,
+        path: str | Path,
+        *,
+        title: str = "TradeTide backtest report",
+        open_browser: bool = False,
+    ) -> Path:
+        """Write a standalone interactive Plotly report and return its path.
+
+        Plotly is an optional dependency; install it with
+        ``pip install 'TradeTide[reporting]'``.
+        """
+        return write_html_report(self, path, title=title, open_browser=open_browser)
+
 
 def _trade_diagnostics(position, market) -> tuple[str, float, float]:
     """Classify a native position's exit and calculate MAE/MFE from OHLC data."""
@@ -338,6 +354,183 @@ def _max_drawdown_duration(times: tuple[datetime, ...], drawdown: np.ndarray) ->
     if start is not None and times:
         longest = max(longest, (times[-1] - start).total_seconds())
     return longest
+
+
+def write_html_report(
+    result: BacktestResult,
+    path: str | Path,
+    *,
+    title: str = "TradeTide backtest report",
+    open_browser: bool = False,
+) -> Path:
+    """Write a standalone interactive Plotly report for a completed backtest."""
+    try:
+        import plotly.graph_objects as go
+        import plotly.io as pio
+        from plotly.subplots import make_subplots
+    except ImportError as error:
+        raise ImportError(
+            "Interactive HTML reports require Plotly. Install it with "
+            "`pip install 'TradeTide[reporting]'`."
+        ) from error
+
+    times = np.asarray(result.times)
+    equity = np.asarray(result.equity, dtype=float)
+    if not len(times) or len(times) != len(equity):
+        raise ValueError("A report requires equally sized, non-empty time and equity data.")
+
+    peaks = np.maximum.accumulate(equity)
+    drawdown = np.divide(
+        equity - peaks, peaks, out=np.zeros_like(equity), where=peaks != 0
+    ) * 100
+    figure = make_subplots(
+        rows=2,
+        cols=1,
+        shared_xaxes=True,
+        row_heights=(0.72, 0.28),
+        vertical_spacing=0.06,
+        subplot_titles=("Net equity", "Drawdown"),
+    )
+    figure.add_trace(
+        go.Scatter(
+            x=times,
+            y=equity,
+            mode="lines",
+            name="Net equity",
+            line={"color": "#24a885", "width": 2},
+            hovertemplate="%{x}<br>Equity: %{y:,.2f}<extra></extra>",
+        ),
+        row=1,
+        col=1,
+    )
+    if result.trades:
+        timestamps = np.asarray([value.timestamp() for value in times], dtype=float)
+
+        def equity_at(time: datetime) -> float:
+            index = int(np.searchsorted(timestamps, time.timestamp(), side="left"))
+            return float(equity[min(index, len(equity) - 1)])
+
+        entries = [trade.entry_time for trade in result.trades]
+        exits = [trade.exit_time for trade in result.trades]
+        figure.add_trace(
+            go.Scatter(
+                x=entries,
+                y=[equity_at(time) for time in entries],
+                mode="markers",
+                name="Entry",
+                marker={"symbol": "triangle-up", "size": 10, "color": "#2563eb"},
+                customdata=[("Long" if trade.is_long else "Short", trade.lot_size) for trade in result.trades],
+                hovertemplate="%{x}<br>%{customdata[0]} entry<br>Lot size: %{customdata[1]:g}<extra></extra>",
+            ),
+            row=1,
+            col=1,
+        )
+        figure.add_trace(
+            go.Scatter(
+                x=exits,
+                y=[equity_at(time) for time in exits],
+                mode="markers",
+                name="Exit",
+                marker={"symbol": "x", "size": 9, "color": "#e05263"},
+                customdata=[(trade.net_pnl, trade.exit_reason) for trade in result.trades],
+                hovertemplate="%{x}<br>Net P&L: %{customdata[0]:,.2f}<br>%{customdata[1]}<extra></extra>",
+            ),
+            row=1,
+            col=1,
+        )
+    figure.add_trace(
+        go.Scatter(
+            x=times,
+            y=drawdown,
+            mode="lines",
+            name="Drawdown",
+            fill="tozeroy",
+            line={"color": "#e05263", "width": 1.5},
+            fillcolor="rgba(224, 82, 99, 0.20)",
+            hovertemplate="%{x}<br>Drawdown: %{y:.2f}%<extra></extra>",
+        ),
+        row=2,
+        col=1,
+    )
+    figure.update_layout(
+        template="plotly_white",
+        height=700,
+        hovermode="x unified",
+        margin={"l": 60, "r": 30, "t": 60, "b": 50},
+        legend={"orientation": "h", "y": 1.08},
+    )
+    figure.update_yaxes(title_text="Equity", row=1, col=1)
+    figure.update_yaxes(title_text="Drawdown (%)", row=2, col=1)
+
+    rows = result.ledger.to_dicts()
+    columns = (
+        "trade_id", "entry_time", "exit_time", "side", "entry_price", "exit_price",
+        "lot_size", "net_pnl", "total_cost", "exit_reason", "holding_period",
+        "maximum_adverse_excursion", "maximum_favorable_excursion",
+    )
+    def ledger_value(row: Mapping[str, object], column: str) -> str:
+        value = row.get(column, "")
+        if column in {"entry_time", "exit_time"} and isinstance(value, datetime):
+            return value.strftime("%Y-%m-%d %H:%M")
+        if column in {"entry_price", "exit_price"}:
+            return f"{float(value):.5f}"
+        if column in {"net_pnl", "total_cost", "maximum_adverse_excursion", "maximum_favorable_excursion"}:
+            return f"{float(value):,.4f}"
+        if column == "lot_size":
+            return f"{float(value):g}"
+        return str(value)
+
+    ledger_head = "".join(
+        f"<th>{escape(column.replace('_', ' ').title())}</th>" for column in columns
+    )
+    ledger_rows = "".join(
+        "<tr>"
+        + "".join(f"<td>{escape(ledger_value(row, column))}</td>" for column in columns)
+        + "</tr>"
+        for row in rows
+    ) or "<tr><td colspan=\"13\">No completed trades.</td></tr>"
+    ledger = f'<div class="ledger-wrap"><table><thead><tr>{ledger_head}</tr></thead><tbody>{ledger_rows}</tbody></table></div>'
+
+    metrics = result.metrics
+    cards = (
+        ("Total return", f"{metrics.total_return:.2%}"),
+        ("Final equity", f"{metrics.final_equity:,.2f}"),
+        ("Max drawdown", f"{metrics.max_drawdown:.2%}"),
+        ("Sharpe", f"{metrics.sharpe_ratio:.2f}"),
+        ("Profit factor", "∞" if np.isinf(metrics.profit_factor) else f"{metrics.profit_factor:.2f}"),
+        ("Exposure", f"{metrics.exposure:.1%}"),
+        ("Trades", str(metrics.total_trades)),
+        ("Win rate", f"{metrics.win_rate:.1%}"),
+    )
+    cards_html = "".join(
+        f'<section class="card"><span>{escape(label)}</span><strong>{escape(value)}</strong></section>'
+        for label, value in cards
+    )
+    dashboard = pio.to_html(figure, full_html=False, include_plotlyjs=True)
+    document = f"""<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>{escape(title)}</title>
+<style>
+body {{ margin: 0; background: #f1f5f9; color: #0f172a; font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif; }}
+main {{ max-width: 1440px; margin: auto; padding: 32px; }} h1 {{ margin: 0 0 8px; }}
+.subtitle {{ color: #475569; margin: 0 0 24px; }} .cards {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 18px; }}
+.card {{ padding: 16px; border-radius: 10px; background: white; box-shadow: 0 1px 3px rgba(15, 23, 42, .1); }}
+.card span {{ display: block; color: #64748b; font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; }} .card strong {{ display: block; font-size: 1.35rem; margin-top: 5px; }}
+.panel {{ background: white; border-radius: 10px; padding: 8px; margin-top: 18px; box-shadow: 0 1px 3px rgba(15, 23, 42, .1); }}
+.ledger-wrap {{ overflow: auto; max-height: 620px; }} table {{ width: 100%; min-width: 1500px; border-collapse: collapse; font-size: .87rem; white-space: nowrap; }}
+th {{ position: sticky; top: 0; z-index: 1; background: #0f172a; color: white; text-align: right; padding: 11px 12px; }} td {{ padding: 9px 12px; border-bottom: 1px solid #e2e8f0; text-align: right; }}
+tbody tr:nth-child(even) {{ background: #f8fafc; }} tbody tr:hover {{ background: #e0f2fe; }} th:nth-child(4), td:nth-child(4), th:nth-child(10), td:nth-child(10) {{ text-align: left; }}
+</style></head><body><main><h1>{escape(title)}</h1>
+<p class="subtitle">Interactive equity, drawdown, trade events, and completed-trade ledger.</p>
+<div class="cards">{cards_html}</div><section class="panel">{dashboard}</section><section class="panel">{ledger}</section>
+</main></body></html>"""
+    output = Path(path).expanduser()
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(document, encoding="utf-8")
+    if open_browser:
+        import webbrowser
+
+        webbrowser.open_new_tab(output.resolve().as_uri())
+    return output
 
 
 def plot_equity_drawdown(

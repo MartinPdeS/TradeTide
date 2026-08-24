@@ -89,6 +89,22 @@ def test_metrics_include_calmar_and_drawdown_duration_and_plot():
     assert len(figure.axes[0].collections) == 2
 
 
+def test_result_writes_a_standalone_interactive_html_report(tmp_path):
+    pytest.importorskip("plotly")
+    start = datetime(2024, 1, 1)
+    times = [start + timedelta(days=day) for day in range(3)]
+    portfolio = FakePortfolio(times, [100.0, 105.0, 102.0], [])
+
+    report = BacktestResult.from_portfolio(portfolio).to_html(
+        tmp_path / "report.html", title="Test report"
+    )
+
+    content = report.read_text(encoding="utf-8")
+    assert report.exists()
+    assert "Test report" in content
+    assert "plotly" in content.lower()
+
+
 def test_execution_costs_reject_negative_inputs():
     with pytest.raises(ValueError, match="non-negative"):
         ExecutionCosts(commission_per_lot=-1)

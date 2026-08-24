@@ -14,7 +14,10 @@ set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Type of build")
 
 # --------------------- Set the output directory for libraries --------------------
 set(LOCAL_CXX_DIR "${PROJECT_NAME}/cpp")
-set(LOCAL_BIN_DIR "${CMAKE_SOURCE_DIR}/${PROJECT_NAME}")
+# Keep extensions in the package root both locally and inside built wheels.
+# Install destinations must be relative to CMAKE_INSTALL_PREFIX: an absolute
+# source-tree path is ignored by wheel staging and leaves CI without modules.
+set(LOCAL_BIN_DIR "${PROJECT_NAME}")
 include_directories(${NAME} ${LOCAL_CXX_DIR})
 # --------------------- Set the output directory for libraries --------------------
 

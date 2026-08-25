@@ -116,6 +116,21 @@ add_subdirectory(TradeTide/cpp/backtester)           # backtester
 
 get_property(TRADETIDE_TARGETS GLOBAL PROPERTY TRADETIDE_TARGETS)
 
+# On Windows, a Python extension named ``market.pyd`` creates the import
+# library ``market.lib``.  Keep internal static libraries distinct so their
+# archives cannot collide with those generated import libraries.
+if(WIN32)
+    foreach(TRADETIDE_TARGET IN LISTS TRADETIDE_TARGETS)
+        get_target_property(TRADETIDE_TARGET_TYPE ${TRADETIDE_TARGET} TYPE)
+        if(TRADETIDE_TARGET_TYPE STREQUAL "STATIC_LIBRARY")
+            set_target_properties(
+                ${TRADETIDE_TARGET}
+                PROPERTIES ARCHIVE_OUTPUT_NAME "${TRADETIDE_TARGET}_static"
+            )
+        endif()
+    endforeach()
+endif()
+
 install(
     TARGETS ${TRADETIDE_TARGETS}
     LIBRARY DESTINATION ${LOCAL_BIN_DIR}

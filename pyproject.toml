@@ -121,15 +121,15 @@ build = ["cp311-manylinux*", "cp312-manylinux*", "cp313-manylinux*"]
 manylinux-x86_64-image = "manylinux_2_28"
 repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel}"
 before-test = ""
-test-command = "cd /tmp && python -m pytest {project}/tests --config-file={project}/pytest.ini"
+test-command = "cd /tmp && python -m pytest {project}/tests --config-file={project}/pytest.ini --import-mode=append"
 
 [tool.cibuildwheel.macos]
 archs = ["arm64"]
 build = ["cp311-*", "cp312-*", "cp313-*"]
 repair-wheel-command = "delocate-wheel -w {dest_dir} -v {wheel}"  # --exclude=libomp.dylib
-test-command = 'cd /tmp && python -m pytest {project}/tests --config-file={project}/pytest.ini'  # DYLD_PRINT_LIBRARIES=NO
+test-command = 'cd /tmp && python -m pytest {project}/tests --config-file={project}/pytest.ini --import-mode=append'  # DYLD_PRINT_LIBRARIES=NO
 
 [tool.cibuildwheel.windows]
 archs = ["AMD64"]
 build = ["cp311-*", "cp312-*", "cp313-*"]
-test-command = 'cd /d %TEMP% && python -m pytest {project}\\tests --config-file={project}\\pytest.ini'
+test-command = 'cd /d %TEMP% && python -m pytest {project}\\tests --config-file={project}\\pytest.ini --import-mode=append'

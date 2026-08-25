@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**03:21.840** total execution time for 12 files **from all galleries**:
+**03:25.482** total execution time for 12 files **from all galleries**:
 
 .. container::
 
@@ -33,34 +33,34 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_gallery_backtester.py` (``../examples/backtester.py``)
-     - 03:17.616
+     - 03:21.155
      - 0.0
    * - :ref:`sphx_glr_gallery_quickstart_backtest.py` (``../examples/quickstart_backtest.py``)
-     - 00:02.592
+     - 00:02.643
      - 0.0
    * - :ref:`sphx_glr_gallery_complete_strategy_tutorial.py` (``../examples/complete_strategy_tutorial.py``)
-     - 00:00.536
+     - 00:00.561
      - 0.0
    * - :ref:`sphx_glr_gallery_candlestick_chart.py` (``../examples/candlestick_chart.py``)
-     - 00:00.517
+     - 00:00.533
      - 0.0
    * - :ref:`sphx_glr_gallery_workflow.py` (``../examples/workflow.py``)
-     - 00:00.236
+     - 00:00.242
      - 0.0
    * - :ref:`sphx_glr_gallery_interactive_html_report.py` (``../examples/interactive_html_report.py``)
-     - 00:00.199
+     - 00:00.203
      - 0.0
    * - :ref:`sphx_glr_gallery_moving_average_crossings.py` (``../examples/moving_average_crossings.py``)
-     - 00:00.044
+     - 00:00.045
      - 0.0
    * - :ref:`sphx_glr_gallery_relative_momentum_index.py` (``../examples/relative_momentum_index.py``)
-     - 00:00.043
+     - 00:00.042
      - 0.0
    * - :ref:`sphx_glr_gallery_bollinger_bands.py` (``../examples/bollinger_bands.py``)
-     - 00:00.040
+     - 00:00.041
      - 0.0
    * - :ref:`sphx_glr_gallery_trade_ledger.py` (``../examples/trade_ledger.py``)
-     - 00:00.013
+     - 00:00.014
      - 0.0
    * - :ref:`sphx_glr_gallery_order_types.py` (``../examples/order_types.py``)
      - 00:00.002

@@ -545,7 +545,7 @@ position and portfolio diagnostics are also required.</p>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">market</span><span class="o">.</span><span class="n">dates</span><span class="p">)</span><span class="si">}</span><span class="s2"> EUR/USD candles; warnings: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">quality</span><span class="o">.</span><span class="n">warnings</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>17:00:09 DEBUG TradeTide: Market validation: observations=721 errors=0 warnings=0
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>17:08:35 DEBUG TradeTide: Market validation: observations=721 errors=0 warnings=0
 Loaded 721 EUR/USD candles; warnings: 0
 </pre></div>
 </div>
@@ -610,31 +610,31 @@ position management.</p>
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">ledger</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>17:00:09 DEBUG TradeTide: Trade short 2023-08-04 09:15:00→2023-08-04 09:33:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-17:00:09 DEBUG TradeTide: Trade long 2023-08-04 09:36:00→2023-08-04 09:39:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-17:00:09 DEBUG TradeTide: Trade long 2023-08-04 10:16:00→2023-08-04 10:27:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-17:00:09 DEBUG TradeTide: Trade short 2023-08-04 10:38:00→2023-08-04 10:51:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-17:00:09 DEBUG TradeTide: Trade long 2023-08-04 10:54:00→2023-08-04 11:00:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-17:00:09 DEBUG TradeTide: Trade short 2023-08-04 11:27:00→2023-08-04 11:30:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-17:00:09 DEBUG TradeTide: Trade long 2023-08-04 11:58:00→2023-08-04 12:07:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-17:00:09 DEBUG TradeTide: Trade short 2023-08-04 12:10:00→2023-08-04 12:13:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-17:00:09 DEBUG TradeTide: Trade short 2023-08-04 12:30:00→2023-08-04 12:31:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
-17:00:09 DEBUG TradeTide: Trade short 2023-08-04 12:41:00→2023-08-04 12:44:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
-17:00:09 DEBUG TradeTide: Trade short 2023-08-04 13:07:00→2023-08-04 13:09:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-17:00:09 DEBUG TradeTide: Trade short 2023-08-04 13:13:00→2023-08-04 13:16:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
-17:00:09 DEBUG TradeTide: Trade long 2023-08-04 13:56:00→2023-08-04 13:58:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
-17:00:09 DEBUG TradeTide: Trade long 2023-08-04 14:04:00→2023-08-04 14:08:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
-17:00:09 DEBUG TradeTide: Trade short 2023-08-04 15:10:00→2023-08-04 15:11:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-17:00:09 DEBUG TradeTide: Trade short 2023-08-04 15:12:00→2023-08-04 15:18:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
-17:00:09 DEBUG TradeTide: Trade short 2023-08-04 15:22:00→2023-08-04 15:28:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-17:00:09 DEBUG TradeTide: Trade short 2023-08-04 15:41:00→2023-08-04 15:53:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-17:00:09 DEBUG TradeTide: Trade long 2023-08-04 16:07:00→2023-08-04 16:27:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-17:00:09 DEBUG TradeTide: Trade short 2023-08-04 16:52:00→2023-08-04 16:56:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-17:00:09 DEBUG TradeTide: Trade short 2023-08-04 17:23:00→2023-08-04 17:26:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-17:00:09 DEBUG TradeTide: Trade long 2023-08-04 17:29:00→2023-08-04 17:58:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
-17:00:09 DEBUG TradeTide: Trade long 2023-08-04 18:46:00→2023-08-04 18:52:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-17:00:09 DEBUG TradeTide: Trade long 2023-08-04 19:35:00→2023-08-04 20:13:00 gross=1.3000 costs=2.1000 net=-0.8000 (end_of_data)
-17:00:09 DEBUG TradeTide: Backtest report: observations=721 trades=24 return=-0.06% max_drawdown=0.06%
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>17:08:35 DEBUG TradeTide: Trade short 2023-08-04 09:15:00→2023-08-04 09:33:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+17:08:35 DEBUG TradeTide: Trade long 2023-08-04 09:36:00→2023-08-04 09:39:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+17:08:35 DEBUG TradeTide: Trade long 2023-08-04 10:16:00→2023-08-04 10:27:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+17:08:35 DEBUG TradeTide: Trade short 2023-08-04 10:38:00→2023-08-04 10:51:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+17:08:35 DEBUG TradeTide: Trade long 2023-08-04 10:54:00→2023-08-04 11:00:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+17:08:35 DEBUG TradeTide: Trade short 2023-08-04 11:27:00→2023-08-04 11:30:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+17:08:35 DEBUG TradeTide: Trade long 2023-08-04 11:58:00→2023-08-04 12:07:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+17:08:35 DEBUG TradeTide: Trade short 2023-08-04 12:10:00→2023-08-04 12:13:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+17:08:35 DEBUG TradeTide: Trade short 2023-08-04 12:30:00→2023-08-04 12:31:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
+17:08:35 DEBUG TradeTide: Trade short 2023-08-04 12:41:00→2023-08-04 12:44:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
+17:08:35 DEBUG TradeTide: Trade short 2023-08-04 13:07:00→2023-08-04 13:09:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+17:08:35 DEBUG TradeTide: Trade short 2023-08-04 13:13:00→2023-08-04 13:16:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
+17:08:35 DEBUG TradeTide: Trade long 2023-08-04 13:56:00→2023-08-04 13:58:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
+17:08:35 DEBUG TradeTide: Trade long 2023-08-04 14:04:00→2023-08-04 14:08:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
+17:08:35 DEBUG TradeTide: Trade short 2023-08-04 15:10:00→2023-08-04 15:11:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+17:08:35 DEBUG TradeTide: Trade short 2023-08-04 15:12:00→2023-08-04 15:18:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
+17:08:35 DEBUG TradeTide: Trade short 2023-08-04 15:22:00→2023-08-04 15:28:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+17:08:35 DEBUG TradeTide: Trade short 2023-08-04 15:41:00→2023-08-04 15:53:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+17:08:35 DEBUG TradeTide: Trade long 2023-08-04 16:07:00→2023-08-04 16:27:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+17:08:35 DEBUG TradeTide: Trade short 2023-08-04 16:52:00→2023-08-04 16:56:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+17:08:35 DEBUG TradeTide: Trade short 2023-08-04 17:23:00→2023-08-04 17:26:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+17:08:35 DEBUG TradeTide: Trade long 2023-08-04 17:29:00→2023-08-04 17:58:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
+17:08:35 DEBUG TradeTide: Trade long 2023-08-04 18:46:00→2023-08-04 18:52:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+17:08:35 DEBUG TradeTide: Trade long 2023-08-04 19:35:00→2023-08-04 20:13:00 gross=1.3000 costs=2.1000 net=-0.8000 (end_of_data)
+17:08:35 DEBUG TradeTide: Backtest report: observations=721 trades=24 return=-0.06% max_drawdown=0.06%
 {'total_return': -0.0006109999999999172, 'annualized_return': -0.36011826646934153, 'volatility': 0.005674055093243982, 'max_drawdown': 0.0006219999999999709, 'max_drawdown_duration_seconds': 39480.0, 'sharpe_ratio': -78.68369954048049, 'sortino_ratio': -19.785926836153156, 'calmar_ratio': -578.9682740664925, 'win_rate': 0.6666666666666666, 'profit_factor': 0.6988505747125253, 'exposure': 0.2861111111111111, 'total_trades': 24, 'winning_trades': 16, 'losing_trades': 8, 'initial_equity': 100000.0, 'final_equity': 99938.90000000001, 'peak_equity': 100000.0}
    trade_id  ... maximum_favorable_excursion
 0         1  ...                         5.3
@@ -655,7 +655,7 @@ position management.</p>
 <img src="../_images/sphx_glr_complete_strategy_tutorial_001.png" srcset="../_images/sphx_glr_complete_strategy_tutorial_001.png" alt="Equity candles, Maximum drawdown: 0.06%" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;Figure size 640x480 with 2 Axes&gt;
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.429 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.558 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-complete-strategy-tutorial-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/25e96b7d89ac8b88433c1f11cea48e30/complete_strategy_tutorial.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">complete_strategy_tutorial.ipynb</span></code></a></p>

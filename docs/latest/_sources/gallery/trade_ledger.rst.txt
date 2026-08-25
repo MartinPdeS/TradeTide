@@ -128,7 +128,7 @@ convenient for notebooks and CSV/HTML reporting workflows.
     0         1  ...                        0.04
 
     [1 rows x 14 columns]
-    <TradeTide.ledger.PositionAnalytics object at 0x7f22d8308f70>
+    <TradeTide.ledger.PositionAnalytics object at 0x7f5e55898df0>
 
 
 

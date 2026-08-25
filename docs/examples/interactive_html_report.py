@@ -1,6 +1,6 @@
 """
 Interactive HTML Backtest Report
-===============================
+================================
 
 Create a portable Plotly report containing interactive equity, drawdown, trade
 markers, performance metrics, and the complete ledger. Install the optional
@@ -33,5 +33,5 @@ portfolio.simulate(
 )
 
 result = BacktestResult.from_portfolio(portfolio)
-report = result.to_html("reports/bollinger_backtest.html", open_browser=True)
+report = result.to_html("reports/bollinger_backtest.html", open_browser=False)
 print(f"Interactive report written to {report}")

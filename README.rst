@@ -70,7 +70,7 @@ backtest:
 
 .. code-block:: python
 
-   from TradeTide import Backtester, Currency, Market, Strategy
+   from TradeTide import Backtester, BacktestResult, Currency, Market, Strategy
    from TradeTide import capital_management, exit_strategy
    from TradeTide.indicators import BollingerBands
    from TradeTide.times import days, minutes
@@ -93,7 +93,8 @@ backtest:
        ),
    )
    backtester.run()
-   backtester.plot()
+   result = BacktestResult.from_portfolio(backtester.portfolio)
+   result.plot_equity_drawdown()
 
 Bundled datasets are EUR/USD, GBP/USD, CHF/USD, JPY/USD, and CAD/USD.
 ``time_span`` accepts a ``timedelta`` or a positive duration string such as

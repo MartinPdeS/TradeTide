@@ -42,9 +42,13 @@ PYBIND11_MODULE(backtester, module) {
         &Backtester::print_performance,
         "Print the performance metrics of the backtest."
     )
+    .def_readonly("portfolio",
+        &Backtester::portfolio,
+        "The completed portfolio produced by the backtest."
+    )
     .def_readonly("_cpp_portfolio",
         &Backtester::portfolio,
-        "The portfolio being managed."
+        "Deprecated compatibility alias for :attr:`portfolio`."
     )
     .def_readonly("_cpp_position_collection",
         &Backtester::position_collection,

@@ -26,7 +26,7 @@ __all__ = ["__version__", "__version_tuple__", "version", "version_tuple", "__co
 
 __version__ = version = {version!r}
 __version_tuple__ = version_tuple = {version_tuple!r}
-__commit_id__ = commit_id = {scm_version.short_node!r}
+__commit_id__ = commit_id = {scm_version.node!r}
 """
 version_scheme = "only-version"
 local_scheme = "no-local-version"

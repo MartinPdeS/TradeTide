@@ -37,9 +37,9 @@ Import Libraries and Setup
 
 .. code-block:: Python
 
-    from TradeTide import Backtester, Strategy, Market, Currency
+    from TradeTide import Backtester, BacktestResult, Strategy, Market, Currency
     from TradeTide.times import months, days, hours, minutes
-    from TradeTide.indicators import BollingerBands
+    from TradeTide import BollingerBands
     from TradeTide import capital_management, exit_strategy
 
 
@@ -166,16 +166,17 @@ Display Results
 ---------------
 View comprehensive performance metrics and analysis.
 
-.. GENERATED FROM PYTHON SOURCE LINES 84-85
+.. GENERATED FROM PYTHON SOURCE LINES 84-86
 
 .. code-block:: Python
 
-    backtester.plot()
+    result = BacktestResult.from_portfolio(backtester.portfolio)
+    result.plot_equity_drawdown()
 
 
 
 .. image-sg:: /gallery/images/sphx_glr_backtester_001.png
-   :alt: Backtesting Results Overview
+   :alt: Equity candles, Maximum drawdown: 0.42%
    :srcset: /gallery/images/sphx_glr_backtester_001.png
    :class: sphx-glr-single-img
 
@@ -185,14 +186,14 @@ View comprehensive performance metrics and analysis.
  .. code-block:: none
 
 
-    <Figure size 640x480 with 4 Axes>
+    <Figure size 640x480 with 2 Axes>
 
 
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (1 minutes 27.637 seconds)
+   **Total running time of the script:** (2 minutes 57.999 seconds)
 
 
 .. _sphx_glr_download_gallery_backtester.py:

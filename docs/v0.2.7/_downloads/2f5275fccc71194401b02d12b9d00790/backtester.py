@@ -13,9 +13,9 @@ its historical performance and risk characteristics.
 # %%
 # Import Libraries and Setup
 # --------------------------
-from TradeTide import Backtester, Strategy, Market, Currency
+from TradeTide import Backtester, BacktestResult, Strategy, Market, Currency
 from TradeTide.times import months, days, hours, minutes
-from TradeTide.indicators import BollingerBands
+from TradeTide import BollingerBands
 from TradeTide import capital_management, exit_strategy
 
 
@@ -81,4 +81,5 @@ backtester.print_summary()
 # Display Results
 # ---------------
 # View comprehensive performance metrics and analysis.
-backtester.plot()
+result = BacktestResult.from_portfolio(backtester.portfolio)
+result.plot_equity_drawdown()

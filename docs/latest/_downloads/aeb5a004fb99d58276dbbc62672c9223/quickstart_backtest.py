@@ -20,9 +20,9 @@ or a claim about live-trading performance.
 # The public API keeps the essential pieces together: market data, an
 # indicator-backed strategy, exit rules, capital management, and a backtester.
 
-from TradeTide import Backtester, Currency, Market, Strategy
+from TradeTide import Backtester, BacktestResult, Currency, Market, Strategy
 from TradeTide import capital_management, exit_strategy
-from TradeTide.indicators import BollingerBands
+from TradeTide import BollingerBands
 from TradeTide.times import days, minutes
 
 
@@ -86,4 +86,5 @@ backtester = Backtester(
     capital_management=position_sizing,
 )
 backtester.run()
-backtester.plot()
+result = BacktestResult.from_portfolio(backtester.portfolio)
+result.plot_equity_drawdown()

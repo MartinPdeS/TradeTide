@@ -128,7 +128,7 @@ convenient for notebooks and CSV/HTML reporting workflows.
     0         1  ...                        0.04
 
     [1 rows x 14 columns]
-    PositionAnalytics(long_trades=1, short_trades=0, average_holding_period=datetime.timedelta(seconds=60), expectancy=-0.2199999999999978, average_win=0.0, average_loss=-0.2199999999999978, longest_winning_streak=0, longest_losing_streak=1, average_mae=-0.039999999999995595, average_mfe=0.039999999999995595, best_trade=-0.2199999999999978, worst_trade=-0.2199999999999978)
+    <TradeTide.ledger.PositionAnalytics object at 0x7f22d8308f70>
 
 
 
@@ -136,7 +136,7 @@ convenient for notebooks and CSV/HTML reporting workflows.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.008 seconds)
+   **Total running time of the script:** (0 minutes 0.009 seconds)
 
 
 .. _sphx_glr_download_gallery_trade_ledger.py:

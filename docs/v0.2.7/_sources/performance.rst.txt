@@ -17,7 +17,8 @@ equity curve.
 
 .. code-block:: python
 
-   result = backtester.run()
+   backtester.run()
+   result = BacktestResult.from_portfolio(backtester.portfolio)
    result.plot_equity_drawdown(max_candles=500)
 
 Debug logging
@@ -56,7 +57,8 @@ and trade metrics without changing the raw native record.
        financing_per_lot_per_night=0.05,
    )
    # Pass execution_costs=costs to Backtester(...).
-   result = backtester.run()
+   backtester.run()
+   result = BacktestResult.from_portfolio(backtester.portfolio, costs)
    print(result.metrics.to_dict())
 
 Chronological validation

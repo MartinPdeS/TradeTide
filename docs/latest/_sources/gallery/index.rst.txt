@@ -98,6 +98,23 @@ Examples: Tutorials
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="Create a portable Plotly report containing interactive equity, drawdown, trade markers, performance metrics, and the complete ledger. Install the optional reporting extra first: pip install &#x27;TradeTide[reporting]&#x27;.">
+
+.. only:: html
+
+  .. image:: /gallery/images/thumb/sphx_glr_interactive_html_report_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_gallery_interactive_html_report.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Interactive HTML Backtest Report</div>
+    </div>
+
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to use the Moving Average Crossings indicator with the TradeTide library.">
 
 .. only:: html
@@ -213,6 +230,7 @@ Examples: Tutorials
    /gallery/candlestick_chart
    /gallery/complete_strategy_tutorial
    /gallery/data_quality
+   /gallery/interactive_html_report
    /gallery/moving_average_crossings
    /gallery/order_types
    /gallery/quickstart_backtest

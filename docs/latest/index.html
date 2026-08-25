@@ -442,7 +442,7 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <p><strong>Date</strong>: Aug 24, 2026, <strong>Version</strong>: 0.2.7</p>
+  <p><strong>Date</strong>: Aug 25, 2026, <strong>Version</strong>: 0.2.7</p>
 <p><img alt="TradeTide logo" src="https://github.com/MartinPdeS/TradeTide/raw/master/docs/images/logo.png" /></p>
 <div class="pst-scrollable-table-container"><table class="table">
 <colgroup>
@@ -521,7 +521,7 @@ a C++20 compiler, pybind11, and OpenMP.</p>
 <h2>First backtest<a class="headerlink" href="#first-backtest" title="Link to this heading">#</a></h2>
 <p>Load the bundled EUR/USD sample, add an indicator to a strategy, and run a
 backtest:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">Backtester</span><span class="p">,</span> <span class="n">Currency</span><span class="p">,</span> <span class="n">Market</span><span class="p">,</span> <span class="n">Strategy</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">Backtester</span><span class="p">,</span> <span class="n">BacktestResult</span><span class="p">,</span> <span class="n">Currency</span><span class="p">,</span> <span class="n">Market</span><span class="p">,</span> <span class="n">Strategy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">capital_management</span><span class="p">,</span> <span class="n">exit_strategy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.indicators</span><span class="w"> </span><span class="kn">import</span> <span class="n">BollingerBands</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.times</span><span class="w"> </span><span class="kn">import</span> <span class="n">days</span><span class="p">,</span> <span class="n">minutes</span>
@@ -544,7 +544,8 @@ backtest:</p>
     <span class="p">),</span>
 <span class="p">)</span>
 <span class="n">backtester</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-<span class="n">backtester</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">BacktestResult</span><span class="o">.</span><span class="n">from_portfolio</span><span class="p">(</span><span class="n">backtester</span><span class="o">.</span><span class="n">portfolio</span><span class="p">)</span>
+<span class="n">result</span><span class="o">.</span><span class="n">plot_equity_drawdown</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>Bundled datasets are EUR/USD, GBP/USD, CHF/USD, JPY/USD, and CAD/USD.

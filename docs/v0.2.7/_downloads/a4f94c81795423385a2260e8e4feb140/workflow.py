@@ -27,7 +27,7 @@ import numpy as np
 from TradeTide import Strategy, Portfolio, PositionCollection, Market, Currency
 from TradeTide.times import days, hours, minutes
 
-from TradeTide.indicators import BollingerBands
+from TradeTide import BollingerBands
 from TradeTide import capital_management, exit_strategy
 
 # %%

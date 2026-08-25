@@ -424,6 +424,7 @@
 <li class="toctree-l1"><a class="reference internal" href="candlestick_chart.html">Fast Candlestick Charts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="complete_strategy_tutorial.html">Build a Complete Strategy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_quality.html">Market Data Quality Checks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interactive_html_report.html">Interactive HTML Backtest Report</a></li>
 <li class="toctree-l1"><a class="reference internal" href="moving_average_crossings.html">Moving Average Crossings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="order_types.html">Order Types and Deterministic Fills</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Your First FX Backtest</a></li>
@@ -509,9 +510,9 @@ or a claim about live-trading performance.</p>
 <h2>Imports<a class="headerlink" href="#imports" title="Link to this heading">#</a></h2>
 <p>The public API keeps the essential pieces together: market data, an
 indicator-backed strategy, exit rules, capital management, and a backtester.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">Backtester</span><span class="p">,</span> <span class="n">Currency</span><span class="p">,</span> <span class="n">Market</span><span class="p">,</span> <span class="n">Strategy</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">Backtester</span><span class="p">,</span> <span class="n">BacktestResult</span><span class="p">,</span> <span class="n">Currency</span><span class="p">,</span> <span class="n">Market</span><span class="p">,</span> <span class="n">Strategy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">capital_management</span><span class="p">,</span> <span class="n">exit_strategy</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.indicators</span><span class="w"> </span><span class="kn">import</span> <span class="n">BollingerBands</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">BollingerBands</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.times</span><span class="w"> </span><span class="kn">import</span> <span class="n">days</span><span class="p">,</span> <span class="n">minutes</span>
 </pre></div>
 </div>
@@ -567,13 +568,14 @@ appropriate out-of-sample data before making any trading decision.</p>
     <span class="n">capital_management</span><span class="o">=</span><span class="n">position_sizing</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">backtester</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-<span class="n">backtester</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">BacktestResult</span><span class="o">.</span><span class="n">from_portfolio</span><span class="p">(</span><span class="n">backtester</span><span class="o">.</span><span class="n">portfolio</span><span class="p">)</span>
+<span class="n">result</span><span class="o">.</span><span class="n">plot_equity_drawdown</span><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../_images/sphx_glr_quickstart_backtest_001.png" srcset="../_images/sphx_glr_quickstart_backtest_001.png" alt="Backtesting Results Overview" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;Figure size 640x480 with 4 Axes&gt;
+<img src="../_images/sphx_glr_quickstart_backtest_001.png" srcset="../_images/sphx_glr_quickstart_backtest_001.png" alt="Equity candles, Maximum drawdown: 0.05%" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;Figure size 640x480 with 2 Axes&gt;
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.806 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 2.309 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-quickstart-backtest-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/0c375ecbd95e51c944a298e4874a5f24/quickstart_backtest.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">quickstart_backtest.ipynb</span></code></a></p>

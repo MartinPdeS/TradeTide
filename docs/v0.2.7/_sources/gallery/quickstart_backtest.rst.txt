@@ -44,9 +44,9 @@ indicator-backed strategy, exit rules, capital management, and a backtester.
 .. code-block:: Python
 
 
-    from TradeTide import Backtester, Currency, Market, Strategy
+    from TradeTide import Backtester, BacktestResult, Currency, Market, Strategy
     from TradeTide import capital_management, exit_strategy
-    from TradeTide.indicators import BollingerBands
+    from TradeTide import BollingerBands
     from TradeTide.times import days, minutes
 
 
@@ -150,7 +150,7 @@ Run and inspect the backtest
 simulation.  The chart is a useful first sanity check; evaluate strategies on
 appropriate out-of-sample data before making any trading decision.
 
-.. GENERATED FROM PYTHON SOURCE LINES 81-90
+.. GENERATED FROM PYTHON SOURCE LINES 81-91
 
 .. code-block:: Python
 
@@ -162,12 +162,13 @@ appropriate out-of-sample data before making any trading decision.
         capital_management=position_sizing,
     )
     backtester.run()
-    backtester.plot()
+    result = BacktestResult.from_portfolio(backtester.portfolio)
+    result.plot_equity_drawdown()
 
 
 
 .. image-sg:: /gallery/images/sphx_glr_quickstart_backtest_001.png
-   :alt: Backtesting Results Overview
+   :alt: Equity candles, Maximum drawdown: 0.05%
    :srcset: /gallery/images/sphx_glr_quickstart_backtest_001.png
    :class: sphx-glr-single-img
 
@@ -177,14 +178,14 @@ appropriate out-of-sample data before making any trading decision.
  .. code-block:: none
 
 
-    <Figure size 640x480 with 4 Axes>
+    <Figure size 640x480 with 2 Axes>
 
 
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.806 seconds)
+   **Total running time of the script:** (0 minutes 2.309 seconds)
 
 
 .. _sphx_glr_download_gallery_quickstart_backtest.py:

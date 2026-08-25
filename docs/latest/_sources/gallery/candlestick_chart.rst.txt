@@ -36,17 +36,17 @@ display every observation, or lower it further for fast interactive views.
 .. code-block:: Python
 
 
-    from TradeTide import Currency, Market, plot_market_candles
+    from TradeTide import Currency, Market
     from TradeTide.times import days
 
     market = Market()
     market.load_from_database(Currency.EUR, Currency.USD, time_span=100 * days)
-    plot_market_candles(market, side="ask", max_candles=500)
+    market.plot_candles(side="ask", max_candles=500)
 
 
 
 .. image-sg:: /gallery/images/sphx_glr_candlestick_chart_001.png
-   :alt: EUR/USD - 100 days, 0:00:00
+   :alt: EUR/USD - candles
    :srcset: /gallery/images/sphx_glr_candlestick_chart_001.png
    :class: sphx-glr-single-img
 
@@ -63,7 +63,7 @@ display every observation, or lower it further for fast interactive views.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.339 seconds)
+   **Total running time of the script:** (0 minutes 0.439 seconds)
 
 
 .. _sphx_glr_download_gallery_candlestick_chart.py:

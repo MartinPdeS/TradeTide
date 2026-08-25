@@ -34,9 +34,9 @@ from TradeTide import (
 )
 from TradeTide import capital_management, exit_strategy
 from TradeTide.execution import ExecutionCosts
-from TradeTide.indicators import BollingerBands
+from TradeTide import BollingerBands
 from TradeTide.performance import BacktestResult
-from TradeTide.times import hours, minutes
+from TradeTide.times import hours
 
 configure_logging(logging.DEBUG)
 
@@ -55,7 +55,7 @@ print(f"Loaded {len(market.dates)} EUR/USD candles; warnings: {len(quality.warni
 # -------------------------------------------
 
 strategy = Strategy()
-strategy.add_indicator(BollingerBands(window=30 * minutes, multiplier=2.0))
+strategy.add_indicator(BollingerBands(window=30, multiplier=2.0))
 raw_signals = strategy.get_trade_signal(market)
 
 # %%

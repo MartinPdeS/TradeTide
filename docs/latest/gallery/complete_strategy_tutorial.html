@@ -424,6 +424,7 @@
 <li class="toctree-l1"><a class="reference internal" href="candlestick_chart.html">Fast Candlestick Charts</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Build a Complete Strategy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_quality.html">Market Data Quality Checks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interactive_html_report.html">Interactive HTML Backtest Report</a></li>
 <li class="toctree-l1"><a class="reference internal" href="moving_average_crossings.html">Moving Average Crossings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="order_types.html">Order Types and Deterministic Fills</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quickstart_backtest.html">Your First FX Backtest</a></li>
@@ -524,9 +525,9 @@ position and portfolio diagnostics are also required.</p>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">capital_management</span><span class="p">,</span> <span class="n">exit_strategy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.execution</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExecutionCosts</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.indicators</span><span class="w"> </span><span class="kn">import</span> <span class="n">BollingerBands</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">BollingerBands</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.performance</span><span class="w"> </span><span class="kn">import</span> <span class="n">BacktestResult</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.times</span><span class="w"> </span><span class="kn">import</span> <span class="n">hours</span><span class="p">,</span> <span class="n">minutes</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.times</span><span class="w"> </span><span class="kn">import</span> <span class="n">hours</span>
 
 <span class="n">configure_logging</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
 </pre></div>
@@ -544,7 +545,7 @@ position and portfolio diagnostics are also required.</p>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">market</span><span class="o">.</span><span class="n">dates</span><span class="p">)</span><span class="si">}</span><span class="s2"> EUR/USD candles; warnings: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">quality</span><span class="o">.</span><span class="n">warnings</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>20:47:48 DEBUG TradeTide: Market validation: observations=721 errors=0 warnings=0
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>16:49:09 DEBUG TradeTide: Market validation: observations=721 errors=0 warnings=0
 Loaded 721 EUR/USD candles; warnings: 0
 </pre></div>
 </div>
@@ -552,7 +553,7 @@ Loaded 721 EUR/USD candles; warnings: 0
 <section id="build-an-indicator-and-derive-trade-signals">
 <h2>Build an indicator and derive trade signals<a class="headerlink" href="#build-an-indicator-and-derive-trade-signals" title="Link to this heading">#</a></h2>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">strategy</span> <span class="o">=</span> <span class="n">Strategy</span><span class="p">()</span>
-<span class="n">strategy</span><span class="o">.</span><span class="n">add_indicator</span><span class="p">(</span><span class="n">BollingerBands</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">30</span> <span class="o">*</span> <span class="n">minutes</span><span class="p">,</span> <span class="n">multiplier</span><span class="o">=</span><span class="mf">2.0</span><span class="p">))</span>
+<span class="n">strategy</span><span class="o">.</span><span class="n">add_indicator</span><span class="p">(</span><span class="n">BollingerBands</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">multiplier</span><span class="o">=</span><span class="mf">2.0</span><span class="p">))</span>
 <span class="n">raw_signals</span> <span class="o">=</span> <span class="n">strategy</span><span class="o">.</span><span class="n">get_trade_signal</span><span class="p">(</span><span class="n">market</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -577,38 +578,7 @@ position management.</p>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Signals: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">orders</span><span class="p">)</span><span class="si">}</span><span class="s2">; fills: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">order_book</span><span class="o">.</span><span class="n">fills</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>20:47:48 DEBUG TradeTide: Order filled: id=signal-62 side=sell type=market index=62 price=1.09420000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-83 side=buy type=market index=83 price=1.09378000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-123 side=buy type=market index=123 price=1.09407000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-145 side=sell type=market index=145 price=1.09457000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-161 side=buy type=market index=161 price=1.09421000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-194 side=sell type=market index=194 price=1.09426000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-225 side=buy type=market index=225 price=1.09398000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-237 side=sell type=market index=237 price=1.09454000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-257 side=sell type=market index=257 price=1.09490000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-268 side=sell type=market index=268 price=1.09685000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-294 side=sell type=market index=294 price=1.10067000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-300 side=sell type=market index=300 price=1.10097000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-343 side=buy type=market index=343 price=1.10211000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-351 side=buy type=market index=351 price=1.10123000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-353 side=buy type=market index=353 price=1.10094000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-417 side=sell type=market index=417 price=1.10248000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-419 side=sell type=market index=419 price=1.10275000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-429 side=sell type=market index=429 price=1.10380000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-448 side=sell type=market index=448 price=1.10382000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-450 side=sell type=market index=450 price=1.10387000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-474 side=buy type=market index=474 price=1.10340000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-519 side=sell type=market index=519 price=1.10384000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-550 side=sell type=market index=550 price=1.10375000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-556 side=buy type=market index=556 price=1.10337000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-566 side=buy type=market index=566 price=1.10328000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-582 side=buy type=market index=582 price=1.10307000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-584 side=buy type=market index=584 price=1.10299000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-633 side=buy type=market index=633 price=1.10121000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-682 side=buy type=market index=682 price=1.10066000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-701 side=buy type=market index=701 price=1.10053000
-20:47:48 DEBUG TradeTide: Order filled: id=signal-717 side=sell type=market index=717 price=1.10061000
-Signals: 31; fills: 31
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Signals: 31; fills: 31
 </pre></div>
 </div>
 </section>
@@ -640,31 +610,31 @@ Signals: 31; fills: 31
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">ledger</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>20:47:48 DEBUG TradeTide: Trade short 2023-08-04 09:15:00→2023-08-04 09:33:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-20:47:48 DEBUG TradeTide: Trade long 2023-08-04 09:36:00→2023-08-04 09:39:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-20:47:48 DEBUG TradeTide: Trade long 2023-08-04 10:16:00→2023-08-04 10:27:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-20:47:48 DEBUG TradeTide: Trade short 2023-08-04 10:38:00→2023-08-04 10:51:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-20:47:48 DEBUG TradeTide: Trade long 2023-08-04 10:54:00→2023-08-04 11:00:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-20:47:48 DEBUG TradeTide: Trade short 2023-08-04 11:27:00→2023-08-04 11:30:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-20:47:48 DEBUG TradeTide: Trade long 2023-08-04 11:58:00→2023-08-04 12:07:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-20:47:48 DEBUG TradeTide: Trade short 2023-08-04 12:10:00→2023-08-04 12:13:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-20:47:48 DEBUG TradeTide: Trade short 2023-08-04 12:30:00→2023-08-04 12:31:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
-20:47:48 DEBUG TradeTide: Trade short 2023-08-04 12:41:00→2023-08-04 12:44:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
-20:47:48 DEBUG TradeTide: Trade short 2023-08-04 13:07:00→2023-08-04 13:09:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-20:47:48 DEBUG TradeTide: Trade short 2023-08-04 13:13:00→2023-08-04 13:16:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
-20:47:48 DEBUG TradeTide: Trade long 2023-08-04 13:56:00→2023-08-04 13:58:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
-20:47:48 DEBUG TradeTide: Trade long 2023-08-04 14:04:00→2023-08-04 14:08:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
-20:47:48 DEBUG TradeTide: Trade short 2023-08-04 15:10:00→2023-08-04 15:11:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-20:47:48 DEBUG TradeTide: Trade short 2023-08-04 15:12:00→2023-08-04 15:18:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
-20:47:48 DEBUG TradeTide: Trade short 2023-08-04 15:22:00→2023-08-04 15:28:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-20:47:48 DEBUG TradeTide: Trade short 2023-08-04 15:41:00→2023-08-04 15:53:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-20:47:48 DEBUG TradeTide: Trade long 2023-08-04 16:07:00→2023-08-04 16:27:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-20:47:48 DEBUG TradeTide: Trade short 2023-08-04 16:52:00→2023-08-04 16:56:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-20:47:48 DEBUG TradeTide: Trade short 2023-08-04 17:23:00→2023-08-04 17:26:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-20:47:48 DEBUG TradeTide: Trade long 2023-08-04 17:29:00→2023-08-04 17:58:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
-20:47:48 DEBUG TradeTide: Trade long 2023-08-04 18:46:00→2023-08-04 18:52:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-20:47:48 DEBUG TradeTide: Trade long 2023-08-04 19:35:00→2023-08-04 20:13:00 gross=1.3000 costs=2.1000 net=-0.8000 (end_of_data)
-20:47:48 DEBUG TradeTide: Backtest report: observations=721 trades=24 return=-0.06% max_drawdown=0.06%
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>16:49:09 DEBUG TradeTide: Trade short 2023-08-04 09:15:00→2023-08-04 09:33:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+16:49:09 DEBUG TradeTide: Trade long 2023-08-04 09:36:00→2023-08-04 09:39:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+16:49:09 DEBUG TradeTide: Trade long 2023-08-04 10:16:00→2023-08-04 10:27:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+16:49:09 DEBUG TradeTide: Trade short 2023-08-04 10:38:00→2023-08-04 10:51:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+16:49:09 DEBUG TradeTide: Trade long 2023-08-04 10:54:00→2023-08-04 11:00:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+16:49:09 DEBUG TradeTide: Trade short 2023-08-04 11:27:00→2023-08-04 11:30:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+16:49:09 DEBUG TradeTide: Trade long 2023-08-04 11:58:00→2023-08-04 12:07:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+16:49:09 DEBUG TradeTide: Trade short 2023-08-04 12:10:00→2023-08-04 12:13:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+16:49:09 DEBUG TradeTide: Trade short 2023-08-04 12:30:00→2023-08-04 12:31:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
+16:49:09 DEBUG TradeTide: Trade short 2023-08-04 12:41:00→2023-08-04 12:44:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
+16:49:09 DEBUG TradeTide: Trade short 2023-08-04 13:07:00→2023-08-04 13:09:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+16:49:09 DEBUG TradeTide: Trade short 2023-08-04 13:13:00→2023-08-04 13:16:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
+16:49:09 DEBUG TradeTide: Trade long 2023-08-04 13:56:00→2023-08-04 13:58:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
+16:49:09 DEBUG TradeTide: Trade long 2023-08-04 14:04:00→2023-08-04 14:08:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
+16:49:09 DEBUG TradeTide: Trade short 2023-08-04 15:10:00→2023-08-04 15:11:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+16:49:09 DEBUG TradeTide: Trade short 2023-08-04 15:12:00→2023-08-04 15:18:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
+16:49:09 DEBUG TradeTide: Trade short 2023-08-04 15:22:00→2023-08-04 15:28:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+16:49:09 DEBUG TradeTide: Trade short 2023-08-04 15:41:00→2023-08-04 15:53:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+16:49:09 DEBUG TradeTide: Trade long 2023-08-04 16:07:00→2023-08-04 16:27:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+16:49:09 DEBUG TradeTide: Trade short 2023-08-04 16:52:00→2023-08-04 16:56:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+16:49:09 DEBUG TradeTide: Trade short 2023-08-04 17:23:00→2023-08-04 17:26:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+16:49:09 DEBUG TradeTide: Trade long 2023-08-04 17:29:00→2023-08-04 17:58:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
+16:49:09 DEBUG TradeTide: Trade long 2023-08-04 18:46:00→2023-08-04 18:52:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+16:49:09 DEBUG TradeTide: Trade long 2023-08-04 19:35:00→2023-08-04 20:13:00 gross=1.3000 costs=2.1000 net=-0.8000 (end_of_data)
+16:49:09 DEBUG TradeTide: Backtest report: observations=721 trades=24 return=-0.06% max_drawdown=0.06%
 {'total_return': -0.0006109999999999172, 'annualized_return': -0.36011826646934153, 'volatility': 0.005674055093243982, 'max_drawdown': 0.0006219999999999709, 'max_drawdown_duration_seconds': 39480.0, 'sharpe_ratio': -78.68369954048049, 'sortino_ratio': -19.785926836153156, 'calmar_ratio': -578.9682740664925, 'win_rate': 0.6666666666666666, 'profit_factor': 0.6988505747125253, 'exposure': 0.2861111111111111, 'total_trades': 24, 'winning_trades': 16, 'losing_trades': 8, 'initial_equity': 100000.0, 'final_equity': 99938.90000000001, 'peak_equity': 100000.0}
    trade_id  ... maximum_favorable_excursion
 0         1  ...                         5.3
@@ -685,7 +655,7 @@ Signals: 31; fills: 31
 <img src="../_images/sphx_glr_complete_strategy_tutorial_001.png" srcset="../_images/sphx_glr_complete_strategy_tutorial_001.png" alt="Equity candles, Maximum drawdown: 0.06%" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;Figure size 640x480 with 2 Axes&gt;
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.320 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.409 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-complete-strategy-tutorial-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/25e96b7d89ac8b88433c1f11cea48e30/complete_strategy_tutorial.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">complete_strategy_tutorial.ipynb</span></code></a></p>

@@ -1,6 +1,6 @@
 """
 Order Types and Deterministic Fills
-==================================
+===================================
 
 ``OrderBook`` evaluates market, limit, stop, and stop-limit entry orders
 against bid/ask OHLC data.  It records the fill time, bar index, and execution

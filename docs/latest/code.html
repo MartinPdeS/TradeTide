@@ -481,90 +481,11 @@
 <blockquote>
 <div><dl class="py class">
 <dt class="sig sig-object py" id="TradeTide.portfolio.Portfolio">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Portfolio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">position_collection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TradeTide/portfolio.html#Portfolio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TradeTide.portfolio.Portfolio" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PORTFOLIO</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="TradeTide.portfolio.Portfolio.plot_positions">
-<span class="sig-name descname"><span class="pre">plot_positions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_positions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">inf</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Figure</span></span></span><a class="reference internal" href="_modules/TradeTide/portfolio.html#Portfolio.plot_positions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TradeTide.portfolio.Portfolio.plot_positions" title="Link to this definition">#</a></dt>
-<dd><p>Plot market bid/ask prices and shade closed positions, using the mps style,
-consistent naming of ‘position’, and a clear legend with distinct colors.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>axes</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>optional</em>) – Axes to draw on. If None, a new figure+axes are created.</p></li>
-<li><p><strong>max_positions</strong> (<em>int</em><em> or </em><em>float</em><em>, </em><em>default=np.inf</em>) – Maximum number of positions to draw (in chronological order).</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="TradeTide.portfolio.Portfolio.plot_equity">
-<span class="sig-name descname"><span class="pre">plot_equity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Axes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/TradeTide/portfolio.html#Portfolio.plot_equity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TradeTide.portfolio.Portfolio.plot_equity" title="Link to this definition">#</a></dt>
-<dd><p>Plot the portfolio’s equity over time.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>axes</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>optional</em>) – Axes to draw on. If None, a new figure+axes are created.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="TradeTide.portfolio.Portfolio.plot_capital_at_risk">
-<span class="sig-name descname"><span class="pre">plot_capital_at_risk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Axes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/TradeTide/portfolio.html#Portfolio.plot_capital_at_risk"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TradeTide.portfolio.Portfolio.plot_capital_at_risk" title="Link to this definition">#</a></dt>
-<dd><p>Plot the capital at risk over time.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>axes</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>optional</em>) – Axes to draw on. If None, a new figure+axes are created.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="TradeTide.portfolio.Portfolio.plot_capital">
-<span class="sig-name descname"><span class="pre">plot_capital</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Axes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/TradeTide/portfolio.html#Portfolio.plot_capital"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TradeTide.portfolio.Portfolio.plot_capital" title="Link to this definition">#</a></dt>
-<dd><p>Plot the capital over time.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>axes</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>optional</em>) – Axes to draw on. If None, a new figure+axes are created.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="TradeTide.portfolio.Portfolio.plot_number_of_positions">
-<span class="sig-name descname"><span class="pre">plot_number_of_positions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Axes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/TradeTide/portfolio.html#Portfolio.plot_number_of_positions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TradeTide.portfolio.Portfolio.plot_number_of_positions" title="Link to this definition">#</a></dt>
-<dd><p>Plot the number of open positions over time.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>axes</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>optional</em>) – Axes to draw on. If None, a new figure+axes are created.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="TradeTide.portfolio.Portfolio.plot_prices">
-<span class="sig-name descname"><span class="pre">plot_prices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Axes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/TradeTide/portfolio.html#Portfolio.plot_prices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TradeTide.portfolio.Portfolio.plot_prices" title="Link to this definition">#</a></dt>
-<dd><p>Plot the market bid and ask prices over time.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>axes</strong> (<em>matplotlib.axes.Axes</em><em>, </em><em>optional</em>) – Axes to draw on. If None, a new figure+axes are created.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="TradeTide.portfolio.Portfolio.plot">
-<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">plot_type</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Figure</span></span></span><a class="reference internal" href="_modules/TradeTide/portfolio.html#Portfolio.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TradeTide.portfolio.Portfolio.plot" title="Link to this definition">#</a></dt>
-<dd><p>Plot the portfolio’s performance, including equity, capital at risk, capital,
-number of open positions, and market prices.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
-
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Portfolio</span></span><a class="headerlink" href="#TradeTide.portfolio.Portfolio" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pybind11_object</span></code></p>
+<p>Capital-constrained portfolio simulator.</p>
+<p>A portfolio selects executable positions, records the equity path, and
+provides performance metrics after <code class="docutils literal notranslate"><span class="pre">simulate</span></code> has completed.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="TradeTide.portfolio.Portfolio.debug_mode">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">debug_mode</span></span><a class="headerlink" href="#TradeTide.portfolio.Portfolio.debug_mode" title="Link to this definition">#</a></dt>
@@ -573,19 +494,19 @@ number of open positions, and market prices.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="TradeTide.portfolio.Portfolio.display">
-<span class="sig-name descname"><span class="pre">display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TradeTide.binary.interface_portfolio.PORTFOLIO</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#TradeTide.portfolio.Portfolio.display" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#TradeTide.portfolio.Portfolio" title="TradeTide.portfolio.Portfolio"><span class="pre">TradeTide.portfolio.Portfolio</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#TradeTide.portfolio.Portfolio.display" title="Link to this definition">#</a></dt>
 <dd><p>Total time elapsed in the simulation, as a timedelta.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="TradeTide.portfolio.Portfolio.get_metrics">
-<span class="sig-name descname"><span class="pre">get_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TradeTide.binary.interface_portfolio.PORTFOLIO</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">TradeTide.binary.interface_portfolio.Metrics</span></span></span><a class="headerlink" href="#TradeTide.portfolio.Portfolio.get_metrics" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">get_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#TradeTide.portfolio.Portfolio" title="TradeTide.portfolio.Portfolio"><span class="pre">TradeTide.portfolio.Portfolio</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">TradeTide.portfolio.Metrics</span></span></span><a class="headerlink" href="#TradeTide.portfolio.Portfolio.get_metrics" title="Link to this definition">#</a></dt>
 <dd><p>Access the Metrics object containing performance metrics.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="TradeTide.portfolio.Portfolio.get_positions">
-<span class="sig-name descname"><span class="pre">get_positions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TradeTide.binary.interface_portfolio.PORTFOLIO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SupportsInt</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">SupportsIndex</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">18446744073709551615</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">TradeTide.binary.interface_position.BasePosition</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#TradeTide.portfolio.Portfolio.get_positions" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">get_positions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#TradeTide.portfolio.Portfolio" title="TradeTide.portfolio.Portfolio"><span class="pre">TradeTide.portfolio.Portfolio</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SupportsInt</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">SupportsIndex</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">18446744073709551615</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">TradeTide.position.BasePosition</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#TradeTide.portfolio.Portfolio.get_positions" title="Link to this definition">#</a></dt>
 <dd><p>Get the list of activated positions up to an optional maximum.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -614,7 +535,7 @@ number of open positions, and market prices.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="TradeTide.portfolio.Portfolio.simulate">
-<span class="sig-name descname"><span class="pre">simulate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TradeTide.binary.interface_portfolio.PORTFOLIO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">capital_management</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TradeTide.binary.interface_capital_management.BaseCapitalManagement</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#TradeTide.portfolio.Portfolio.simulate" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">simulate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#TradeTide.portfolio.Portfolio" title="TradeTide.portfolio.Portfolio"><span class="pre">TradeTide.portfolio.Portfolio</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">capital_management</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TradeTide.capital_management.BaseCapitalManagement</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#TradeTide.portfolio.Portfolio.simulate" title="Link to this definition">#</a></dt>
 <dd><p>Run the full simulation, opening/closing trades according to constraints.</p>
 </dd></dl>
 
@@ -655,13 +576,6 @@ number of open positions, and market prices.</p>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#backtester">BackTester</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#TradeTide.portfolio.Portfolio"><code class="docutils literal notranslate"><span class="pre">Portfolio</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#TradeTide.portfolio.Portfolio.plot_positions"><code class="docutils literal notranslate"><span class="pre">Portfolio.plot_positions()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#TradeTide.portfolio.Portfolio.plot_equity"><code class="docutils literal notranslate"><span class="pre">Portfolio.plot_equity()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#TradeTide.portfolio.Portfolio.plot_capital_at_risk"><code class="docutils literal notranslate"><span class="pre">Portfolio.plot_capital_at_risk()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#TradeTide.portfolio.Portfolio.plot_capital"><code class="docutils literal notranslate"><span class="pre">Portfolio.plot_capital()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#TradeTide.portfolio.Portfolio.plot_number_of_positions"><code class="docutils literal notranslate"><span class="pre">Portfolio.plot_number_of_positions()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#TradeTide.portfolio.Portfolio.plot_prices"><code class="docutils literal notranslate"><span class="pre">Portfolio.plot_prices()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#TradeTide.portfolio.Portfolio.plot"><code class="docutils literal notranslate"><span class="pre">Portfolio.plot()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#TradeTide.portfolio.Portfolio.debug_mode"><code class="docutils literal notranslate"><span class="pre">Portfolio.debug_mode</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#TradeTide.portfolio.Portfolio.display"><code class="docutils literal notranslate"><span class="pre">Portfolio.display()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#TradeTide.portfolio.Portfolio.get_metrics"><code class="docutils literal notranslate"><span class="pre">Portfolio.get_metrics()</span></code></a></li>

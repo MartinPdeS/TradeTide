@@ -487,7 +487,8 @@ exposure, and trade counts.</p>
 each candle opens at the previous observation’s equity and closes at the current
 one.  The drawdown panel shares its time axis and uses the same net-of-costs
 equity curve.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">backtester</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">backtester</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">BacktestResult</span><span class="o">.</span><span class="n">from_portfolio</span><span class="p">(</span><span class="n">backtester</span><span class="o">.</span><span class="n">portfolio</span><span class="p">)</span>
 <span class="n">result</span><span class="o">.</span><span class="n">plot_equity_drawdown</span><span class="p">(</span><span class="n">max_candles</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -522,7 +523,8 @@ and trade metrics without changing the raw native record.</p>
     <span class="n">financing_per_lot_per_night</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="c1"># Pass execution_costs=costs to Backtester(...).</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">backtester</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">backtester</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">BacktestResult</span><span class="o">.</span><span class="n">from_portfolio</span><span class="p">(</span><span class="n">backtester</span><span class="o">.</span><span class="n">portfolio</span><span class="p">,</span> <span class="n">costs</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
 </pre></div>
 </div>

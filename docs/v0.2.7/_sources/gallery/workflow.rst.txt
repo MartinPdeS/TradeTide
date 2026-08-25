@@ -51,7 +51,7 @@ We start by importing all necessary modules from TradeTide and standard librarie
     from TradeTide import Strategy, Portfolio, PositionCollection, Market, Currency
     from TradeTide.times import days, hours, minutes
 
-    from TradeTide.indicators import BollingerBands
+    from TradeTide import BollingerBands
     from TradeTide import capital_management, exit_strategy
 
 
@@ -168,7 +168,7 @@ and understand where trading signals are generated.
 
 
 .. image-sg:: /gallery/images/sphx_glr_workflow_001.png
-   :alt: CAD/USD - 4:00:00
+   :alt: workflow
    :srcset: /gallery/images/sphx_glr_workflow_001.png
    :class: sphx-glr-single-img
 
@@ -237,7 +237,7 @@ Create and manage trading positions based on our strategy signals.
 
 
 .. image-sg:: /gallery/images/sphx_glr_workflow_002.png
-   :alt: CAD/USD - 4:00:00, CAD/USD - 4:00:00
+   :alt: CAD/USD - candles, CAD/USD - candles
    :srcset: /gallery/images/sphx_glr_workflow_002.png
    :class: sphx-glr-single-img
 
@@ -319,7 +319,7 @@ Analyze the results of our trading strategy and display key performance metrics.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.241 seconds)
+   **Total running time of the script:** (0 minutes 0.164 seconds)
 
 
 .. _sphx_glr_download_gallery_workflow.py:

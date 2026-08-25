@@ -46,7 +46,10 @@ struct ExecutionCosts {
 
     [[nodiscard]] static long nights(const BasePosition& position) {
         const auto duration = position.close_date - position.start_date;
-        return std::max(0L, std::chrono::duration_cast<std::chrono::hours>(duration).count() / 24);
+        return static_cast<long>(std::max<long long>(
+            0,
+            std::chrono::duration_cast<std::chrono::hours>(duration).count() / 24
+        ));
     }
 
     [[nodiscard]] TradeCost for_trade(const BasePosition& position, double pip_value) const {

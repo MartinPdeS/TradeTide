@@ -10,6 +10,8 @@
 !development
 !docs
 !tests
+!tools
+!tools/*.py
 !.flake8
 !.gitignore
 !.pre-commit-config.yaml
@@ -18,9 +20,11 @@
 !pyproject.toml
 !README.rst
 !CONTRIBUTING.md
+!CITATION.cff
 !CHANGELOG.md
 !notebook.ipynb
 !CMakeLists.txt
+!.zenodo.json
 !pytest.ini
 !.coveragerc
 

@@ -3,8 +3,7 @@ package:
   version: {{ GIT_DESCRIBE_TAG }}
 
 source:
-  path: ../
-  git_url: https://github.com/MartinPdeS/TradeTide.git
+  path: .
 
 build:
   number: 0

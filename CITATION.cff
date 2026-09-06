@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use TradeTide in your research, please cite this software."
+title: "TradeTide"
+type: software
+authors:
+  - family-names: "Poinsinet de Sivry-Houle"
+    given-names: "Martin"
+abstract: >
+  TradeTide is an open-source Python package for technical analysis, trading
+  strategy backtesting, portfolio simulation, and performance evaluation.
+license: "MIT"
+repository-code: "https://github.com/MartinPdeS/TradeTide"
+keywords:
+  - backtesting
+  - quantitative finance
+  - technical analysis
+  - portfolio simulation
+  - trading strategies

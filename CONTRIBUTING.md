@@ -26,6 +26,11 @@ declared build backend before its editable install; ``make test`` runs tests
 with a headless Matplotlib backend; and ``make quality`` runs the focused lint
 and type checks. Set ``PYTHON`` or ``BUILD_DIR`` to override their defaults.
 
+Release tags use ``vMAJOR.MINOR.PATCH``. ``make tag VERSION=vX.Y.Z`` regenerates
+the SCM version file, creates a release commit, and makes an annotated tag
+without pushing. ``make release patch``, ``make release minor``, and ``make
+release major`` derive the next version and push the release commit and tag.
+
 ## Pull requests
 
 - Keep each change focused and add tests for changed public behavior.

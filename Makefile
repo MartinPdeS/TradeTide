@@ -1,11 +1,27 @@
+.DEFAULT_GOAL := help
+
 # Local developer shortcuts for TradeTide's CMake and Python workflows.
 # Override defaults as needed, for example: make PYTHON=python3.13 quick
 PYTHON ?= .venv/bin/python
 BUILD_DIR ?= build
 ROOT_DIR := $(CURDIR)
-PYBIND11_DIR := $(shell $(PYTHON) -m pybind11 --cmakedir)
+PYBIND11_DIR = $(shell $(PYTHON) -m pybind11 --cmakedir)
+RELEASE_KIND := $(filter major minor patch,$(MAKECMDGOALS))
 
-.PHONY: bootstrap configure build install uninstall quick rebuild editable quality test clean
+.PHONY: help bootstrap configure build install uninstall quick rebuild editable quality test check release-check tag release major minor patch clean
+
+help:
+	@echo "TradeTide development commands"
+	@echo ""
+	@echo "  make editable              Build and install an editable package"
+	@echo "  make test                  Run the test suite"
+	@echo "  make quality               Run static checks"
+	@echo "  make check                 Run quality and tests"
+	@echo "  make release-check         Check tag-derived release metadata"
+	@echo "  make tag VERSION=vX.Y.Z    Create a release commit and annotated tag"
+	@echo "  make release patch         Create and push the next patch release"
+	@echo "  make release minor         Create and push the next minor release"
+	@echo "  make release major         Create and push the next major release"
 
 bootstrap:
 	$(PYTHON) -m pip install --upgrade pip
@@ -17,6 +33,24 @@ quality:
 
 test:
 	MPLBACKEND=Agg $(PYTHON) -m pytest --config-file=pytest.ini
+
+check: quality test
+
+release-check:
+	$(PYTHON) tools/check_release.py $(if $(VERSION),--version $(VERSION),)
+
+tag:
+	@test -n "$(VERSION)" || { echo "usage: make tag VERSION=vX.Y.Z" >&2; exit 2; }
+	$(PYTHON) tools/release_tag.py "$(VERSION)"
+
+release:
+	@test "$(words $(RELEASE_KIND))" -eq 1 || { echo "usage: make release [patch|minor|major]" >&2; exit 2; }
+	@set -eu; release_tag="$$($(PYTHON) tools/next_release_version.py $(RELEASE_KIND))"; \
+	$(PYTHON) tools/release_tag.py "$$release_tag"; \
+	git push origin HEAD "refs/tags/$$release_tag"
+
+major minor patch:
+	@:
 
 configure:
 	cmake -S . -B $(BUILD_DIR) \

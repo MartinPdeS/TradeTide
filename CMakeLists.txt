@@ -13,7 +13,7 @@ set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Type of build")
 
 
 # --------------------- Set the output directory for libraries --------------------
-set(LOCAL_CXX_DIR "${PROJECT_NAME}/cpp")
+set(LOCAL_CXX_DIR "${PROJECT_SOURCE_DIR}/cpp")
 # Keep extensions in the package root both locally and inside built wheels.
 # Install destinations must be relative to CMAKE_INSTALL_PREFIX: an absolute
 # source-tree path is ignored by wheel staging and leaves CI without modules.
@@ -96,22 +96,22 @@ message(STATUS "")
 # ----------------- logging build configuration --------------------
 
 # ----------------- collect subdirectories --------------------
-add_subdirectory(TradeTide/cpp/market)               # market
-add_subdirectory(TradeTide/cpp/orders)               # orders
-add_subdirectory(TradeTide/cpp/execution)            # execution costs
-add_subdirectory(TradeTide/cpp/ledger)               # trade ledger
-add_subdirectory(TradeTide/cpp/indicators)           # indicators
-add_subdirectory(TradeTide/cpp/strategy)             # strategy
-add_subdirectory(TradeTide/cpp/position)             # position
-add_subdirectory(TradeTide/cpp/signal)               # signal
-add_subdirectory(TradeTide/cpp/state)                # state
-add_subdirectory(TradeTide/cpp/record)               # record
-add_subdirectory(TradeTide/cpp/metrics)              # metrics
-add_subdirectory(TradeTide/cpp/exit_strategy)        # exit_strategy
-add_subdirectory(TradeTide/cpp/capital_management)   # capital_manag
-add_subdirectory(TradeTide/cpp/portfolio)            # portfolio
-add_subdirectory(TradeTide/cpp/position_collection)  # position collection
-add_subdirectory(TradeTide/cpp/backtester)           # backtester
+add_subdirectory(cpp/market)               # market
+add_subdirectory(cpp/orders)               # orders
+add_subdirectory(cpp/execution)            # execution costs
+add_subdirectory(cpp/ledger)               # trade ledger
+add_subdirectory(cpp/indicators)           # indicators
+add_subdirectory(cpp/strategy)             # strategy
+add_subdirectory(cpp/position)             # position
+add_subdirectory(cpp/signal)               # signal
+add_subdirectory(cpp/state)                # state
+add_subdirectory(cpp/record)               # record
+add_subdirectory(cpp/metrics)              # metrics
+add_subdirectory(cpp/exit_strategy)        # exit_strategy
+add_subdirectory(cpp/capital_management)   # capital_manag
+add_subdirectory(cpp/portfolio)            # portfolio
+add_subdirectory(cpp/position_collection)  # position collection
+add_subdirectory(cpp/backtester)           # backtester
 # ----------------- collect subdirectories --------------------
 
 get_property(TRADETIDE_TARGETS GLOBAL PROPERTY TRADETIDE_TARGETS)

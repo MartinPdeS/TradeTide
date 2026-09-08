@@ -16,7 +16,8 @@
 !.gitignore
 !.pre-commit-config.yaml
 !LICENSE
-!meta.yaml
+!cpp
+!conda.recipe
 !pyproject.toml
 !README.rst
 !CONTRIBUTING.md

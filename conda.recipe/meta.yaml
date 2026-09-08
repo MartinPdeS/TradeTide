@@ -3,7 +3,7 @@ package:
   version: {{ GIT_DESCRIBE_TAG }}
 
 source:
-  path: .
+  path: ..
 
 build:
   number: 0
@@ -57,7 +57,8 @@ about:
 
 files:
   include:
-    - "TradeTide/binary/*.so"
+    - "TradeTide/*.so"
+    - "TradeTide/*.pyd"
 
 test:
   imports:
@@ -70,6 +71,7 @@ test:
     - pytest-json-report ==1.5
     - coverage ==7.6
   commands:
+    - TradeTide --help
     - python -m pytest
   source_files:
     - tests

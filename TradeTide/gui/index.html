@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   TradeTide · Research home
+  </title>
+  <link href="/logo.png" rel="icon"/>
+  <link href="/style.css" rel="stylesheet"/>
+  <script src="/app.js" type="module">
+  </script>
+ </head>
+ <body>
+  <a class="skip-link" href="#main-content">
+   Skip to content
+  </a>
+  <header class="topbar">
+   <a aria-label="TradeTide home" class="brand" href="#home">
+    <img alt="TradeTide · Forex backtester" src="/logo.png"/>
+   </a>
+   <nav aria-label="Main navigation">
+    <a data-page="home" href="#home">
+     Home
+    </a>
+    <a data-page="workspace" href="#workspace/strategy">
+     Strategy workspace
+    </a>
+   </nav>
+   <span class="local">
+    <i>
+    </i>
+    Local research
+    <span class="local-divider">
+     /
+    </span>
+    Historical FX
+   </span>
+  </header>
+  <main id="main-content" tabindex="-1">
+   <section aria-labelledby="home-title" id="home-page">
+    <div class="heading home-heading">
+     <div>
+      <span class="eyebrow">
+       TRADETIDE
+      </span>
+      <h1 id="home-title">
+       Research library
+      </h1>
+      <p>
+       Saved strategies and completed backtests.
+      </p>
+     </div>
+     <a class="primary" href="#workspace/strategy">
+      Continue editing
+      <span>
+       →
+      </span>
+     </a>
+    </div>
+    <div class="quick-start">
+     <span>
+      Start from a template
+     </span>
+     <button data-preset="reversion">
+      Bollinger Bands
+      <span>
+       ↗
+      </span>
+     </button>
+     <button data-preset="trend">
+      MA Crossing + MACD
+      <span>
+       ↗
+      </span>
+     </button>
+     <button data-preset="momentum">
+      RSI + RMI
+      <span>
+       ↗
+      </span>
+     </button>
+    </div>
+    <div class="library-grid">
+     <section class="panel library-panel">
+      <div class="panel-title">
+       <div>
+        <h2>
+         Saved strategies
+         <span class="count" id="saved-count">
+          0
+         </span>
+        </h2>
+        <p>
+         Reusable settings, saved in this browser.
+        </p>
+       </div>
+       <button class="secondary" id="import-home">
+        Import JSON
+       </button>
+      </div>
+      <div id="saved-strategies">
+       <p class="placeholder">
+        Save a strategy from the workspace to reuse it here.
+       </p>
+      </div>
+     </section>
+     <section class="panel recent-panel">
+      <div class="panel-title">
+       <div>
+        <h2>
+         Recent runs
+         <span class="count" id="home-run-count">
+          0
+         </span>
+        </h2>
+        <p>
+         Last 30 runs, retained in this browser.
+        </p>
+       </div>
+       <a class="text-link" href="#workspace/compare">
+        Compare →
+       </a>
+      </div>
+      <div id="home-recent">
+       <p class="placeholder">
+        No backtests yet. Open a template or continue editing.
+       </p>
+      </div>
+     </section>
+    </div>
+   </section>
+   <section aria-labelledby="workspace-title" hidden="" id="workspace-page">
+    <div class="heading">
+     <div>
+      <span class="eyebrow">
+       STRATEGY WORKSPACE
+      </span>
+      <h1 id="workspace-title">
+       Strategy workspace
+      </h1>
+      <p id="workspace-description">
+       Configure indicators, execution, and a sample.
+      </p>
+     </div>
+     <div class="header-actions">
+      <button class="secondary" id="save-strategy">
+       Save strategy
+      </button>
+      <details class="file-menu">
+       <summary>
+        Files ↓
+       </summary>
+       <div>
+        <button id="import-strategy">
+         Import strategy JSON
+        </button>
+        <button id="export-strategy">
+         Export strategy JSON
+        </button>
+        <button disabled="" id="export">
+         Export selected run JSON
+        </button>
+       </div>
+      </details>
+     </div>
+    </div>
+    <div class="workspace-toolbar">
+     <div aria-label="Workspace sections" class="workspace-tabs" role="tablist">
+      <button aria-controls="panel-strategy" data-workspace-tab="strategy" id="tab-strategy" role="tab">
+       01
+       <span>
+        Strategy
+       </span>
+      </button>
+      <button aria-controls="panel-results" data-workspace-tab="results" id="tab-results" role="tab">
+       02
+       <span>
+        Results
+       </span>
+      </button>
+      <button aria-controls="panel-execution" data-workspace-tab="execution" id="tab-execution" role="tab">
+       03
+       <span>
+        Orders &amp; trades
+       </span>
+      </button>
+      <button aria-controls="panel-compare" data-workspace-tab="compare" id="tab-compare" role="tab">
+       04
+       <span>
+        Compare
+       </span>
+      </button>
+     </div>
+     <button class="primary" form="config" id="run" type="submit">
+      Run backtest
+      <span>
+       →
+      </span>
+     </button>
+     <button class="secondary" hidden="" id="stop-queue">
+      Stop after current run
+     </button>
+    </div>
+    <div class="workspace-status">
+     <span id="draft-summary">
+      EUR / USD · 1 indicator · Any agreement
+     </span>
+     <p aria-live="polite" id="status" role="status">
+      Ready.
+     </p>
+    </div>
+    <div hidden="" id="run-progress">
+     <progress aria-label="Backtest progress" id="queue-progress" max="1" value="0">
+     </progress>
+     <span id="queue-label">
+     </span>
+    </div>
+    <section aria-labelledby="tab-strategy" id="panel-strategy" role="tabpanel">
+     <form id="config" novalidate="">
+      <fieldset class="strategy-grid" id="fields">
+       <section class="panel market-setup">
+        <div class="section-title">
+         <h2>
+          Strategy setup
+         </h2>
+         <span class="tag">
+          DRAFT
+         </span>
+        </div>
+        <label>
+         Strategy name
+         <input maxlength="80" name="name" required="" value="Mean reversion"/>
+        </label>
+        <div class="two">
+         <label>
+          Market
+          <select name="pair">
+           <option>
+            EUR
+           </option>
+           <option>
+            GBP
+           </option>
+           <option>
+            CHF
+           </option>
+           <option>
+            JPY
+           </option>
+           <option>
+            CAD
+           </option>
+          </select>
+          <small>
+           Base currency / USD
+          </small>
+         </label>
+         <label>
+          Sample
+          <select name="days">
+           <option value="1">
+            First day
+           </option>
+           <option selected="" value="3">
+            First 3 days
+           </option>
+           <option value="5">
+            First 5 days
+           </option>
+           <option value="7">
+            First 7 days
+           </option>
+           <option value="14">
+            First 14 days
+           </option>
+          </select>
+         </label>
+        </div>
+        <div class="setup-note">
+         <p>
+          Samples start at the first bundled observation. Days are calendar days; market closures may leave fewer bars.
+         </p>
+         <div class="draft-state">
+          <span id="draft-state">
+           Draft saved locally
+          </span>
+          <button class="text-button" hidden="" id="undo-draft" type="button">
+           Undo replacement
+          </button>
+         </div>
+        </div>
+       </section>
+       <section class="panel indicator-setup">
+        <div class="section-title">
+         <h2>
+          Indicator stack
+          <span class="count" id="indicator-count">
+           1
+          </span>
+         </h2>
+        </div>
+        <p class="help">
+         Combine up to 8 indicators. Turn one off to test its contribution.
+        </p>
+        <div class="stack-actions">
+         <button class="text-button" id="expand-indicators" type="button">
+          Expand all
+         </button>
+         <button class="text-button" id="collapse-indicators" type="button">
+          Collapse all
+         </button>
+        </div>
+        <div id="indicator-stack">
+        </div>
+        <div class="add-row">
+         <select aria-label="Indicator to add" id="add-kind">
+          <option value="bollinger">
+           Bollinger Bands
+          </option>
+          <option value="crossing">
+           Moving Average Crossing
+          </option>
+          <option value="rsi">
+           Relative Strength Index
+          </option>
+          <option value="rmi">
+           Relative Momentum Index
+          </option>
+          <option value="macd">
+           MACD
+          </option>
+         </select>
+         <button class="secondary" id="add-indicator" type="button">
+          + Add
+         </button>
+        </div>
+        <label>
+         Combine entry signals
+         <select name="combination">
+          <option value="any">
+           Any agreement
+          </option>
+          <option value="all">
+           All must agree
+          </option>
+          <option value="weighted">
+           Weighted vote
+          </option>
+         </select>
+        </label>
+        <p class="help" id="rule-help">
+        </p>
+        <label hidden="" id="threshold-field">
+         Vote threshold
+         <input max="800" min="0" name="threshold" step="0.1" type="number" value="0"/>
+        </label>
+       </section>
+       <section class="panel risk-setup">
+        <div class="section-title">
+         <h2>
+          Risk &amp; execution
+         </h2>
+        </div>
+        <details open="">
+         <summary>
+          Capital &amp; position sizing
+         </summary>
+         <label>
+          Starting capital · USD
+          <input max="100000000" min="100" name="capital" required="" type="number" value="100000"/>
+         </label>
+         <div class="two">
+          <label>
+           Size · base units
+           <input max="1000000" min="1" name="lot_size" required="" type="number" value="10000"/>
+          </label>
+          <label>
+           Max positions
+           <input max="10" min="1" name="positions" required="" type="number" value="1"/>
+          </label>
+         </div>
+         <label>
+          Capital at risk cap · USD
+          <input max="100000000" min="1" name="max_risk" required="" type="number" value="10000"/>
+         </label>
+        </details>
+        <details>
+         <summary>
+          Exit rules
+         </summary>
+         <label>
+          Exit policy
+          <select name="exit_policy">
+           <option value="static">
+            Fixed stop &amp; target
+           </option>
+           <option value="trailing">
+            Trailing stop
+           </option>
+           <option value="break_even">
+            Move stop to break-even
+           </option>
+          </select>
+         </label>
+         <div class="two">
+          <label>
+           Stop loss · pips
+           <input max="500" min="0.1" name="stop_loss" required="" step="0.1" type="number" value="4"/>
+          </label>
+          <label>
+           Take profit · pips
+           <input max="500" min="0.1" name="take_profit" required="" step="0.1" type="number" value="4"/>
+          </label>
+         </div>
+         <label hidden="" id="trigger-field">
+          Break-even trigger · pips
+          <input max="500" min="0.1" name="break_even_trigger" step="0.1" type="number" value="2"/>
+         </label>
+        </details>
+        <details>
+         <summary>
+          Execution costs
+         </summary>
+         <label>
+          Commission · USD per unit, per side
+          <input max="1" min="0" name="commission" required="" step="0.00001" type="number" value="0"/>
+         </label>
+         <div class="two">
+          <label>
+           Slippage · pips / side
+           <input max="100" min="0" name="slippage" required="" step="0.01" type="number" value="0"/>
+          </label>
+          <label>
+           Extra spread · pips
+           <input max="100" min="0" name="spread" required="" step="0.01" type="number" value="0"/>
+          </label>
+         </div>
+         <p class="help">
+          Costs adjust reported equity and P&amp;L after simulation; they do not change entry sizing.
+         </p>
+        </details>
+       </section>
+      </fieldset>
+     </form>
+     <details class="panel sweep-panel" id="sweep-panel">
+      <summary>
+       Test several parameter values
+       <span>
+        Parameter sweep
+       </span>
+      </summary>
+      <fieldset id="sweep-fields">
+       <div class="sweep-grid">
+        <label>
+         Parameter
+         <select id="sweep-parameter">
+         </select>
+        </label>
+        <label>
+         Values · comma-separated
+         <input autocomplete="off" id="sweep-values" placeholder="2, 3, 4, 5" value="2, 4, 6"/>
+        </label>
+        <button class="secondary" id="run-sweep" type="button">
+         Run sweep
+        </button>
+       </div>
+       <p class="help" id="sweep-hint">
+        2–6 runs. Only this parameter changes; each result keeps its exact settings.
+       </p>
+       <p class="error" id="sweep-error" role="status">
+       </p>
+      </fieldset>
+     </details>
+    </section>
+    <section aria-labelledby="tab-results" hidden="" id="panel-results" role="tabpanel">
+     <div class="result-heading">
+      <div>
+       <h2 id="result-name">
+        No run selected
+       </h2>
+       <p id="run-label">
+        Run a strategy to see its results.
+       </p>
+      </div>
+      <span class="tag" id="result-badge">
+       NO RUN YET
+      </span>
+      <div class="result-actions">
+       <select aria-label="Selected result" disabled="" id="selected-run">
+        <option>
+         No completed runs
+        </option>
+       </select>
+       <button class="secondary" disabled="" id="edit-result">
+        Use these settings
+       </button>
+      </div>
+     </div>
+     <div class="metrics" id="metrics">
+     </div>
+     <div class="result-facts" id="result-facts">
+     </div>
+     <div class="result-draft-note" hidden="" id="result-draft-note">
+      These results belong to a different configuration than the current draft.
+     </div>
+     <div class="range-toolbar">
+      <span id="range-label">
+       Full sample
+      </span>
+      <div>
+       <label>
+        From
+        <input aria-label="Chart range start" id="range-start" max="99" min="0" type="range" value="0"/>
+       </label>
+       <label>
+        To
+        <input aria-label="Chart range end" id="range-end" max="100" min="1" type="range" value="100"/>
+       </label>
+       <button class="text-button" id="reset-range">
+        Reset range
+       </button>
+      </div>
+     </div>
+     <div class="result-grid">
+      <section class="panel chart-panel">
+       <div class="panel-title">
+        <div>
+         <h2 id="chart-title">
+          Equity curve
+         </h2>
+         <p id="date-range">
+         </p>
+        </div>
+        <div aria-label="Chart series" class="tabs">
+         <button aria-pressed="true" class="selected" data-chart="equity">
+          Equity
+         </button>
+         <button aria-pressed="false" data-chart="drawdown">
+          Drawdown
+         </button>
+         <button aria-pressed="false" data-chart="price">
+          Market
+         </button>
+        </div>
+       </div>
+       <div id="chart">
+        <div class="empty">
+         <h3>
+          No backtest yet
+         </h3>
+         <p>
+          Run the draft to inspect equity and market prices.
+         </p>
+        </div>
+       </div>
+       <div class="chart-footer">
+        <span id="chart-caption">
+         Bundled historical data · No live orders
+        </span>
+        <span id="chart-value">
+        </span>
+       </div>
+      </section>
+      <section class="panel signal-panel">
+       <div class="panel-title">
+        <div>
+         <h2>
+          Indicator diagnostics
+         </h2>
+         <p>
+          Inspect each indicator behind the combined strategy.
+         </p>
+        </div>
+        <select aria-label="Indicator to inspect" disabled="" id="diagnostic-select">
+         <option>
+          No indicators calculated
+         </option>
+        </select>
+        <div class="chart-legend" id="diagnostic-legend">
+        </div>
+       </div>
+       <div id="diagnostic-chart">
+        <p class="placeholder">
+         Indicator values and signal counts appear after a run.
+        </p>
+       </div>
+       <div class="chart-footer" id="diagnostic-caption">
+        No indicator values yet.
+       </div>
+      </section>
+     </div>
+     <p class="results-note">
+      Charts use equally spaced market bars. Use the range sliders to inspect a segment; metrics always cover the full run.
+     </p>
+    </section>
+    <section aria-labelledby="tab-execution" hidden="" id="panel-execution" role="tabpanel">
+     <div class="execution-heading">
+      <h2>
+       Orders &amp; trades
+      </h2>
+      <p id="execution-context">
+       Run a strategy to inspect its orders and completed trades.
+      </p>
+     </div>
+     <div class="execution-grid">
+      <section class="panel ledger" id="ledger">
+       <div class="panel-title">
+        <div>
+         <h2>
+          Completed trades
+          <span class="count" id="trade-count">
+           0
+          </span>
+         </h2>
+         <p>
+          Prices, position sizes, costs, and outcomes.
+         </p>
+        </div>
+        <button class="secondary" disabled="" id="export-trades">
+         Export trades CSV
+        </button>
+       </div>
+       <div class="trade-filters">
+        <input aria-label="Filter trades" id="search" placeholder="Search time or exit outcome" type="search"/>
+        <select aria-label="Trade side" id="trade-side">
+         <option value="all">
+          Both sides
+         </option>
+         <option value="long">
+          Long
+         </option>
+         <option value="short">
+          Short
+         </option>
+        </select>
+        <select aria-label="Trade outcome" id="trade-outcome">
+         <option value="all">
+          All outcomes
+         </option>
+         <option value="profit">
+          Profitable
+         </option>
+         <option value="loss">
+          Losing
+         </option>
+        </select>
+        <select aria-label="Sort trades" id="trade-sort">
+         <option value="time">
+          Entry time ↑
+         </option>
+         <option value="pnl-desc">
+          Net P&amp;L ↓
+         </option>
+         <option value="pnl-asc">
+          Net P&amp;L ↑
+         </option>
+        </select>
+       </div>
+       <div class="table-scroll">
+        <table>
+         <thead>
+          <tr>
+           <th>
+            Trade / entry / exit
+           </th>
+           <th>
+            Side
+           </th>
+           <th>
+            Entry → exit
+           </th>
+           <th>
+            Units
+           </th>
+           <th>
+            Costs · USD
+           </th>
+           <th>
+            Net P&amp;L · USD
+           </th>
+           <th>
+            Exit outcome
+           </th>
+          </tr>
+         </thead>
+         <tbody id="trades">
+          <tr>
+           <td class="table-empty" colspan="7">
+            No completed trades yet.
+           </td>
+          </tr>
+         </tbody>
+        </table>
+       </div>
+       <div class="pagination">
+        <span id="page-info">
+         No trades to display
+        </span>
+        <div>
+         <button aria-label="Previous page" disabled="" id="previous">
+          ←
+         </button>
+         <button aria-label="Next page" disabled="" id="next">
+          →
+         </button>
+        </div>
+       </div>
+      </section>
+      <aside class="panel orders">
+       <div class="panel-title">
+        <div>
+         <span class="eyebrow">
+          EXECUTION
+         </span>
+         <h2>
+          Orders
+          <span class="count" id="order-count">
+           0
+          </span>
+         </h2>
+        </div>
+       </div>
+       <p class="help">
+        Simulated entry requests. Portfolio constraints can skip a signal.
+       </p>
+       <select aria-label="Filter orders" id="order-filter">
+        <option value="all">
+         All entry requests
+        </option>
+        <option value="Executed">
+         Executed only
+        </option>
+        <option value="Skipped">
+         Skipped only
+        </option>
+       </select>
+       <div class="order-summary" id="order-summary">
+        No requests yet
+       </div>
+       <div id="order-list">
+        <p class="placeholder">
+         Every combined entry signal will appear here with its outcome.
+        </p>
+       </div>
+       <div class="pagination">
+        <span id="order-page">
+         0 orders
+        </span>
+        <div>
+         <button aria-label="Previous orders" disabled="" id="order-prev">
+          ←
+         </button>
+         <button aria-label="Next orders" disabled="" id="order-next">
+          →
+         </button>
+        </div>
+       </div>
+       <div class="order-detail" hidden="" id="order-detail">
+       </div>
+      </aside>
+     </div>
+    </section>
+    <section aria-labelledby="tab-compare" hidden="" id="panel-compare" role="tabpanel">
+     <section class="panel comparison">
+      <div class="panel-title">
+       <div>
+        <h2>
+         Compare two runs
+        </h2>
+        <p id="comparison-note">
+         Complete two runs to compare their results and parameters.
+        </p>
+       </div>
+      </div>
+      <div class="comparison-selectors">
+       <label>
+        Baseline
+        <select disabled="" id="compare-baseline">
+        </select>
+       </label>
+       <label>
+        Candidate
+        <select disabled="" id="compare-candidate">
+        </select>
+       </label>
+      </div>
+      <div class="comparison-metrics" id="comparison-metrics">
+      </div>
+      <div class="comparison-grid">
+       <div>
+        <h3>
+         Net return · %
+        </h3>
+        <div id="comparison-chart">
+        </div>
+        <p aria-live="polite" class="help" id="comparison-chart-value">
+        </p>
+        <div class="chart-legend" id="comparison-legend">
+        </div>
+       </div>
+       <div>
+        <h3>
+         Settings changed
+        </h3>
+        <div class="table-scroll">
+         <table>
+          <thead>
+           <tr>
+            <th>
+             Parameter
+            </th>
+            <th>
+             Baseline
+            </th>
+            <th>
+             Candidate
+            </th>
+           </tr>
+          </thead>
+          <tbody id="comparison-diff">
+           <tr>
+            <td class="table-empty" colspan="3">
+             Choose two runs.
+            </td>
+           </tr>
+          </tbody>
+         </table>
+        </div>
+       </div>
+      </div>
+     </section>
+     <section class="panel history" id="history">
+      <div class="panel-title">
+       <div>
+        <h2>
+         Compare experiments
+        </h2>
+        <p>
+         Each row is a completed run with its own settings.
+        </p>
+       </div>
+       <button class="secondary" disabled="" id="load-settings">
+        Load run settings
+       </button>
+      </div>
+      <div class="table-scroll">
+       <table>
+        <thead>
+         <tr>
+          <th>
+           Experiment
+          </th>
+          <th>
+           Market / sample
+          </th>
+          <th>
+           Indicators / rule
+          </th>
+          <th>
+           Return
+          </th>
+          <th>
+           Drawdown
+          </th>
+          <th>
+           Trades
+          </th>
+         </tr>
+        </thead>
+        <tbody id="history-rows">
+         <tr>
+          <td class="table-empty" colspan="6">
+           Run a variation to compare it here.
+          </td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </section>
+     <p class="results-note">
+      Comparisons use the stored results. Different samples can be compared in the table; curve overlays require the same market and observation times.
+     </p>
+    </section>
+   </section>
+   <footer>
+    <span>
+     TradeTide · Local FX backtesting
+    </span>
+    <span id="storage-status" role="status">
+     Drafts, strategies, and runs stay in this browser.
+    </span>
+   </footer>
+  </main>
+  <input accept=".json,application/json" hidden="" id="import-file" type="file"/>
+  <div class="notice" hidden="" id="notice" role="status">
+  </div>
+  <dialog id="trade-dialog">
+   <div class="panel-title">
+    <h2 id="trade-detail-title">
+     Trade detail
+    </h2>
+    <button aria-label="Close trade details" class="icon-button" id="close-trade">
+     ×
+    </button>
+   </div>
+   <div id="trade-detail-body">
+   </div>
+   <button class="primary" id="trade-on-chart">
+    Show entry &amp; exit on chart →
+   </button>
+  </dialog>
+ </body>
+</html>

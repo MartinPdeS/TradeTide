@@ -34,13 +34,13 @@ TradeTide is a comprehensive Python library for forex trading strategy backtesti
 ```
 TradeTide/
 ├── TradeTide/                   # Main package
-│   ├── cpp/                     # C++ backend implementation
-│   ├── binary/                  # Compiled binaries (pybind11)
 │   ├── indicators/              # Technical indicators
 │   ├── market.py               # Market data handling
 │   ├── portfolio.py            # Portfolio management
 │   ├── backtester.py           # Backtesting engine
 │   └── ...
+├── cpp/                        # C++ backend; extensions install into TradeTide/
+├── conda.recipe/               # Conda packaging recipe
 ├── tests/                      # Test suite
 ├── docs/                       # Documentation
 │   └── examples/               # Sphinx gallery examples

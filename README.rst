@@ -62,6 +62,68 @@ Verify the installation with the Python interpreter used for backtests:
 Released wheels are the easiest option. Building from source requires CMake,
 a C++20 compiler, pybind11, and OpenMP.
 
+Graphical workspace
+-------------------
+
+Launch the local strategy lab in your browser:
+
+.. code-block:: console
+
+   TradeTide
+
+After updating a source checkout, reinstall with ``pip install -e .`` to
+register the command. You can also use ``python -m TradeTide.gui`` or the
+``tradetide-gui`` alias. The GUI runs locally and needs no
+additional dependencies, accounts, or internet access. The home page offers
+editable mean-reversion, trend-following, and momentum templates, plus recent
+experiments. The strategy workspace separates setup, results, orders and trades,
+and run comparisons into four keyboard-accessible tabs. Navigation preserves
+your draft and completed runs; a successful backtest opens the Results tab.
+The run action sits in a separate toolbar above the form.
+
+Build a stack of up to eight independently configured Bollinger Bands, moving-average crossings,
+RSI, RMI, and MACD indicators. Enable or disable each indicator and combine
+its entry events using unanimous agreement, any non-conflicting agreement,
+or weighted voting with a configurable threshold.
+
+Tune fixed position size, concurrent positions, capital at risk, fixed/trailing/
+break-even exits, commission, slippage, and additional spread. Inspect equity,
+drawdown, market entry markers, individual indicator curves, simulated entry
+requests (executed or skipped), and a searchable trade ledger with costs and
+position sizes. Open any trade to see its cost breakdown and highlight its
+entry and exit on the market chart. Filter trades by side or outcome, sort by
+P&L, and export the filtered ledger as CSV. Chart range sliders and keyboard
+inspection make individual periods easier to examine.
+
+The parameter-sweep tool tests 2–6 values for one setting, keeping all other
+settings fixed. Every candidate is validated before the first simulation;
+queued runs can be stopped after the current run finishes. Compare any two
+completed runs to inspect metric changes and exact parameter differences.
+Normalized equity curves are overlaid only for matching markets and observation
+times; metric comparisons remain available for different samples.
+
+Drafts and up to 20 named strategies are saved locally. The last 30 runs are
+stored in the browser and restored after a refresh, using the same browser
+profile and server address/port. Import strategy JSON or the settings from an
+exported run; undo restores the replaced draft. Export JSON to keep portable
+copies independent of browser storage. ``Ctrl+Enter`` or ``Cmd+Enter`` runs
+the current draft from any workspace tab.
+
+Samples begin at each dataset's first observation; the selected duration is
+calendar time and may include market closures. The displayed dates show the
+actual simulation period. Bollinger, moving-average, and RMI windows use minutes;
+RSI and MACD windows use bars. Signal rules combine entry events on the same bar,
+not persistent indicator regions. Simulated entries use the native engine's
+bid/ask closing prices. Skipped requests reflect portfolio constraints or the
+end of the sample; they are not broker orders. Costs adjust reported equity
+and P&L after simulation, without changing position sizing. Editing settings
+leaves the previous result visible until a new run succeeds. The results page
+identifies when the current draft differs from the selected run.
+
+Use ``python -m TradeTide.gui --port 8766 --no-browser`` to choose a port or
+open the displayed URL yourself. Stop the server with Ctrl+C. The server binds
+only to ``127.0.0.1`` and is intended for a local research session.
+
 First backtest
 --------------
 

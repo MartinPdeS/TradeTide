@@ -78,5 +78,4 @@ clean:
 	@echo "Removing TradeTide build products"
 	rm -rf $(BUILD_DIR) .skbuild
 	rm -f TradeTide/*.so TradeTide/*.a
-	rm -f TradeTide/binary/*.so TradeTide/binary/*.a
 	rm -rf .pytest_cache htmlcov .coverage

@@ -2,6 +2,6 @@
 # don't change, don't track in version control
 __all__ = ["__version__", "__version_tuple__", "version", "version_tuple", "__commit_id__", "commit_id"]
 
-__version__ = version = '0.2.7'
-__version_tuple__ = version_tuple = (0, 2, 7)
-__commit_id__ = commit_id = 'g3d2e6b454'
+__version__ = version = '1.0.0'
+__version_tuple__ = version_tuple = (1, 0, 0)
+__commit_id__ = commit_id = None

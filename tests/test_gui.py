@@ -30,11 +30,21 @@ def test_gui_runs_native_backtest(strategy):
     json.dumps(result, allow_nan=False)
 
 
+def test_backtest_reports_pipeline_progress():
+    """Backtest progress covers each native pipeline phase through completion."""
+    updates = []
+    run_backtest(BacktestConfig(days=1), lambda completed, phase: updates.append((completed, phase)))
+
+    assert updates[0] == (5, "Loading market data")
+    assert updates[-1] == (100, "Backtest complete")
+    assert [completed for completed, _ in updates] == sorted(completed for completed, _ in updates)
+
+
 @pytest.mark.parametrize(
     "values",
     [
         {"days": 0},
-        {"days": 15},
+        {"days": 181},
         {"capital": float("inf")},
         {"strategy": "unknown"},
         {"pair": "../EUR"},
@@ -55,6 +65,13 @@ def test_json_safe_undefined_metrics():
     }
 
 
+def test_gui_accepts_long_bundled_data_samples():
+    """The GUI supports long samples while retaining an explicit resource limit."""
+    assert BacktestConfig(days=180).days == 180
+    with pytest.raises(ValidationError):
+        BacktestConfig(days=181)
+
+
 def test_local_http_boundary():
     server = WorkspaceServer(("127.0.0.1", 0))
     thread = threading.Thread(target=server.serve_forever, daemon=True)
@@ -62,7 +79,17 @@ def test_local_http_boundary():
     base = f"http://127.0.0.1:{server.server_port}"
     try:
         with urlopen(base) as response:
-            assert b"Strategy setup" in response.read()
+            assert b"Indicator stack" in response.read()
+        with urlopen(base) as response:
+            assert b"Market data" in response.read()
+        with urlopen(base) as response:
+            page = response.read()
+            assert b"6 months" in page
+            assert b"One year requires longer bundled market data." in page
+        with urlopen(base) as response:
+            assert b'load-strategy-dialog' in response.read()
+        with urlopen(base) as response:
+            assert b"Research dashboard" in response.read()
         with urlopen(base + "/api/session") as response:
             token = json.load(response)["token"]
         with pytest.raises(HTTPError) as error:
@@ -72,6 +99,8 @@ def test_local_http_boundary():
             urlopen(Request(base, headers={"Host": "untrusted.example"}))
         assert error.value.code == 403
         headers = {"X-TradeTide-Token": token, "Content-Type": "application/json"}
+        with urlopen(Request(base + "/api/progress", headers=headers)) as response:
+            assert json.load(response) == {"completed": 0, "phase": "Ready"}
         # Configuration validation must not acquire the simulation lock or run a backtest.
         server.run_lock.acquire()
         try:
@@ -90,7 +119,7 @@ def test_local_http_boundary():
             server.run_lock.release()
         with urlopen(base + "/research.mjs") as response:
             assert response.headers["Content-Type"].startswith("text/javascript")
-            assert b"buildSweep" in response.read()
+            assert b"normalizedEquity" in response.read()
         with pytest.raises(HTTPError) as error:
             urlopen(
                 Request(base + "/api/backtest", data=b'{"days":0}', headers=headers)
@@ -104,6 +133,8 @@ def test_local_http_boundary():
             )
         ) as response:
             assert json.load(response)["metrics"]["initial_equity"] == 100000
+        with urlopen(Request(base + "/api/progress", headers=headers)) as response:
+            assert json.load(response) == {"completed": 100, "phase": "Backtest complete"}
     finally:
         server.shutdown()
         server.server_close()

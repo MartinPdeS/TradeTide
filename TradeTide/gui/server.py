@@ -9,9 +9,14 @@ from pathlib import Path
 import secrets
 import threading
 import webbrowser
+from collections.abc import Callable
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
+
+
+MAX_GUI_SAMPLE_DAYS = 180
+ProgressCallback = Callable[[int, str], None]
 
 
 class IndicatorConfig(BaseModel):
@@ -45,7 +50,7 @@ class BacktestConfig(BaseModel):
     model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
     name: str = Field(default="Untitled strategy", min_length=1, max_length=80)
     pair: Literal["EUR", "GBP", "CHF", "JPY", "CAD"] = "EUR"
-    days: int = Field(default=3, ge=1, le=14)
+    days: int = Field(default=1, ge=1, le=MAX_GUI_SAMPLE_DAYS)
     indicators: list[IndicatorConfig] = Field(
         default_factory=lambda: [IndicatorConfig()], min_length=1, max_length=8
     )
@@ -109,8 +114,18 @@ def create_indicator(config: IndicatorConfig):
     )
 
 
-def run_backtest(config: BacktestConfig) -> dict:
-    """Combine native entry signals, simulate positions, and expose their outcomes."""
+def run_backtest(config: BacktestConfig, progress: ProgressCallback | None = None) -> dict:
+    """Combine native entry signals, simulate positions, and expose their outcomes.
+
+    Parameters
+    ----------
+    config : BacktestConfig
+        Validated strategy and simulation settings.
+    progress : callable, optional
+        Receives a completed percentage and current pipeline phase. This keeps
+        interactive clients informed during market loading, indicator
+        calculation, portfolio simulation, and report generation.
+    """
     from TradeTide import (
         BacktestResult,
         Market,
@@ -123,10 +138,16 @@ def run_backtest(config: BacktestConfig) -> dict:
     )
     from TradeTide import signal_rules
 
+    def report(completed: int, phase: str) -> None:
+        if progress is not None:
+            progress(completed, phase)
+
+    report(5, "Loading market data")
     market = Market()
     dataset = Path(__file__).resolve().parents[1] / "data" / f"{config.pair}_USD.csv"
     market.load_from_csv(str(dataset), timedelta(days=config.days))
     market.currency_pair = f"{config.pair}/USD"
+    report(25, "Market data loaded")
     active_slots = [i + 1 for i, item in enumerate(config.indicators) if item.enabled]
     active = [item for item in config.indicators if item.enabled]
     signals, diagnostics = [], []
@@ -148,7 +169,8 @@ def run_backtest(config: BacktestConfig) -> dict:
             ("Histogram", "_cpp_histogram"),
         ],
     }
-    for slot, item in zip(active_slots, active):
+    for completed_indicators, (slot, item) in enumerate(zip(active_slots, active), start=1):
+        report(25 + round(40 * (completed_indicators - 1) / len(active)), f"Calculating indicator {completed_indicators} of {len(active)}")
         indicator = create_indicator(item)
         strategy = Strategy()
         strategy.add_indicator(indicator)
@@ -167,6 +189,8 @@ def run_backtest(config: BacktestConfig) -> dict:
                 ],
             }
         )
+        report(25 + round(40 * completed_indicators / len(active)), f"Calculated indicator {completed_indicators} of {len(active)}")
+    report(70, "Combining entry signals")
     if config.combination == "weighted":
         combined = signal_rules.weighted(
             *signals,
@@ -194,15 +218,18 @@ def run_backtest(config: BacktestConfig) -> dict:
         max_concurrent_positions=config.positions,
     )
     positions = PositionCollection(market, combined.tolist())
+    report(80, "Creating positions")
     positions.open_positions(exits)
     positions.propagate_positions()
     portfolio = Portfolio(positions)
+    report(88, "Simulating portfolio")
     portfolio.simulate(sizing)
     costs = ExecutionCosts(
         commission_per_lot=config.commission,
         slippage_pips=config.slippage,
         extra_spread_pips=config.spread,
     )
+    report(95, "Calculating performance report")
     result = BacktestResult.from_portfolio(portfolio, costs)
     payload = dict(result.to_dict())
     payload["config"] = config.model_dump()
@@ -238,6 +265,7 @@ def run_backtest(config: BacktestConfig) -> dict:
             }
         )
     payload["orders"] = orders
+    report(100, "Backtest complete")
     return json_safe(payload)
 
 
@@ -261,6 +289,18 @@ class WorkspaceServer(ThreadingHTTPServer):
         super().__init__(address, WorkspaceHandler)
         self.token = secrets.token_urlsafe(32)
         self.run_lock = threading.Lock()
+        self.progress_lock = threading.Lock()
+        self._progress = {"completed": 0, "phase": "Ready"}
+
+    def set_progress(self, completed: int, phase: str) -> None:
+        """Record the current native backtest pipeline phase."""
+        with self.progress_lock:
+            self._progress = {"completed": max(0, min(100, completed)), "phase": phase}
+
+    def progress(self) -> dict[str, int | str]:
+        """Return a thread-safe snapshot of current pipeline progress."""
+        with self.progress_lock:
+            return dict(self._progress)
 
 
 class WorkspaceHandler(BaseHTTPRequestHandler):
@@ -286,6 +326,10 @@ class WorkspaceHandler(BaseHTTPRequestHandler):
             return self.respond(403, '{"error":"Invalid host"}')
         if self.path == "/api/session":
             return self.respond(200, json.dumps({"token": self.server.token}))
+        if self.path == "/api/progress":
+            if self.headers.get("X-TradeTide-Token") != self.server.token:
+                return self.respond(403, '{"error":"Invalid session; reload the page."}')
+            return self.respond(200, json.dumps(self.server.progress()))
         assets = {
             "/": ("index.html", "text/html; charset=utf-8"),
             "/app.js": ("app.js", "text/javascript; charset=utf-8"),
@@ -332,11 +376,13 @@ class WorkspaceHandler(BaseHTTPRequestHandler):
                 409, '{"error":"A backtest is already running. Try again shortly."}'
             )
         try:
-            self.respond(200, json.dumps(run_backtest(config), allow_nan=False))
+            self.server.set_progress(1, "Starting backtest")
+            self.respond(200, json.dumps(run_backtest(config, self.server.set_progress), allow_nan=False))
         except Exception:
             import logging
 
             logging.getLogger(__name__).exception("Backtest failed")
+            self.server.set_progress(0, "Backtest failed")
             self.respond(
                 500,
                 '{"error":"The backtest failed. Check the terminal for details or try a shorter sample."}',

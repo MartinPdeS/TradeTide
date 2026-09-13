@@ -1,20 +1,19 @@
 import {
   names, defaults, fieldsByKind, parameterSpec, descriptions, clone, number,
-  percent, date, parameterLabel, configDiff, pathLabel, sweepParameters,
-  buildSweep, matchingSamples, normalizedEquity,
+  percent, date, parameterLabel, configDiff, pathLabel, comparableExperiments, experimentSummary, matchingSamples, normalizedEquity,
 } from './research.mjs';
 import {plot, colors} from './charts.mjs';
 import {readLocal, writeLocal, readRuns, storeRun} from './storage.mjs';
 
 const $ = id => document.getElementById(id);
 const form = $('config');
-const tabs = ['strategy', 'results', 'execution', 'compare'];
+const tabs = ['market', 'strategy', 'results', 'execution', 'compare', 'research'];
 const ruleNames = {any: 'Any agreement', all: 'All must agree', weighted: 'Weighted vote'};
 const runHistory = [];
 let stack = [{...defaults}], result = null, busy = false, ready = false;
 let runNumber = 0, chartType = 'equity', page = 0, orderPage = 0;
-let selectedTrade = null, stopQueue = false, previousDraft = null;
-let savedStrategies = [], savedId = null, previousRoute = null;
+let selectedTrade = null, previousDraft = null;
+let savedStrategies = [], savedId = null, previousRoute = null, draftName = 'Untitled strategy';
 let draftTimer, noticeTimer, token = null, storageFailed = false;
 const closedCards = new Set();
 const stringFields = ['name', 'pair', 'combination', 'exit_policy'];
@@ -39,7 +38,7 @@ function storageError() {
   $('storage-status').className = 'error';
 }
 function settings() {
-  const config = {};
+  const config = {name: draftName};
   form.querySelectorAll('[name]').forEach(input => {
     config[input.name] = stringFields.includes(input.name) ? input.value : input.value === '' ? null : Number(input.value);
   });
@@ -66,6 +65,7 @@ function updateDraftSummary() {
 function applySettings(config, {remember = true, id = null} = {}) {
   if (remember) previousDraft = {config: settings(), savedId};
   savedId = id;
+  draftName = config.name || 'Untitled strategy';
   form.reset();
   Object.entries(config).forEach(([key, value]) => {
     const input = form.elements.namedItem(key);
@@ -79,7 +79,7 @@ function applySettings(config, {remember = true, id = null} = {}) {
   persistDraft(); updateDraftSummary();
 }
 function revealControl(input) {
-  navigate('strategy');
+  navigate(['pair', 'days'].includes(input.name) ? 'market' : 'strategy');
   let parent = input.parentElement;
   while (parent && parent !== form) { if (parent.tagName === 'DETAILS') parent.open = true; parent = parent.parentElement; }
   input.scrollIntoView({block: 'center'}); input.focus();
@@ -108,17 +108,40 @@ function validateDraft() {
   }
   return settings();
 }
-async function api(path, config) {
+async function ensureSession() {
   if (!token) {
     const session = await fetch('/api/session');
     if (!session.ok) throw Error('Cannot connect to TradeTide. Check that the local server is running.');
     token = (await session.json()).token;
   }
+}
+async function api(path, config) {
+  await ensureSession();
   const response = await fetch(path, {method: 'POST', headers: {'Content-Type': 'application/json', 'X-TradeTide-Token': token}, body: JSON.stringify(config)});
   if (response.status === 403) { token = null; throw Error('The server session changed. Try again.'); }
   const data = await response.json();
   if (!response.ok) throw Error(data.error || 'The request could not be completed.');
   return data;
+}
+async function readProgress() {
+  await ensureSession();
+  const response = await fetch('/api/progress', {headers: {'X-TradeTide-Token': token}});
+  if (response.status === 403) { token = null; throw Error('The server session changed. Try again.'); }
+  const data = await response.json();
+  if (!response.ok) throw Error(data.error || 'Could not read backtest progress.');
+  return data;
+}
+const delay = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
+async function runWithProgress(config) {
+  let finished = false;
+  const request = api('/api/backtest', config).finally(() => { finished = true; });
+  while (!finished) {
+    const progress = await readProgress();
+    $('queue-progress').value = progress.completed;
+    $('queue-label').textContent = progress.phase;
+    await delay(120);
+  }
+  return request;
 }
 function cardSummary(item) {
   return fieldsByKind[item.kind].map(key => `${parameterSpec[key][0]} ${item[key] ?? '—'}`).join(' · ');
@@ -162,7 +185,7 @@ function renderStack(focusIndex = null) {
   }));
   $('indicator-count').textContent = `${stack.filter(item => item.enabled).length} active`;
   $('add-indicator').disabled = stack.length >= 8;
-  updateDraftSummary(); updateSweepParameters();
+  updateDraftSummary();
   if (focusIndex != null) $('indicator-stack').children[focusIndex].querySelector('summary').focus();
 }
 function updateRules() {
@@ -176,67 +199,43 @@ function updateRules() {
   renderStack();
 }
 function updateExit() { $('trigger-field').hidden = form.elements.exit_policy.value !== 'break_even'; }
-function updateSweepParameters() {
-  const previous = $('sweep-parameter').value;
-  $('sweep-parameter').replaceChildren(...sweepParameters(settings()).map(item => option(item.key, item.label)));
-  if ([...$('sweep-parameter').options].some(item => item.value === previous)) $('sweep-parameter').value = previous;
-}
 function setBusy(value) {
   busy = value;
-  if (value) $('stop-queue').disabled = false;
-  $('fields').disabled = value; $('sweep-fields').disabled = value;
-  ['run', 'save-strategy', 'import-home', 'export-strategy', 'import-strategy', 'undo-draft'].forEach(id => { $(id).disabled = value || !ready; });
+  $('fields').disabled = value;
+  ['run', 'load-strategy', 'save-strategy', 'import-home', 'export-strategy', 'import-strategy', 'undo-draft'].forEach(id => { $(id).disabled = value || !ready; });
   $('edit-result').disabled = value || !result; $('load-settings').disabled = value || !result;
-  $('stop-queue').hidden = !value; $('run-progress').hidden = !value;
+  $('export-research').disabled = value || !runHistory.length;
+  $('run-progress').hidden = !value;
   $('run').textContent = value ? 'Running…' : 'Run backtest';
   $('run').setAttribute('aria-busy', String(value));
 }
-async function executeRuns(entries, sweepPath = null) {
+async function executeRun(config) {
   if (busy || !ready) return;
-  persistDraft(); stopQueue = false; setBusy(true);
-  $('queue-progress').max = entries.length; $('queue-progress').value = 0;
-  const completed = [];
+  persistDraft(); setBusy(true);
+  $('queue-progress').max = 100; $('queue-progress').value = 0;
   try {
-    // Validate every candidate before starting the first simulation.
-    for (const entry of entries) entry.config = await api('/api/config', entry.config);
-    for (const [index, entry] of entries.entries()) {
-      if (stopQueue) break;
-      const variant = sweepPath ? `${pathLabel(sweepPath, entry.config)} = ${entry.value}` : '';
-      $('queue-label').textContent = `${index + 1} of ${entries.length}${variant ? ` · ${variant}` : ''}`;
-      message(`Running ${index + 1} of ${entries.length}…`);
-      const started = performance.now();
-      const data = await api('/api/backtest', entry.config);
-      Object.assign(data, {id: crypto.randomUUID(), runNumber: ++runNumber, createdAt: Date.now(), elapsedMs: performance.now() - started, variant});
-      completed.push(data); runHistory.unshift(data);
-      const expired = runHistory.splice(30);
-      try { await storeRun(data, expired.map(run => run.id)); writeLocal('runNumber', runNumber); }
-      catch { storageError(); }
-      $('queue-progress').value = index + 1;
-      result = data; renderResults(); renderHome(); renderHistory();
-    }
-    if (completed.length) {
-      selectResult(completed.at(-1), false);
-      if (entries.length > 1) {
-        refreshComparisonSelectors(completed[0].id, completed.at(-1).id);
-        navigate('compare');
-      } else navigate('results');
-      message(`${completed.length} ${completed.length === 1 ? 'run' : 'runs'} completed${stopQueue ? '; remaining runs stopped' : ''}.`);
-    } else message('No runs started.');
+    const normalized = await api('/api/config', config);
+    $('queue-label').textContent = 'Starting';
+    message('Running backtest…');
+    const started = performance.now();
+    const data = await runWithProgress(normalized);
+    Object.assign(data, {id: crypto.randomUUID(), runNumber: ++runNumber, createdAt: Date.now(), elapsedMs: performance.now() - started});
+    runHistory.unshift(data);
+    const expired = runHistory.splice(30);
+    try { await storeRun(data, expired.map(run => run.id)); writeLocal('runNumber', runNumber); }
+    catch { storageError(); }
+    result = data; renderResults(); renderHome(); renderHistory(); renderResearch();
+    selectResult(data, false);
+    navigate('results');
+    message('Backtest completed.');
   } catch (error) {
-    message(`${completed.length ? `${completed.length} runs completed. ` : ''}${error.message}`, true);
-    if (sweepPath) $('sweep-error').textContent = error.message;
+    message(error.message, true);
   } finally { setBusy(false); updateDraftSummary(); }
 }
 form.addEventListener('submit', event => {
   event.preventDefault(); if (busy) return;
-  const config = validateDraft(); if (config) executeRuns([{config}]);
+  const config = validateDraft(); if (config) executeRun(config);
 });
-$('run-sweep').addEventListener('click', () => {
-  $('sweep-error').textContent = ''; const config = validateDraft(); if (!config) return;
-  try { executeRuns(buildSweep(config, $('sweep-parameter').value, $('sweep-values').value), $('sweep-parameter').value); }
-  catch (error) { $('sweep-error').textContent = error.message; $('sweep-values').focus(); }
-});
-$('stop-queue').addEventListener('click', () => { stopQueue = true; $('stop-queue').disabled = true; message('Finishing the current run. Remaining runs will not start.'); });
 $('run').title = 'Run draft · Ctrl/⌘ + Enter';
 document.addEventListener('keydown', event => {
   if ((event.ctrlKey || event.metaKey) && event.key === 'Enter' && !document.querySelector('dialog[open]')) {
@@ -248,7 +247,7 @@ function selectResult(data, goToResults = true) {
   result = data; page = 0; orderPage = 0; selectedTrade = null;
   $('search').value = ''; $('order-filter').value = 'all'; $('order-detail').hidden = true;
   $('range-start').value = 0; $('range-end').value = 100;
-  renderResults(); renderHistory();
+  renderResults(); renderHistory(); renderResearch();
   if (goToResults) navigate('results');
 }
 function renderResults() {
@@ -269,7 +268,7 @@ function renderResults() {
   $('run-label').textContent = `${result.config.pair} / USD · ${date(result.times[0])} — ${date(result.times.at(-1))}`;
   $('result-badge').textContent = `RUN ${String(result.runNumber).padStart(2, '0')}`;
   $('execution-context').textContent = `Run ${result.runNumber} · ${result.config.name} · ${result.config.pair} / USD`;
-  $('selected-run').replaceChildren(...runHistory.map(run => option(run.id, `#${run.runNumber} ${run.config.name}${run.variant ? ` · ${run.variant}` : ''}`)));
+  $('selected-run').replaceChildren(...runHistory.map(run => option(run.id, `#${run.runNumber} ${run.config.name}`)));
   $('selected-run').value = result.id;
   const cost = result.trades.reduce((total, trade) => total + Object.values(trade.costs).reduce((a, b) => a + b, 0), 0);
   const facts = [
@@ -433,16 +432,16 @@ function renderHistory() {
     const row = el('tr'); if (run === result) row.className = 'current-run';
     const first = el('td'), link = el('button', `#${run.runNumber} ${run.config.name}`, 'run-link');
     link.addEventListener('click', () => selectResult(run)); first.append(link);
-    if (run.variant) first.append(el('small', run.variant)); row.append(first);
+    row.append(first);
     [`${run.config.pair}/USD · ${run.config.days}d`, `${run.indicators.length} / ${ruleNames[run.config.combination]}`, percent(run.metrics.total_return), percent(run.metrics.max_drawdown), run.metrics.total_trades].forEach(value => row.append(el('td', value)));
     return row;
   }));
-  if (!runHistory.length) emptyRow($('history-rows'), 6, 'No completed runs. Run a strategy or parameter sweep.');
+  if (!runHistory.length) emptyRow($('history-rows'), 6, 'No completed runs. Run a strategy to create an experiment.');
   refreshComparisonSelectors();
 }
 function refreshComparisonSelectors(baseline = $('compare-baseline').value, candidate = $('compare-candidate').value) {
   ['compare-baseline', 'compare-candidate'].forEach(id => {
-    $(id).replaceChildren(...runHistory.map(run => option(run.id, `#${run.runNumber} ${run.config.name}${run.variant ? ` · ${run.variant}` : ''}`)));
+    $(id).replaceChildren(...runHistory.map(run => option(run.id, `#${run.runNumber} ${run.config.name}`)));
     $(id).disabled = runHistory.length < 2;
   });
   $('compare-baseline').value = runHistory.some(run => run.id === baseline) ? baseline : runHistory[1]?.id || runHistory[0]?.id || '';
@@ -473,6 +472,67 @@ function renderComparison() {
   else $('comparison-chart').replaceChildren(el('p', 'Curve overlay requires the same market and observation times.', 'placeholder'));
 }
 ['compare-baseline', 'compare-candidate'].forEach(id => $(id).addEventListener('change', renderComparison));
+function rankedExperiments() {
+  const runs = [...runHistory], sort = $('research-sort').value;
+  const compare = {
+    return: (a, b) => b.metrics.total_return - a.metrics.total_return,
+    sharpe: (a, b) => b.metrics.sharpe_ratio - a.metrics.sharpe_ratio,
+    drawdown: (a, b) => a.metrics.max_drawdown - b.metrics.max_drawdown,
+    recent: (a, b) => b.createdAt - a.createdAt,
+  };
+  return runs.sort(compare[sort]);
+}
+function renderResearch() {
+  const summary = experimentSummary(runHistory);
+  $('export-research').disabled = !summary;
+  if (!summary) {
+    $('research-summary').replaceChildren();
+    $('research-rows').replaceChildren(); emptyRow($('research-rows'), 6, 'No completed experiments.');
+    $('research-chart').replaceChildren(el('p', 'Complete a backtest to start an experiment series.', 'placeholder'));
+    $('research-legend').replaceChildren();
+    return;
+  }
+  const facts = [
+    ['Experiments', summary.count],
+    ['Average return', percent(summary.averageReturn)],
+    ['Best return', `${percent(summary.bestReturn.metrics.total_return)} · #${summary.bestReturn.runNumber}`],
+    ['Best Sharpe', `${number(summary.bestSharpe.metrics.sharpe_ratio)} · #${summary.bestSharpe.runNumber}`],
+  ];
+  $('research-summary').replaceChildren(...facts.map(([label, value]) => {
+    const item = el('div'); item.append(el('span', label), el('strong', String(value))); return item;
+  }));
+  const ranked = rankedExperiments();
+  $('research-rows').replaceChildren(...ranked.map(run => {
+    const row = el('tr'), first = el('td'), link = el('button', `#${run.runNumber} ${run.config.name}`, 'research-link');
+    link.addEventListener('click', () => selectResult(run));
+    first.append(link, el('small', `${run.config.pair}/USD · ${run.config.days}d`));
+    row.append(first);
+    const factor = run.metrics.profit_factor;
+    [percent(run.metrics.total_return), percent(run.metrics.max_drawdown), number(run.metrics.sharpe_ratio), Number.isFinite(factor) ? number(factor) : '∞', run.metrics.total_trades].forEach(value => row.append(el('td', String(value))));
+    return row;
+  }));
+  const reference = result && runHistory.includes(result) ? result : runHistory[0];
+  const comparable = comparableExperiments(runHistory, reference);
+  $('research-note').textContent = `${summary.count} retained experiment${summary.count === 1 ? '' : 's'} · returns and risk metrics cover each complete sample.`;
+  $('research-chart-note').textContent = `${comparable.length} run${comparable.length === 1 ? '' : 's'} match #${reference.runNumber}'s market and observation times.`;
+  $('research-chart-value').textContent = '';
+  legend($('research-legend'), comparable.map(run => `#${run.runNumber} ${run.config.name}`));
+  plot($('research-chart'), comparable.map(run => ({name: `#${run.runNumber}`, values: normalizedEquity(run)})), reference.times, {
+    onInspect: text => { $('research-chart-value').textContent = text; },
+  });
+}
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, character => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[character]));
+}
+function exportResearchReport() {
+  const summary = experimentSummary(runHistory);
+  if (!summary) return;
+  const rows = rankedExperiments().map(run => `<tr><td>#${run.runNumber} ${escapeHtml(run.config.name)}<small>${escapeHtml(`${run.config.pair}/USD · ${run.config.days}d`)}</small></td><td>${percent(run.metrics.total_return)}</td><td>${percent(run.metrics.max_drawdown)}</td><td>${number(run.metrics.sharpe_ratio)}</td><td>${Number.isFinite(run.metrics.profit_factor) ? number(run.metrics.profit_factor) : '∞'}</td><td>${run.metrics.total_trades}</td></tr>`).join('');
+  const document = `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>TradeTide research report</title><style>body{margin:0;background:#f7f9fc;color:#23334c;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}main{max-width:1200px;margin:auto;padding:32px}h1{margin:0 0 8px}.subtitle,small{color:#728198}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:24px 0}.card,section{background:white;border:1px solid #e2e8f1;border-radius:10px;padding:18px}.card span{display:block;color:#728198;font-size:11px}.card strong{display:block;font-size:21px;margin-top:8px}table{border-collapse:collapse;width:100%}th,td{padding:12px;text-align:right;border-bottom:1px solid #e2e8f1}th{background:#23334c;color:white}th:first-child,td:first-child{text-align:left}td small{display:block;margin-top:4px}</style></head><body><main><h1>TradeTide research report</h1><p class="subtitle">Experiment ranking exported from the local research workspace. Metrics cover each full backtest sample.</p><div class="cards"><div class="card"><span>Experiments</span><strong>${summary.count}</strong></div><div class="card"><span>Average return</span><strong>${percent(summary.averageReturn)}</strong></div><div class="card"><span>Best return</span><strong>${percent(summary.bestReturn.metrics.total_return)}</strong></div><div class="card"><span>Best Sharpe</span><strong>${number(summary.bestSharpe.metrics.sharpe_ratio)}</strong></div></div><section><table><thead><tr><th>Experiment</th><th>Return</th><th>Max drawdown</th><th>Sharpe</th><th>Profit factor</th><th>Trades</th></tr></thead><tbody>${rows}</tbody></table></section></main></body></html>`;
+  download(document, 'tradetide-research-report.html', 'text/html');
+}
+$('research-sort').addEventListener('change', renderResearch);
+$('export-research').addEventListener('click', exportResearchReport);
 function useResultSettings() {
   if (!result || busy) return;
   applySettings(result.config); navigate('strategy'); message(`Loaded run #${result.runNumber}. Edit the draft or run a variation.`);
@@ -483,16 +543,30 @@ $('edit-result').addEventListener('click', useResultSettings);
 function persistLibrary() {
   try { writeLocal('strategies', savedStrategies); } catch { storageError(); throw Error('Strategy could not be saved. Export its JSON instead.'); }
 }
+async function loadSavedStrategy(saved) {
+  if (busy) { notice('Wait for the current run to finish.'); return; }
+  try {
+    applySettings(await api('/api/config', saved.config), {id: saved.id});
+    if ($('load-strategy-dialog').open) $('load-strategy-dialog').close();
+    navigate('strategy'); message('Saved strategy loaded.');
+  } catch (error) { notice(error.message); }
+}
+function renderLoadStrategyDialog() {
+  const list = $('load-strategy-list');
+  list.replaceChildren(...savedStrategies.map(saved => {
+    const button = el('button', undefined, 'saved-open');
+    button.append(el('strong', saved.config.name), el('small', `${saved.config.pair} / USD · ${saved.config.indicators.filter(item => item.enabled).map(item => names[item.kind]).join(' + ')}`));
+    button.addEventListener('click', () => loadSavedStrategy(saved));
+    return button;
+  }));
+  if (!savedStrategies.length) list.append(el('p', 'No saved strategies yet. Save the current draft from the bottom of the Strategy tab.', 'placeholder'));
+}
 function renderHome() {
   $('saved-count').textContent = savedStrategies.length; $('home-run-count').textContent = runHistory.length;
   $('saved-strategies').replaceChildren(...savedStrategies.map(saved => {
     const card = el('article', undefined, 'saved-card'), main = el('button', undefined, 'saved-open');
     main.append(el('strong', saved.config.name), el('small', `${saved.config.pair} / USD · ${saved.config.indicators.filter(item => item.enabled).map(item => names[item.kind]).join(' + ')}`));
-    main.addEventListener('click', async () => {
-      if (busy) { notice('Wait for the current run to finish.'); return; }
-      try { applySettings(await api('/api/config', saved.config), {id: saved.id}); navigate('strategy'); message('Saved strategy loaded.'); }
-      catch (error) { notice(error.message); }
-    });
+    main.addEventListener('click', () => loadSavedStrategy(saved));
     const remove = el('button', 'Remove', 'text-button');
     remove.setAttribute('aria-label', `Remove saved strategy ${saved.config.name}`);
     remove.addEventListener('click', () => {
@@ -503,17 +577,17 @@ function renderHome() {
     });
     card.append(main, remove); return card;
   }));
-  if (!savedStrategies.length) $('saved-strategies').append(el('p', 'No saved strategies. Use “Save strategy” in the workspace to keep a reusable configuration.', 'placeholder'));
+  if (!savedStrategies.length) $('saved-strategies').append(el('p', 'No saved strategies. Use “Save strategy” at the bottom of the Strategy tab to keep a reusable configuration.', 'placeholder'));
   $('home-recent').replaceChildren(...runHistory.slice(0, 6).map(run => {
     const button = el('button', undefined, 'recent-run'), label = el('span', `#${run.runNumber} · ${run.config.name}`);
-    label.append(el('small', run.variant || `${run.config.pair} / USD · ${run.indicators.length} indicators · ${run.config.days}d`));
+    label.append(el('small', `${run.config.pair} / USD · ${run.indicators.length} indicators · ${run.config.days}d`));
     button.append(label, el('span', `${percent(run.metrics.total_return)} →`, run.metrics.total_return >= 0 ? 'positive' : 'negative'));
     button.addEventListener('click', () => selectResult(run)); return button;
   }));
   if (!runHistory.length) $('home-recent').append(el('p', 'No completed backtests. Start with a template or run your current draft.', 'placeholder'));
 }
-$('save-strategy').addEventListener('click', async () => {
-  if (busy) return; const config = validateDraft(); if (!config) return;
+async function saveStrategy() {
+  const config = validateDraft(); if (!config) return false;
   try {
     const normalized = await api('/api/config', config);
     const existing = savedStrategies.find(item => item.id === savedId && item.config.name === normalized.name);
@@ -523,8 +597,30 @@ $('save-strategy').addEventListener('click', async () => {
     const saved = {id: savedId, config: normalized, updatedAt: Date.now()};
     savedStrategies = [saved, ...savedStrategies.filter(item => item.id !== saved.id)];
     try { persistLibrary(); } catch (error) { savedStrategies = previous; savedId = previousId; throw error; }
-    persistDraft(); renderHome(); message(existing ? 'Saved strategy updated.' : 'Strategy saved to the library.');
-  } catch (error) { message(error.message, true); }
+    persistDraft(); renderHome(); renderLoadStrategyDialog(); message(existing ? 'Saved strategy updated.' : 'Strategy saved to the library.');
+    return true;
+  } catch (error) { $('save-strategy-error').textContent = error.message; return false; }
+}
+$('load-strategy').addEventListener('click', () => {
+  if (busy) return;
+  renderLoadStrategyDialog(); $('load-strategy-dialog').showModal();
+});
+$('close-load-strategy').addEventListener('click', () => $('load-strategy-dialog').close());
+$('save-strategy').addEventListener('click', () => {
+  if (busy) return;
+  $('save-strategy-error').textContent = '';
+  $('strategy-name').value = draftName === 'Untitled strategy' ? '' : draftName;
+  $('save-strategy-dialog').showModal(); $('strategy-name').focus();
+});
+$('cancel-save-strategy').addEventListener('click', () => $('save-strategy-dialog').close());
+$('save-strategy-form').addEventListener('submit', async event => {
+  event.preventDefault();
+  const name = $('strategy-name').value.trim();
+  if (!name) { $('strategy-name').setCustomValidity('Enter a name for this strategy.'); $('strategy-name').reportValidity(); return; }
+  $('strategy-name').setCustomValidity('');
+  draftName = name;
+  $('save-strategy-error').textContent = '';
+  if (await saveStrategy()) $('save-strategy-dialog').close();
 });
 function download(content, filename, type) {
   const url = URL.createObjectURL(new Blob([content], {type})), link = el('a');
@@ -576,12 +672,29 @@ $('expand-indicators').addEventListener('click', () => { closedCards.clear(); re
 $('collapse-indicators').addEventListener('click', () => { stack.forEach((_, index) => closedCards.add(index)); renderStack(); });
 form.elements.combination.addEventListener('change', updateRules);
 form.elements.exit_policy.addEventListener('change', updateExit);
+function updateSamplePresets() {
+  const days = Number(form.elements.days.value);
+  document.querySelectorAll('[data-days]').forEach(button => {
+    const selected = Number(button.dataset.days) === days;
+    button.classList.toggle('selected', selected);
+    button.setAttribute('aria-pressed', String(selected));
+  });
+}
+document.querySelectorAll('[data-days]').forEach(button => button.addEventListener('click', () => {
+  form.elements.days.value = button.dataset.days; updateSamplePresets(); dirty(); form.elements.days.focus();
+}));
+form.elements.days.addEventListener('input', updateSamplePresets);
 form.addEventListener('input', dirty);
 window.addEventListener('pagehide', () => { if (ready) persistDraft(); });
 
 const tabDescriptions = {
-  strategy: 'Configure indicators, execution, and a sample.', results: 'Selected run: performance, market prices, and indicator values.',
+  market: 'Choose the currency pair and historical sample for this backtest.',
+  strategy: 'Configure indicators, signal logic, and execution.', results: 'Selected run: performance, market prices, and indicator values.',
   execution: 'Inspect executed trades and skipped entry requests.', compare: 'Compare results and the settings that produced them.',
+  research: 'Rank experiments, compare normalized outcomes, and export a research report.',
+};
+const tabTitles = {
+  market: 'Market data', strategy: 'Strategy', results: 'Results', execution: 'Orders & trades', compare: 'Compare', research: 'Research',
 };
 function navigate(tab) {
   const target = tab === 'home' ? '#home' : `#workspace/${tab}`;
@@ -593,32 +706,25 @@ function route() {
   let tab = location.hash.split('/')[1] || 'strategy'; if (!tabs.includes(tab)) tab = 'strategy';
   $('home-page').hidden = !home; $('workspace-page').hidden = home;
   document.querySelectorAll('[data-page]').forEach(link => {
-    const active = link.dataset.page === (home ? 'home' : 'workspace'); link.classList.toggle('active', active);
+    const active = link.dataset.page === (home ? 'home' : tab); link.classList.toggle('active', active);
     if (active) link.setAttribute('aria-current', 'page'); else link.removeAttribute('aria-current');
   });
   tabs.forEach(name => {
-    const selected = name === tab; $(`tab-${name}`).setAttribute('aria-selected', String(selected));
-    $(`tab-${name}`).tabIndex = selected ? 0 : -1; $(`panel-${name}`).hidden = !selected;
+    $(`panel-${name}`).hidden = name !== tab;
   });
   const current = home ? 'home' : tab;
   if (current !== previousRoute) { window.scrollTo(0, 0); previousRoute = current; }
+  const strategyActionsVisible = !home && tab === 'strategy';
+  $('load-strategy').hidden = !strategyActionsVisible;
+  $('strategy-files').hidden = !strategyActionsVisible;
+  $('workspace-title').textContent = tabTitles[tab];
   $('workspace-description').textContent = tabDescriptions[tab];
-  document.title = `TradeTide · ${home ? 'Research library' : tab === 'execution' ? 'Orders & trades' : tab[0].toUpperCase() + tab.slice(1)}`;
-  requestAnimationFrame(() => { if (!home && tab === 'results') drawCharts(); if (!home && tab === 'compare') renderComparison(); });
+  document.title = `TradeTide · ${home ? 'Research library' : tabTitles[tab]}`;
+  requestAnimationFrame(() => { if (!home && tab === 'results') drawCharts(); if (!home && tab === 'compare') renderComparison(); if (!home && tab === 'research') renderResearch(); });
 }
 window.addEventListener('hashchange', route);
-document.querySelectorAll('[data-workspace-tab]').forEach(button => {
-  button.addEventListener('click', () => navigate(button.dataset.workspaceTab));
-  button.addEventListener('keydown', event => {
-    const index = tabs.indexOf(button.dataset.workspaceTab); let next;
-    if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
-    if (event.key === 'ArrowLeft') next = (index + tabs.length - 1) % tabs.length;
-    if (event.key === 'Home') next = 0; if (event.key === 'End') next = tabs.length - 1;
-    if (next !== undefined) { event.preventDefault(); navigate(tabs[next]); $(`tab-${tabs[next]}`).focus(); }
-  });
-});
-const resize = new ResizeObserver(() => { drawCharts(); renderComparison(); });
-resize.observe($('chart')); resize.observe($('comparison-chart'));
+const resize = new ResizeObserver(() => { drawCharts(); renderComparison(); renderResearch(); });
+resize.observe($('chart')); resize.observe($('comparison-chart')); resize.observe($('research-chart'));
 const initialConfig = settings();
 async function initialize() {
   $('run').disabled = true; message('Loading workspace…');
@@ -626,6 +732,7 @@ async function initialize() {
   if (draft?.config && Array.isArray(draft.config.indicators) && draft.config.indicators.length > 0 && draft.config.indicators.length <= 8 && draft.config.indicators.every(item => names[item.kind])) {
     applySettings({...initialConfig, ...draft.config}, {remember: false, id: draft.savedId});
   } else updateRules();
+  updateSamplePresets();
   const library = readLocal('strategies', []);
   savedStrategies = Array.isArray(library) ? library.filter(item => item.id && item.config && Array.isArray(item.config.indicators)).slice(0, 20) : [];
   try {
@@ -634,7 +741,7 @@ async function initialize() {
     runNumber = Math.max(Number(readLocal('runNumber', 0)) || 0, ...runHistory.map(run => run.runNumber), 0);
     result = runHistory[0] || null;
   } catch { storageError(); }
-  ready = true; setBusy(false); renderResults(); renderHome(); renderHistory(); route();
+  ready = true; setBusy(false); renderResults(); renderHome(); renderHistory(); renderResearch(); route();
   message(draft ? 'Draft restored.' : 'Ready. Ctrl/⌘ + Enter runs the draft.');
   if (!storageFailed) persistDraft();
 }

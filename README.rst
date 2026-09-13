@@ -77,7 +77,7 @@ register the command. You can also use ``python -m TradeTide.gui`` or the
 additional dependencies, accounts, or internet access. The home page offers
 editable mean-reversion, trend-following, and momentum templates, plus recent
 experiments. The strategy workspace separates setup, results, orders and trades,
-and run comparisons into four keyboard-accessible tabs. Navigation preserves
+run comparisons, and experiment research into five keyboard-accessible tabs. Navigation preserves
 your draft and completed runs; a successful backtest opens the Results tab.
 The run action sits in a separate toolbar above the form.
 
@@ -101,6 +101,9 @@ queued runs can be stopped after the current run finishes. Compare any two
 completed runs to inspect metric changes and exact parameter differences.
 Normalized equity curves are overlaid only for matching markets and observation
 times; metric comparisons remain available for different samples.
+The Research tab ranks every retained experiment by return, risk, or Sharpe
+ratio, overlays matching normalized equity curves, and exports a standalone
+HTML experiment report.
 
 Drafts and up to 20 named strategies are saved locally. The last 30 runs are
 stored in the browser and restored after a refresh, using the same browser
@@ -109,9 +112,14 @@ exported run; undo restores the replaced draft. Export JSON to keep portable
 copies independent of browser storage. ``Ctrl+Enter`` or ``Cmd+Enter`` runs
 the current draft from any workspace tab.
 
-Samples begin at each dataset's first observation; the selected duration is
-calendar time and may include market closures. The displayed dates show the
-actual simulation period. Bollinger, moving-average, and RMI windows use minutes;
+Samples begin at each dataset's first observation; the GUI accepts whole-day
+durations from 1 to 180 days, with one-click 1-day, 15-day, 1-month, 3-month,
+and 6-month presets. A 1-year option is shown but remains unavailable until
+longer bundled market data is provided. The selected duration is calendar time
+and may include market closures. The displayed dates show the actual simulation
+period. During each run, the workspace reports progress through data loading,
+indicator calculation, signal combination, portfolio simulation, and performance reporting. Bollinger,
+moving-average, and RMI windows use minutes;
 RSI and MACD windows use bars. Signal rules combine entry events on the same bar,
 not persistent indicator regions. Simulated entries use the native engine's
 bid/ask closing prices. Skipped requests reflect portfolio constraints or the

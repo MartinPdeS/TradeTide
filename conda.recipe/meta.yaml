@@ -1,6 +1,6 @@
 package:
   name: tradetide
-  version: {{ GIT_DESCRIBE_TAG }}
+  version: 1.0.0
 
 source:
   path: ..

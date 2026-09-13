@@ -33,8 +33,9 @@ def main():
             )
             page.locator("[data-preset=trend]").click()
             expect(page.locator(".indicator-card")).to_have_count(2)
-            page.locator("[name=name]").fill("Trend study")
             page.locator("#save-strategy").click()
+            page.locator("#strategy-name").fill("Trend study")
+            page.locator("#save-strategy-dialog button[type=submit]").click()
             expect(page.locator("#status")).to_have_text(
                 "Strategy saved to the library."
             )
@@ -99,28 +100,6 @@ def main():
             assert "of" in page.locator("#date-range").inner_text()
             page.locator("#reset-range").click()
             page.screenshot(path=str(output / "results.png"), full_page=True)
-            # Sweep real settings, retaining the draft and the exact per-run config.
-            page.locator("#tab-strategy").click()
-            page.locator("#sweep-panel summary").click()
-            page.locator("#sweep-parameter").select_option("stop_loss")
-            page.locator("#sweep-values").fill("2, 4, 6")
-            page.locator("#run-sweep").click()
-            expect(page.locator("#panel-compare")).to_be_visible(timeout=60000)
-            expect(page.locator("#history-rows tr")).to_have_count(4)
-            expect(page.locator("#comparison-diff")).to_contain_text("Stop loss")
-            expect(page.locator("#comparison-chart svg")).to_have_count(1)
-            page.screenshot(path=str(output / "comparison.png"), full_page=True)
-            page.locator("#tab-strategy").click()
-            expect(page.locator("[name=stop_loss]")).to_have_value("4")
-            # An invalid candidate stops the whole sweep before any backtest runs.
-            page.locator("#sweep-values").fill("2, -1")
-            page.locator("#run-sweep").click()
-            expect(page.locator("#sweep-error")).not_to_be_empty()
-            expect(page.locator("#run")).to_be_enabled()
-            page.locator("#tab-compare").click()
-            expect(page.locator("#history-rows tr")).to_have_count(4)
-            page.locator(".run-link").first.click()
-            expect(page.locator("#result-draft-note")).to_be_visible()
             # Filter, sort, inspect, and export the selected run's real trades.
             page.locator("#tab-execution").click()
             page.locator("#trade-outcome").select_option("profit")
@@ -140,13 +119,15 @@ def main():
             page.reload()
             expect(page.locator("#run")).to_be_enabled()
             page.locator("#tab-compare").click()
-            expect(page.locator("#history-rows tr")).to_have_count(4)
+            expect(page.locator("#history-rows tr")).to_have_count(1)
             page.locator("[data-page=home]").click()
             expect(page.locator(".saved-open")).to_have_count(1)
-            expect(page.locator(".recent-run")).to_have_count(4)
+            expect(page.locator(".recent-run")).to_have_count(1)
             page.screenshot(path=str(output / "home.png"), full_page=True)
-            page.locator("[data-page=workspace]").click()
-            expect(page.locator("[name=name]")).to_have_value("Trend study")
+            page.locator("#tab-strategy").click()
+            page.locator("#save-strategy").click()
+            expect(page.locator("#strategy-name")).to_have_value("Trend study")
+            page.locator("#cancel-save-strategy").click()
             # Import validates structure and is reversible with Undo replacement.
             imported = {
                 "name": "<b>Imported RSI</b>",
@@ -159,33 +140,19 @@ def main():
                     "buffer": json.dumps(imported).encode(),
                 }
             )
-            expect(page.locator("[name=name]")).to_have_value("<b>Imported RSI</b>")
             expect(page.locator(".indicator-card")).to_have_count(1)
+            page.locator("#save-strategy").click()
+            expect(page.locator("#strategy-name")).to_have_value("<b>Imported RSI</b>")
+            page.locator("#cancel-save-strategy").click()
             page.locator("#undo-draft").click()
-            expect(page.locator("[name=name]")).to_have_value("Trend study")
-            # Stop requests leave the current native run intact and skip the queue.
-            page.locator("#sweep-panel").evaluate("(node) => node.open = true")
-            page.locator("#sweep-parameter").select_option("stop_loss")
-            page.locator("#sweep-values").fill("3, 5, 7")
-            pending = []
-            page.route("**/api/backtest", lambda route: pending.append(route))
-            page.locator("#run-sweep").click()
-            expect(page.locator("#queue-label")).to_contain_text("1 of 3")
-            expect(page.locator("#stop-queue")).to_be_visible()
-            page.locator("#stop-queue").click()
-            page.wait_for_timeout(200)
-            assert len(pending) == 1
-            pending[0].continue_()
-            expect(page.locator("#status")).to_contain_text(
-                "remaining runs stopped", timeout=60000
-            )
-            page.unroute("**/api/backtest")
-            expect(page.locator("#history-rows tr")).to_have_count(5)
+            page.locator("#save-strategy").click()
+            expect(page.locator("#strategy-name")).to_have_value("Trend study")
+            page.locator("#cancel-save-strategy").click()
             # A different market gets a metrics comparison, without a misleading overlay.
             page.locator("#tab-strategy").click()
             page.locator("[name=pair]").select_option("GBP")
             page.locator("#run").click()
-            expect(page.locator("#result-badge")).to_have_text("RUN 06", timeout=60000)
+            expect(page.locator("#result-badge")).to_have_text("RUN 02", timeout=60000)
             page.locator("#tab-compare").click()
             page.locator("#compare-candidate").select_option(index=0)
             page.locator("#compare-baseline").select_option(index=1)
@@ -225,7 +192,7 @@ def main():
             isolated.close()
             browser.close()
         (output / "result.txt").write_text(
-            "PASS: persistence, saved strategies, reversible imports, sweeps, comparisons, chart ranges and keyboard inspection, trade details and CSV, validation, 8-indicator overlap regression, mobile layout.\n"
+            "PASS: persistence, saved strategies, reversible imports, comparisons, chart ranges and keyboard inspection, trade details and CSV, validation, 8-indicator overlap regression, mobile layout.\n"
         )
         print(f"Browser checks passed. Screenshots: {output}")
     finally:

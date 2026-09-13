@@ -8,7 +8,7 @@ import pytest
 
 from TradeTide.execution import ExecutionCosts
 from TradeTide import Market
-from TradeTide.performance import BacktestResult
+from TradeTide.performance import BacktestResult, write_html_experiment_report
 from TradeTide.validation import WalkForwardSplitter, chronological_split
 
 
@@ -103,6 +103,24 @@ def test_result_writes_a_standalone_interactive_html_report(tmp_path):
     assert report.exists()
     assert "Test report" in content
     assert "plotly" in content.lower()
+
+
+def test_experiment_report_compares_normalized_equity_and_metrics(tmp_path):
+    """Experiment reports provide an interactive comparison and metric table."""
+    pytest.importorskip("plotly")
+    start = datetime(2024, 1, 1)
+    times = [start + timedelta(days=day) for day in range(3)]
+    first = BacktestResult.from_portfolio(FakePortfolio(times, [100.0, 105.0, 102.0], []))
+    second = BacktestResult.from_portfolio(FakePortfolio(times, [200.0, 220.0, 230.0], []))
+
+    report = write_html_experiment_report({"Baseline": first, "Candidate": second}, tmp_path / "experiments.html", title="Experiment comparison")
+
+    content = report.read_text(encoding="utf-8")
+    assert report.exists()
+    assert "Experiment comparison" in content
+    assert "Normalized return" in content
+    assert "Baseline" in content
+    assert "Candidate" in content
 
 
 def test_execution_costs_reject_negative_inputs():

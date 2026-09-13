@@ -533,6 +533,134 @@ tbody tr:nth-child(even) {{ background: #f8fafc; }} tbody tr:hover {{ background
     return output
 
 
+def write_html_experiment_report(
+    experiments: Mapping[str, BacktestResult],
+    path: str | Path,
+    *,
+    title: str = "TradeTide experiment report",
+    open_browser: bool = False,
+) -> Path:
+    """Write a standalone interactive report comparing completed backtests.
+
+    Parameters
+    ----------
+    experiments : Mapping[str, BacktestResult]
+        Non-empty mapping of unique experiment labels to completed results.
+        Equity curves are normalized to their respective starting equity so
+        portfolios with different initial capital remain comparable.
+    path : str or pathlib.Path
+        Destination HTML file. Parent directories are created when needed.
+    title : str, default="TradeTide experiment report"
+        Title shown in the generated document.
+    open_browser : bool, default=False
+        Whether to open the generated file in the default browser.
+
+    Returns
+    -------
+    pathlib.Path
+        The generated report path.
+
+    Raises
+    ------
+    ValueError
+        If no experiments are supplied, a label is blank, or an experiment
+        has inconsistent equity data.
+    ImportError
+        If the optional Plotly reporting dependency is unavailable.
+    """
+    if not experiments:
+        raise ValueError("An experiment report requires at least one completed backtest.")
+    if any(not label.strip() for label in experiments):
+        raise ValueError("Experiment report labels must not be blank.")
+    try:
+        import plotly.graph_objects as go
+        import plotly.io as pio
+    except ImportError as error:
+        raise ImportError(
+            "Interactive HTML reports require Plotly. Install it with "
+            "`pip install 'TradeTide[reporting]'`."
+        ) from error
+
+    figure = go.Figure()
+    rows = []
+    for label, result in experiments.items():
+        times = np.asarray(result.times)
+        equity = np.asarray(result.equity, dtype=float)
+        if not len(times) or len(times) != len(equity) or equity[0] == 0:
+            raise ValueError(f"Experiment {label!r} requires non-empty, aligned equity data with non-zero initial equity.")
+        normalized = 100 * (equity / equity[0] - 1)
+        figure.add_trace(
+            go.Scatter(
+                x=times,
+                y=normalized,
+                mode="lines",
+                name=label,
+                hovertemplate="%{x}<br>Return: %{y:.2f}%<extra>" + escape(label) + "</extra>",
+            )
+        )
+        metrics = result.metrics
+        rows.append(
+            (
+                label,
+                f"{metrics.total_return:.2%}",
+                f"{metrics.max_drawdown:.2%}",
+                f"{metrics.sharpe_ratio:.2f}",
+                f"{metrics.sortino_ratio:.2f}",
+                f"{metrics.profit_factor:.2f}" if np.isfinite(metrics.profit_factor) else "infinite",
+                str(metrics.total_trades),
+                f"{metrics.win_rate:.1%}",
+            )
+        )
+    figure.update_layout(
+        template="plotly_white",
+        height=560,
+        hovermode="x unified",
+        margin={"l": 60, "r": 30, "t": 35, "b": 50},
+        legend={"orientation": "h", "y": 1.08},
+        xaxis_title="Time",
+        yaxis_title="Normalized return (%)",
+    )
+
+    result_values = list(experiments.values())
+    metrics = [result.metrics for result in result_values]
+    best_return = max(metrics, key=lambda value: value.total_return)
+    best_sharpe = max(metrics, key=lambda value: value.sharpe_ratio)
+    cards = (
+        ("Experiments", str(len(experiments))),
+        ("Average return", f"{np.mean([value.total_return for value in metrics]):.2%}"),
+        ("Best return", f"{best_return.total_return:.2%}"),
+        ("Best Sharpe", f"{best_sharpe.sharpe_ratio:.2f}"),
+    )
+    cards_html = "".join(f'<section class="card"><span>{escape(label)}</span><strong>{escape(value)}</strong></section>' for label, value in cards)
+    headers = ("Experiment", "Return", "Max drawdown", "Sharpe", "Sortino", "Profit factor", "Trades", "Win rate")
+    table_head = "".join(f"<th>{escape(header)}</th>" for header in headers)
+    table_rows = "".join("<tr>" + "".join(f"<td>{escape(value)}</td>" for value in row) + "</tr>" for row in rows)
+    chart = pio.to_html(figure, full_html=False, include_plotlyjs=True)
+    document = f"""<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>{escape(title)}</title>
+<style>
+body {{ margin: 0; background: #f1f5f9; color: #0f172a; font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif; }}
+main {{ max-width: 1440px; margin: auto; padding: 32px; }} h1 {{ margin: 0 0 8px; }} .subtitle {{ color: #475569; margin: 0 0 24px; }}
+.cards {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 18px; }}
+.card, .panel {{ background: white; border-radius: 10px; box-shadow: 0 1px 3px rgba(15, 23, 42, .1); }}
+.card {{ padding: 16px; }} .card span {{ display: block; color: #64748b; font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; }} .card strong {{ display: block; font-size: 1.35rem; margin-top: 5px; }}
+.panel {{ padding: 8px; margin-top: 18px; }} .table-wrap {{ overflow: auto; }} table {{ width: 100%; border-collapse: collapse; font-size: .9rem; white-space: nowrap; }}
+th {{ background: #0f172a; color: white; text-align: right; padding: 11px 12px; }} td {{ padding: 9px 12px; border-bottom: 1px solid #e2e8f0; text-align: right; }} th:first-child, td:first-child {{ text-align: left; }} tbody tr:nth-child(even) {{ background: #f8fafc; }}
+</style></head><body><main><h1>{escape(title)}</h1>
+<p class="subtitle">Normalized equity curves and full-sample performance metrics for {len(experiments)} completed experiments.</p>
+<div class="cards">{cards_html}</div><section class="panel">{chart}</section>
+<section class="panel"><div class="table-wrap"><table><thead><tr>{table_head}</tr></thead><tbody>{table_rows}</tbody></table></div></section>
+</main></body></html>"""
+    output = Path(path).expanduser()
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(document, encoding="utf-8")
+    if open_browser:
+        import webbrowser
+
+        webbrowser.open_new_tab(output.resolve().as_uri())
+    return output
+
+
 def plot_equity_drawdown(
     result: BacktestResult,
     *,

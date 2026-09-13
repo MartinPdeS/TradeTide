@@ -6,9 +6,18 @@ PYTHON ?= .venv/bin/python
 BUILD_DIR ?= build
 ROOT_DIR := $(CURDIR)
 PYBIND11_DIR = $(shell $(PYTHON) -m pybind11 --cmakedir)
+TAG_VERSION ?= $(or $(VERSION),$(filter v%,$(MAKECMDGOALS)))
 RELEASE_KIND := $(filter major minor patch,$(MAKECMDGOALS))
 
 .PHONY: help bootstrap configure build install uninstall quick rebuild editable quality test check release-check tag release major minor patch clean
+
+ifneq ($(filter tag,$(MAKECMDGOALS)),)
+ifneq ($(strip $(TAG_VERSION)),)
+.PHONY: $(TAG_VERSION)
+$(TAG_VERSION):
+	@:
+endif
+endif
 
 help:
 	@echo "TradeTide development commands"
@@ -17,11 +26,11 @@ help:
 	@echo "  make test                  Run the test suite"
 	@echo "  make quality               Run static checks"
 	@echo "  make check                 Run quality and tests"
-	@echo "  make release-check         Check tag-derived release metadata"
+	@echo "  make release-check         Check version metadata consistency"
 	@echo "  make tag VERSION=vX.Y.Z    Create a release commit and annotated tag"
-	@echo "  make release patch         Create and push the next patch release"
-	@echo "  make release minor         Create and push the next minor release"
-	@echo "  make release major         Create and push the next major release"
+	@echo "  make release patch         Create the next patch release and tag"
+	@echo "  make release minor         Create the next minor release and tag"
+	@echo "  make release major         Create the next major release and tag"
 
 bootstrap:
 	$(PYTHON) -m pip install --upgrade pip
@@ -40,8 +49,7 @@ release-check:
 	$(PYTHON) tools/check_release.py $(if $(VERSION),--version $(VERSION),)
 
 tag:
-	@test -n "$(VERSION)" || { echo "usage: make tag VERSION=vX.Y.Z" >&2; exit 2; }
-	$(PYTHON) tools/release_tag.py "$(VERSION)"
+	$(PYTHON) tools/release_tag.py "$(TAG_VERSION)"
 
 release:
 	@test "$(words $(RELEASE_KIND))" -eq 1 || { echo "usage: make release [patch|minor|major]" >&2; exit 2; }

@@ -1,26 +1,8 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {
-  defaults, buildSweep, configDiff, matchingSamples, normalizedEquity,
-} from '../TradeTide/gui/research.mjs';
+import {defaults, configDiff, matchingSamples, normalizedEquity} from '../TradeTide/gui/research.mjs';
 const config = () => ({name: 'Research', pair: 'EUR', days: 3, combination: 'any', stop_loss: 4, indicators: [{...defaults}]});
 
-test('sweep creates independent snapshots without modifying the draft', () => {
-  const source = config(), original = structuredClone(source);
-  const runs = buildSweep(source, 'indicators.0.multiplier', '1.5, 2, 2.5');
-  assert.deepEqual(runs.map(run => run.config.indicators[0].multiplier), [1.5, 2, 2.5]);
-  runs[0].config.indicators[0].window = 80;
-  assert.equal(runs[1].config.indicators[0].window, 30);
-  assert.deepEqual(source, original);
-});
-test('sweep rejects malformed values and paths outside research parameters', () => {
-  for (const values of ['2', '2,', '2, 2', '2, Infinity', '1,2,3,4,5,6,7', '2, nope']) {
-    assert.throws(() => buildSweep(config(), 'stop_loss', values));
-  }
-  for (const path of ['__proto__.polluted', 'name', 'indicators.5.window']) {
-    assert.throws(() => buildSweep(config(), path, '2, 3'));
-  }
-});
 test('comparison reports the changed indicator parameter, not irrelevant defaults', () => {
   const before = config(), after = config();
   after.indicators[0].multiplier = 3;

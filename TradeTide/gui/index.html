@@ -20,11 +20,26 @@
     <img alt="TradeTide · Forex backtester" src="/logo.png"/>
    </a>
    <nav aria-label="Main navigation">
-    <a data-page="home" href="#home">
+    <a data-page="home" id="tab-home" href="#home">
      Home
     </a>
-    <a data-page="workspace" href="#workspace/strategy">
-     Strategy workspace
+    <a data-page="market" id="tab-market" href="#workspace/market">
+     Market data
+    </a>
+    <a data-page="strategy" id="tab-strategy" href="#workspace/strategy">
+     Strategy
+    </a>
+    <a data-page="results" id="tab-results" href="#workspace/results">
+     Results
+    </a>
+    <a data-page="execution" id="tab-execution" href="#workspace/execution">
+     Orders &amp; trades
+    </a>
+    <a data-page="compare" id="tab-compare" href="#workspace/compare">
+     Compare
+    </a>
+    <a data-page="research" id="tab-research" href="#workspace/research">
+     Research
     </a>
    </nav>
    <span class="local">
@@ -133,21 +148,18 @@
    <section aria-labelledby="workspace-title" hidden="" id="workspace-page">
     <div class="heading">
      <div>
-      <span class="eyebrow">
-       STRATEGY WORKSPACE
-      </span>
       <h1 id="workspace-title">
-       Strategy workspace
+       Strategy
       </h1>
       <p id="workspace-description">
        Configure indicators, execution, and a sample.
       </p>
      </div>
      <div class="header-actions">
-      <button class="secondary" id="save-strategy">
-       Save strategy
+      <button class="secondary" id="load-strategy">
+       Load strategy
       </button>
-      <details class="file-menu">
+      <details class="file-menu" id="strategy-files">
        <summary>
         Files ↓
        </summary>
@@ -163,44 +175,13 @@
         </button>
        </div>
       </details>
-     </div>
-    </div>
-    <div class="workspace-toolbar">
-     <div aria-label="Workspace sections" class="workspace-tabs" role="tablist">
-      <button aria-controls="panel-strategy" data-workspace-tab="strategy" id="tab-strategy" role="tab">
-       01
+      <button class="primary" form="config" id="run" type="submit">
+       Run backtest
        <span>
-        Strategy
-       </span>
-      </button>
-      <button aria-controls="panel-results" data-workspace-tab="results" id="tab-results" role="tab">
-       02
-       <span>
-        Results
-       </span>
-      </button>
-      <button aria-controls="panel-execution" data-workspace-tab="execution" id="tab-execution" role="tab">
-       03
-       <span>
-        Orders &amp; trades
-       </span>
-      </button>
-      <button aria-controls="panel-compare" data-workspace-tab="compare" id="tab-compare" role="tab">
-       04
-       <span>
-        Compare
+        →
        </span>
       </button>
      </div>
-     <button class="primary" form="config" id="run" type="submit">
-      Run backtest
-      <span>
-       →
-      </span>
-     </button>
-     <button class="secondary" hidden="" id="stop-queue">
-      Stop after current run
-     </button>
     </div>
     <div class="workspace-status">
      <span id="draft-summary">
@@ -213,84 +194,87 @@
     <div hidden="" id="run-progress">
      <progress aria-label="Backtest progress" id="queue-progress" max="1" value="0">
      </progress>
-     <span id="queue-label">
+     <span aria-live="polite" id="queue-label">
      </span>
     </div>
-    <section aria-labelledby="tab-strategy" id="panel-strategy" role="tabpanel">
-     <form id="config" novalidate="">
-      <fieldset class="strategy-grid" id="fields">
-       <section class="panel market-setup">
-        <div class="section-title">
-         <h2>
-          Strategy setup
-         </h2>
-         <span class="tag">
-          DRAFT
-         </span>
-        </div>
+    <form id="config" novalidate="">
+     <section aria-labelledby="tab-market" id="panel-market" role="region">
+      <section class="panel market-data-setup">
+       <div class="section-title">
+        <h2>
+         Market data
+        </h2>
+        <span class="tag">
+         SAMPLE
+        </span>
+       </div>
+       <p class="help">
+        Choose the bundled currency pair and the historical sample used for this backtest.
+       </p>
+       <div class="market-data-fields">
         <label>
-         Strategy name
-         <input maxlength="80" name="name" required="" value="Mean reversion"/>
+         Market
+         <select name="pair">
+          <option>
+           EUR
+          </option>
+          <option>
+           GBP
+          </option>
+          <option>
+           CHF
+          </option>
+          <option>
+           JPY
+          </option>
+          <option>
+           CAD
+          </option>
+         </select>
+         <small>
+          Base currency / USD
+         </small>
         </label>
-        <div class="two">
-         <label>
-          Market
-          <select name="pair">
-           <option>
-            EUR
-           </option>
-           <option>
-            GBP
-           </option>
-           <option>
-            CHF
-           </option>
-           <option>
-            JPY
-           </option>
-           <option>
-            CAD
-           </option>
-          </select>
-          <small>
-           Base currency / USD
-          </small>
-         </label>
-         <label>
-          Sample
-          <select name="days">
-           <option value="1">
-            First day
-           </option>
-           <option selected="" value="3">
-            First 3 days
-           </option>
-           <option value="5">
-            First 5 days
-           </option>
-           <option value="7">
-            First 7 days
-           </option>
-           <option value="14">
-            First 14 days
-           </option>
-          </select>
-         </label>
-        </div>
-        <div class="setup-note">
-         <p>
-          Samples start at the first bundled observation. Days are calendar days; market closures may leave fewer bars.
-         </p>
-         <div class="draft-state">
-          <span id="draft-state">
-           Draft saved locally
-          </span>
-          <button class="text-button" hidden="" id="undo-draft" type="button">
-           Undo replacement
+        <label>
+         Sample · days
+         <input max="180" min="1" name="days" required="" step="1" type="number" value="1"/>
+         <small>
+          Any whole-day sample from 1 to 180 days
+         </small>
+         <div aria-label="Common sample durations" class="sample-presets">
+          <button data-days="1" type="button">
+           1 day
+          </button>
+          <button data-days="15" type="button">
+           15 days
+          </button>
+          <button data-days="30" type="button">
+           1 month
+          </button>
+          <button data-days="90" type="button">
+           3 months
+          </button>
+          <button data-days="180" type="button">
+           6 months
+          </button>
+          <button aria-describedby="one-year-unavailable" data-days="365" disabled="" title="One year requires longer bundled market data." type="button">
+           1 year
           </button>
          </div>
-        </div>
-       </section>
+         <small id="one-year-unavailable">
+          One year requires longer bundled market data.
+         </small>
+        </label>
+       </div>
+       <div class="setup-note">
+        <p>
+         Samples start at the first bundled observation. All bundled pairs contain at least 197 calendar days; market closures may leave fewer bars.
+        </p>
+       </div>
+      </section>
+     </section>
+     <section aria-labelledby="tab-strategy" id="panel-strategy" role="region">
+      <fieldset class="strategy-grid" id="fields">
        <section class="panel indicator-setup">
         <div class="section-title">
          <h2>
@@ -440,40 +424,32 @@
           Costs adjust reported equity and P&amp;L after simulation; they do not change entry sizing.
          </p>
         </details>
-       </section>
-      </fieldset>
-     </form>
-     <details class="panel sweep-panel" id="sweep-panel">
-      <summary>
-       Test several parameter values
-       <span>
-        Parameter sweep
-       </span>
-      </summary>
-      <fieldset id="sweep-fields">
-       <div class="sweep-grid">
-        <label>
-         Parameter
-         <select id="sweep-parameter">
-         </select>
-        </label>
-        <label>
-         Values · comma-separated
-         <input autocomplete="off" id="sweep-values" placeholder="2, 3, 4, 5" value="2, 4, 6"/>
-        </label>
-        <button class="secondary" id="run-sweep" type="button">
-         Run sweep
+      </section>
+     </fieldset>
+     <div class="strategy-save">
+      <div>
+       <h2>
+        Save this strategy
+       </h2>
+       <p>
+        Add this configuration to your local strategy library.
+       </p>
+       <div class="draft-state">
+        <span id="draft-state">
+         Draft saved locally
+        </span>
+        <button class="text-button" hidden="" id="undo-draft" type="button">
+         Undo replacement
         </button>
        </div>
-       <p class="help" id="sweep-hint">
-        2–6 runs. Only this parameter changes; each result keeps its exact settings.
-       </p>
-       <p class="error" id="sweep-error" role="status">
-       </p>
-      </fieldset>
-     </details>
+      </div>
+      <button class="primary" id="save-strategy" type="button">
+       Save strategy
+      </button>
+     </div>
     </section>
-    <section aria-labelledby="tab-results" hidden="" id="panel-results" role="tabpanel">
+    </form>
+    <section aria-labelledby="tab-results" hidden="" id="panel-results" role="region">
      <div class="result-heading">
       <div>
        <h2 id="result-name">
@@ -594,7 +570,7 @@
       Charts use equally spaced market bars. Use the range sliders to inspect a segment; metrics always cover the full run.
      </p>
     </section>
-    <section aria-labelledby="tab-execution" hidden="" id="panel-execution" role="tabpanel">
+    <section aria-labelledby="tab-execution" hidden="" id="panel-execution" role="region">
      <div class="execution-heading">
       <h2>
        Orders &amp; trades
@@ -761,7 +737,7 @@
       </aside>
      </div>
     </section>
-    <section aria-labelledby="tab-compare" hidden="" id="panel-compare" role="tabpanel">
+    <section aria-labelledby="tab-compare" hidden="" id="panel-compare" role="region">
      <section class="panel comparison">
       <div class="panel-title">
        <div>
@@ -882,6 +858,108 @@
       Comparisons use the stored results. Different samples can be compared in the table; curve overlays require the same market and observation times.
      </p>
     </section>
+    <section aria-labelledby="tab-research" hidden="" id="panel-research" role="region">
+     <div class="result-heading">
+      <div>
+       <h2>
+        Research dashboard
+       </h2>
+       <p id="research-note">
+        Run experiments to compare their full-sample outcomes.
+       </p>
+      </div>
+      <button class="secondary" disabled="" id="export-research">
+       Export research report
+      </button>
+     </div>
+     <div class="metrics" id="research-summary">
+     </div>
+     <div class="research-grid">
+      <section class="panel chart-panel">
+       <div class="panel-title">
+        <div>
+         <h2>
+          Normalized experiment returns
+         </h2>
+         <p id="research-chart-note">
+          Comparable runs are normalized to their starting equity.
+         </p>
+        </div>
+        <div class="chart-legend" id="research-legend">
+        </div>
+       </div>
+       <div id="research-chart">
+        <p class="placeholder">
+         Complete a backtest to start an experiment series.
+        </p>
+       </div>
+       <p aria-live="polite" class="help" id="research-chart-value">
+       </p>
+      </section>
+      <section class="panel research-table">
+       <div class="panel-title">
+        <div>
+         <h2>
+          Experiment ranking
+         </h2>
+         <p>
+          Select a run to inspect or reuse its settings.
+         </p>
+        </div>
+        <select aria-label="Sort experiments" id="research-sort">
+         <option value="return">
+          Return ↓
+         </option>
+         <option value="sharpe">
+          Sharpe ↓
+         </option>
+         <option value="drawdown">
+          Drawdown ↑
+         </option>
+         <option value="recent">
+          Most recent
+         </option>
+        </select>
+       </div>
+       <div class="table-scroll">
+        <table>
+         <thead>
+          <tr>
+           <th>
+            Experiment
+           </th>
+           <th>
+            Return
+           </th>
+           <th>
+            Drawdown
+           </th>
+           <th>
+            Sharpe
+           </th>
+           <th>
+            Profit factor
+           </th>
+           <th>
+            Trades
+           </th>
+          </tr>
+         </thead>
+         <tbody id="research-rows">
+          <tr>
+           <td class="table-empty" colspan="6">
+            No completed experiments.
+           </td>
+          </tr>
+         </tbody>
+        </table>
+       </div>
+      </section>
+     </div>
+     <p class="results-note">
+      The report includes all locally retained runs. Curve overlays only include runs sharing the selected experiment's market and observation times.
+     </p>
+    </section>
    </section>
    <footer>
     <span>
@@ -895,6 +973,47 @@
   <input accept=".json,application/json" hidden="" id="import-file" type="file"/>
   <div class="notice" hidden="" id="notice" role="status">
   </div>
+  <dialog id="load-strategy-dialog">
+   <div class="panel-title">
+    <div>
+     <h2>
+      Load strategy
+     </h2>
+     <p>
+      Replace the current draft with a saved local strategy.
+     </p>
+    </div>
+    <button aria-label="Close saved strategies" class="icon-button" id="close-load-strategy" type="button">
+     ×
+    </button>
+   </div>
+   <div class="load-strategy-list" id="load-strategy-list">
+   </div>
+  </dialog>
+  <dialog id="save-strategy-dialog">
+   <form id="save-strategy-form" novalidate="">
+    <h2>
+     Save strategy
+    </h2>
+    <p>
+     Give this configuration a name so it is easy to find in your local library.
+    </p>
+    <label>
+     Strategy name
+     <input autocomplete="off" id="strategy-name" maxlength="80" required="" type="text"/>
+    </label>
+    <p class="error" id="save-strategy-error" role="status">
+    </p>
+    <div class="dialog-actions">
+     <button class="secondary" id="cancel-save-strategy" type="button">
+      Cancel
+     </button>
+     <button class="primary" type="submit">
+      Save strategy
+     </button>
+    </div>
+   </form>
+  </dialog>
   <dialog id="trade-dialog">
    <div class="panel-title">
     <h2 id="trade-detail-title">

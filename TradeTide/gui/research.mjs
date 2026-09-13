@@ -66,32 +66,6 @@ export function configDiff(before, after) {
     .filter(key => a[key] !== b[key])
     .map(key => ({key, label: pathLabel(key, after), before: a[key], after: b[key]}));
 }
-export function sweepParameters(config) {
-  const parameters = ['stop_loss', 'take_profit', 'lot_size', 'positions', 'slippage', 'spread', 'commission']
-    .map(key => ({key, label: labels[key]}));
-  config.indicators.forEach((item, index) => {
-    if (!item.enabled) return;
-    for (const key of [...fieldsByKind[item.kind], ...(config.combination === 'weighted' ? ['weight'] : [])]) {
-      parameters.push({key: `indicators.${index}.${key}`, label: `${index + 1}. ${names[item.kind]} / ${parameterLabel(item.kind, key)}`});
-    }
-  });
-  return parameters;
-}
-export function buildSweep(config, path, text) {
-  if (!sweepParameters(config).some(parameter => parameter.key === path)) throw Error('Choose a parameter to vary.');
-  const tokens = text.split(',').map(token => token.trim());
-  if (tokens.length < 2 || tokens.length > 6 || tokens.some(token => !token)) throw Error('Enter 2–6 numbers, separated by commas.');
-  const values = tokens.map(Number);
-  if (values.some(value => !Number.isFinite(value))) throw Error('Every sweep value must be a finite number.');
-  if (new Set(values).size !== values.length) throw Error('Use distinct values so each run tests a different setting.');
-  return values.map(value => {
-    const candidate = clone(config), parts = path.split('.');
-    let target = candidate;
-    for (const key of parts.slice(0, -1)) target = target[key];
-    target[parts.at(-1)] = value;
-    return {config: candidate, value};
-  });
-}
 export function matchingSamples(a, b) {
   return a.config.pair === b.config.pair && a.times.length === b.times.length &&
     a.times.every((time, index) => time === b.times[index]);
@@ -99,4 +73,19 @@ export function matchingSamples(a, b) {
 export function normalizedEquity(run) {
   const initial = run.equity[0];
   return run.equity.map(value => initial ? 100 * (value / initial - 1) : 0);
+}
+export function experimentSummary(runs) {
+  if (!runs.length) return null;
+  const metrics = runs.map(run => run.metrics);
+  const bestReturn = runs.reduce((best, run) => run.metrics.total_return > best.metrics.total_return ? run : best);
+  const bestSharpe = runs.reduce((best, run) => run.metrics.sharpe_ratio > best.metrics.sharpe_ratio ? run : best);
+  return {
+    count: runs.length,
+    averageReturn: metrics.reduce((total, value) => total + value.total_return, 0) / runs.length,
+    bestReturn,
+    bestSharpe,
+  };
+}
+export function comparableExperiments(runs, reference) {
+  return runs.filter(run => matchingSamples(reference, run));
 }

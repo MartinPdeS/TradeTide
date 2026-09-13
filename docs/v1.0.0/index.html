@@ -528,28 +528,43 @@ register the command. You can also use <code class="docutils literal notranslate
 <code class="docutils literal notranslate"><span class="pre">tradetide-gui</span></code> alias. The GUI runs locally and needs no
 additional dependencies, accounts, or internet access. The home page offers
 editable mean-reversion, trend-following, and momentum templates, plus recent
-experiments. The strategy workspace separates setup, results, orders and trades,
-run comparisons, and experiment research into five keyboard-accessible tabs. Navigation preserves
-your draft and completed runs; a successful backtest opens the Results tab.
-The run action sits in a separate toolbar above the form.</p>
-<p>Build a stack of up to eight independently configured Bollinger Bands, moving-average crossings,
-RSI, RMI, and MACD indicators. Enable or disable each indicator and combine
-its entry events using unanimous agreement, any non-conflicting agreement,
-or weighted voting with a configurable threshold.</p>
-<p>Tune fixed position size, concurrent positions, capital at risk, fixed/trailing/
-break-even exits, commission, slippage, and additional spread. Inspect equity,
-drawdown, market entry markers, individual indicator curves, simulated entry
-requests (executed or skipped), and a searchable trade ledger with costs and
-position sizes. Open any trade to see its cost breakdown and highlight its
-entry and exit on the market chart. Filter trades by side or outcome, sort by
-P&amp;L, and export the filtered ledger as CSV. Chart range sliders and keyboard
-inspection make individual periods easier to examine.</p>
-<p>The parameter-sweep tool tests 2–6 values for one setting, keeping all other
-settings fixed. Every candidate is validated before the first simulation;
-queued runs can be stopped after the current run finishes. Compare any two
-completed runs to inspect metric changes and exact parameter differences.
-Normalized equity curves are overlaid only for matching markets and observation
-times; metric comparisons remain available for different samples.
+experiments. The keyboard-accessible navigation separates Market data, Strategy,
+Results, Orders &amp; trades, Compare, and Research. Navigation preserves your draft
+and completed runs; a successful backtest opens the Results tab.</p>
+<section id="market-data">
+<h3>Market data<a class="headerlink" href="#market-data" title="Link to this heading">#</a></h3>
+<p>Choose the bundled currency pair and historical sample independently from the
+strategy configuration. Samples are available from 1 to 180 days, with one-click
+presets for 1 day, 15 days, 1 month, 3 months, and 6 months. The 1-year option
+is visible but disabled until longer bundled market data is available.</p>
+<a class="reference internal image-reference" href="docs/images/gui-market-data.png"><img alt="TradeTide Market data tab with currency pair, sample duration, and common duration presets" src="docs/images/gui-market-data.png" style="width: 100%;" />
+</a>
+</section>
+<section id="strategy-and-saved-configurations">
+<h3>Strategy and saved configurations<a class="headerlink" href="#strategy-and-saved-configurations" title="Link to this heading">#</a></h3>
+<p>Build a stack of up to eight independently configured Bollinger Bands,
+moving-average crossings, RSI, RMI, and MACD indicators. Enable or disable
+each indicator and combine its entry events using unanimous agreement, any
+non-conflicting agreement, or weighted voting with a configurable threshold.</p>
+<p>Tune fixed position size, concurrent positions, capital at risk, fixed,
+trailing, or break-even exits, commission, slippage, and additional spread.
+Use <strong>Load strategy</strong> in the Strategy tab to replace the current draft with a
+saved configuration. <strong>Save strategy</strong> at the bottom of the tab opens a name
+dialog and stores a reusable strategy in the local browser library.</p>
+<a class="reference internal image-reference" href="docs/images/gui-strategy-workspace.png"><img alt="TradeTide Strategy tab with indicator and risk configuration panels" src="docs/images/gui-strategy-workspace.png" style="width: 100%;" />
+</a>
+</section>
+<section id="analysis-and-research">
+<h3>Analysis and research<a class="headerlink" href="#analysis-and-research" title="Link to this heading">#</a></h3>
+<p>Inspect equity, drawdown, market entry markers, individual indicator curves,
+simulated entry requests (executed or skipped), and a searchable trade ledger
+with costs and position sizes. Open any trade to see its cost breakdown and
+highlight its entry and exit on the market chart. Filter trades by side or
+outcome, sort by P&amp;L, and export the filtered ledger as CSV. Chart range
+sliders and keyboard inspection make individual periods easier to examine.</p>
+<p>Compare any two completed runs to inspect metric changes and exact parameter
+differences. Normalized equity curves are overlaid only for matching markets and
+observation times; metric comparisons remain available for different samples.
 The Research tab ranks every retained experiment by return, risk, or Sharpe
 ratio, overlays matching normalized equity curves, and exports a standalone
 HTML experiment report.</p>
@@ -559,24 +574,22 @@ profile and server address/port. Import strategy JSON or the settings from an
 exported run; undo restores the replaced draft. Export JSON to keep portable
 copies independent of browser storage. <code class="docutils literal notranslate"><span class="pre">Ctrl+Enter</span></code> or <code class="docutils literal notranslate"><span class="pre">Cmd+Enter</span></code> runs
 the current draft from any workspace tab.</p>
-<p>Samples begin at each dataset’s first observation; the GUI accepts whole-day
-durations from 1 to 180 days, with one-click 1-day, 15-day, 1-month, 3-month,
-and 6-month presets. A 1-year option is shown but remains unavailable until
-longer bundled market data is provided. The selected duration is calendar time
-and may include market closures. The displayed dates show the actual simulation
-period. During each run, the workspace reports progress through data loading,
-indicator calculation, signal combination, portfolio simulation, and performance reporting. Bollinger,
-moving-average, and RMI windows use minutes;
-RSI and MACD windows use bars. Signal rules combine entry events on the same bar,
-not persistent indicator regions. Simulated entries use the native engine’s
-bid/ask closing prices. Skipped requests reflect portfolio constraints or the
-end of the sample; they are not broker orders. Costs adjust reported equity
-and P&amp;L after simulation, without changing position sizing. Editing settings
-leaves the previous result visible until a new run succeeds. The results page
-identifies when the current draft differs from the selected run.</p>
+<p>Samples begin at each dataset’s first observation. The selected duration is
+calendar time and may include market closures; displayed dates show the actual
+simulation period. During each run, the workspace reports genuine progress
+through data loading, indicator calculation, signal combination, portfolio
+simulation, and performance reporting. Bollinger, moving-average, and RMI
+windows use minutes; RSI and MACD windows use bars. Signal rules combine entry
+events on the same bar, not persistent indicator regions. Simulated entries use
+the native engine’s bid/ask closing prices. Skipped requests reflect portfolio
+constraints or the end of the sample; they are not broker orders. Costs adjust
+reported equity and P&amp;L after simulation, without changing position sizing.
+Editing settings leaves the previous result visible until a new run succeeds.
+The Results tab identifies when the current draft differs from the selected run.</p>
 <p>Use <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">TradeTide.gui</span> <span class="pre">--port</span> <span class="pre">8766</span> <span class="pre">--no-browser</span></code> to choose a port or
 open the displayed URL yourself. Stop the server with Ctrl+C. The server binds
 only to <code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code> and is intended for a local research session.</p>
+</section>
 </section>
 <section id="first-backtest">
 <h2>First backtest<a class="headerlink" href="#first-backtest" title="Link to this heading">#</a></h2>
@@ -662,7 +675,12 @@ formatting checks, and pull-request guidelines.</p>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#features">Features</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#graphical-workspace">Graphical workspace</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#graphical-workspace">Graphical workspace</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#market-data">Market data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#strategy-and-saved-configurations">Strategy and saved configurations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analysis-and-research">Analysis and research</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#first-backtest">First backtest</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#testing">Testing</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contributing">Contributing</a></li>

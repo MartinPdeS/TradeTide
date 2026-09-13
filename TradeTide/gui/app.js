@@ -26,7 +26,7 @@ function el(tag, text, className) {
 }
 function option(value, text) { const node = el('option', text); node.value = value; return node; }
 function message(text, error = false) {
-  $('status').textContent = text; $('status').className = error ? 'error' : '';
+  $('status').textContent = text; $('status').classList.toggle('error', error);
 }
 function notice(text) {
   clearTimeout(noticeTimer); $('notice').textContent = text; $('notice').hidden = false;
@@ -58,8 +58,6 @@ function dirty() {
   if (result && !busy) message(configDiff(result.config, settings()).length ? 'Draft changed. Run it to calculate new results.' : 'Draft matches the selected run.');
 }
 function updateDraftSummary() {
-  const count = stack.filter(item => item.enabled).length;
-  $('draft-summary').textContent = `Draft: ${form.elements.pair.value} / USD · ${count} ${count === 1 ? 'indicator' : 'indicators'} · ${ruleNames[form.elements.combination.value]}`;
   $('result-draft-note').hidden = !result || configDiff(result.config, settings()).length === 0;
 }
 function applySettings(config, {remember = true, id = null} = {}) {
@@ -687,12 +685,6 @@ form.elements.days.addEventListener('input', updateSamplePresets);
 form.addEventListener('input', dirty);
 window.addEventListener('pagehide', () => { if (ready) persistDraft(); });
 
-const tabDescriptions = {
-  market: 'Choose the currency pair and historical sample for this backtest.',
-  strategy: 'Configure indicators, signal logic, and execution.', results: 'Selected run: performance, market prices, and indicator values.',
-  execution: 'Inspect executed trades and skipped entry requests.', compare: 'Compare results and the settings that produced them.',
-  research: 'Rank experiments, compare normalized outcomes, and export a research report.',
-};
 const tabTitles = {
   market: 'Market data', strategy: 'Strategy', results: 'Results', execution: 'Orders & trades', compare: 'Compare', research: 'Research',
 };
@@ -718,7 +710,6 @@ function route() {
   $('load-strategy').hidden = !strategyActionsVisible;
   $('strategy-files').hidden = !strategyActionsVisible;
   $('workspace-title').textContent = tabTitles[tab];
-  $('workspace-description').textContent = tabDescriptions[tab];
   document.title = `TradeTide · ${home ? 'Research library' : tabTitles[tab]}`;
   requestAnimationFrame(() => { if (!home && tab === 'results') drawCharts(); if (!home && tab === 'compare') renderComparison(); if (!home && tab === 'research') renderResearch(); });
 }

@@ -146,15 +146,10 @@
     </div>
    </section>
    <section aria-labelledby="workspace-title" hidden="" id="workspace-page">
-    <div class="heading">
-     <div>
-      <h1 id="workspace-title">
-       Strategy
-      </h1>
-      <p id="workspace-description">
-       Configure indicators, execution, and a sample.
-      </p>
-     </div>
+    <h1 class="visually-hidden" id="workspace-title">
+     Strategy
+    </h1>
+    <div class="workspace-actions">
      <div class="header-actions">
       <button class="secondary" id="load-strategy">
        Load strategy
@@ -183,14 +178,8 @@
       </button>
      </div>
     </div>
-    <div class="workspace-status">
-     <span id="draft-summary">
-      EUR / USD · 1 indicator · Any agreement
-     </span>
-     <p aria-live="polite" id="status" role="status">
-      Ready.
-     </p>
-    </div>
+    <p aria-live="polite" class="visually-hidden" id="status" role="status">
+    </p>
     <div hidden="" id="run-progress">
      <progress aria-label="Backtest progress" id="queue-progress" max="1" value="0">
      </progress>

@@ -76,31 +76,53 @@ register the command. You can also use ``python -m TradeTide.gui`` or the
 ``tradetide-gui`` alias. The GUI runs locally and needs no
 additional dependencies, accounts, or internet access. The home page offers
 editable mean-reversion, trend-following, and momentum templates, plus recent
-experiments. The strategy workspace separates setup, results, orders and trades,
-run comparisons, and experiment research into five keyboard-accessible tabs. Navigation preserves
-your draft and completed runs; a successful backtest opens the Results tab.
-The run action sits in a separate toolbar above the form.
+experiments. The keyboard-accessible navigation separates Market data, Strategy,
+Results, Orders & trades, Compare, and Research. Navigation preserves your draft
+and completed runs; a successful backtest opens the Results tab.
 
-Build a stack of up to eight independently configured Bollinger Bands, moving-average crossings,
-RSI, RMI, and MACD indicators. Enable or disable each indicator and combine
-its entry events using unanimous agreement, any non-conflicting agreement,
-or weighted voting with a configurable threshold.
+Market data
+~~~~~~~~~~~
 
-Tune fixed position size, concurrent positions, capital at risk, fixed/trailing/
-break-even exits, commission, slippage, and additional spread. Inspect equity,
-drawdown, market entry markers, individual indicator curves, simulated entry
-requests (executed or skipped), and a searchable trade ledger with costs and
-position sizes. Open any trade to see its cost breakdown and highlight its
-entry and exit on the market chart. Filter trades by side or outcome, sort by
-P&L, and export the filtered ledger as CSV. Chart range sliders and keyboard
-inspection make individual periods easier to examine.
+Choose the bundled currency pair and historical sample independently from the
+strategy configuration. Samples are available from 1 to 180 days, with one-click
+presets for 1 day, 15 days, 1 month, 3 months, and 6 months. The 1-year option
+is visible but disabled until longer bundled market data is available.
 
-The parameter-sweep tool tests 2–6 values for one setting, keeping all other
-settings fixed. Every candidate is validated before the first simulation;
-queued runs can be stopped after the current run finishes. Compare any two
-completed runs to inspect metric changes and exact parameter differences.
-Normalized equity curves are overlaid only for matching markets and observation
-times; metric comparisons remain available for different samples.
+.. image:: docs/images/gui-market-data.png
+   :alt: TradeTide Market data tab with currency pair, sample duration, and common duration presets
+   :width: 100%
+
+Strategy and saved configurations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Build a stack of up to eight independently configured Bollinger Bands,
+moving-average crossings, RSI, RMI, and MACD indicators. Enable or disable
+each indicator and combine its entry events using unanimous agreement, any
+non-conflicting agreement, or weighted voting with a configurable threshold.
+
+Tune fixed position size, concurrent positions, capital at risk, fixed,
+trailing, or break-even exits, commission, slippage, and additional spread.
+Use **Load strategy** in the Strategy tab to replace the current draft with a
+saved configuration. **Save strategy** at the bottom of the tab opens a name
+dialog and stores a reusable strategy in the local browser library.
+
+.. image:: docs/images/gui-strategy-workspace.png
+   :alt: TradeTide Strategy tab with indicator and risk configuration panels
+   :width: 100%
+
+Analysis and research
+~~~~~~~~~~~~~~~~~~~~~
+
+Inspect equity, drawdown, market entry markers, individual indicator curves,
+simulated entry requests (executed or skipped), and a searchable trade ledger
+with costs and position sizes. Open any trade to see its cost breakdown and
+highlight its entry and exit on the market chart. Filter trades by side or
+outcome, sort by P&L, and export the filtered ledger as CSV. Chart range
+sliders and keyboard inspection make individual periods easier to examine.
+
+Compare any two completed runs to inspect metric changes and exact parameter
+differences. Normalized equity curves are overlaid only for matching markets and
+observation times; metric comparisons remain available for different samples.
 The Research tab ranks every retained experiment by return, risk, or Sharpe
 ratio, overlays matching normalized equity curves, and exports a standalone
 HTML experiment report.
@@ -112,21 +134,18 @@ exported run; undo restores the replaced draft. Export JSON to keep portable
 copies independent of browser storage. ``Ctrl+Enter`` or ``Cmd+Enter`` runs
 the current draft from any workspace tab.
 
-Samples begin at each dataset's first observation; the GUI accepts whole-day
-durations from 1 to 180 days, with one-click 1-day, 15-day, 1-month, 3-month,
-and 6-month presets. A 1-year option is shown but remains unavailable until
-longer bundled market data is provided. The selected duration is calendar time
-and may include market closures. The displayed dates show the actual simulation
-period. During each run, the workspace reports progress through data loading,
-indicator calculation, signal combination, portfolio simulation, and performance reporting. Bollinger,
-moving-average, and RMI windows use minutes;
-RSI and MACD windows use bars. Signal rules combine entry events on the same bar,
-not persistent indicator regions. Simulated entries use the native engine's
-bid/ask closing prices. Skipped requests reflect portfolio constraints or the
-end of the sample; they are not broker orders. Costs adjust reported equity
-and P&L after simulation, without changing position sizing. Editing settings
-leaves the previous result visible until a new run succeeds. The results page
-identifies when the current draft differs from the selected run.
+Samples begin at each dataset's first observation. The selected duration is
+calendar time and may include market closures; displayed dates show the actual
+simulation period. During each run, the workspace reports genuine progress
+through data loading, indicator calculation, signal combination, portfolio
+simulation, and performance reporting. Bollinger, moving-average, and RMI
+windows use minutes; RSI and MACD windows use bars. Signal rules combine entry
+events on the same bar, not persistent indicator regions. Simulated entries use
+the native engine's bid/ask closing prices. Skipped requests reflect portfolio
+constraints or the end of the sample; they are not broker orders. Costs adjust
+reported equity and P&L after simulation, without changing position sizing.
+Editing settings leaves the previous result visible until a new run succeeds.
+The Results tab identifies when the current draft differs from the selected run.
 
 Use ``python -m TradeTide.gui --port 8766 --no-browser`` to choose a port or
 open the displayed URL yourself. Stop the server with Ctrl+C. The server binds

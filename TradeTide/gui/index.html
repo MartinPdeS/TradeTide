@@ -41,6 +41,9 @@
     <a data-page="research" id="tab-research" href="#workspace/research">
      Research
     </a>
+    <a data-page="guide" id="tab-guide" href="#workspace/guide">
+     Guide
+    </a>
    </nav>
    <span class="local">
     <i>
@@ -188,6 +191,7 @@
     </div>
     <form id="config" novalidate="">
      <section aria-labelledby="tab-market" id="panel-market" role="region">
+      <div class="market-data-grid">
       <section class="panel market-data-setup">
        <div class="section-title">
         <h2>
@@ -261,7 +265,43 @@
         </p>
        </div>
       </section>
-     </section>
+       <aside class="panel market-next-step">
+        <span class="eyebrow">
+         NEXT STEP
+        </span>
+        <h2>
+         Define the trading logic
+        </h2>
+        <p>
+         Market data sets the historical sample. Choose the indicators, signal rule, and execution assumptions in Strategy before running the backtest.
+        </p>
+        <dl>
+         <div>
+          <dt>
+           1–180 days
+          </dt>
+          <dd>
+           Available bundled sample range
+          </dd>
+         </div>
+         <div>
+          <dt>
+           Local only
+          </dt>
+          <dd>
+           Historical data and simulated orders
+          </dd>
+         </div>
+        </dl>
+        <a class="primary" href="#workspace/strategy">
+         Configure strategy
+         <span>
+          →
+         </span>
+        </a>
+       </aside>
+       </div>
+      </section>
      <section aria-labelledby="tab-strategy" id="panel-strategy" role="region">
       <fieldset class="strategy-grid" id="fields">
        <section class="panel indicator-setup">
@@ -462,6 +502,23 @@
        </button>
       </div>
      </div>
+     <section class="panel results-empty-state" id="results-empty-state">
+      <span class="eyebrow">
+       READY TO ANALYZE
+      </span>
+      <h3>
+       Run your first backtest
+      </h3>
+      <p>
+       Results will show return, drawdown, equity, and indicator diagnostics after the current draft completes.
+      </p>
+      <a class="primary" href="#workspace/strategy">
+       Review strategy
+       <span>
+        →
+       </span>
+      </a>
+     </section>
      <div class="metrics" id="metrics">
      </div>
      <div class="result-facts" id="result-facts">
@@ -948,6 +1005,128 @@
      <p class="results-note">
       The report includes all locally retained runs. Curve overlays only include runs sharing the selected experiment's market and observation times.
      </p>
+    </section>
+    <section aria-labelledby="tab-guide" hidden="" id="panel-guide" role="region">
+      <div class="guide-heading">
+       <span class="eyebrow">
+        GETTING STARTED
+       </span>
+       <h2>
+        How TradeTide works
+       </h2>
+       <p>
+        TradeTide runs historical FX backtests locally in your browser. Configure a market and strategy, simulate it against bundled data, then inspect and compare the completed experiments.
+       </p>
+      </div>
+      <section class="guide-workflow" aria-label="Backtesting workflow">
+       <article>
+        <span>
+         1
+        </span>
+        <h3>
+         Choose market data
+        </h3>
+        <p>
+         In <a href="#workspace/market">Market data</a>, select a currency against USD and a sample from 1 to 180 days. Presets provide common windows; all samples begin at the first bundled observation.
+        </p>
+       </article>
+       <article>
+        <span>
+         2
+        </span>
+        <h3>
+         Build a strategy
+        </h3>
+        <p>
+         In <a href="#workspace/strategy">Strategy</a>, enable and tune indicators, choose how their signals combine, and set position size, exits, commissions, and slippage. Save named configurations to reuse them later.
+        </p>
+       </article>
+       <article>
+        <span>
+         3
+        </span>
+        <h3>
+         Run the simulation
+        </h3>
+        <p>
+         Select <strong>Run backtest</strong>. The progress display follows real processing stages: loading data, computing indicators, combining signals, creating positions, simulating the portfolio, and calculating performance.
+        </p>
+       </article>
+       <article>
+        <span>
+         4
+        </span>
+        <h3>
+         Learn from the run
+        </h3>
+        <p>
+         Use <a href="#workspace/results">Results</a> for equity and indicator charts, <a href="#workspace/execution">Orders &amp; trades</a> for execution detail, and the comparison pages to assess variations.
+        </p>
+       </article>
+      </section>
+      <div class="guide-grid">
+       <section class="panel guide-panel">
+        <h3>
+         Reading a backtest
+        </h3>
+        <dl class="guide-definitions">
+         <div>
+          <dt>
+           Results
+          </dt>
+          <dd>
+           Shows full-run metrics, portfolio equity, market prices, and the values produced by each enabled indicator. Sliders inspect a portion of a chart without changing its metrics.
+          </dd>
+         </div>
+         <div>
+          <dt>
+           Orders &amp; trades
+          </dt>
+          <dd>
+           Separates every simulated entry request from completed positions. A signal can be skipped when portfolio constraints prevent execution.
+          </dd>
+         </div>
+         <div>
+          <dt>
+           Compare
+          </dt>
+          <dd>
+           Select two completed runs to see their settings and performance side by side. Equity overlays require matching markets and observation times.
+          </dd>
+         </div>
+         <div>
+          <dt>
+           Research
+          </dt>
+          <dd>
+           Ranks the locally retained runs by return, Sharpe ratio, drawdown, or recency. Export a research report when you want to share the experiment set.
+          </dd>
+         </div>
+        </dl>
+       </section>
+       <aside class="panel guide-panel guide-notes">
+        <h3>
+         Important notes
+        </h3>
+        <ul>
+         <li>
+          Backtests use bundled historical data and simulated orders only; they never place live trades.
+         </li>
+         <li>
+          Drafts, saved strategies, and the 30 most recent completed runs stay in this browser. Export JSON or CSV before clearing browser data or moving to another computer.
+         </li>
+         <li>
+          A strong historical result does not guarantee future performance. Test meaningful variations and account for drawdown, costs, and trade count before drawing conclusions.
+         </li>
+        </ul>
+        <a class="primary guide-start" href="#workspace/market">
+         Start a backtest
+         <span>
+          →
+         </span>
+        </a>
+       </aside>
+      </div>
     </section>
    </section>
    <footer>

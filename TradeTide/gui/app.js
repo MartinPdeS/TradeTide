@@ -7,7 +7,7 @@ import {readLocal, writeLocal, readRuns, storeRun} from './storage.mjs';
 
 const $ = id => document.getElementById(id);
 const form = $('config');
-const tabs = ['market', 'strategy', 'results', 'execution', 'compare', 'research'];
+const tabs = ['market', 'strategy', 'results', 'execution', 'compare', 'research', 'guide'];
 const ruleNames = {any: 'Any agreement', all: 'All must agree', weighted: 'Weighted vote'};
 const runHistory = [];
 let stack = [{...defaults}], result = null, busy = false, ready = false;
@@ -250,6 +250,7 @@ function selectResult(data, goToResults = true) {
 }
 function renderResults() {
   const metrics = result?.metrics;
+  $('panel-results').classList.toggle('without-results', !result);
   const cards = metrics ? [
     ['Net return', percent(metrics.total_return), 'After additional costs', metrics.total_return >= 0 ? 'positive' : 'negative'],
     ['Final equity', number(metrics.final_equity), 'USD', ''],
@@ -686,7 +687,7 @@ form.addEventListener('input', dirty);
 window.addEventListener('pagehide', () => { if (ready) persistDraft(); });
 
 const tabTitles = {
-  market: 'Market data', strategy: 'Strategy', results: 'Results', execution: 'Orders & trades', compare: 'Compare', research: 'Research',
+  market: 'Market data', strategy: 'Strategy', results: 'Results', execution: 'Orders & trades', compare: 'Compare', research: 'Research', guide: 'Guide',
 };
 function navigate(tab) {
   const target = tab === 'home' ? '#home' : `#workspace/${tab}`;

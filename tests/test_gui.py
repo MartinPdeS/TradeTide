@@ -90,6 +90,10 @@ def test_local_http_boundary():
             assert b'load-strategy-dialog' in response.read()
         with urlopen(base) as response:
             assert b"Research dashboard" in response.read()
+        with urlopen(base) as response:
+            page = response.read()
+            assert b"How TradeTide works" in page
+            assert b"Backtests use bundled historical data and simulated orders only" in page
         with urlopen(base + "/api/session") as response:
             token = json.load(response)["token"]
         with pytest.raises(HTTPError) as error:

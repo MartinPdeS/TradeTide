@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Create a TradeTide release commit and annotated Git tag."""
 
-from __future__ import annotations
 
 import argparse
 from datetime import date

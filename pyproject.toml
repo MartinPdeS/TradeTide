@@ -1,5 +1,5 @@
 [build-system]
-requires = ["scikit-build-core>=0.3.3", "pybind11", "setuptools_scm[toml]>=8.0"]
+requires = ["scikit-build-core>=0.3.3", "pybind11>=3.0,<4", "setuptools_scm[toml]>=8.0"]
 build-backend = "scikit_build_core.build"
 
 [tool.scikit-build]
@@ -60,6 +60,7 @@ classifiers = [
     'Programming Language :: Python :: 3.11',
     'Programming Language :: Python :: 3.12',
     'Programming Language :: Python :: 3.13',
+    'Programming Language :: Python :: 3.14',
     'Programming Language :: Python :: Implementation :: CPython',
     'Development Status :: 4 - Beta',
 ]
@@ -131,7 +132,7 @@ test-extras = ["testing"]
 
 [tool.cibuildwheel.linux]
 archs = ["x86_64"]
-build = ["cp311-manylinux*", "cp312-manylinux*", "cp313-manylinux*"]
+build = ["cp311-manylinux*", "cp312-manylinux*", "cp313-manylinux*", "cp314-manylinux*"]
 manylinux-x86_64-image = "manylinux_2_28"
 repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel}"
 before-test = ""
@@ -139,11 +140,11 @@ test-command = "cd /tmp && python -m pytest {project}/tests --config-file={proje
 
 [tool.cibuildwheel.macos]
 archs = ["arm64"]
-build = ["cp311-*", "cp312-*", "cp313-*"]
+build = ["cp311-*", "cp312-*", "cp313-*", "cp314-*"]
 repair-wheel-command = "delocate-wheel -w {dest_dir} -v {wheel}"  # --exclude=libomp.dylib
 test-command = 'cd /tmp && python -m pytest {project}/tests --config-file={project}/pytest.ini --import-mode=importlib'  # DYLD_PRINT_LIBRARIES=NO
 
 [tool.cibuildwheel.windows]
 archs = ["AMD64"]
-build = ["cp311-*", "cp312-*", "cp313-*"]
+build = ["cp311-*", "cp312-*", "cp313-*", "cp314-*"]
 test-command = 'cd /d %TEMP% && python -m pytest {project}\\tests --config-file={project}\\pytest.ini --import-mode=importlib'

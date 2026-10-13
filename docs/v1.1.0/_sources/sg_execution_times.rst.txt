@@ -1,0 +1,70 @@
+
+:orphan:
+
+.. _sphx_glr_sg_execution_times:
+
+
+Computation times
+=================
+**03:24.992** total execution time for 12 files **from all galleries**:
+
+.. container::
+
+  .. raw:: html
+
+    <style scoped>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    </style>
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script type="text/javascript" class="init">
+    $(document).ready( function () {
+        $('table.sg-datatable').DataTable({order: [[1, 'desc']]});
+    } );
+    </script>
+
+  .. list-table::
+   :header-rows: 1
+   :class: table table-striped sg-datatable
+
+   * - Example
+     - Time
+     - Mem (MB)
+   * - :ref:`sphx_glr_gallery_backtester.py` (``../examples/backtester.py``)
+     - 03:20.717
+     - 0.0
+   * - :ref:`sphx_glr_gallery_quickstart_backtest.py` (``../examples/quickstart_backtest.py``)
+     - 00:02.630
+     - 0.0
+   * - :ref:`sphx_glr_gallery_candlestick_chart.py` (``../examples/candlestick_chart.py``)
+     - 00:00.515
+     - 0.0
+   * - :ref:`sphx_glr_gallery_complete_strategy_tutorial.py` (``../examples/complete_strategy_tutorial.py``)
+     - 00:00.512
+     - 0.0
+   * - :ref:`sphx_glr_gallery_workflow.py` (``../examples/workflow.py``)
+     - 00:00.239
+     - 0.0
+   * - :ref:`sphx_glr_gallery_interactive_html_report.py` (``../examples/interactive_html_report.py``)
+     - 00:00.236
+     - 0.0
+   * - :ref:`sphx_glr_gallery_moving_average_crossings.py` (``../examples/moving_average_crossings.py``)
+     - 00:00.045
+     - 0.0
+   * - :ref:`sphx_glr_gallery_relative_momentum_index.py` (``../examples/relative_momentum_index.py``)
+     - 00:00.042
+     - 0.0
+   * - :ref:`sphx_glr_gallery_bollinger_bands.py` (``../examples/bollinger_bands.py``)
+     - 00:00.040
+     - 0.0
+   * - :ref:`sphx_glr_gallery_trade_ledger.py` (``../examples/trade_ledger.py``)
+     - 00:00.013
+     - 0.0
+   * - :ref:`sphx_glr_gallery_order_types.py` (``../examples/order_types.py``)
+     - 00:00.002
+     - 0.0
+   * - :ref:`sphx_glr_gallery_data_quality.py` (``../examples/data_quality.py``)
+     - 00:00.001
+     - 0.0

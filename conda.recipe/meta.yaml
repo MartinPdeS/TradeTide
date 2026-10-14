@@ -32,13 +32,15 @@ requirements:
     - python_abi 3.13.* *_cp313   # [py==313]
     - python_abi 3.14.* *_cp314   # [py==314]
     - scikit-build-core ~=0.3
-    - pybind11 >=3.0,<4
+    - pybind11 >=3.0.1,<4
     - python-build ~=1.2
     - setuptools_scm[toml] ~=8.0
-    - numpy >=2.0,<3
+    - numpy >=2.0,<3  # [py<314]
+    - numpy >=2.3.3,<3  # [py>=314]
   run:
-    - pandas ==2.3
-    - numpy >=2.0,<3
+    - pandas >=2.3,<4
+    - numpy >=2.0,<3  # [py<314]
+    - numpy >=2.3.3,<3  # [py>=314]
     - matplotlib >=3.9,<4
     - pydantic >=2.8,<3
 

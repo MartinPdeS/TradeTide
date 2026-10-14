@@ -9,7 +9,8 @@ permissions:
 
 jobs:
   release:
-    uses: MartinPdeS/MPSActions/.github/workflows/publish_release.yml@v6
+    # Validate Conda metadata before publishing and install the .conda archive reader.
+    uses: MartinPdeS/MPSActions/.github/workflows/publish_release.yml@649c126d7d77cc99a41d3b35dd191d2e799579cd
     with:
       pypi_python_version: "3.13"
       pypi_build_linux: true
@@ -25,6 +26,7 @@ jobs:
       conda_package_name: tradetide
       conda_recipe_path: conda.recipe/meta.yaml
       conda_test_import: TradeTide
+      conda_tools_python_version: "3.11"
     secrets:
       PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
       ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_API_TOKEN }}

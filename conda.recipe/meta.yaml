@@ -7,6 +7,8 @@ source:
 
 build:
   number: 0
+  # Python is excluded from Conda's hash; keep ABI builds distinct when merged.
+  string: py{{ PY_VER | replace('.', '') }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}
   script: |
     @echo on  # [win]
     "%PYTHON%" -m pip install . -vv --no-deps --no-build-isolation ^  # [win]

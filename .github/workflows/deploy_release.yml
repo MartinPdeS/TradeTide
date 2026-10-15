@@ -18,9 +18,11 @@ jobs:
       pypi_build_windows: true
       # The toolchain group pulls in GDB's Python, which shadows setup-python
       # when the shared workflow adds mingw64/bin to PATH.
+      # gcc-libs supplies OpenMP on both older MSYS2 snapshots and newer
+      # repositories where libgomp is a separate dependency.
       pypi_mingw_package: |
         mingw-w64-x86_64-gcc
-        mingw-w64-x86_64-libgomp
+        mingw-w64-x86_64-gcc-libs
         mingw-w64-x86_64-ninja
         mingw-w64-x86_64-gcc-fortran
         mingw-w64-x86_64-pkg-config

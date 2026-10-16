@@ -88,7 +88,14 @@ def create_release(tag: str, version: str) -> None:
     update_pyproject(version)
     generate_version_file(version)
     run("git", "add", ".zenodo.json", "conda.recipe/meta.yaml", "pyproject.toml", "TradeTide/_version.py")
-    run("git", "commit", "-m", f"Release {tag}")
+    run(
+        "git",
+        "commit",
+        "-m",
+        f"Release {tag}",
+        "-m",
+        "Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>",
+    )
     run("git", "tag", "-a", tag, "-m", f"Release {tag}")
 
 

@@ -2,5 +2,5 @@
 
 .. _theory:
 
-Theoretical background
-======================
+Theory
+======

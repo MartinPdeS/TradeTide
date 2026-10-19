@@ -1,5 +1,5 @@
-Performance and validation
-==========================
+Performance
+===========
 
 Every completed :class:`TradeTide.Backtester` returns a structured
 ``BacktestResult``.  Its ``metrics`` field uses decimal fractions (``0.12`` is

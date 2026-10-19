@@ -54,6 +54,11 @@ html {
         pointer-events: none;
     }
 
+    .bd-header .navbar-nav > .nav-item {
+        align-items: center;
+        display: flex;
+    }
+
     .bd-header .navbar-nav .nav-link {
         padding: 0.65rem 0.8rem;
         border-radius: 0.4rem;
@@ -69,21 +74,21 @@ html {
 }
 
 @media (min-width: 1200px) {
-    #pst-header .navbar-brand {
+    .bd-header .navbar-brand {
         box-sizing: border-box;
         flex: 0 0 var(--documentation-sidebar-width);
         width: var(--documentation-sidebar-width);
     }
 
-    #pst-header .navbar-brand img.logo__image {
-        width: 12rem !important;
-        max-width: 12rem !important;
+    .bd-header .navbar-brand img.logo__image {
+        width: 14rem !important;
+        max-width: 14rem !important;
         height: auto !important;
-        max-height: 4.5rem !important;
+        max-height: 5.5rem !important;
         object-fit: contain;
     }
 
-    #pst-header .navbar-brand .logo__title {
+    .bd-header .navbar-brand .logo__title {
         font-size: 2.1rem;
         line-height: 1;
         letter-spacing: -0.035em;

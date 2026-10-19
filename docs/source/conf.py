@@ -5,13 +5,9 @@ import sys
 import os
 from sphinx_gallery.sorting import FileNameSortKey
 from pathlib import Path
-import TradeTide
+
 from TradeTide.directories import doc_css_path
 from martinpdes_docs import configure
-
-
-package_name = "TradeTide"
-version = TradeTide.__version__
 
 current_dir = Path(".")
 
@@ -28,15 +24,11 @@ autodoc_mock_imports = [
     "numpydoc",
 ]
 
-
-project = package_name
-author = "Martin Poinsinet de Sivry-Houle"
-
 globals().update(
     configure(
-        project=project,
-        package=package_name,
-        author=author,
+        project="TradeTide",
+        package="TradeTide",
+        author="Martin Poinsinet de Sivry-Houle",
         repository="MartinPdeS/TradeTide",
         logo="../images/logo.png",
         favicon="_static/favicon.svg",

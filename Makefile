@@ -4,12 +4,14 @@
 # Override defaults as needed, for example: make PYTHON=python3.13 quick
 PYTHON ?= .venv/bin/python
 BUILD_DIR ?= build
+DOCS_BUILD_DIR ?= docs/_build
+DOCS_PYTHONPATH ?= ../MartinPdeS-docs
 ROOT_DIR := $(CURDIR)
 PYBIND11_DIR = $(shell $(PYTHON) -m pybind11 --cmakedir)
 TAG_VERSION ?= $(or $(VERSION),$(filter v%,$(MAKECMDGOALS)))
 RELEASE_KIND := $(filter major minor patch,$(MAKECMDGOALS))
 
-.PHONY: help bootstrap configure build install uninstall quick rebuild editable quality test check release-check tag release major minor patch clean
+.PHONY: help bootstrap configure build install uninstall quick rebuild editable quality test docs check release-check tag release major minor patch clean
 
 ifneq ($(filter tag,$(MAKECMDGOALS)),)
 ifneq ($(strip $(TAG_VERSION)),)
@@ -42,6 +44,9 @@ quality:
 
 test:
 	MPLBACKEND=Agg $(PYTHON) -m pytest --config-file=pytest.ini
+
+docs:
+	PYTHONPATH="$(DOCS_PYTHONPATH)" $(PYTHON) -m sphinx -M html docs/source $(DOCS_BUILD_DIR)
 
 check: quality test
 

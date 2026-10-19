@@ -88,7 +88,7 @@ strategy configuration. Samples are available from 1 to 180 days, with one-click
 presets for 1 day, 15 days, 1 month, 3 months, and 6 months. The 1-year option
 is visible but disabled until longer bundled market data is available.
 
-.. image:: docs/images/gui-market-data.png
+.. image:: https://raw.githubusercontent.com/MartinPdeS/TradeTide/master/docs/images/gui-market-data.png
    :alt: TradeTide Market data tab with currency pair, sample duration, and common duration presets
    :width: 100%
 
@@ -106,7 +106,7 @@ Use **Load strategy** in the Strategy tab to replace the current draft with a
 saved configuration. **Save strategy** at the bottom of the tab opens a name
 dialog and stores a reusable strategy in the local browser library.
 
-.. image:: docs/images/gui-strategy-workspace.png
+.. image:: https://raw.githubusercontent.com/MartinPdeS/TradeTide/master/docs/images/gui-strategy-workspace.png
    :alt: TradeTide Strategy tab with indicator and risk configuration panels
    :width: 100%
 

@@ -60,22 +60,12 @@ def reset_mpl(gallery_conf, fname):
     plt.style.use("default")
 
 
-sphinx_gallery_conf = {
-    "examples_dirs": "../examples/",
-    "gallery_dirs": "gallery/",
-    "image_scrapers": ("matplotlib"),
-    "ignore_pattern": "/__",
-    "filename_pattern": r".*\.py",
-    "plot_gallery": True,
-    "thumbnail_size": [600, 600],
-    "download_all_examples": False,
-    "reset_modules": reset_mpl,
-    "line_numbers": False,
-    "remove_config_comments": True,
-    "capture_repr": ("_repr_html_", "__repr__"),
-    "nested_sections": True,
-    "within_subsection_order": FileNameSortKey,
-}
+sphinx_gallery_conf.update(
+    {
+        "reset_modules": reset_mpl,
+        "within_subsection_order": FileNameSortKey,
+    }
+)
 
 
 

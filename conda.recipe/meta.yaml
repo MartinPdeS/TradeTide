@@ -33,7 +33,7 @@ requirements:
     - python {{ PY_VER }}*
     - python_abi 3.13.* *_cp313   # [py==313]
     - python_abi 3.14.* *_cp314   # [py==314]
-    - scikit-build-core ~=0.3
+    - scikit-build-core >=0.10
     - pybind11 >=3.0.1,<4
     - python-build ~=1.2
     - setuptools_scm[toml] ~=8.0

@@ -41,15 +41,15 @@ html {
 }
 
 @media (min-width: 768px) {
-    #pst-header .navbar-nav {
+    .bd-header .navbar-nav {
         gap: 0.3rem;
     }
 
-    #pst-header .navbar-nav > .nav-item + .nav-item > .nav-link {
+    .bd-header .navbar-nav > .nav-item + .nav-item > .nav-link {
         border-left: 1px solid var(--pst-color-border);
     }
 
-    #pst-header .navbar-nav .nav-link {
+    .bd-header .navbar-nav .nav-link {
         padding: 0.65rem 0.8rem;
         border-radius: 0.4rem;
         font-size: 1.05rem;

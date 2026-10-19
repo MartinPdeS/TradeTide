@@ -2,8 +2,8 @@
 
 .. _source_code:
 
-Source code
-===========
+Code
+====
 
 
 BackTester

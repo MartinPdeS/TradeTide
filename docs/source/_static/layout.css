@@ -45,8 +45,13 @@ html {
         gap: 0.3rem;
     }
 
-    .bd-header .navbar-nav > .nav-item + .nav-item > .nav-link {
-        border-left: 1px solid var(--pst-color-border);
+    .bd-header .navbar-nav > .nav-item:not(:last-child)::after {
+        color: var(--pst-color-border);
+        content: "|";
+        font-size: 1.2rem;
+        font-weight: 400;
+        line-height: 1;
+        pointer-events: none;
     }
 
     .bd-header .navbar-nav .nav-link {
@@ -54,6 +59,12 @@ html {
         border-radius: 0.4rem;
         font-size: 1.05rem;
         font-weight: 600;
+    }
+}
+
+@media (min-width: 1200px) {
+    .sphx-glr-thumbnails {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
 

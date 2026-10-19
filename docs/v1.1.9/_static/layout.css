@@ -45,19 +45,8 @@ html {
         gap: 0.3rem;
     }
 
-    #pst-header .navbar-nav .nav-item {
-        position: relative;
-    }
-
-    #pst-header .navbar-nav > .nav-item:not(:last-child)::after {
-        position: absolute;
-        top: 50%;
-        right: -0.15rem;
-        height: 1rem;
-        border-right: 1px solid var(--pst-color-border);
-        content: "";
-        transform: translateY(-50%);
-        pointer-events: none;
+    #pst-header .navbar-nav > .nav-item + .nav-item > .nav-link {
+        border-left: 1px solid var(--pst-color-border);
     }
 
     #pst-header .navbar-nav .nav-link {
@@ -76,13 +65,15 @@ html {
     }
 
     #pst-header .navbar-brand img.logo__image {
-        width: 4rem;
-        height: 4rem;
+        width: 4.5rem !important;
+        max-width: 4.5rem !important;
+        height: 4.5rem !important;
+        max-height: 4.5rem !important;
         object-fit: contain;
     }
 
     #pst-header .navbar-brand .logo__title {
-        font-size: 2rem;
+        font-size: 2.1rem;
         line-height: 1;
         letter-spacing: -0.035em;
     }

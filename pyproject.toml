@@ -6,6 +6,7 @@ build-backend = "scikit_build_core.build"
 build-dir = ".skbuild/{wheel_tag}"
 logging.level = "INFO"
 wheel.packages = ["TradeTide"]
+wheel.force-include = {"TradeTide/data" = "TradeTide/data"}
 install.strip = false
 sdist.include = ["cpp/**/*.cpp", "cpp/**/*.h", "cpp/**/CMakeLists.txt", "conda.recipe/meta.yaml", "TradeTide/data/*.csv"]
 sdist.exclude = [

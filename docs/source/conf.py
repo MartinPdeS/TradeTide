@@ -3,16 +3,16 @@
 
 import sys
 import os
-from sphinx_gallery.sorting import FileNameSortKey
 from pathlib import Path
+
+# Ensure Sphinx-Gallery examples import this checkout instead of a globally
+# installed TradeTide package.
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
+from sphinx_gallery.sorting import FileNameSortKey
 
 from TradeTide.directories import doc_css_path
 from martinpdes_docs import configure
-
-current_dir = Path(".")
-
-sys.path.append(str(current_dir.resolve()))
-
 
 def setup(app):
     app.add_css_file(str(doc_css_path))
@@ -51,6 +51,9 @@ globals().update(
 
 sphinx_gallery_conf.update(
     {
+        # Sphinx-Gallery resolves this path from the repository root rather
+        # than from ``docs/source``.  Keep the shared logo fallback explicit.
+        "default_thumb_file": str(Path(__file__).resolve().parents[1] / "images" / "logo.png"),
         "within_subsection_order": FileNameSortKey,
     }
 )

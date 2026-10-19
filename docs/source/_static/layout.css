@@ -54,10 +54,10 @@ html {
         position: absolute;
         right: -0.08rem;
         top: 50%;
-        color: var(--pst-color-border);
-        content: "|";
-        font-size: 1.1rem;
-        font-weight: 400;
+        width: 1px;
+        height: 1.15rem;
+        background: color-mix(in srgb, var(--pst-color-text-base) 35%, transparent);
+        content: "";
         line-height: 1;
         pointer-events: none;
         transform: translateY(-50%);
@@ -94,6 +94,7 @@ html {
         max-width: 14rem !important;
         height: auto !important;
         max-height: 5.5rem !important;
+        filter: grayscale(1) brightness(0) invert(1);
         object-fit: contain;
     }
 

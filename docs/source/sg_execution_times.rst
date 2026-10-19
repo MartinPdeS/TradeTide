@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:00.552** total execution time for 4 files **from all galleries**:
+**00:15.578** total execution time for 12 files **from all galleries**:
 
 .. container::
 
@@ -32,15 +32,39 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
-   * - :ref:`sphx_glr_gallery_relative_momentum_index.py` (``../examples/relative_momentum_index.py``)
-     - 00:00.552
+   * - :ref:`sphx_glr_gallery_backtester.py` (``../examples/backtester.py``)
+     - 00:11.182
      - 0.0
-   * - :ref:`sphx_glr_gallery_bollinger_bands.py` (``../examples/bollinger_bands.py``)
-     - 00:00.000
+   * - :ref:`sphx_glr_gallery_complete_strategy_tutorial.py` (``../examples/complete_strategy_tutorial.py``)
+     - 00:01.789
      - 0.0
-   * - :ref:`sphx_glr_gallery_moving_average_crossings.py` (``../examples/moving_average_crossings.py``)
-     - 00:00.000
+   * - :ref:`sphx_glr_gallery_interactive_html_report.py` (``../examples/interactive_html_report.py``)
+     - 00:01.186
+     - 0.0
+   * - :ref:`sphx_glr_gallery_candlestick_chart.py` (``../examples/candlestick_chart.py``)
+     - 00:00.997
+     - 0.0
+   * - :ref:`sphx_glr_gallery_quickstart_backtest.py` (``../examples/quickstart_backtest.py``)
+     - 00:00.247
      - 0.0
    * - :ref:`sphx_glr_gallery_workflow.py` (``../examples/workflow.py``)
-     - 00:00.000
+     - 00:00.124
+     - 0.0
+   * - :ref:`sphx_glr_gallery_moving_average_crossings.py` (``../examples/moving_average_crossings.py``)
+     - 00:00.017
+     - 0.0
+   * - :ref:`sphx_glr_gallery_bollinger_bands.py` (``../examples/bollinger_bands.py``)
+     - 00:00.015
+     - 0.0
+   * - :ref:`sphx_glr_gallery_relative_momentum_index.py` (``../examples/relative_momentum_index.py``)
+     - 00:00.014
+     - 0.0
+   * - :ref:`sphx_glr_gallery_trade_ledger.py` (``../examples/trade_ledger.py``)
+     - 00:00.005
+     - 0.0
+   * - :ref:`sphx_glr_gallery_order_types.py` (``../examples/order_types.py``)
+     - 00:00.001
+     - 0.0
+   * - :ref:`sphx_glr_gallery_data_quality.py` (``../examples/data_quality.py``)
+     - 00:00.001
      - 0.0

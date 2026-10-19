@@ -54,15 +54,8 @@ globals().update(
 )
 
 
-def reset_mpl(gallery_conf, fname):
-    import matplotlib.pyplot as plt
-
-    plt.style.use("default")
-
-
 sphinx_gallery_conf.update(
     {
-        "reset_modules": reset_mpl,
         "within_subsection_order": FileNameSortKey,
     }
 )

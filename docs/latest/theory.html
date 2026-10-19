@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Theory &#8212; TradeTide  documentation</title>
+    <title>How it works &#8212; TradeTide  documentation</title>
   
   
   
@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="_static/default.css?v=4340df76" />
-    <link rel="stylesheet" type="text/css" href="_static/layout.css?v=9df2db11" />
+    <link rel="stylesheet" type="text/css" href="_static/martinpdes_layout.css?v=a8cc01cd" />
   
   <!-- So that users can add custom icons -->
   <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -52,7 +52,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/TradeTide/documentation_page/version_switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v1.1.11';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v1.1.14';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             true;
         </script>
@@ -63,7 +63,7 @@
     <link rel="prev" title="TradeTide" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="1.1.11" />
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -147,7 +147,7 @@
     
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="#">
-    Theory
+    How it works
   </a>
 </li>
 
@@ -306,7 +306,7 @@
     
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="#">
-    Theory
+    How it works
   </a>
 </li>
 
@@ -456,7 +456,7 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Theory</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">How it works</span></li>
   </ul>
 </nav>
 </div>
@@ -473,8 +473,24 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="theory">
-<span id="id1"></span><h1>Theory<a class="headerlink" href="#theory" title="Link to this heading">#</a></h1>
+  <section id="how-it-works">
+<span id="theory"></span><h1>How it works<a class="headerlink" href="#how-it-works" title="Link to this heading">#</a></h1>
+<p>TradeTide turns market data into reproducible backtests through a small set of
+cooperating components:</p>
+<ul class="simple">
+<li><p><strong>Market data</strong> provides timestamped prices and normalizes them into the
+common series used by the rest of the package.</p></li>
+<li><p><strong>Signal rules</strong> convert prices and indicators into entry and exit signals.</p></li>
+<li><p><strong>The backtester</strong> applies those signals, manages positions and cash, and
+records every transaction in a structured result.</p></li>
+<li><p><strong>Costs and execution</strong> model spreads, commissions, slippage, and position
+sizing so the simulated fills remain explicit.</p></li>
+<li><p><strong>Performance analysis</strong> turns the trade ledger and equity curve into return,
+risk, drawdown, and ratio metrics.</p></li>
+<li><p><strong>The graphical workspace</strong> exposes the same workflow interactively for
+exploring data, strategies, and saved configurations.</p></li>
+</ul>
+<p>The sections below describe the models and conventions used by each component.</p>
 </section>
 
 
@@ -496,7 +512,7 @@
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/MartinPdeS/TradeTide/edit/master/theory.rst">
+    <a href="https://github.com/MartinPdeS/TradeTide/edit/v1.1.14/theory.rst">
       <i class="fa-solid fa-pencil"></i>
       
       

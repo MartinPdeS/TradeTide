@@ -43,7 +43,7 @@ html {
 @media (min-width: 768px) {
     .bd-header .navbar-nav {
         align-items: center;
-        gap: 0.15rem;
+        gap: 1.2rem;
     }
 
     .bd-header .navbar-nav > .nav-item {
@@ -52,7 +52,7 @@ html {
 
     .bd-header .navbar-nav > .nav-item:not(:last-child)::after {
         position: absolute;
-        right: -0.08rem;
+        right: -0.6rem;
         top: 50%;
         width: 1px;
         height: 1.15rem;

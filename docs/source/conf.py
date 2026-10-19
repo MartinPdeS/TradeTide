@@ -5,10 +5,6 @@ import sys
 import os
 from pathlib import Path
 
-# Ensure Sphinx-Gallery examples import this checkout instead of a globally
-# installed TradeTide package.
-sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-
 from sphinx_gallery.sorting import FileNameSortKey
 
 from TradeTide.directories import doc_css_path

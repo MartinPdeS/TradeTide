@@ -46,7 +46,7 @@ test:
 	MPLBACKEND=Agg $(PYTHON) -m pytest --config-file=pytest.ini
 
 docs:
-	PYTHONPATH="$(ROOT_DIR):$(DOCS_PYTHONPATH)" $(PYTHON) -m sphinx -M html docs/source $(DOCS_BUILD_DIR)
+	PYTHONPATH="$(DOCS_PYTHONPATH)" $(PYTHON) -m sphinx -M html docs/source $(DOCS_BUILD_DIR)
 
 check: quality test
 

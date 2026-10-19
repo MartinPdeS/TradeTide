@@ -38,7 +38,7 @@ globals().update(
         package=package_name,
         author=author,
         repository="MartinPdeS/TradeTide",
-        logo="_static/logo.svg",
+        logo="_static/logo.png",
         favicon="_static/favicon.svg",
         version=os.getenv("tag", "latest"),
         extensions=[
@@ -50,6 +50,9 @@ globals().update(
             "sphinx.ext.autosectionlabel",
             "sphinx.ext.intersphinx",
         ],
+        html_theme_options={
+            "logo": {"text": "", "image": "_static/logo.png"},
+        },
     )
 )
 

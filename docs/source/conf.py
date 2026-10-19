@@ -78,9 +78,5 @@ sphinx_gallery_conf = {
 }
 
 
-html_static_path = ["_static"]
-templates_path = ["_templates"]
-html_css_files = ["default.css", "layout.css"]
-epub_exclude_files = ["search.html"]
 
 # -

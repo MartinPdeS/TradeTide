@@ -31,7 +31,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=c83e6b79" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
@@ -48,6 +48,7 @@
     <script src="../_static/documentation_options.js?v=8a448e45"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'gallery/trade_ledger';</script>
     <script>
@@ -502,82 +503,80 @@ favorable excursion (MFE), while the ledger provides portfolio-level position
 analytics such as expectancy and streaks.</p>
 <p>Create a short deterministic market and a single long signal.  Its compact
 price path makes the resulting holding time, MAE, and MFE easy to audit.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">Market</span><span class="p">,</span>
-    <span class="n">Portfolio</span><span class="p">,</span>
-    <span class="n">PositionCollection</span><span class="p">,</span>
-    <span class="n">capital_management</span><span class="p">,</span>
-    <span class="n">exit_strategy</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.execution</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExecutionCosts</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.performance</span><span class="w"> </span><span class="kn">import</span> <span class="n">BacktestResult</span>
-
-<span class="n">market</span> <span class="o">=</span> <span class="n">Market</span><span class="p">()</span>
-<span class="n">start</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2024</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
-<span class="n">market</span><span class="o">.</span><span class="n">add_market_data</span><span class="p">(</span>
-    <span class="n">start</span><span class="p">,</span> <span class="mf">1.2002</span><span class="p">,</span> <span class="mf">1.2004</span><span class="p">,</span> <span class="mf">1.2000</span><span class="p">,</span> <span class="mf">1.2002</span><span class="p">,</span> <span class="mf">1.2000</span><span class="p">,</span> <span class="mf">1.2002</span><span class="p">,</span> <span class="mf">1.1998</span><span class="p">,</span> <span class="mf">1.2000</span>
-<span class="p">)</span>
-<span class="n">market</span><span class="o">.</span><span class="n">add_market_data</span><span class="p">(</span>
-    <span class="n">start</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
-    <span class="mf">1.2004</span><span class="p">,</span>
-    <span class="mf">1.2008</span><span class="p">,</span>
-    <span class="mf">1.2002</span><span class="p">,</span>
-    <span class="mf">1.2006</span><span class="p">,</span>
-    <span class="mf">1.2002</span><span class="p">,</span>
-    <span class="mf">1.2006</span><span class="p">,</span>
-    <span class="mf">1.2000</span><span class="p">,</span>
-    <span class="mf">1.2004</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">market</span><span class="o">.</span><span class="n">add_market_data</span><span class="p">(</span>
-    <span class="n">start</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
-    <span class="mf">1.2006</span><span class="p">,</span>
-    <span class="mf">1.2008</span><span class="p">,</span>
-    <span class="mf">1.2004</span><span class="p">,</span>
-    <span class="mf">1.2006</span><span class="p">,</span>
-    <span class="mf">1.2004</span><span class="p">,</span>
-    <span class="mf">1.2006</span><span class="p">,</span>
-    <span class="mf">1.2002</span><span class="p">,</span>
-    <span class="mf">1.2004</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">positions</span> <span class="o">=</span> <span class="n">PositionCollection</span><span class="p">(</span><span class="n">market</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
-<span class="n">positions</span><span class="o">.</span><span class="n">open_positions</span><span class="p">(</span><span class="n">exit_strategy</span><span class="o">.</span><span class="n">Static</span><span class="p">(</span><span class="n">stop_loss</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">take_profit</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
-<span class="n">positions</span><span class="o">.</span><span class="n">propagate_positions</span><span class="p">()</span>
-
-<span class="n">portfolio</span> <span class="o">=</span> <span class="n">Portfolio</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span>
-<span class="n">portfolio</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span>
-    <span class="n">capital_management</span><span class="o">.</span><span class="n">FixedLot</span><span class="p">(</span>
-        <span class="n">capital</span><span class="o">=</span><span class="mi">10_000</span><span class="p">,</span>
-        <span class="n">fixed_lot_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-        <span class="n">max_capital_at_risk</span><span class="o">=</span><span class="mi">1_000</span><span class="p">,</span>
-        <span class="n">max_concurrent_positions</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="p">)</span>
-<span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span><span class="w">
+</span><span class="w">
+</span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span><span class="w">
+</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="w">
+</span>    <span class="n">Market</span><span class="p">,</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-TradeTide sphx-glr-backref-type-py-class reference internal" href="../code.html#TradeTide.portfolio.Portfolio" title="TradeTide.Portfolio"><span class="n">Portfolio</span></a><span class="p">,</span><span class="w">
+</span>    <span class="n">PositionCollection</span><span class="p">,</span><span class="w">
+</span>    <span class="n">capital_management</span><span class="p">,</span><span class="w">
+</span>    <span class="n">exit_strategy</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="nn">.</span><span class="nn">execution</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExecutionCosts</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="nn">.</span><span class="nn">performance</span><span class="w"> </span><span class="kn">import</span> <span class="n">BacktestResult</span><span class="w">
+</span><span class="w">
+</span><span class="n">market</span> <span class="o">=</span> <span class="n">Market</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="n">start</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2024</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span><span class="w">
+</span><span class="n">market</span><span class="o">.</span><span class="n">add_market_data</span><span class="p">(</span><span class="w">
+</span>    <span class="n">start</span><span class="p">,</span> <span class="mf">1.2002</span><span class="p">,</span> <span class="mf">1.2004</span><span class="p">,</span> <span class="mf">1.2000</span><span class="p">,</span> <span class="mf">1.2002</span><span class="p">,</span> <span class="mf">1.2000</span><span class="p">,</span> <span class="mf">1.2002</span><span class="p">,</span> <span class="mf">1.1998</span><span class="p">,</span> <span class="mf">1.2000</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="n">market</span><span class="o">.</span><span class="n">add_market_data</span><span class="p">(</span><span class="w">
+</span>    <span class="n">start</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span>    <span class="mf">1.2004</span><span class="p">,</span><span class="w">
+</span>    <span class="mf">1.2008</span><span class="p">,</span><span class="w">
+</span>    <span class="mf">1.2002</span><span class="p">,</span><span class="w">
+</span>    <span class="mf">1.2006</span><span class="p">,</span><span class="w">
+</span>    <span class="mf">1.2002</span><span class="p">,</span><span class="w">
+</span>    <span class="mf">1.2006</span><span class="p">,</span><span class="w">
+</span>    <span class="mf">1.2000</span><span class="p">,</span><span class="w">
+</span>    <span class="mf">1.2004</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="n">market</span><span class="o">.</span><span class="n">add_market_data</span><span class="p">(</span><span class="w">
+</span>    <span class="n">start</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span>    <span class="mf">1.2006</span><span class="p">,</span><span class="w">
+</span>    <span class="mf">1.2008</span><span class="p">,</span><span class="w">
+</span>    <span class="mf">1.2004</span><span class="p">,</span><span class="w">
+</span>    <span class="mf">1.2006</span><span class="p">,</span><span class="w">
+</span>    <span class="mf">1.2004</span><span class="p">,</span><span class="w">
+</span>    <span class="mf">1.2006</span><span class="p">,</span><span class="w">
+</span>    <span class="mf">1.2002</span><span class="p">,</span><span class="w">
+</span>    <span class="mf">1.2004</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">positions</span> <span class="o">=</span> <span class="n">PositionCollection</span><span class="p">(</span><span class="n">market</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><span class="n">positions</span><span class="o">.</span><span class="n">open_positions</span><span class="p">(</span><span class="n">exit_strategy</span><span class="o">.</span><span class="n">Static</span><span class="p">(</span><span class="n">stop_loss</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">take_profit</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><span class="n">positions</span><span class="o">.</span><span class="n">propagate_positions</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><a class="sphx-glr-backref-module-TradeTide sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../code.html#TradeTide.portfolio.Portfolio" title="TradeTide.Portfolio"><span class="n">portfolio</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-TradeTide sphx-glr-backref-type-py-class reference internal" href="../code.html#TradeTide.portfolio.Portfolio" title="TradeTide.Portfolio"><span class="n">Portfolio</span></a><span class="p">(</span><span class="n">positions</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-TradeTide sphx-glr-backref-type-py-method reference internal" href="../code.html#TradeTide.portfolio.Portfolio.simulate" title="TradeTide.Portfolio.simulate"><span class="n">portfolio</span><span class="o">.</span><span class="n">simulate</span></a><span class="p">(</span><span class="w">
+</span>    <span class="n">capital_management</span><span class="o">.</span><span class="n">FixedLot</span><span class="p">(</span><span class="w">
+</span>        <span class="n">capital</span><span class="o">=</span><span class="mi">10_000</span><span class="p">,</span><span class="w">
+</span>        <span class="n">fixed_lot_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="w">
+</span>        <span class="n">max_capital_at_risk</span><span class="o">=</span><span class="mi">1_000</span><span class="p">,</span><span class="w">
+</span>        <span class="n">max_concurrent_positions</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w">
+</span>    <span class="p">)</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p>Add optional execution costs and inspect the ledger.  <code class="docutils literal notranslate"><span class="pre">to_dataframe</span></code> is
 convenient for notebooks and CSV/HTML reporting workflows.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">BacktestResult</span><span class="o">.</span><span class="n">from_portfolio</span><span class="p">(</span>
-    <span class="n">portfolio</span><span class="p">,</span>
-    <span class="n">ExecutionCosts</span><span class="p">(</span><span class="n">commission_per_lot</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">slippage_pips</span><span class="o">=</span><span class="mf">0.0</span><span class="p">),</span>
-<span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">ledger</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">())</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">ledger</span><span class="o">.</span><span class="n">analytics</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">BacktestResult</span><span class="o">.</span><span class="n">from_portfolio</span><span class="p">(</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-TradeTide sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../code.html#TradeTide.portfolio.Portfolio" title="TradeTide.Portfolio"><span class="n">portfolio</span></a><span class="p">,</span><span class="w">
+</span>    <span class="n">ExecutionCosts</span><span class="p">(</span><span class="n">commission_per_lot</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">slippage_pips</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">ledger</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">(</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">ledger</span><span class="o">.</span><span class="n">analytics</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>   trade_id  ... maximum_favorable_excursion
 0         1  ...                        0.04
 
 [1 rows x 14 columns]
-&lt;TradeTide.ledger.PositionAnalytics object at 0x7f3ca6e713b0&gt;
+&lt;TradeTide.ledger.PositionAnalytics object at 0x7f2273d64bf0&gt;
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.012 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.008 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-trade-ledger-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/c46211281ed61787a52ecf6823da3741/trade_ledger.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">trade_ledger.ipynb</span></code></a></p>

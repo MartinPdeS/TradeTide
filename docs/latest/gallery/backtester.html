@@ -31,7 +31,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=c83e6b79" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
@@ -48,6 +48,7 @@
     <script src="../_static/documentation_options.js?v=8a448e45"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'gallery/backtester';</script>
     <script>
@@ -503,83 +504,77 @@ position management, portfolio simulation, and performance analysis automaticall
 its historical performance and risk characteristics.</p>
 <section id="import-libraries-and-setup">
 <h2>Import Libraries and Setup<a class="headerlink" href="#import-libraries-and-setup" title="Link to this heading">#</a></h2>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">Backtester</span><span class="p">,</span> <span class="n">BacktestResult</span><span class="p">,</span> <span class="n">Strategy</span><span class="p">,</span> <span class="n">Market</span><span class="p">,</span> <span class="n">Currency</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.times</span><span class="w"> </span><span class="kn">import</span> <span class="n">months</span><span class="p">,</span> <span class="n">days</span><span class="p">,</span> <span class="n">hours</span><span class="p">,</span> <span class="n">minutes</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">BollingerBands</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">capital_management</span><span class="p">,</span> <span class="n">exit_strategy</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">Backtester</span><span class="p">,</span> <span class="n">BacktestResult</span><span class="p">,</span> <span class="n">Strategy</span><span class="p">,</span> <span class="n">Market</span><span class="p">,</span> <span class="n">Currency</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="nn">.</span><span class="nn">times</span><span class="w"> </span><span class="kn">import</span> <span class="n">months</span><span class="p">,</span> <span class="n">days</span><span class="p">,</span> <span class="n">hours</span><span class="p">,</span> <span class="n">minutes</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">BollingerBands</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">capital_management</span><span class="p">,</span> <span class="n">exit_strategy</span><span class="w">
+</span></pre></div></div>
 </section>
 <section id="load-historical-market-data">
 <h2>Load Historical Market Data<a class="headerlink" href="#load-historical-market-data" title="Link to this heading">#</a></h2>
 <p>Load 100 days of CAD/USD forex data for comprehensive backtesting.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">market</span> <span class="o">=</span> <span class="n">Market</span><span class="p">()</span>
-
-<span class="n">market</span><span class="o">.</span><span class="n">load_from_database</span><span class="p">(</span>
-    <span class="n">currency_0</span><span class="o">=</span><span class="n">Currency</span><span class="o">.</span><span class="n">CAD</span><span class="p">,</span>
-    <span class="n">currency_1</span><span class="o">=</span><span class="n">Currency</span><span class="o">.</span><span class="n">USD</span><span class="p">,</span>
-    <span class="n">time_span</span><span class="o">=</span><span class="mi">20</span> <span class="o">*</span> <span class="n">days</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="c1"># market.plot()</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">market</span> <span class="o">=</span> <span class="n">Market</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">market</span><span class="o">.</span><span class="n">load_from_database</span><span class="p">(</span><span class="w">
+</span>    <span class="n">currency_0</span><span class="o">=</span><span class="n">Currency</span><span class="o">.</span><span class="n">CAD</span><span class="p">,</span><span class="w">
+</span>    <span class="n">currency_1</span><span class="o">=</span><span class="n">Currency</span><span class="o">.</span><span class="n">USD</span><span class="p">,</span><span class="w">
+</span>    <span class="n">time_span</span><span class="o">=</span><span class="mi">20</span> <span class="o">*</span> <span class="n">days</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="c1"># market.plot()</span><span class="w">
+</span></pre></div></div>
 </section>
 <section id="configure-trading-strategy">
 <h2>Configure Trading Strategy<a class="headerlink" href="#configure-trading-strategy" title="Link to this heading">#</a></h2>
 <p>Set up a Bollinger Bands strategy with 2.0 standard deviation bands
 for more conservative signal generation.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">indicator</span> <span class="o">=</span> <span class="n">BollingerBands</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">20</span> <span class="o">*</span> <span class="n">minutes</span><span class="p">,</span> <span class="n">multiplier</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
-
-<span class="n">indicator</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">market</span><span class="p">)</span>
-
-<span class="c1"># indicator.plot()</span>
-
-<span class="n">strategy</span> <span class="o">=</span> <span class="n">Strategy</span><span class="p">()</span>
-<span class="n">strategy</span><span class="o">.</span><span class="n">add_indicator</span><span class="p">(</span><span class="n">indicator</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">indicator</span> <span class="o">=</span> <span class="n">BollingerBands</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">20</span> <span class="o">*</span> <span class="n">minutes</span><span class="p">,</span> <span class="n">multiplier</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">indicator</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">market</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># indicator.plot()</span><span class="w">
+</span><span class="w">
+</span><span class="n">strategy</span> <span class="o">=</span> <span class="n">Strategy</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="n">strategy</span><span class="o">.</span><span class="n">add_indicator</span><span class="p">(</span><span class="n">indicator</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 </section>
 <section id="define-risk-management">
 <h2>Define Risk Management<a class="headerlink" href="#define-risk-management" title="Link to this heading">#</a></h2>
 <p>Configure exit strategy and capital management parameters.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">exit_strat</span> <span class="o">=</span> <span class="n">exit_strategy</span><span class="o">.</span><span class="n">Static</span><span class="p">(</span><span class="n">stop_loss</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">take_profit</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">save_price_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="n">capital_mgmt</span> <span class="o">=</span> <span class="n">capital_management</span><span class="o">.</span><span class="n">FixedLot</span><span class="p">(</span>
-    <span class="n">capital</span><span class="o">=</span><span class="mi">1_000</span><span class="p">,</span>
-    <span class="n">fixed_lot_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-    <span class="n">max_capital_at_risk</span><span class="o">=</span><span class="mi">100_000</span><span class="p">,</span>
-    <span class="n">max_concurrent_positions</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-<span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">exit_strat</span> <span class="o">=</span> <span class="n">exit_strategy</span><span class="o">.</span><span class="n">Static</span><span class="p">(</span><span class="n">stop_loss</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">take_profit</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">save_price_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">capital_mgmt</span> <span class="o">=</span> <span class="n">capital_management</span><span class="o">.</span><span class="n">FixedLot</span><span class="p">(</span><span class="w">
+</span>    <span class="n">capital</span><span class="o">=</span><span class="mi">1_000</span><span class="p">,</span><span class="w">
+</span>    <span class="n">fixed_lot_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="w">
+</span>    <span class="n">max_capital_at_risk</span><span class="o">=</span><span class="mi">100_000</span><span class="p">,</span><span class="w">
+</span>    <span class="n">max_concurrent_positions</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 </section>
 <section id="run-backtest">
 <h2>Run Backtest<a class="headerlink" href="#run-backtest" title="Link to this heading">#</a></h2>
 <p>The Backtester automatically handles the complete workflow:
 strategy execution, position management, and performance calculation.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">backtester</span> <span class="o">=</span> <span class="n">Backtester</span><span class="p">(</span>
-    <span class="n">strategy</span><span class="o">=</span><span class="n">strategy</span><span class="p">,</span>
-    <span class="n">exit_strategy</span><span class="o">=</span><span class="n">exit_strat</span><span class="p">,</span>
-    <span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">,</span>
-    <span class="n">capital_management</span><span class="o">=</span><span class="n">capital_mgmt</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">backtester</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-<span class="n">backtester</span><span class="o">.</span><span class="n">print_summary</span><span class="p">()</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">backtester</span> <span class="o">=</span> <span class="n">Backtester</span><span class="p">(</span><span class="w">
+</span>    <span class="n">strategy</span><span class="o">=</span><span class="n">strategy</span><span class="p">,</span><span class="w">
+</span>    <span class="n">exit_strategy</span><span class="o">=</span><span class="n">exit_strat</span><span class="p">,</span><span class="w">
+</span>    <span class="n">market</span><span class="o">=</span><span class="n">market</span><span class="p">,</span><span class="w">
+</span>    <span class="n">capital_management</span><span class="o">=</span><span class="n">capital_mgmt</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">backtester</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="n">backtester</span><span class="o">.</span><span class="n">print_summary</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 </section>
 <section id="display-results">
 <h2>Display Results<a class="headerlink" href="#display-results" title="Link to this heading">#</a></h2>
 <p>View comprehensive performance metrics and analysis.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">BacktestResult</span><span class="o">.</span><span class="n">from_portfolio</span><span class="p">(</span><span class="n">backtester</span><span class="o">.</span><span class="n">portfolio</span><span class="p">)</span>
-<span class="n">result</span><span class="o">.</span><span class="n">plot_equity_drawdown</span><span class="p">()</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">BacktestResult</span><span class="o">.</span><span class="n">from_portfolio</span><span class="p">(</span><span class="n">backtester</span><span class="o">.</span><span class="n">portfolio</span><span class="p">)</span><span class="w">
+</span><span class="n">result</span><span class="o">.</span><span class="n">plot_equity_drawdown</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <img src="../_images/sphx_glr_backtester_001.png" srcset="../_images/sphx_glr_backtester_001.png" alt="Equity candles, Maximum drawdown: 0.42%" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;Figure size 640x480 with 2 Axes&gt;
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (2 minutes 57.594 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (2 minutes 56.666 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-backtester-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/5eac73c04a7f10b4518daee59f2aac94/backtester.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">backtester.ipynb</span></code></a></p>

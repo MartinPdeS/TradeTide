@@ -31,7 +31,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=c83e6b79" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
@@ -48,6 +48,7 @@
     <script src="../_static/documentation_options.js?v=8a448e45"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'gallery/candlestick_chart';</script>
     <script>
@@ -502,18 +503,17 @@ large intraday datasets.  By default, the renderer aggregates data to no more
 than 2,000 visible candles while preserving each bucket’s OHLC values.</p>
 <p>Load a bundled market and render the ask side.  Pass <code class="docutils literal notranslate"><span class="pre">max_candles=None</span></code> to
 display every observation, or lower it further for fast interactive views.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">Currency</span><span class="p">,</span> <span class="n">Market</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide.times</span><span class="w"> </span><span class="kn">import</span> <span class="n">days</span>
-
-<span class="n">market</span> <span class="o">=</span> <span class="n">Market</span><span class="p">()</span>
-<span class="n">market</span><span class="o">.</span><span class="n">load_from_database</span><span class="p">(</span><span class="n">Currency</span><span class="o">.</span><span class="n">EUR</span><span class="p">,</span> <span class="n">Currency</span><span class="o">.</span><span class="n">USD</span><span class="p">,</span> <span class="n">time_span</span><span class="o">=</span><span class="mi">100</span> <span class="o">*</span> <span class="n">days</span><span class="p">)</span>
-<span class="n">market</span><span class="o">.</span><span class="n">plot_candles</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">"ask"</span><span class="p">,</span> <span class="n">max_candles</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">Currency</span><span class="p">,</span> <span class="n">Market</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="nn">.</span><span class="nn">times</span><span class="w"> </span><span class="kn">import</span> <span class="n">days</span><span class="w">
+</span><span class="w">
+</span><span class="n">market</span> <span class="o">=</span> <span class="n">Market</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="n">market</span><span class="o">.</span><span class="n">load_from_database</span><span class="p">(</span><span class="n">Currency</span><span class="o">.</span><span class="n">EUR</span><span class="p">,</span> <span class="n">Currency</span><span class="o">.</span><span class="n">USD</span><span class="p">,</span> <span class="n">time_span</span><span class="o">=</span><span class="mi">100</span> <span class="o">*</span> <span class="n">days</span><span class="p">)</span><span class="w">
+</span><span class="n">market</span><span class="o">.</span><span class="n">plot_candles</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">ask</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">max_candles</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <img src="../_images/sphx_glr_candlestick_chart_001.png" srcset="../_images/sphx_glr_candlestick_chart_001.png" alt="EUR/USD - candles" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;Figure size 640x480 with 1 Axes&gt;
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.507 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.440 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-candlestick-chart-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/445617c36457006ff6ca715644a00cfb/candlestick_chart.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">candlestick_chart.ipynb</span></code></a></p>

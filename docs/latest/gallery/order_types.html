@@ -31,7 +31,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=c83e6b79" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
@@ -48,6 +48,7 @@
     <script src="../_static/documentation_options.js?v=8a448e45"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'gallery/order_types';</script>
     <script>
@@ -501,50 +502,48 @@ against bid/ask OHLC data.  It records the fill time, bar index, and execution
 price, and can produce an entry signal compatible with <code class="docutils literal notranslate"><span class="pre">PositionCollection</span></code>.</p>
 <p>Build a tiny deterministic market.  The first candle crosses the prices used
 below, making the outcome easy to inspect.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">Market</span><span class="p">,</span> <span class="n">Order</span><span class="p">,</span> <span class="n">OrderBook</span><span class="p">,</span> <span class="n">OrderSide</span><span class="p">,</span> <span class="n">OrderType</span>
-
-<span class="n">market</span> <span class="o">=</span> <span class="n">Market</span><span class="p">()</span>
-<span class="n">start</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2024</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
-<span class="n">market</span><span class="o">.</span><span class="n">add_market_data</span><span class="p">(</span>
-    <span class="n">start</span><span class="p">,</span>
-    <span class="mf">1.2000</span><span class="p">,</span>  <span class="c1"># ask open</span>
-    <span class="mf">1.4000</span><span class="p">,</span>  <span class="c1"># ask high</span>
-    <span class="mf">0.9000</span><span class="p">,</span>  <span class="c1"># ask low</span>
-    <span class="mf">1.2000</span><span class="p">,</span>  <span class="c1"># ask close</span>
-    <span class="mf">1.1998</span><span class="p">,</span>  <span class="c1"># bid open</span>
-    <span class="mf">1.3998</span><span class="p">,</span>  <span class="c1"># bid high</span>
-    <span class="mf">0.8998</span><span class="p">,</span>  <span class="c1"># bid low</span>
-    <span class="mf">1.1998</span><span class="p">,</span>  <span class="c1"># bid close</span>
-<span class="p">)</span>
-<span class="n">market</span><span class="o">.</span><span class="n">add_tick</span><span class="p">(</span><span class="n">start</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">ask_price</span><span class="o">=</span><span class="mf">1.2002</span><span class="p">,</span> <span class="n">bid_price</span><span class="o">=</span><span class="mf">1.2000</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span><span class="w">
+</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">Market</span><span class="p">,</span> <span class="n">Order</span><span class="p">,</span> <span class="n">OrderBook</span><span class="p">,</span> <span class="n">OrderSide</span><span class="p">,</span> <span class="n">OrderType</span><span class="w">
+</span><span class="w">
+</span><span class="n">market</span> <span class="o">=</span> <span class="n">Market</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="n">start</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2024</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span><span class="w">
+</span><span class="n">market</span><span class="o">.</span><span class="n">add_market_data</span><span class="p">(</span><span class="w">
+</span>    <span class="n">start</span><span class="p">,</span><span class="w">
+</span>    <span class="mf">1.2000</span><span class="p">,</span>  <span class="c1"># ask open</span><span class="w">
+</span>    <span class="mf">1.4000</span><span class="p">,</span>  <span class="c1"># ask high</span><span class="w">
+</span>    <span class="mf">0.9000</span><span class="p">,</span>  <span class="c1"># ask low</span><span class="w">
+</span>    <span class="mf">1.2000</span><span class="p">,</span>  <span class="c1"># ask close</span><span class="w">
+</span>    <span class="mf">1.1998</span><span class="p">,</span>  <span class="c1"># bid open</span><span class="w">
+</span>    <span class="mf">1.3998</span><span class="p">,</span>  <span class="c1"># bid high</span><span class="w">
+</span>    <span class="mf">0.8998</span><span class="p">,</span>  <span class="c1"># bid low</span><span class="w">
+</span>    <span class="mf">1.1998</span><span class="p">,</span>  <span class="c1"># bid close</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="n">market</span><span class="o">.</span><span class="n">add_tick</span><span class="p">(</span><span class="n">start</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="p">,</span> <span class="n">ask_price</span><span class="o">=</span><span class="mf">1.2002</span><span class="p">,</span> <span class="n">bid_price</span><span class="o">=</span><span class="mf">1.2000</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p>Place several orders.  A buy limit receives its limit price or a better open;
 a buy stop receives its stop price or a worse open.  A stop-limit first arms
 at the stop, then requires its limit to be reached.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">orders</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">Order</span><span class="p">(</span><span class="s2">"market"</span><span class="p">,</span> <span class="n">OrderSide</span><span class="o">.</span><span class="n">BUY</span><span class="p">,</span> <span class="n">OrderType</span><span class="o">.</span><span class="n">MARKET</span><span class="p">,</span> <span class="n">start</span><span class="p">),</span>
-    <span class="n">Order</span><span class="p">(</span><span class="s2">"limit"</span><span class="p">,</span> <span class="n">OrderSide</span><span class="o">.</span><span class="n">BUY</span><span class="p">,</span> <span class="n">OrderType</span><span class="o">.</span><span class="n">LIMIT</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">limit_price</span><span class="o">=</span><span class="mf">1.0000</span><span class="p">),</span>
-    <span class="n">Order</span><span class="p">(</span><span class="s2">"stop"</span><span class="p">,</span> <span class="n">OrderSide</span><span class="o">.</span><span class="n">BUY</span><span class="p">,</span> <span class="n">OrderType</span><span class="o">.</span><span class="n">STOP</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop_price</span><span class="o">=</span><span class="mf">1.3000</span><span class="p">),</span>
-    <span class="n">Order</span><span class="p">(</span>
-        <span class="s2">"stop-limit"</span><span class="p">,</span>
-        <span class="n">OrderSide</span><span class="o">.</span><span class="n">BUY</span><span class="p">,</span>
-        <span class="n">OrderType</span><span class="o">.</span><span class="n">STOP_LIMIT</span><span class="p">,</span>
-        <span class="n">start</span><span class="p">,</span>
-        <span class="n">stop_price</span><span class="o">=</span><span class="mf">1.3000</span><span class="p">,</span>
-        <span class="n">limit_price</span><span class="o">=</span><span class="mf">0.9500</span><span class="p">,</span>
-    <span class="p">),</span>
-<span class="p">]</span>
-
-<span class="n">book</span> <span class="o">=</span> <span class="n">OrderBook</span><span class="p">(</span><span class="n">orders</span><span class="p">)</span>
-<span class="n">fills</span> <span class="o">=</span> <span class="n">book</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">market</span><span class="p">)</span>
-
-<span class="k">for</span> <span class="n">fill</span> <span class="ow">in</span> <span class="n">fills</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">fill</span><span class="o">.</span><span class="n">order_id</span><span class="si">:</span><span class="s2">10</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">fill</span><span class="o">.</span><span class="n">time</span><span class="si">:</span><span class="s2">%H:%M</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">fill</span><span class="o">.</span><span class="n">price</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">orders</span> <span class="o">=</span> <span class="p">[</span><span class="w">
+</span>    <span class="n">Order</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">market</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">OrderSide</span><span class="o">.</span><span class="n">BUY</span><span class="p">,</span> <span class="n">OrderType</span><span class="o">.</span><span class="n">MARKET</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span>    <span class="n">Order</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">limit</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">OrderSide</span><span class="o">.</span><span class="n">BUY</span><span class="p">,</span> <span class="n">OrderType</span><span class="o">.</span><span class="n">LIMIT</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">limit_price</span><span class="o">=</span><span class="mf">1.0000</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span>    <span class="n">Order</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">stop</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">OrderSide</span><span class="o">.</span><span class="n">BUY</span><span class="p">,</span> <span class="n">OrderType</span><span class="o">.</span><span class="n">STOP</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop_price</span><span class="o">=</span><span class="mf">1.3000</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span>    <span class="n">Order</span><span class="p">(</span><span class="w">
+</span>        <span class="s2">&quot;</span><span class="s2">stop-limit</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>        <span class="n">OrderSide</span><span class="o">.</span><span class="n">BUY</span><span class="p">,</span><span class="w">
+</span>        <span class="n">OrderType</span><span class="o">.</span><span class="n">STOP_LIMIT</span><span class="p">,</span><span class="w">
+</span>        <span class="n">start</span><span class="p">,</span><span class="w">
+</span>        <span class="n">stop_price</span><span class="o">=</span><span class="mf">1.3000</span><span class="p">,</span><span class="w">
+</span>        <span class="n">limit_price</span><span class="o">=</span><span class="mf">0.9500</span><span class="p">,</span><span class="w">
+</span>    <span class="p">)</span><span class="p">,</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span><span class="w">
+</span><span class="n">book</span> <span class="o">=</span> <span class="n">OrderBook</span><span class="p">(</span><span class="n">orders</span><span class="p">)</span><span class="w">
+</span><span class="n">fills</span> <span class="o">=</span> <span class="n">book</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">market</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="k">for</span> <span class="n">fill</span> <span class="ow">in</span> <span class="n">fills</span><span class="p">:</span><span class="w">
+</span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">fill</span><span class="o">.</span><span class="n">order_id</span><span class="si">:</span><span class="s2">10</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">fill</span><span class="o">.</span><span class="n">time</span><span class="si">:</span><span class="s2">%H:%M</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">fill</span><span class="o">.</span><span class="n">price</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>market     09:00  1.2000
 limit      09:00  1.0000
 stop       09:00  1.3000
@@ -553,14 +552,13 @@ stop-limit 09:00  0.9500
 </div>
 <p>Convert fills into a long/short entry stream when connecting the order engine
 to the existing native position workflow.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">signals</span> <span class="o">=</span> <span class="n">book</span><span class="o">.</span><span class="n">trade_signals</span><span class="p">(</span><span class="n">market</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">signals</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">signals</span> <span class="o">=</span> <span class="n">book</span><span class="o">.</span><span class="n">trade_signals</span><span class="p">(</span><span class="n">market</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="n">signals</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[1 0]
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.002 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.001 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-order-types-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/7b49394a6fe26a93da32f53f792cbee2/order_types.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">order_types.ipynb</span></code></a></p>

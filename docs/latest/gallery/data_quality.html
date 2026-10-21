@@ -31,7 +31,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=c83e6b79" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
@@ -48,6 +48,7 @@
     <script src="../_static/documentation_options.js?v=8a448e45"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'gallery/data_quality';</script>
     <script>
@@ -502,38 +503,36 @@ report distinguishes invalid data (errors) from suspicious-but-usable data
 <p>This example deliberately uses a wide, but valid, spread to demonstrate a
 warning.  Native market construction still guards basic bid/ask and OHLC
 invariants at insertion time.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">Market</span><span class="p">,</span> <span class="n">validate_market_data</span>
-
-<span class="n">market</span> <span class="o">=</span> <span class="n">Market</span><span class="p">()</span>
-<span class="n">market</span><span class="o">.</span><span class="n">add_market_data</span><span class="p">(</span>
-    <span class="n">datetime</span><span class="p">(</span><span class="mi">2024</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span>
-    <span class="mf">1.2000</span><span class="p">,</span>  <span class="c1"># ask open</span>
-    <span class="mf">1.2100</span><span class="p">,</span>  <span class="c1"># ask high</span>
-    <span class="mf">1.1900</span><span class="p">,</span>  <span class="c1"># ask low</span>
-    <span class="mf">1.2000</span><span class="p">,</span>  <span class="c1"># ask close</span>
-    <span class="mf">1.0000</span><span class="p">,</span>  <span class="c1"># bid open</span>
-    <span class="mf">1.0100</span><span class="p">,</span>  <span class="c1"># bid high</span>
-    <span class="mf">0.9900</span><span class="p">,</span>  <span class="c1"># bid low</span>
-    <span class="mf">1.0000</span><span class="p">,</span>  <span class="c1"># bid close</span>
-<span class="p">)</span>
-
-<span class="n">report</span> <span class="o">=</span> <span class="n">validate_market_data</span><span class="p">(</span><span class="n">market</span><span class="p">,</span> <span class="n">max_spread_ratio</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"valid: </span><span class="si">{</span><span class="n">report</span><span class="o">.</span><span class="n">valid</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">issue</span> <span class="ow">in</span> <span class="n">report</span><span class="o">.</span><span class="n">issues</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">issue</span><span class="o">.</span><span class="n">severity</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">issue</span><span class="o">.</span><span class="n">code</span><span class="si">}</span><span class="s2"> — </span><span class="si">{</span><span class="n">issue</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="w">
+</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">TradeTide</span><span class="w"> </span><span class="kn">import</span> <span class="n">Market</span><span class="p">,</span> <span class="n">validate_market_data</span><span class="w">
+</span><span class="w">
+</span><span class="n">market</span> <span class="o">=</span> <span class="n">Market</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="n">market</span><span class="o">.</span><span class="n">add_market_data</span><span class="p">(</span><span class="w">
+</span>    <span class="n">datetime</span><span class="p">(</span><span class="mi">2024</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span>    <span class="mf">1.2000</span><span class="p">,</span>  <span class="c1"># ask open</span><span class="w">
+</span>    <span class="mf">1.2100</span><span class="p">,</span>  <span class="c1"># ask high</span><span class="w">
+</span>    <span class="mf">1.1900</span><span class="p">,</span>  <span class="c1"># ask low</span><span class="w">
+</span>    <span class="mf">1.2000</span><span class="p">,</span>  <span class="c1"># ask close</span><span class="w">
+</span>    <span class="mf">1.0000</span><span class="p">,</span>  <span class="c1"># bid open</span><span class="w">
+</span>    <span class="mf">1.0100</span><span class="p">,</span>  <span class="c1"># bid high</span><span class="w">
+</span>    <span class="mf">0.9900</span><span class="p">,</span>  <span class="c1"># bid low</span><span class="w">
+</span>    <span class="mf">1.0000</span><span class="p">,</span>  <span class="c1"># bid close</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">report</span> <span class="o">=</span> <span class="n">validate_market_data</span><span class="p">(</span><span class="n">market</span><span class="p">,</span> <span class="n">max_spread_ratio</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">valid: </span><span class="si">{</span><span class="n">report</span><span class="o">.</span><span class="n">valid</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="k">for</span> <span class="n">issue</span> <span class="ow">in</span> <span class="n">report</span><span class="o">.</span><span class="n">issues</span><span class="p">:</span><span class="w">
+</span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">issue</span><span class="o">.</span><span class="n">severity</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">issue</span><span class="o">.</span><span class="n">code</span><span class="si">}</span><span class="s2"> — </span><span class="si">{</span><span class="n">issue</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>valid: True
 warning: wide_spread — Spread ratio 20.0000% exceeds 1.0000%.
 </pre></div>
 </div>
 <p>Use <code class="docutils literal notranslate"><span class="pre">raise_for_errors</span></code> when a pipeline should stop on invalid data.  Warnings
 remain visible but do not prevent a backtest.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">report</span><span class="o">.</span><span class="n">raise_for_errors</span><span class="p">()</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">report</span><span class="o">.</span><span class="n">raise_for_errors</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.001 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-data-quality-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">

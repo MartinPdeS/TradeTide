@@ -23,9 +23,7 @@ globals().update(
         favicon="_static/favicon.svg",
         prefer_installed_package=True,
         gallery_default_thumb=str(docs_source.parent / "images" / "logo.png"),
-        html_theme_options={
-            "logo": {"text": "", "image": "../images/logo.png"},
-        },
+        logo_text="",
     )
 )
 

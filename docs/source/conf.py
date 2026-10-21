@@ -1,17 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys
-import os
-from pathlib import Path
-
-from sphinx_gallery.sorting import FileNameSortKey
-
-from TradeTide.directories import doc_css_path
 from martinpdes_docs import configure
-
-def setup(app):
-    app.add_css_file(str(doc_css_path))
 
 
 autodoc_mock_imports = [
@@ -28,32 +18,13 @@ globals().update(
         repository="MartinPdeS/TradeTide",
         logo="../images/logo.png",
         favicon="_static/favicon.svg",
-        version=os.getenv("tag", "latest"),
-        extensions=[
-            "sphinx.ext.mathjax",
-            "sphinx_gallery.gen_gallery",
-            "sphinx.ext.autodoc",
-            "sphinx.ext.napoleon",
-            "sphinx.ext.viewcode",
-            "sphinx.ext.autosectionlabel",
-            "sphinx.ext.intersphinx",
-        ],
+        prefer_installed_package=True,
+        gallery_default_thumb="../images/logo.png",
         html_theme_options={
             "logo": {"text": "", "image": "../images/logo.png"},
         },
     )
 )
-
-
-sphinx_gallery_conf.update(
-    {
-        # Sphinx-Gallery resolves this path from the repository root rather
-        # than from ``docs/source``.  Keep the shared logo fallback explicit.
-        "default_thumb_file": str(Path(__file__).resolve().parents[1] / "images" / "logo.png"),
-        "within_subsection_order": FileNameSortKey,
-    }
-)
-
 
 
 # -

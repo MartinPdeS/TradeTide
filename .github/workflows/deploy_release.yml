@@ -14,7 +14,7 @@ jobs:
       pages: write
       id-token: write
     # Validate Conda metadata before publishing and install the .conda archive reader.
-    uses: MartinPdeS/MPSActions/.github/workflows/publish_release.yml@v16
+    uses: MartinPdeS/MPSActions/.github/workflows/publish_release.yml@v17
     with:
       documentation: true
       documentation_package_name: TradeTide

@@ -9,9 +9,18 @@ permissions:
 
 jobs:
   release:
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
     # Validate Conda metadata before publishing and install the .conda archive reader.
-    uses: MartinPdeS/MPSActions/.github/workflows/publish_release.yml@v11
+    uses: MartinPdeS/MPSActions/.github/workflows/publish_release.yml@v12
     with:
+      documentation: true
+      documentation_package_name: TradeTide
+      documentation_python_version: "3.11"
+      documentation_apt_package: xvfb jq
+      debug: true
       pypi_python_version: "3.13"
       pypi_build_linux: true
       pypi_build_macos: true

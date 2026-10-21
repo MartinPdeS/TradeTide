@@ -10,7 +10,7 @@ permissions:
 jobs:
   release:
     # Validate Conda metadata before publishing and install the .conda archive reader.
-    uses: MartinPdeS/MPSActions/.github/workflows/publish_release.yml@v9
+    uses: MartinPdeS/MPSActions/.github/workflows/publish_release.yml@v10
     with:
       pypi_python_version: "3.13"
       pypi_build_linux: true

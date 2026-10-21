@@ -10,7 +10,6 @@ docs_source = Path(__file__).resolve().parent
 autodoc_mock_imports = [
     "numpy",
     "matplotlib",
-    "numpydoc",
 ]
 
 globals().update(

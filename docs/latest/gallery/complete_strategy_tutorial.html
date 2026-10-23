@@ -37,6 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/default.css?v=4340df76" />
     <link rel="stylesheet" type="text/css" href="../_static/martinpdes_layout.css?v=a8cc01cd" />
+    <link rel="stylesheet" type="text/css" href="../_static/layout.css?v=a0095c48" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
@@ -53,12 +54,12 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.23.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/TradeTide/documentation_page/version_switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v1.1.18';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v1.1.19';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             true;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="icon" href="../_static/favicon.svg"/>
+    <link rel="icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Market Data Quality Checks" href="data_quality.html" />
@@ -136,8 +137,8 @@
     
     
     
-    <img src="../_static/logo.png" class="logo__image only-dark" alt="TradeTide  documentation - Home"/>
-    <img src="../_static/logo.png" class="logo__image only-light pst-js-only" alt="TradeTide  documentation - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-dark" alt="TradeTide logo"/>
+    <img src="../_static/logo.png" class="logo__image only-light pst-js-only" alt="TradeTide logo"/>
   
   
 </a></div>
@@ -223,6 +224,21 @@
     role="listbox" aria-labelledby="pst-version-switcher-button-2">
     <!-- dropdown will be populated by javascript on page load -->
   </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
 </div></div>
       
         <div class="navbar-item"><ul class="navbar-icon-links"
@@ -370,6 +386,21 @@
     role="listbox" aria-labelledby="pst-version-switcher-button-3">
     <!-- dropdown will be populated by javascript on page load -->
   </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
 </div></div>
         
           <div class="navbar-item"><ul class="navbar-icon-links"
@@ -551,7 +582,7 @@ position and portfolio diagnostics are also required.</p>
 </span><span class="n">quality</span><span class="o">.</span><span class="n">raise_for_errors</span><span class="p">(</span><span class="p">)</span><span class="w">
 </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">market</span><span class="o">.</span><span class="n">dates</span><span class="p">)</span><span class="si">}</span><span class="s2"> EUR/USD candles; warnings: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">quality</span><span class="o">.</span><span class="n">warnings</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>22:52:11 DEBUG TradeTide: Market validation: observations=721 errors=0 warnings=0
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>15:39:22 DEBUG TradeTide: Market validation: observations=721 errors=0 warnings=0
 Loaded 721 EUR/USD candles; warnings: 0
 </pre></div>
 </div>
@@ -612,38 +643,38 @@ position management.</p>
 </span><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="p">)</span><span class="p">)</span><span class="w">
 </span><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">ledger</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">(</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="p">)</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>22:52:11 DEBUG TradeTide: Trade short 2023-08-04 09:15:00→2023-08-04 09:33:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-22:52:11 DEBUG TradeTide: Trade long 2023-08-04 09:36:00→2023-08-04 09:39:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-22:52:11 DEBUG TradeTide: Trade long 2023-08-04 10:16:00→2023-08-04 10:27:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-22:52:11 DEBUG TradeTide: Trade short 2023-08-04 10:38:00→2023-08-04 10:51:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-22:52:11 DEBUG TradeTide: Trade long 2023-08-04 10:54:00→2023-08-04 11:00:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-22:52:11 DEBUG TradeTide: Trade short 2023-08-04 11:27:00→2023-08-04 11:30:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-22:52:11 DEBUG TradeTide: Trade long 2023-08-04 11:58:00→2023-08-04 12:07:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-22:52:11 DEBUG TradeTide: Trade short 2023-08-04 12:10:00→2023-08-04 12:13:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-22:52:11 DEBUG TradeTide: Trade short 2023-08-04 12:30:00→2023-08-04 12:31:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
-22:52:11 DEBUG TradeTide: Trade short 2023-08-04 12:41:00→2023-08-04 12:44:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
-22:52:11 DEBUG TradeTide: Trade short 2023-08-04 13:07:00→2023-08-04 13:09:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-22:52:11 DEBUG TradeTide: Trade short 2023-08-04 13:13:00→2023-08-04 13:16:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
-22:52:11 DEBUG TradeTide: Trade long 2023-08-04 13:56:00→2023-08-04 13:58:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
-22:52:11 DEBUG TradeTide: Trade long 2023-08-04 14:04:00→2023-08-04 14:08:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
-22:52:11 DEBUG TradeTide: Trade short 2023-08-04 15:10:00→2023-08-04 15:11:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-22:52:11 DEBUG TradeTide: Trade short 2023-08-04 15:12:00→2023-08-04 15:18:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
-22:52:11 DEBUG TradeTide: Trade short 2023-08-04 15:22:00→2023-08-04 15:28:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-22:52:11 DEBUG TradeTide: Trade short 2023-08-04 15:41:00→2023-08-04 15:53:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-22:52:11 DEBUG TradeTide: Trade long 2023-08-04 16:07:00→2023-08-04 16:27:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-22:52:11 DEBUG TradeTide: Trade short 2023-08-04 16:52:00→2023-08-04 16:56:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-22:52:11 DEBUG TradeTide: Trade short 2023-08-04 17:23:00→2023-08-04 17:26:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-22:52:11 DEBUG TradeTide: Trade long 2023-08-04 17:29:00→2023-08-04 17:58:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
-22:52:11 DEBUG TradeTide: Trade long 2023-08-04 18:46:00→2023-08-04 18:52:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
-22:52:11 DEBUG TradeTide: Trade long 2023-08-04 19:35:00→2023-08-04 20:13:00 gross=1.3000 costs=2.1000 net=-0.8000 (end_of_data)
-22:52:11 DEBUG TradeTide: Backtest report: observations=721 trades=24 return=-0.06% max_drawdown=0.06%
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>15:39:22 DEBUG TradeTide: Trade short 2023-08-04 09:15:00→2023-08-04 09:33:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+15:39:22 DEBUG TradeTide: Trade long 2023-08-04 09:36:00→2023-08-04 09:39:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+15:39:22 DEBUG TradeTide: Trade long 2023-08-04 10:16:00→2023-08-04 10:27:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+15:39:22 DEBUG TradeTide: Trade short 2023-08-04 10:38:00→2023-08-04 10:51:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+15:39:22 DEBUG TradeTide: Trade long 2023-08-04 10:54:00→2023-08-04 11:00:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+15:39:22 DEBUG TradeTide: Trade short 2023-08-04 11:27:00→2023-08-04 11:30:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+15:39:22 DEBUG TradeTide: Trade long 2023-08-04 11:58:00→2023-08-04 12:07:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+15:39:22 DEBUG TradeTide: Trade short 2023-08-04 12:10:00→2023-08-04 12:13:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+15:39:22 DEBUG TradeTide: Trade short 2023-08-04 12:30:00→2023-08-04 12:31:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
+15:39:22 DEBUG TradeTide: Trade short 2023-08-04 12:41:00→2023-08-04 12:44:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
+15:39:22 DEBUG TradeTide: Trade short 2023-08-04 13:07:00→2023-08-04 13:09:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+15:39:22 DEBUG TradeTide: Trade short 2023-08-04 13:13:00→2023-08-04 13:16:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
+15:39:22 DEBUG TradeTide: Trade long 2023-08-04 13:56:00→2023-08-04 13:58:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
+15:39:22 DEBUG TradeTide: Trade long 2023-08-04 14:04:00→2023-08-04 14:08:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
+15:39:22 DEBUG TradeTide: Trade short 2023-08-04 15:10:00→2023-08-04 15:11:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+15:39:22 DEBUG TradeTide: Trade short 2023-08-04 15:12:00→2023-08-04 15:18:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
+15:39:22 DEBUG TradeTide: Trade short 2023-08-04 15:22:00→2023-08-04 15:28:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+15:39:22 DEBUG TradeTide: Trade short 2023-08-04 15:41:00→2023-08-04 15:53:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+15:39:22 DEBUG TradeTide: Trade long 2023-08-04 16:07:00→2023-08-04 16:27:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+15:39:22 DEBUG TradeTide: Trade short 2023-08-04 16:52:00→2023-08-04 16:56:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+15:39:22 DEBUG TradeTide: Trade short 2023-08-04 17:23:00→2023-08-04 17:26:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+15:39:22 DEBUG TradeTide: Trade long 2023-08-04 17:29:00→2023-08-04 17:58:00 gross=-4.0000 costs=2.1000 net=-6.1000 (stop_loss)
+15:39:22 DEBUG TradeTide: Trade long 2023-08-04 18:46:00→2023-08-04 18:52:00 gross=4.0000 costs=2.1000 net=1.9000 (take_profit)
+15:39:22 DEBUG TradeTide: Trade long 2023-08-04 19:35:00→2023-08-04 20:13:00 gross=1.3000 costs=2.1000 net=-0.8000 (end_of_data)
+15:39:22 DEBUG TradeTide: Backtest report: observations=721 trades=24 return=-0.06% max_drawdown=0.06%
 {'total_return': -0.0006109999999999172, 'annualized_return': -0.36011826646934153, 'volatility': 0.005674055093243982, 'max_drawdown': 0.0006219999999999709, 'max_drawdown_duration_seconds': 39480.0, 'sharpe_ratio': -78.68369954048049, 'sortino_ratio': -19.785926836153156, 'calmar_ratio': -578.9682740664925, 'win_rate': 0.6666666666666666, 'profit_factor': 0.6988505747125253, 'exposure': 0.2861111111111111, 'total_trades': 24, 'winning_trades': 16, 'losing_trades': 8, 'initial_equity': 100000.0, 'final_equity': 99938.90000000001, 'peak_equity': 100000.0}
-   trade_id  ... maximum_favorable_excursion
-0         1  ...                         5.3
-1         2  ...                         4.5
-2         3  ...                         4.2
-3         4  ...                         5.0
-4         5  ...                         4.2
+   trade_id  ...  maximum_favorable_excursion
+0         1  ...                          5.3
+1         2  ...                          4.5
+2         3  ...                          4.2
+3         4  ...                          5.0
+4         5  ...                          4.2
 
 [5 rows x 14 columns]
 </pre></div>
@@ -656,7 +687,7 @@ position management.</p>
 <img src="../_images/sphx_glr_complete_strategy_tutorial_001.png" srcset="../_images/sphx_glr_complete_strategy_tutorial_001.png" alt="Equity candles, Maximum drawdown: 0.06%" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;Figure size 640x480 with 2 Axes&gt;
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.407 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.554 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-complete-strategy-tutorial-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/25e96b7d89ac8b88433c1f11cea48e30/complete_strategy_tutorial.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">complete_strategy_tutorial.ipynb</span></code></a></p>
@@ -678,6 +709,30 @@ position management.</p>
               
               
               
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="candlestick_chart.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Fast Candlestick Charts</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="data_quality.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Market Data Quality Checks</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
               
             </div>
             
@@ -709,7 +764,7 @@ position management.</p>
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/MartinPdeS/TradeTide/edit/v1.1.18/docs/source/gallery/complete_strategy_tutorial.rst">
+    <a href="https://github.com/MartinPdeS/TradeTide/edit/v1.1.19/docs/source/gallery/complete_strategy_tutorial.rst">
       <i class="fa-solid fa-pencil"></i>
       
       
@@ -764,23 +819,6 @@ position management.</p>
     </div>
   
   
-  
-    <div class="footer-items__end">
-      
-        <div class="footer-item">
-
-  <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
-  </p>
-</div>
-      
-        <div class="footer-item">
-<p class="theme-version">
-  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
-</p></div>
-      
-    </div>
   
 </div>
 

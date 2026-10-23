@@ -335,6 +335,7 @@ class WorkspaceHandler(BaseHTTPRequestHandler):
             "/app.js": ("app.js", "text/javascript; charset=utf-8"),
             "/style.css": ("style.css", "text/css; charset=utf-8"),
             "/logo.png": ("logo.png", "image/png"),
+            "/favicon.png": ("favicon.png", "image/png"),
             "/research.mjs": ("research.mjs", "text/javascript; charset=utf-8"),
             "/storage.mjs": ("storage.mjs", "text/javascript; charset=utf-8"),
             "/charts.mjs": ("charts.mjs", "text/javascript; charset=utf-8"),

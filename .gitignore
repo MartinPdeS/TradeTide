@@ -31,6 +31,7 @@
 
 # But ignore docs/build inside docs and code
 docs/build/
+docs/_build/
 docs/source/gallery/
 
 # Compiled files in the project

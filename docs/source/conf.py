@@ -7,22 +7,19 @@ from martinpdes_docs import configure
 
 docs_source = Path(__file__).resolve().parent
 
-autodoc_mock_imports = [
-    "numpy",
-    "matplotlib",
-]
-
 globals().update(
     configure(
         project="TradeTide",
         package="TradeTide",
         author="Martin Poinsinet de Sivry-Houle",
         repository="MartinPdeS/TradeTide",
-        logo="../images/logo.png",
-        favicon="_static/favicon.svg",
+        logo="_static/logo.png",
+        favicon="_static/favicon.png",
         prefer_installed_package=True,
         gallery_default_thumb=str(docs_source.parent / "images" / "logo.png"),
         logo_text="",
+        logo_alt_text="TradeTide logo",
+        html_css_files=["layout.css"],
     )
 )
 

@@ -6,6 +6,10 @@ All notable changes to TradeTide are documented here.
 
 ### Added
 
+- Documentation layout aligned with PyMieSim and MartinPdeS-docs 0.3, preserving
+  full-color header logos.
+- Market Wave branding with matching colored application icon and favicons.
+
 - Local browser GUI launched with `TradeTide`, `tradetide-gui`, or
   `python -m TradeTide.gui`, with a research library and separate strategy,
   results, orders/trades, and comparison tabs.

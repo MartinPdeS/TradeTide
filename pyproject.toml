@@ -71,7 +71,7 @@ testing = [
 ]
 
 documentation = [
-    "MartinPdeS-docs>=0.2.5,<0.3",
+    "MartinPdeS-docs>=0.3.2,<0.4",
     "plotly>=5.0",
 ]
 

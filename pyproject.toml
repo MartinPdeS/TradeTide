@@ -1,5 +1,5 @@
 [build-system]
-requires = ["scikit-build-core>=0.3.3", "pybind11>=3.0,<4", "setuptools_scm[toml]>=8.0"]
+requires = ["scikit-build-core>=0.3.3", "pybind11>=3.0,<4"]
 build-backend = "scikit_build_core.build"
 
 [tool.scikit-build]
@@ -15,10 +15,6 @@ sdist.exclude = [
     ".git*",
     "developments",
 ]
-
-[tool.setuptools_scm]
-version_scheme = "only-version"
-local_scheme = "no-local-version"
 
 [project]
 name = "TradeTide"
@@ -58,11 +54,12 @@ TradeTide = "TradeTide.gui.server:main"
 tradetide-gui = "TradeTide.gui.server:main"
 
 [project.optional-dependencies]
+release = ["martinpdes-maintenance==0.2.2"]
 reporting = [
     "plotly>=5.0",
 ]
 
-testing = [
+testing = ["martinpdes-maintenance==0.2.2",
     "pytest>=0.6",
     "pytest-cov>=2.0",
     "pytest-json-report==1.5.0",
@@ -119,3 +116,9 @@ test-command = 'cd /tmp && python -m pytest {project}/tests --config-file={proje
 archs = ["AMD64"]
 build = ["cp311-*", "cp312-*", "cp313-*", "cp314-*"]
 test-command = 'cd /d %TEMP% && python -m pytest {project}\\tests --config-file={project}\\pytest.ini --import-mode=importlib'
+
+[tool.mps-maintenance]
+version-file = "TradeTide/_version.py"
+version-method = "literal"
+conda-recipe = "conda.recipe/meta.yaml"
+zenodo = ".zenodo.json"

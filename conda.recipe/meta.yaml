@@ -36,7 +36,6 @@ requirements:
     - scikit-build-core >=0.10
     - pybind11 >=3.0.1,<4
     - python-build ~=1.2
-    - setuptools_scm[toml] ~=8.0
     - numpy >=2.0,<3  # [py<314]
     - numpy >=2.3.3,<3  # [py>=314]
   run:

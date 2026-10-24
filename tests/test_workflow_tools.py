@@ -1,50 +1,44 @@
-"""Tests for repository workflow helpers."""
+"""Verify the release compatibility commands against repository metadata."""
 
-import importlib.util
+import re
+import subprocess
+import sys
 from pathlib import Path
-from types import ModuleType
-
-import pytest
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
-TOOLS_DIRECTORY = REPOSITORY_ROOT / "tools"
 
 
-def load_tool_module(name: str) -> ModuleType:
-    """Load a repository-only workflow helper without packaging it."""
-    path = TOOLS_DIRECTORY / f"{name}.py"
-    specification = importlib.util.spec_from_file_location(f"tradetide_test_{name}", path)
-    if specification is None or specification.loader is None:
-        raise RuntimeError(f"could not load workflow helper: {path}")
-    module = importlib.util.module_from_spec(specification)
-    specification.loader.exec_module(module)
-    return module
-
-
-check_release = load_tool_module("check_release")
-release_tag = load_tool_module("release_tag")
+def run_tool(name: str, *arguments: str) -> subprocess.CompletedProcess:
+    """Run a release wrapper using the current test interpreter."""
+    return subprocess.run(
+        [sys.executable, str(REPOSITORY_ROOT / "tools" / f"{name}.py"), *arguments],
+        cwd=REPOSITORY_ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
 
 
 def test_release_versions_are_aligned() -> None:
-    """Package release artifacts declare one version."""
-    declared = check_release.versions()
-    assert len(set(declared.values())) == 1
+    """The shared check validates every configured release artifact."""
+    result = run_tool("check_release")
+    assert result.returncode == 0, result.stderr
+    assert "pyproject.toml" in result.stdout
+    assert ".zenodo.json" in result.stdout
+    assert "conda.recipe/meta.yaml" in result.stdout
+    assert "TradeTide/_version.py" in result.stdout
 
 
-@pytest.mark.parametrize(("version", "expected"), [("1.2.3", "1.2.3"), ("v1.2.3", "1.2.3")])
-def test_normalized_version(version: str, expected: str) -> None:
-    """Release checks accept plain and Git-style version strings."""
-    assert check_release.normalized_version(version) == expected
+def test_release_check_rejects_unexpected_version() -> None:
+    """An explicitly incorrect expected version fails the compatibility command."""
+    result = run_tool("check_release", "--version", "v999999.0.0")
+    assert result.returncode == 1
+    assert "MISMATCH" in result.stdout
 
 
-@pytest.mark.parametrize("tag", ["1.2.3", "v1.2", "v1.2.3.4", "v01.2.3"])
-def test_release_tag_validation_rejects_invalid_semantic_versions(tag: str) -> None:
-    """Release tags must use the canonical semantic-version format."""
-    with pytest.raises(ValueError, match="vMAJOR.MINOR.PATCH"):
-        release_tag.validate_tag(tag)
-
-
-def test_release_tag_validation_extracts_version() -> None:
-    """A valid release tag maps to its PEP 440 package version."""
-    assert release_tag.validate_tag("v1.2.3") == "1.2.3"
+def test_next_release_prints_semantic_tag() -> None:
+    """Make receives exactly one usable tag from the shared next command."""
+    result = run_tool("next_release_version", "patch")
+    assert result.returncode == 0, result.stderr
+    assert re.fullmatch(r"v[0-9]+\.[0-9]+\.[0-9]+\n", result.stdout)

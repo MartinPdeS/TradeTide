@@ -18,7 +18,7 @@ sdist.exclude = [
 
 [project]
 name = "TradeTide"
-version = "1.1.19"
+version = "1.1.20"
 description = "A package for stocks market backtesting."
 license = {file = "LICENSE"}
 readme = "README.rst"

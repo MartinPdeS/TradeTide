@@ -1,5 +1,5 @@
 """Release version maintained by martinpdes-maintenance."""
 
-__version__ = version = "1.1.19"
+__version__ = version = "1.1.20"
 __version_tuple__ = version_tuple = tuple(int(part) for part in version.split("."))
 __commit_id__ = commit_id = None

@@ -9,7 +9,7 @@
   "license": "MIT",
   "upload_type": "software",
   "access_right": "open",
-  "version": "1.1.19",
+  "version": "1.1.20",
   "keywords": [
     "backtesting",
     "quantitative finance",
@@ -17,5 +17,5 @@
     "portfolio simulation",
     "trading strategies"
   ],
-  "publication_date": "2026-10-23"
+  "publication_date": "2026-10-27"
 }

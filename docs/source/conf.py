@@ -11,6 +11,7 @@ globals().update(
     configure(
         project="TradeTide",
         package="TradeTide",
+        version="auto",
         author="Martin Poinsinet de Sivry-Houle",
         repository="MartinPdeS/TradeTide",
         logo="_static/logo.png",

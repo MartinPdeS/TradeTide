@@ -54,30 +54,19 @@ TradeTide = "TradeTide.gui.server:main"
 tradetide-gui = "TradeTide.gui.server:main"
 
 [project.optional-dependencies]
-release = ["martinpdes-maintenance==0.2.2"]
+release = ["martinpdes-maintenance==0.2.3"]
 reporting = [
     "plotly>=5.0",
 ]
 
-testing = ["martinpdes-maintenance==0.2.2",
-    "pytest>=0.6",
-    "pytest-cov>=2.0",
-    "pytest-json-report==1.5.0",
-    "flake8>=3.9",
-    "coverage==7.16.2"
-]
+testing = ["martinpdes-maintenance[testing]==0.2.3", "pytest-json-report==1.5.0", "coverage==7.16.2"]
 
 documentation = [
     "MartinPdeS-docs>=0.4.0,<0.5",
     "plotly>=5.0",
 ]
 
-dev = [
-    "TradeTide[testing]",
-    "pre-commit>=3.0",
-    "ruff>=0.8",
-    "mypy>=1.13",
-]
+dev = ["martinpdes-maintenance[quality]==0.2.3", "TradeTide[testing]", "pre-commit>=3.0", "flake8>=3.9"]
 
 [tool.ruff]
 target-version = "py310"
